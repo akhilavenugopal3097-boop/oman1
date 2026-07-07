@@ -1,0 +1,960 @@
+<!-- templates/admin1/user_activity_log.html -->
+{% include 'admin1/headeradmin.html' %}
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Activity Log - Admin Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        .main-wrapper {
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #15818E;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #15818E;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-refresh {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-refresh:hover {
+            background: #15818E;
+            border-color: #15818E;
+            color: white;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+            border-top: 3px solid #15818E;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: #e6f3f5;
+        }
+
+        .stat-icon i {
+            font-size: 1.2rem;
+            color: #15818E;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #15818E;
+            line-height: 1.2;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .filter-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #15818E;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-title i {
+            color: #15818E;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-item label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .filter-item select, .filter-item input {
+            padding: 0.6rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .filter-item select:focus, .filter-item input:focus {
+            outline: none;
+            border-color: #15818E;
+            box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+        }
+
+        .btn-filter {
+            background: #15818E;
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-filter:hover {
+            background: #0f5f68;
+        }
+
+        /* Top Users Section */
+        .top-users-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .top-users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .top-user-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            border-left: 3px solid #15818E;
+        }
+
+        .top-user-item:hover {
+            background: white;
+            border-color: #15818E;
+            box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.1);
+        }
+
+        .top-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #15818E;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .top-user-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #15818E;
+            margin: 0 0 0.2rem 0;
+        }
+
+        .top-user-info .user-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .top-user-stats {
+            margin-left: auto;
+            background: #15818E;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Activity Distribution */
+        .distribution-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .distribution-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            border-bottom: 3px solid #15818E;
+        }
+
+        .distribution-count {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #15818E;
+            margin-bottom: 0.25rem;
+        }
+
+        .distribution-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-transform: capitalize;
+        }
+
+        /* Activity Timeline */
+        .activity-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #15818E;
+            margin: 0;
+        }
+
+        .activity-count {
+            background: #15818E;
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .activity-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .activity-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: white;
+            border-color: #15818E;
+            box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.1);
+        }
+
+        .activity-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .activity-user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #15818E;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .activity-user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #15818E;
+            margin: 0 0 0.2rem 0;
+        }
+
+        .activity-user-details .user-email {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .activity-user-details a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .activity-user-details a:hover h4 {
+            color: #0f5f68;
+        }
+
+        .activity-badge {
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .badge-success { background: #e6f3f5; color: #15818E; border-color: #15818E; }
+        .badge-warning { background: #e6f3f5; color: #15818E; border-color: #15818E; }
+        .badge-danger { background: #fee9e8; color: #dc2626; border-color: #dc2626; }
+        .badge-info { background: #e6f3f5; color: #15818E; border-color: #15818E; }
+
+        .activity-description {
+            margin: 0.5rem 0;
+            color: #334155;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .meta-item i {
+            font-size: 0.8rem;
+            color: #15818E;
+        }
+
+        .btn-details {
+            background: none;
+            border: 1px solid #e2e8f0;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-details:hover {
+            background: #15818E;
+            border-color: #15818E;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 25px -5px rgba(21, 129, 142, 0.1);
+        }
+
+        .modal-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.25rem;
+            border-radius: 12px 12px 0 0;
+            border-left: 4px solid #15818E;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #15818E;
+        }
+
+        .modal-body {
+            padding: 1.25rem;
+        }
+
+        .modal-body dl {
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 0.5rem;
+        }
+
+        .modal-body dt {
+            color: #64748b;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .modal-body dd {
+            color: #1e293b;
+            margin-bottom: 0;
+            font-size: 0.85rem;
+            word-break: break-word;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e2e8f0;
+            padding: 1.25rem;
+        }
+
+        .modal-footer .btn-secondary {
+            background: white;
+            border: 1px solid #15818E;
+            color: #15818E;
+        }
+
+        .modal-footer .btn-secondary:hover {
+            background: #15818E;
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination-info {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .pagination {
+            gap: 0.25rem;
+        }
+
+        .page-link {
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 6px !important;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .page-link:hover {
+            background: #15818E;
+            border-color: #15818E;
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background: #15818E;
+            border-color: #15818E;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #15818E;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #15818E;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state .btn-primary {
+            background: #15818E;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .empty-state .btn-primary:hover {
+            background: #0f5f68;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-body dl {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-chart-line me-2" style="color: #15818E;"></i>User Activity Log</h1>
+            <div class="header-actions">
+    
+    <button class="btn-refresh" onclick="window.location.reload();">
+        <i class="fas fa-sync-alt me-2"></i>Refresh
+    </button>
+
+    <a href="{% url 'admin_dashboard_overview' %}" class="btn-refresh">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+
+</div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="stat-label">Total Activities</div>
+                <div class="stat-value">{{ total_activities }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-label">Last 24 Hours</div>
+                <div class="stat-value">{{ activities_24h }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value">{{ unique_users }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="stat-label">Activity Types</div>
+                <div class="stat-value">{{ activity_counts|length }}</div>
+            </div>
+        </div>
+
+        <!-- Top Active Users Section -->
+        {% if top_users %}
+        <div class="top-users-section">
+            <div class="filter-title">
+                <i class="fas fa-crown"></i>
+                Most Active Users
+            </div>
+            <div class="top-users-grid">
+                {% for user_data in top_users %}
+                <a href="{% url 'user_activity_detail' user_data.user.id %}" class="top-user-item">
+                    <div class="top-user-avatar">
+                        {{ user_data.username|first|upper }}
+                    </div>
+                    <div class="top-user-info">
+                        <h4>{{ user_data.username }}</h4>
+                        <div class="user-meta">{{ user_data.email|truncatechars:20 }}</div>
+                    </div>
+                    <div class="top-user-stats">
+                        {{ user_data.count }}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter Activities
+            </div>
+            <form method="get">
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label>Action Type</label>
+                        <select name="action_type">
+                            <option value="">All Actions</option>
+                            {% for value, label in action_type_choices %}
+                            <option value="{{ value }}" {% if selected_action == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>From Date</label>
+                        <input type="date" name="date_from" value="{{ date_from }}">
+                    </div>
+                    <div class="filter-item">
+                        <label>To Date</label>
+                        <input type="date" name="date_to" value="{{ date_to }}">
+                    </div>
+                    <div class="filter-item">
+                        <label>Model Type</label>
+                        <select name="model_type">
+                            <option value="">All Models</option>
+                            {% for model in model_choices %}
+                            <option value="{{ model }}" {% if selected_model == model %}selected{% endif %}>
+                                {{ model }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Search</label>
+                        <input type="text" name="search" value="{{ search }}" placeholder="Search...">
+                    </div>
+                </div>
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-search"></i> Apply Filters
+                </button>
+            </form>
+        </div>
+
+        <!-- Activity Distribution -->
+        <div class="distribution-section">
+            <div class="filter-title">
+                <i class="fas fa-chart-pie"></i>
+                Activity Distribution
+            </div>
+            <div class="distribution-grid">
+                {% for action, count in activity_counts.items|slice:":8" %}
+                <div class="distribution-item">
+                    <div class="distribution-count">{{ count }}</div>
+                    <div class="distribution-label">{{ action|title|cut:"_" }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="activity-section">
+            <div class="activity-header">
+                <h3><i class="fas fa-stream me-2" style="color: #15818E;"></i>Recent Activities</h3>
+                <span class="activity-count">
+                    {{ page_obj.paginator.count }} total
+                </span>
+            </div>
+
+            <div class="activity-timeline">
+                {% for activity in activities %}
+                <div class="activity-item">
+                    <div class="activity-header-row">
+                        <div class="activity-user-info">
+                            <div class="activity-avatar">
+                                {{ activity.username|first|upper }}
+                            </div>
+                            <div class="activity-user-details">
+                                {% if activity.url %}
+                                <a href="{{ activity.url }}">
+                                    <h4>{{ activity.username }}</h4>
+                                </a>
+                                {% else %}
+                                <h4>{{ activity.username }}</h4>
+                                {% endif %}
+                                <div class="user-email">
+                                    {% if activity.user_id %}
+                                        ID: {{ activity.user_id }}
+                                    {% else %}
+                                        Anonymous
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="activity-badge 
+                                {% if activity.color == 'success' %}badge-success
+                                {% elif activity.color == 'warning' %}badge-warning
+                                {% elif activity.color == 'danger' %}badge-danger
+                                {% elif activity.color == 'info' %}badge-info
+                                {% endif %}">
+                                <i class="fas fa-{{ activity.icon }}"></i>
+                                {{ activity.action }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="activity-description">
+                        {{ activity.description }}
+                    </div>
+
+                    <div class="activity-meta">
+                        <div class="meta-item">
+                            <i class="far fa-clock"></i>
+                            <span title="{{ activity.timestamp|date:'Y-m-d H:i:s' }}">
+                                {{ activity.timestamp|timesince }} ago
+                            </span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="far fa-calendar"></i>
+                            <span>{{ activity.timestamp|date:'M d, Y H:i' }}</span>
+                        </div>
+                        {% if activity.url %}
+                        <a href="{{ activity.url }}" class="meta-item text-decoration-none">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                        {% endif %}
+                        <button class="btn-details" data-bs-toggle="modal" 
+                                data-bs-target="#detailModal{{ activity.id|slugify }}">
+                            <i class="fas fa-info-circle me-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Detail Modal -->
+                <div class="modal fade" id="detailModal{{ activity.id|slugify }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-info-circle me-2" style="color: #15818E;"></i>
+                                    Activity Details
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <dl>
+                                    <dt>Timestamp</dt>
+                                    <dd>{{ activity.timestamp|date:'Y-m-d H:i:s' }}</dd>
+                                    
+                                    <dt>User</dt>
+                                    <dd>
+                                        {{ activity.username }}<br>
+                                        <small class="text-muted">{{ activity.user_email|default:"No email" }}</small>
+                                    </dd>
+                                    
+                                    <dt>User Type</dt>
+                                    <dd>{{ activity.user_type|title|default:"System" }}</dd>
+                                    
+                                    <dt>Action</dt>
+                                    <dd>{{ activity.action }}</dd>
+                                    
+                                    <dt>Description</dt>
+                                    <dd>{{ activity.description }}</dd>
+                                    
+                                    {% if activity.model_name %}
+                                    <dt>Model</dt>
+                                    <dd>{{ activity.model_name }}</dd>
+                                    {% endif %}
+                                    
+                                    {% if activity.object_id %}
+                                    <dt>Object ID</dt>
+                                    <dd>{{ activity.object_id }}</dd>
+                                    {% endif %}
+                                    
+                                    {% for key, value in activity.details.items %}
+                                    <dt>{{ key|title|cut:"_" }}</dt>
+                                    <dd>{{ value|default:"-" }}</dd>
+                                    {% endfor %}
+                                </dl>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No Activities Found</h4>
+                    <p>There are no activities matching your current filters.</p>
+                    <a href="{% url 'user_activity_log' %}" class="btn btn-primary">
+                        <i class="fas fa-redo-alt me-2"></i>Clear Filters
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.paginator.num_pages > 1 %}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="pagination-info">
+                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+                </div>
+                <nav>
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for i in page_obj.paginator.page_range %}
+                            {% if page_obj.number == i %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ i }}</span>
+                            </li>
+                            {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ i }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

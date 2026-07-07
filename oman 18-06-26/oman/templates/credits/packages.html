@@ -1,0 +1,490 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Credits - Choose Your Package</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, rgba(21,129,142,0.03) 0%, rgba(248,249,252,1) 90%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .my-credits-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        .btn-my-credits {
+            background: linear-gradient(135deg, #15818E, #0f5e68);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(21,129,142,0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .btn-my-credits:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(21,129,142,0.4);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 28px;
+            margin-bottom: 60px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 28px 20px;
+            text-align: center;
+            border: 1px solid rgba(21,129,142,0.2);
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+        }
+        .stat-card:hover {
+            transform: translateY(-6px);
+            border-color: #15818E;
+            box-shadow: 0 20px 35px -12px rgba(21,129,142,0.2);
+            background: white;
+        }
+        .stat-icon {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+        }
+        .stat-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin: 48px 0 32px;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0f2b3d, #15818E);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .section-desc {
+            color: #5b6e8c;
+            font-size: 1rem;
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        .package-card {
+            background: white;
+            border-radius: 36px;
+            padding: 32px 24px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid #eef2ff;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 12px 24px -12px rgba(0,0,0,0.06);
+        }
+        .package-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 100% 0%, rgba(21,129,142,0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .package-card:hover {
+            transform: translateY(-8px);
+            border-color: #15818E40;
+            box-shadow: 0 28px 40px -18px rgba(21,129,142,0.25);
+        }
+        .package-card:hover::before {
+            opacity: 1;
+        }
+        .package-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #f0f9ff, #e6f2f5);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 24px;
+            transition: 0.2s;
+        }
+        .package-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        .package-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #15818E;
+        }
+        .package-price small {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5f6c80;
+        }
+        .package-vat {
+            font-size: 0.7rem;
+            color: #8592a5;
+            margin-bottom: 12px;
+        }
+        .package-badge {
+            background: #f1f5f9;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            width: fit-content;
+            margin: 12px auto 20px auto;
+        }
+        .package-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 28px 0;
+            flex-grow: 1;
+        }
+        .package-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .package-features li i {
+            color: #15818E;
+            width: 20px;
+            font-size: 1rem;
+        }
+        .btn-buy {
+            border-radius: 60px;
+            padding: 14px 12px;
+            font-weight: 700;
+            background: #15818E;
+            color: white;
+            border: none;
+            transition: 0.2s;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-top: auto;
+        }
+        .btn-buy:hover {
+            background: #0e6a74;
+            transform: scale(0.98);
+            color: white;
+        }
+        .btn-buy-warning {
+            background: linear-gradient(95deg, #f59e0b, #ea580c);
+        }
+        .btn-buy-info {
+            background: linear-gradient(95deg, #0ea5e9, #3b82f6);
+        }
+        .btn-buy-danger {
+            background: linear-gradient(95deg, #ef4444, #dc2626);
+        }
+
+        .bg-soft {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 40px 24px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(21,129,142,0.1);
+        }
+
+        .business-card {
+            background: linear-gradient(125deg, #0a2e38, #15818E);
+            border-radius: 48px;
+            padding: 50px 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 25px 40px -12px rgba(21,129,142,0.4);
+        }
+        .business-card .business-price {
+            font-size: 3.2rem;
+            font-weight: 800;
+        }
+        .btn-light-custom {
+            background: white;
+            color: #15818E;
+            padding: 14px 36px;
+            border-radius: 60px;
+            font-weight: 700;
+            transition: 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn-light-custom:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            color: #0b5b66;
+        }
+
+        @media (max-width: 768px) {
+            .container-custom { padding: 0 20px; }
+            .package-grid { grid-template-columns: 1fr; }
+            .stat-value { font-size: 2rem; }
+            .my-credits-fab { bottom: 20px; right: 20px; }
+            .btn-my-credits { padding: 12px 20px; font-size: 0.8rem; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #15818E; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<main style="padding: 60px 0 80px;">
+    <div class="container-custom">
+
+        <div class="my-credits-fab">
+            <a href="{% url 'my_credits' %}" class="btn-my-credits">
+                <i class="fas fa-coins"></i> My Credits
+            </a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if credits %}
+        <div class="stats-grid">
+            <div class="stat-card" onclick="window.location.href='{% url 'my_credits' %}'">
+                <div class="stat-icon"><i class="fas fa-ticket-alt" style="color:#15818E;"></i></div>
+                <div class="stat-value" style="color: #15818E;">{{ credits.available_listing_credits }}</div>
+                <div class="stat-label">Available Listing Credits</div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='{% url 'my_credits' %}'">
+                <div class="stat-icon"><i class="fas fa-rocket" style="color:#f59e0b;"></i></div>
+                <div class="stat-value" style="color: #f59e0b;">{{ credits.boost_days_available }}</div>
+                <div class="stat-label">Boost Days Available</div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='{% url 'my_credits' %}'">
+                <div class="stat-icon"><i class="fas fa-chart-line" style="color:#10b981;"></i></div>
+                <div class="stat-value" style="color: #10b981;">{{ credits.total_listings_created }}</div>
+                <div class="stat-label">Total Listings Created</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Listing Credits -->
+        <div class="section-header">
+            <h2 class="section-title">📝 Listing Credits</h2>
+            <p class="section-desc">Each credit allows you to post one ad. Valid for 45 days.</p>
+        </div>
+        <div class="package-grid">
+            {% for package in listing_packages %}
+            <div class="package-card">
+                <div class="package-icon">📋</div>
+                <h3 class="package-name">{{ package.name }}</h3>
+                <div class="package-price">{{ package.price_omr }} <small>OMR</small></div>
+                <div class="package-vat">+ {{ package.vat_percentage }}% VAT</div>
+                <div class="package-badge">{{ package.listing_credits }} Listing Credits</div>
+                <ul class="package-features">
+                    {% for feature in package.features %}
+                    <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'buy_credits' package.id %}?next={{ request.GET.next|default:'' }}" class="btn-buy">
+                    Buy Now - {{ package.get_price_with_vat|floatformat:3 }} OMR
+                </a>
+            </div>
+            {% empty %}
+            <div class="text-center">No packages available at the moment.</div>
+            {% endfor %}
+        </div>
+
+        <!-- Individual Boost -->
+        <div class="bg-soft">
+            <div class="section-header">
+                <h2 class="section-title">🚀 Boost Your Ad (Individual)</h2>
+                <p class="section-desc">Get more visibility with premium placement</p>
+            </div>
+            <div class="package-grid">
+                {% for package in boost_individual %}
+                <div class="package-card">
+                    <div class="package-icon">🚀</div>
+                    <h3 class="package-name">{{ package.name }}</h3>
+                    <div class="package-price">{{ package.price_omr }} <small>OMR</small></div>
+                    <div class="package-vat">+ {{ package.vat_percentage }}% VAT</div>
+                    <div class="package-badge">{{ package.boost_days }} Days Boost</div>
+                    <ul class="package-features">
+                        {% for feature in package.features %}
+                        <li><i class="fas fa-check-circle"></i> {{ feature }}</li>
+                        {% endfor %}
+                        <li><i class="fas fa-eye"></i> Higher Visibility</li>
+                    </ul>
+                    <a href="{% url 'buy_credits' package.id %}?next={{ request.GET.next|default:'' }}" class="btn-buy btn-buy-warning">
+                        Boost Now - {{ package.get_price_with_vat|floatformat:3 }} OMR
+                    </a>
+                </div>
+                {% empty %}
+                <div class="text-center">No boost packages available.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Bulk 7 Days -->
+        <div class="section-header">
+            <h2 class="section-title">📦 Bulk Boost Packages (7 Days)</h2>
+            <p class="section-desc">Best for dealers and businesses with multiple ads</p>
+        </div>
+        <div class="package-grid">
+            {% for package in boost_bulk_7 %}
+            <div class="package-card">
+                <div class="package-icon">📦</div>
+                <h3 class="package-name">{{ package.name }}</h3>
+                <div class="package-price">{{ package.price_omr }} <small>OMR</small></div>
+                <div class="package-vat">+ {{ package.vat_percentage }}% VAT</div>
+                <div class="package-badge">{{ package.boost_posts_count }} Ads × {{ package.boost_days }} Days</div>
+                <ul class="package-features">
+                    <li><i class="fas fa-check-circle"></i> Boost {{ package.boost_posts_count }} ads</li>
+                    <li><i class="fas fa-clock"></i> {{ package.boost_days }} days each</li>
+                    <li><i class="fas fa-tag"></i> Save up to 31%</li>
+                </ul>
+                <a href="{% url 'buy_credits' package.id %}?next={{ request.GET.next|default:'' }}" class="btn-buy btn-buy-info">
+                    Buy Bulk - {{ package.get_price_with_vat|floatformat:3 }} OMR
+                </a>
+            </div>
+            {% empty %}
+            <div class="text-center">No bulk packages available.</div>
+            {% endfor %}
+        </div>
+
+        <!-- Bulk 14 Days -->
+        <div class="bg-soft">
+            <div class="section-header">
+                <h2 class="section-title">📦 Bulk Boost Packages (14 Days)</h2>
+                <p class="section-desc">Extended promotion for maximum exposure</p>
+            </div>
+            <div class="package-grid">
+                {% for package in boost_bulk_14 %}
+                <div class="package-card">
+                    <div class="package-icon">⭐</div>
+                    <h3 class="package-name">{{ package.name }}</h3>
+                    <div class="package-price">{{ package.price_omr }} <small>OMR</small></div>
+                    <div class="package-vat">+ {{ package.vat_percentage }}% VAT</div>
+                    <div class="package-badge">{{ package.boost_posts_count }} Ads × {{ package.boost_days }} Days</div>
+                    <ul class="package-features">
+                        <li><i class="fas fa-check-circle"></i> Boost {{ package.boost_posts_count }} ads</li>
+                        <li><i class="fas fa-clock"></i> {{ package.boost_days }} days each</li>
+                        <li><i class="fas fa-chart-line"></i> Extended visibility</li>
+                    </ul>
+                    <a href="{% url 'buy_credits' package.id %}?next={{ request.GET.next|default:'' }}" class="btn-buy btn-buy-danger">
+                        Buy Bulk - {{ package.get_price_with_vat|floatformat:3 }} OMR
+                    </a>
+                </div>
+                {% empty %}
+                <div class="text-center">No bulk packages available.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Business Package -->
+        {% if business_package %}
+        <div class="business-card">
+            <div style="font-size: 56px; margin-bottom: 16px;">🏢</div>
+            <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 12px;">{{ business_package.name }}</h2>
+            <div class="business-price">
+                Starting From {{ business_package.price_omr }} <small>OMR</small>
+            </div>
+            <ul class="business-features" style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 30px auto;">
+                <li><i class="fas fa-check-circle"></i> Unlimited Listings</li>
+                <li><i class="fas fa-check-circle"></i> Priority Support</li>
+                <li><i class="fas fa-check-circle"></i> Featured Badge</li>
+            </ul>
+            <a href="https://wa.me/96897719505?text=Hello%20I%20am%20interested%20in%20the%20Business%20Package"
+               class="btn-light-custom"
+               target="_blank">
+                Get Business Package
+            </a>
+            <p style="margin-top: 28px; font-size: 0.75rem; opacity: 0.7; color: #e6f2f5;">
+                Contact support for custom requirements
+            </p>
+        </div>
+        {% endif %}
+
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('.nav-item.dropdown > a.nav-link[href]').forEach(function(link) {
+        link.removeAttribute('data-bs-toggle');
+        link.parentElement.addEventListener('mouseenter', function() {
+            let dropdown = this.querySelector('.dropdown-menu');
+            if (dropdown) dropdown.classList.add('show');
+        });
+        link.parentElement.addEventListener('mouseleave', function() {
+            let dropdown = this.querySelector('.dropdown-menu');
+            if (dropdown) dropdown.classList.remove('show');
+        });
+    });
+</script>
+</body>
+</html>

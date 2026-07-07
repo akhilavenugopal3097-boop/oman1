@@ -1,0 +1,211 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+   .toolbar {
+         background: #15818E;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+    }
+</style>
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Governate</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addGovernateModal">
+                Add
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Governate</h3>
+                            <div class="table-responsive">
+                                <table id="reviewTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th>Name</th>
+                                            <th>Latitude</th>
+                                            <th>Longitude</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><br>
+                                        {% for governate in governates %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ governate.name }}</td>
+                                            <td>{{ governate.latitude }}</td>
+                                            <td>{{ governate.longitude }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                        data-edit-url="{% url 'edit_governate' governate.id %}" 
+                                                        data-governate-name="{{ governate.name }}" 
+                                                        data-governate-latitude="{{ governate.latitude }}"
+                                                        data-governate-longitude="{{ governate.longitude }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editGovernateModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                        data-delete-url="{% url 'delete_governate' governate.id %}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteGovernateModal">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Governate Modal -->
+<div class="modal fade" id="addGovernateModal" tabindex="-1" aria-labelledby="addGovernateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addGovernateForm" method="POST" action="{% url 'add_governate' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addGovernateModalLabel">Add Governate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="governateName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="governateName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="governateLatitude" class="form-label">Latitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="governateLatitude" name="latitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="governateLongitude" class="form-label">Longitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="governateLongitude" name="longitude" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Governate Modal -->
+<div class="modal fade" id="editGovernateModal" tabindex="-1" aria-labelledby="editGovernateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editGovernateForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editGovernateModalLabel">Edit Governate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editGovernateName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editGovernateName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editGovernateLatitude" class="form-label">Latitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="editGovernateLatitude" name="latitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editGovernateLongitude" class="form-label">Longitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="editGovernateLongitude" name="longitude" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteGovernateModal" tabindex="-1" aria-labelledby="deleteGovernateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteGovernateForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteGovernateModalLabel">Delete Governate</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this governate?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteGovernateForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.action = deleteUrl;
+            });
+        });
+
+        // Handle edit modal
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editGovernateForm');
+        const editGovernateNameInput = document.getElementById('editGovernateName');
+        const editGovernateLatitudeInput = document.getElementById('editGovernateLatitude');
+        const editGovernateLongitudeInput = document.getElementById('editGovernateLongitude');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const governateName = button.getAttribute('data-governate-name');
+                const governateLatitude = button.getAttribute('data-governate-latitude');
+                const governateLongitude = button.getAttribute('data-governate-longitude');
+                
+                editForm.action = editUrl;
+                editGovernateNameInput.value = governateName;
+                editGovernateLatitudeInput.value = governateLatitude;
+                editGovernateLongitudeInput.value = governateLongitude;
+            });
+        });
+    });
+</script>

@@ -1,0 +1,491 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Credits - Zoqo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f6f9fc;
+            color: #1a2c3e;
+        }
+
+        /* Hero gradient header (same as buy credits page) */
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f2b3d 0%, #15818E 100%);
+            border-radius: 0 0 48px 48px;
+            padding: 40px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            filter: blur(70px);
+        }
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+
+        /* Container */
+        .container-narrow {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header content inside hero */
+        .hero-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 6px;
+        }
+        .hero-sub {
+            color: rgba(255,255,255,0.7);
+            margin: 0;
+        }
+        .btn-buy-hero {
+            background: white;
+            color: #15818E;
+            border-radius: 60px;
+            padding: 12px 28px;
+            font-weight: 700;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+        .btn-buy-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(0,0,0,0.15);
+            color: #0e5f69;
+        }
+
+        /* Alert modes */
+        .alert-mode {
+            border-radius: 20px;
+            padding: 14px 20px;
+            margin: 28px 0 32px;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        /* Stats grid – 3 equal columns */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #eef2ff;
+            transition: all 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: #15818E40;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+        }
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+        }
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #5b6e8c;
+            margin-bottom: 4px;
+        }
+        .stat-detail {
+            font-size: 0.7rem;
+            color: #8ba0bc;
+        }
+
+        /* Free tier card */
+        .free-card {
+            background: linear-gradient(105deg, #15818E 0%, #1f9eac 100%);
+            border-radius: 28px;
+            padding: 24px 32px;
+            margin-bottom: 48px;
+            color: white;
+        }
+        .free-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .free-badge {
+            background: rgba(255,255,255,0.2);
+            border-radius: 60px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .progress-custom {
+            background: rgba(255,255,255,0.25);
+            border-radius: 40px;
+            height: 8px;
+        }
+        .progress-bar-custom {
+            background: white;
+            border-radius: 40px;
+        }
+
+        /* Transaction table */
+        .transactions-card {
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #eef2ff;
+            overflow: hidden;
+            margin-bottom: 48px;
+        }
+        .transactions-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .transaction-table th {
+            text-align: left;
+            padding: 16px 20px;
+            background: #fafcff;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b6e8c;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .transaction-table td {
+            padding: 16px 20px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .badge-transaction {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-purchase { background: #dbeafe; color: #1e40af; }
+        .badge-usage { background: #ffedd5; color: #9a3412; }
+        .badge-expiry { background: #fee2e2; color: #991b1b; }
+        .badge-other { background: #f1f5f9; color: #334155; }
+
+        .text-success { color: #15818E !important; font-weight: 600; }
+        .text-danger { color: #dc2626 !important; font-weight: 600; }
+
+        /* Two column tips */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .tip-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #eef2ff;
+            transition: 0.2s;
+            height: 100%;
+        }
+        .tip-card:hover {
+            border-color: #15818E30;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+        }
+        .tip-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .tip-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        .tip-list {
+            padding-left: 20px;
+            margin: 0;
+            color: #4a5b7a;
+            font-size: 0.8rem;
+        }
+        .tip-list li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+            .container-narrow {
+                padding: 0 20px;
+            }
+            .transaction-table th, 
+            .transaction-table td {
+                padding: 12px 12px;
+            }
+            .hero-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% include 'header.html' %}
+
+<!-- Hero Header (same as previous custom design) -->
+<div class="hero-gradient">
+    <div class="container-narrow">
+        <div class="hero-content">
+            <div>
+                <h1 class="hero-title"><i class="fas fa-coins me-2"></i> My Credits</h1>
+                <p class="hero-sub">Welcome back, {{ request.user.username }}!</p>
+            </div>
+            <a href="{% url 'credit_packages' %}" class="btn-buy-hero">
+                <i class="fas fa-plus-circle"></i> Buy Credits
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-narrow">
+
+    <!-- Payment Mode Alert -->
+    {% if payment_mode == 'test' %}
+    <div class="alert alert-warning alert-mode d-flex align-items-center gap-2">
+        <i class="fas fa-flask"></i> <strong>TEST MODE:</strong> No real payment. Credits added for testing.
+    </div>
+    {% else %}
+    <div class="alert alert-success alert-mode d-flex align-items-center gap-2">
+        <i class="fas fa-lock"></i> <strong>LIVE MODE:</strong> Real payments via Paymob.
+    </div>
+    {% endif %}
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e0f2fe;"><i class="fas fa-ticket-alt" style="color: #0284c7;"></i></div>
+            <div class="stat-value" style="color: #0284c7;">{{ credits.available_listing_credits }}</div>
+            <div class="stat-label">Available Listing Credits</div>
+            <div class="stat-detail">{{ free_credits_left }} free + {{ purchased_credits_left }} purchased</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fef3c7;"><i class="fas fa-rocket" style="color: #d97706;"></i></div>
+            <div class="stat-value" style="color: #d97706;">{{ boost_days_left }}</div>
+            <div class="stat-label">Boost Days Available</div>
+            <div class="stat-detail">For promoting your ads</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #dcfce7;"><i class="fas fa-chart-line" style="color: #059669;"></i></div>
+            <div class="stat-value" style="color: #059669;">{{ credits.total_listings_created }}</div>
+            <div class="stat-label">Total Listings Created</div>
+            <div class="stat-detail">All time</div>
+        </div>
+    </div>
+
+    <!-- Free Tier Card -->
+    <div class="free-card">
+        <div class="free-header">
+            <div><i class="fas fa-gift me-2"></i> <strong>Free Tier</strong></div>
+            <div class="free-badge">Expires in {{ free_tier_days_left }} days</div>
+        </div>
+        <div>You have <strong>{{ free_credits_left }}</strong> free listings remaining out of <strong>{{ credits.free_listings_total }}</strong></div>
+        <div class="mt-2">
+            <div class="progress progress-custom">
+                <div class="progress-bar progress-bar-custom" 
+                     style="width: {% widthratio credits.free_listings_used credits.free_listings_total 100 %}%;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction History -->
+    <div class="transactions-card">
+        <div class="transactions-header">
+            <h5 class="fw-bold mb-0"><i class="fas fa-history me-2" style="color: #15818E;"></i> Transaction History</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Type</th>
+                        <th>Package / Description</th>
+                        <th>Credits Change</th>
+                        <th>Amount (OMR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if transaction.transaction_type == 'purchase' %}
+                                <span class="badge-transaction badge-purchase">Purchase</span>
+                            {% elif transaction.transaction_type == 'usage' %}
+                                <span class="badge-transaction badge-usage">Usage</span>
+                            {% elif transaction.transaction_type == 'expiry' %}
+                                <span class="badge-transaction badge-expiry">Expired</span>
+                            {% else %}
+                                <span class="badge-transaction badge-other">{{ transaction.transaction_type }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ transaction.package.name|default:transaction.description|default:"—" }}</td>
+                        <td>
+                            {% if transaction.listing_credits_change != 0 %}
+                                {% if transaction.listing_credits_change > 0 %}
+                                    <span class="text-success">+{{ transaction.listing_credits_change }} listing</span>
+                                {% else %}
+                                    <span class="text-danger">{{ transaction.listing_credits_change }} listing</span>
+                                {% endif %}
+                            {% elif transaction.boost_days_change != 0 %}
+                                {% if transaction.boost_days_change > 0 %}
+                                    <span class="text-success">+{{ transaction.boost_days_change }} boost days</span>
+                                {% else %}
+                                    <span class="text-danger">{{ transaction.boost_days_change }} boost days</span>
+                                {% endif %}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if transaction.payment_amount %}
+                                <strong>{{ transaction.payment_amount|floatformat:3 }}</strong>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+                            No transactions yet. Buy credits to get started.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="tips-grid">
+        <div class="tip-card">
+            <div class="tip-icon" style="background: #fef3c7;"><i class="fas fa-lightbulb fa-xl" style="color: #d97706;"></i></div>
+            <div class="tip-title">How Listing Credits Work</div>
+            <ul class="tip-list">
+                <li>Each credit = one ad post</li>
+                <li>Free credits expire after 45 days</li>
+                <li>Purchased credits valid 45 days</li>
+                <li>Reusable if you delete ad within validity</li>
+            </ul>
+        </div>
+        <div class="tip-card">
+            <div class="tip-icon" style="background: #e0f2fe;"><i class="fas fa-chart-line fa-xl" style="color: #0284c7;"></i></div>
+            <div class="tip-title">How Boost Days Work</div>
+            <ul class="tip-list">
+                <li>Boost days give premium placement</li>
+                <li>Ad appears at top of search results</li>
+                <li>More views & faster responses</li>
+                <li>Consumed 1 day at a time</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Header dropdown hover fix
+    document.querySelectorAll('.nav-item.dropdown > a.nav-link[href]').forEach(function(link) {
+        link.removeAttribute('data-bs-toggle');
+        link.parentElement.addEventListener('mouseenter', function() {
+            let dropdown = this.querySelector('.dropdown-menu');
+            if (dropdown) dropdown.classList.add('show');
+        });
+        link.parentElement.addEventListener('mouseleave', function() {
+            let dropdown = this.querySelector('.dropdown-menu');
+            if (dropdown) dropdown.classList.remove('show');
+        });
+    });
+</script>
+</body>
+</html>

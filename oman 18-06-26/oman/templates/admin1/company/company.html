@@ -1,0 +1,369 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<style>
+   .toolbar {
+         background: #15818E;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+    }
+</style>
+<style>
+    .company-logo-thumb {
+        width: 100%;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #eee;
+    }
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+    }
+    .badge-pending {
+        background-color: #FFC107;
+        color: #000;
+    }
+    .badge-approved {
+        background-color: #198754;
+        color: #fff;
+    }
+    .badge-rejected {
+        background-color: #DC3545;
+        color: #fff;
+    }
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+    }
+    .search-box {
+        max-width: 300px;
+    }
+    .nav-tabs .nav-link.active {
+        font-weight: 600;
+        border-bottom: 2px solid #009EF7;
+    }
+    .social-icon {
+        font-size: 1.25rem;
+        margin-right: 8px;
+        color: #5E6278;
+    }
+</style>
+
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Company Management</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="search-box d-flex align-items-center my-2 me-4 me-lg-6">
+                <form method="GET" class="d-flex w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" value="{{ search_query }}" placeholder="Search companies...">
+                    <button type="submit" class="btn btn-icon position-absolute top-50 translate-middle-y end-0 me-3">
+                        <i class="fas fa-search fs-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-header border-0 pt-6">
+                <div class="card-title">
+                    <ul class="nav nav-tabs nav-line-tabs nav-stretch fs-6 border-0">
+                        <li class="nav-item">
+                            <a class="nav-link {% if not status_filter %}active{% endif %}" href="?status=all">
+                                All <span class="badge bg-secondary">{{ counts.all }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if status_filter == 'pending' %}active{% endif %}" href="?status=pending">
+                                Pending <span class="badge bg-warning">{{ counts.pending }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if status_filter == 'approved' %}active{% endif %}" href="?status=approved">
+                                Approved <span class="badge bg-success">{{ counts.approved }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if status_filter == 'rejected' %}active{% endif %}" href="?status=rejected">
+                                Rejected <span class="badge bg-danger">{{ counts.rejected }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+                <div class="table-responsive">
+                    <table id="companyTable" class="table align-middle table-row-dashed fs-6 gy-5">
+                        <thead>
+                            <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                <th class="w-10px">#</th>
+                                <th class="min-w-150px">Company</th>
+                                <th class="min-w-100px">Owner</th>
+                                <th class="min-w-100px">Type</th>
+                                <th class="min-w-100px">Status</th>
+                                <th class="min-w-100px text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="fw-semibold text-gray-600">
+                            {% for company in companies %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="symbol symbol-50px me-3">
+                                            <img src="{{ company.logo.url }}" alt="{{ company.company_name }}" class="company-logo-thumb">
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <span class="text-dark fw-bold">{{ company.company_name }}</span>
+                                            <span class="text-muted">{{ company.city }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{ company.user.username }}</td>
+                                <td>{{ company.get_company_type_display }}</td>
+                                <td>
+                                    <span class="status-badge badge-{{ company.status }}">
+                                        {{ company.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-icon btn-light-primary action-btn" data-bs-toggle="modal" data-bs-target="#companyModal{{ company.pk }}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    {% if company.status == 'pending' %}
+                                        <a href="{% url 'approve_company' company.id %}" class="btn btn-icon btn-light-success action-btn" title="Approve">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a href="{% url 'reject_company' company.id %}" class="btn btn-icon btn-light-danger action-btn" title="Reject">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-10">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <i class="fas fa-building fs-2x text-muted mb-3"></i>
+                                        <span class="text-muted fs-4">No companies found</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if companies.paginator.num_pages > 1 %}
+                <div class="row mt-5">
+                    <div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
+                        <div class="dataTables_info">
+                            Showing {{ companies.start_index }} to {{ companies.end_index }} of {{ companies.paginator.count }} entries
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
+                        <div class="dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                {% if companies.has_previous %}
+                                    <li class="paginate_button page-item previous">
+                                        <a href="?page=1&search={{ search_query }}&status={{ status_filter }}" class="page-link">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="paginate_button page-item previous">
+                                        <a href="?page={{ companies.previous_page_number }}&search={{ search_query }}&status={{ status_filter }}" class="page-link">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in companies.paginator.page_range %}
+                                    {% if companies.number == num %}
+                                        <li class="paginate_button page-item active">
+                                            <a href="#" class="page-link">{{ num }}</a>
+                                        </li>
+                                    {% elif num > companies.number|add:'-3' and num < companies.number|add:'3' %}
+                                        <li class="paginate_button page-item">
+                                            <a href="?page={{ num }}&search={{ search_query }}&status={{ status_filter }}" class="page-link">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if companies.has_next %}
+                                    <li class="paginate_button page-item next">
+                                        <a href="?page={{ companies.next_page_number }}&search={{ search_query }}&status={{ status_filter }}" class="page-link">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="paginate_button page-item next">
+                                        <a href="?page={{ companies.paginator.num_pages }}&search={{ search_query }}&status={{ status_filter }}" class="page-link">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+{% for company in companies %}
+<div class="modal fade" id="companyModal{{ company.pk }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">{{ company.company_name }}</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-5">
+                    <div class="col-md-4 text-center">
+                        <img src="{{ company.logo.url }}" alt="{{ company.company_name }}" class="img-fluid rounded" style="max-height: 200px;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex flex-column h-100">
+                            <div class="mb-3">
+                                <h4 class="text-gray-800">{{ company.company_name }}</h4>
+                                <span class="badge bg-{% if company.status == 'approved' %}success{% elif company.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                                    {{ company.get_status_display }}
+                                </span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-3 mb-3">
+                                <div>
+                                    <span class="text-muted">Type:</span>
+                                    <span class="fw-bold">{{ company.get_company_type_display }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Industry:</span>
+                                    <span class="fw-bold">{{ company.get_industry_display }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted">Size:</span>
+                                    <span class="fw-bold">{{ company.company_size }} employees</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto">
+                                {% if company.website %}
+                                <a href="{{ company.website }}" target="_blank" class="btn btn-icon btn-light-primary me-2">
+                                    <i class="fas fa-globe"></i>
+                                </a>
+                                {% endif %}
+                                {% if company.linkedin %}
+                                <a href="{{ company.linkedin }}" target="_blank" class="btn btn-icon btn-light-primary me-2">
+                                    <i class="fab fa-linkedin"></i>
+                                </a>
+                                {% endif %}
+                                {% if company.facebook %}
+                                <a href="{{ company.facebook }}" target="_blank" class="btn btn-icon btn-light-primary me-2">
+                                    <i class="fab fa-facebook"></i>
+                                </a>
+                                {% endif %}
+                                {% if company.instagram %}
+                                <a href="{{ company.instagram }}" target="_blank" class="btn btn-icon btn-light-primary me-2">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="separator my-5"></div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="mb-4">Contact Information</h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div>
+                                <span class="text-muted">Contact Person:</span>
+                                <span class="fw-bold">{{ company.contact_name }}</span>
+                            </div>
+                            <div>
+                                <span class="text-muted">Email:</span>
+                                <span class="fw-bold">{{ company.email }}</span>
+                            </div>
+                            <div>
+                                <span class="text-muted">Phone:</span>
+                                <span class="fw-bold">{{ company.phone }}</span>
+                            </div>
+                            <div>
+                                <span class="text-muted">Location:</span>
+                                <span class="fw-bold">{{ company.city }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-4">Company Details</h5>
+                        <div class="d-flex flex-column gap-3">
+                            <div>
+                                <span class="text-muted">Trade License:</span>
+                                <span class="fw-bold">{{ company.trade_license }}</span>
+                            </div>
+                            <div>
+                                <span class="text-muted">Registered On:</span>
+                                <span class="fw-bold">{{ company.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="separator my-5"></div>
+                
+                <div>
+                    <h5 class="mb-4">About Company</h5>
+                    <p class="text-gray-700">{{ company.description }}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {% if company.status == 'pending' %}
+                <div class="me-auto">
+                    <a href="{% url 'approve_company' company.id %}" class="btn btn-success me-2">
+                        <i class="fas fa-check me-2"></i>Approve
+                    </a>
+                    <a href="{% url 'reject_company' company.id %}" class="btn btn-danger">
+                        <i class="fas fa-times me-2"></i>Reject
+                    </a>
+                </div>
+                {% endif %}
+                <button type="button" class="btn btn-light-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#companyTable').DataTable({
+        searching: false,
+        paging: false,
+        info: false,
+        order: [[1, 'asc']],
+        columnDefs: [
+            { orderable: false, targets: [0, 5] }
+        ]
+    });
+});
+</script>
+
+{% include 'admin1/footeradmin.html' %}

@@ -1,0 +1,572 @@
+{% extends 'admin1/base.html' %}
+{% load static %}
+
+{% block title %}Marketing Performance{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid var(--primary-color, #e35d20);
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .stat-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+    .stat-trend {
+        font-size: 0.85rem;
+        color: #28a745;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .data-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+        white-space: nowrap;
+    }
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        color: #212529;
+        vertical-align: middle;
+    }
+    .data-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    .campaign-name {
+        font-weight: 600;
+        color: #2d3748;
+    }
+    .campaign-type {
+        font-size: 0.8rem;
+        color: #6c757d;
+        display: block;
+        margin-top: 0.25rem;
+    }
+    .metric-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    .metric-high {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .metric-medium {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .metric-low {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .progress-thin {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #e9ecef;
+    }
+    .progress-bar-success {
+        background-color: #28a745;
+    }
+    .source-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .source-item:last-child {
+        border-bottom: none;
+    }
+    .source-name {
+        font-weight: 500;
+    }
+    .source-stats {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    .source-visits {
+        font-weight: 600;
+        min-width: 80px;
+        text-align: right;
+    }
+    .source-percentage {
+        color: #6c757d;
+        min-width: 60px;
+        text-align: right;
+    }
+    .filter-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    .btn-outline-primary {
+        color: #e35d20;
+        border-color: #e35d20;
+    }
+    .btn-outline-primary:hover {
+        background-color: #e35d20;
+        border-color: #e35d20;
+        color: white;
+    }
+    .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 1.5rem;
+        color: white;
+        margin-bottom: 1.5rem;
+    }
+    .summary-title {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+    .summary-value {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">📈 Marketing Performance Dashboard</h1>
+                    <p class="text-muted mb-0">Track campaign effectiveness and traffic sources</p>
+                </div>
+                <a href="?export=1&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                    <i class="fas fa-download me-2"></i>Export Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <div class="filter-label">Date Range</div>
+            <form method="get" class="d-flex gap-2" id="filterForm">
+                <input type="date" name="date_from" class="form-control" value="{{ date_from|date:'Y-m-d' }}">
+                <input type="date" name="date_to" class="form-control" value="{{ date_to|date:'Y-m-d' }}">
+                <button type="submit" class="btn btn-primary">Apply</button>
+                <a href="?clear=1" class="btn btn-outline-secondary">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Campaigns</div>
+            <div class="stat-value">{{ campaigns|length }}</div>
+            <div class="stat-trend">
+                <i class="fas fa-arrow-up"></i> Active campaigns
+            </div>
+            <i class="fas fa-bullhorn stat-icon"></i>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Spend</div>
+            <div class="stat-value">{{ total_spend|default:"2,060" }} OMR</div>
+            <div class="stat-trend">
+                <i class="fas fa-chart-line"></i> Across all campaigns
+            </div>
+            <i class="fas fa-credit-card stat-icon"></i>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">{{ total_revenue|default:"8,750" }} OMR</div>
+            <div class="stat-trend text-success">
+                <i class="fas fa-arrow-up"></i> +15.3% vs last period
+            </div>
+            <i class="fas fa-dollar-sign stat-icon"></i>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Avg. ROI</div>
+            <div class="stat-value">{{ avg_roi|default:"325" }}%</div>
+            <div class="stat-trend text-success">
+                <i class="fas fa-check-circle"></i> Profitable
+            </div>
+            <i class="fas fa-percent stat-icon"></i>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="row">
+        <!-- Traffic Sources Chart -->
+        <div class="col-lg-6">
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>
+                    Traffic Sources Distribution
+                </div>
+                <div style="height: 300px;">
+                    <canvas id="trafficChart"></canvas>
+                </div>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">Source Breakdown</span>
+                        <span class="text-muted">Visits / %</span>
+                    </div>
+                    {% for source in traffic_sources %}
+                    <div class="source-item">
+                        <span class="source-name">
+                            <span class="color-dot" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: {% cycle '#4e73df' '#1cc88a' '#36b9cc' '#f6c23e' '#e74a3b' '#858796' %}; margin-right: 8px;"></span>
+                            {{ source.source }}
+                        </span>
+                        <div class="source-stats">
+                            <span class="source-visits">{{ source.visits|floatformat:0 }}</span>
+                            <span class="source-percentage">{{ source.percentage }}%</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaign Performance Summary -->
+        <div class="col-lg-6">
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-trophy me-2 text-primary"></i>
+                    Campaign Performance Summary
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Type</th>
+                                <th class="text-end">Spent</th>
+                                <th class="text-end">Revenue</th>
+                                <th class="text-end">ROI</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for campaign in campaigns %}
+                            <tr>
+                                <td>
+                                    <span class="campaign-name">{{ campaign.name }}</span>
+                                </td>
+                                <td>
+                                    <span class="campaign-type">{{ campaign.type }}</span>
+                                </td>
+                                <td class="text-end">{{ campaign.spent|floatformat:2 }} OMR</td>
+                                <td class="text-end">{{ campaign.revenue|floatformat:2 }} OMR</td>
+                                <td class="text-end {% if campaign.roi > 0 %}text-success{% else %}text-danger{% endif %} fw-bold">
+                                    {{ campaign.roi }}%
+                                </td>
+                                <td class="text-center">
+                                    {% if campaign.roi > 100 %}
+                                        <span class="metric-badge metric-high">Excellent</span>
+                                    {% elif campaign.roi > 0 %}
+                                        <span class="metric-badge metric-medium">Good</span>
+                                    {% else %}
+                                        <span class="metric-badge metric-low">Poor</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Campaign Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="chart-container">
+                <div class="chart-title">
+                    <i class="fas fa-table me-2 text-primary"></i>
+                    Complete Campaign Analytics
+                    <span class="badge bg-secondary ms-2">{{ campaigns|length }} Campaigns</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="campaignTable">
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Type</th>
+                                <th class="text-end">Budget</th>
+                                <th class="text-end">Spent</th>
+                                <th class="text-end">Impressions</th>
+                                <th class="text-end">Clicks</th>
+                                <th class="text-end">CTR</th>
+                                <th class="text-end">Conversions</th>
+                                <th class="text-end">Conv. Rate</th>
+                                <th class="text-end">CPC</th>
+                                <th class="text-end">Revenue</th>
+                                <th class="text-end">ROI</th>
+                                <th class="text-center">Performance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for campaign in campaigns %}
+                            <tr>
+                                <td>
+                                    <span class="campaign-name">{{ campaign.name }}</span>
+                                    <small class="campaign-type">ID: CAM{{ forloop.counter|stringformat:"03d" }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ campaign.type }}</span>
+                                </td>
+                                <td class="text-end">{{ campaign.budget }} OMR</td>
+                                <td class="text-end">{{ campaign.spent|floatformat:2 }} OMR</td>
+                                <td class="text-end">{{ campaign.impressions|floatformat:0 }}</td>
+                                <td class="text-end">{{ campaign.clicks|floatformat:0 }}</td>
+                                <td class="text-end">
+                                    <span class="fw-bold">{{ campaign.ctr }}%</span>
+                                    <div class="progress-thin mt-1">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ campaign.ctr|default:0 }}%; background-color: #4e73df;"></div>
+                                    </div>
+                                </td>
+                                <td class="text-end">{{ campaign.conversions|floatformat:0 }}</td>
+                                <td class="text-end">
+                                    <span class="fw-bold">{{ campaign.conversion_rate }}%</span>
+                                    <div class="progress-thin mt-1">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ campaign.conversion_rate|default:0 }}%; background-color: #1cc88a;"></div>
+                                    </div>
+                                </td>
+                                <td class="text-end">{{ campaign.cpc|floatformat:3 }} OMR</td>
+                                <td class="text-end fw-bold text-success">{{ campaign.revenue|floatformat:2 }} OMR</td>
+                                <td class="text-end">
+                                    <span class="fw-bold {% if campaign.roi > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ campaign.roi }}%
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    {% if campaign.roi > 100 %}
+                                        <i class="fas fa-star text-warning" title="Excellent Performance"></i>
+                                    {% elif campaign.roi > 0 %}
+                                        <i class="fas fa-check-circle text-success" title="Good Performance"></i>
+                                    {% else %}
+                                        <i class="fas fa-exclamation-triangle text-danger" title="Poor Performance"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="2" class="text-end">Totals:</th>
+                                <th class="text-end">{{ total_budget|default:"2,650" }} OMR</th>
+                                <th class="text-end">{{ total_spent|default:"2,060" }} OMR</th>
+                                <th class="text-end">{{ total_impressions|default:"103,000" }}</th>
+                                <th class="text-end">{{ total_clicks|default:"3,760" }}</th>
+                                <th class="text-end">{{ avg_ctr|default:"3.65" }}%</th>
+                                <th class="text-end">{{ total_conversions|default:"277" }}</th>
+                                <th class="text-end">{{ avg_conversion_rate|default:"7.37" }}%</th>
+                                <th class="text-end">{{ avg_cpc|default:"0.548" }} OMR</th>
+                                <th class="text-end">{{ total_revenue|default:"8,750" }} OMR</th>
+                                <th class="text-end">{{ avg_roi|default:"325" }}%</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Metrics Row -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #4e73df;">
+                <div class="stat-label">Avg. CTR</div>
+                <div class="stat-value">{{ avg_ctr|default:"3.65" }}%</div>
+                <div class="progress-thin mt-2">
+                    <div class="progress-bar" role="progressbar" style="width: 73%; background-color: #4e73df;"></div>
+                </div>
+                <small class="text-muted">Above industry average</small>
+                <i class="fas fa-mouse-pointer stat-icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #1cc88a;">
+                <div class="stat-label">Avg. Conv. Rate</div>
+                <div class="stat-value">{{ avg_conversion_rate|default:"7.37" }}%</div>
+                <div class="progress-thin mt-2">
+                    <div class="progress-bar" role="progressbar" style="width: 74%; background-color: #1cc88a;"></div>
+                </div>
+                <small class="text-muted">Strong performance</small>
+                <i class="fas fa-percent stat-icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #f6c23e;">
+                <div class="stat-label">Cost per Click</div>
+                <div class="stat-value">{{ avg_cpc|default:"0.548" }} OMR</div>
+                <div class="progress-thin mt-2">
+                    <div class="progress-bar" role="progressbar" style="width: 45%; background-color: #f6c23e;"></div>
+                </div>
+                <small class="text-muted">Below target</small>
+                <i class="fas fa-coins stat-icon"></i>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #e74a3b;">
+                <div class="stat-label">ROAS</div>
+                <div class="stat-value">{{ roas|default:"4.25" }}x</div>
+                <div class="progress-thin mt-2">
+                    <div class="progress-bar" role="progressbar" style="width: 85%; background-color: #e74a3b;"></div>
+                </div>
+                <small class="text-muted">Excellent return</small>
+                <i class="fas fa-chart-line stat-icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Traffic Sources Chart
+        const ctx = document.getElementById('trafficChart').getContext('2d');
+        const labels = [{% for source in traffic_sources %}'{{ source.source }}',{% endfor %}];
+        const data = [{% for source in traffic_sources %}{{ source.visits }},{% endfor %}];
+        const colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'];
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    hoverOffset: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value.toLocaleString()} visits (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize DataTable for better sorting and filtering
+        $('#campaignTable').DataTable({
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            order: [[11, 'desc']], // Sort by ROI column descending
+            columnDefs: [
+                { targets: [2,3,4,5,6,7,8,9,10,11], className: 'text-end' },
+                { targets: [12], className: 'text-center', orderable: false }
+            ],
+            language: {
+                search: "Search campaigns:",
+                lengthMenu: "Show _MENU_ campaigns",
+                info: "Showing _START_ to _END_ of _TOTAL_ campaigns",
+                paginate: {
+                    first: "First",
+                    last: "Last",
+                    next: "Next",
+                    previous: "Previous"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,1577 @@
+{% load static %}
+{% include 'header.html' %}
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            {% load static %}
+<!-- banner-section -->
+            <section id="banner-section" class="banner-section centred">
+                <div class="auto-container">
+                    <div class="content-column">
+                        <div class="content-box">
+                            <div class="custom-form">
+                               <form action="{% url 'search_results' %}" method="get" autocomplete="off">
+    {% csrf_token %}
+    <div class="form-group-row">
+        <!-- Search Input -->
+        <div class="form-group oval-container">
+            <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon5">
+            <input class="input" type="search"
+                   name="keyword"
+                   id="searchInput"
+                   placeholder="Search for Everything">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="btn-box oval-container">
+            <button type="submit" class="theme-btn-one">Search</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Category names from your backend
+    const categoryNames = [
+        {% for category in all_categories %}
+            "{{ category.name }}",
+        {% endfor %}
+    ];
+    
+    const searchInput = document.getElementById('searchInput');
+    let currentIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const prefix = "Search for ";
+    
+    function animatePlaceholder() {
+        if (!categoryNames.length) return;
+        
+        const currentCategory = categoryNames[currentIndex];
+        const fullText = prefix + currentCategory;
+        
+        if (isDeleting) {
+            // Show prefix + category text being deleted
+            searchInput.placeholder = fullText.substring(0, charIndex - 1);
+            charIndex--;
+        } else {
+            // Show prefix + category text being typed
+            searchInput.placeholder = fullText.substring(0, charIndex + 1);
+            charIndex++;
+        }
+        
+        // Check if typing is complete
+        if (!isDeleting && charIndex === fullText.length) {
+            isDeleting = true;
+            setTimeout(animatePlaceholder, 2000);
+            return;
+        }
+        
+        // Check if deletion is complete
+        if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            currentIndex = (currentIndex + 1) % categoryNames.length;
+        }
+        
+        // Speed control
+        const speed = isDeleting ? 50 : 100;
+        setTimeout(animatePlaceholder, speed);
+    }
+    
+    // Start animation
+    if (searchInput && categoryNames.length > 0) {
+        searchInput.placeholder = "Search for " + categoryNames[0];
+        setTimeout(animatePlaceholder, 1000);
+    }
+</script>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                        const dropdownLists = document.querySelectorAll('.value-list');
+                                    
+                                        dropdownInputs.forEach(input => {
+                                            const dropdownId = input.getAttribute('data-dropdown');
+                                            const dropdown = document.getElementById(dropdownId);
+                                    
+                                            // Toggle dropdown visibility on click
+                                            input.addEventListener('click', (event) => {
+                                                event.stopPropagation(); // Prevent the click from propagating to the document
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open')); // Close other dropdowns
+                                                dropdown.classList.toggle('open');
+                                            });
+                                     // Handle clicks on category items
+                                     dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                                            // Prevent dropdown from closing when clicking inside
+                                            dropdown.addEventListener('mousedown', (event) => {
+                                                event.stopPropagation();
+                                            });
+                       // Handle clicks on region items
+dropdown.querySelectorAll('.main-menu1[data-region]').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document
+        const region = item.getAttribute('data-region');
+        selectRegion(region); // Call the selectRegion function
+
+        // Update the input field with the selected region only
+        input.value = regionName; // Update the input with the selected region
+
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('region', region); // Set the region parameter
+        
+        // Clear the city parameter if it exists
+        url.searchParams.delete('city'); // Remove the city parameter if it exists
+        
+        window.location.href = url; // Redirect to the updated URL
+
+        // Close the dropdown after selection
+        dropdown.classList.remove('open');
+    });
+
+    // Handle clicks on submenu items (cities)
+    item.querySelectorAll('ul li').forEach(subItem => {
+        subItem.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click from propagating to the document
+            const city = subItem.textContent; // Get the city name from the text content
+            const region = item.getAttribute('data-region'); // Get the region from the parent item
+
+            selectCity(city); // Call the selectCity function
+
+            // Update the input field with the selected city and region
+            input.value = `${city}`; // Update the input with city and region
+
+            // Create a new URL object based on the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('region', region); // Set the region parameter
+            url.searchParams.set('city', city); // Set the city parameter
+            window.location.href = url; // Redirect to the updated URL
+
+            // Close the dropdown after selection
+            dropdown.classList.remove('open');
+        });
+    });
+});                 
+                                           // Filter dropdown items based on input
+// Filter dropdown items based on input
+input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    const items = dropdown.querySelectorAll('li');
+
+    items.forEach(item => {
+        const text = item.firstChild.textContent.toLowerCase();
+        let matchFound = text.includes(filter);
+
+        // Check submenu items if the main item doesn't match
+        if (!matchFound && item.querySelector('.submenus')) {
+            const subItems = item.querySelectorAll('.submenus ul li');
+            subItems.forEach(subItem => {
+                const subText = subItem.textContent.toLowerCase();
+                if (subText.includes(filter)) {
+                    matchFound = true;
+                }
+            });
+        }
+
+        // Show the main menu item if it or any of its submenu items match
+        if (matchFound) {
+            item.style.display = 'block';
+            // Expand the main menu item if it has submenus
+            if (item.classList.contains('main-menu1') && item.querySelector('.submenus')) {
+                item.classList.add('open'); // Add a class to expand the main menu
+                item.querySelector('.submenus').style.display = 'block'; // Show submenus
+            }
+        } else {
+            item.style.display = 'none';
+            // Hide submenus if the main menu item is not matched
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none';
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        }
+    });
+
+    // If the input is empty, show all main menu items and hide all submenus
+    if (filter === '') {
+        items.forEach(item => {
+            item.style.display = 'block'; // Show all main menu items
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none'; // Hide all submenus
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        });
+    }
+});                       
+                                            // Show submenus on hover
+                                            dropdown.querySelectorAll('.main-menu1').forEach(item => {
+                                                item.addEventListener('mouseenter', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'block';
+                                                    }
+                                                });
+                                
+                                                item.addEventListener('mouseleave', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'none';
+                                                    }
+                                                });
+                                            });
+                                            // Close dropdown when mouse leaves the dropdown container
+                                            dropdown.addEventListener('mouseout', (event) => {
+                                                // Check if the mouse is leaving the dropdown container
+                                                if (!dropdown.contains(event.relatedTarget)) {
+                                                    dropdown.classList.remove('open');
+                                                }
+                                            });
+                                        });
+                                    
+                                        // Close dropdown if clicking outside
+                                        document.addEventListener('click', (event) => {
+                                            if (!event.target.matches('.chosen-value')) {
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            }
+                                        });
+                                    });
+                                    // Handle clicks on category items
+                                    dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                            
+                                    // Example function to select a region
+                                    function selectRegions(region) {
+                                        console.log(`Region selected: ${region}`);
+                                        // Additional logic for selecting a region
+                                    }
+                                    
+                                    // Example function to select a city
+                                    function selectCitys(city) {
+                                        console.log(`City selected: ${city}`);
+                                        // Additional logic for selecting a city
+                                    }
+                                </script>
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 6px;
+        border-radius: 52px;
+        border: 1px solid #ccc;
+        width: 36%;
+        margin-top: 5px ;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon5{
+        position: absolute;
+        left: 14px !important;
+        height: 20px !important;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+<div class="container my-4">
+  <!-- Popular Jobs Section -->
+  <section class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h4 class="fw-bold mb-0" style="color: #2c3e50;">Jobs</h4>
+      <a href="{% url 'job' %}" class="view-more-link" style="text-decoration: none;">
+        View More <i class="fas fa-arrow-circle-right"></i>
+      </a>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Job List Container -->
+        <div class="col-md-12">
+          <div class="row">
+            {% for job in recent_jobs %}
+            <div class="col-xl-6 col-lg-6 col-md-6 mb-2">
+              {% if user.is_authenticated %}
+                <a href="{% url 'jobdetails' user_id=user.id job_id=job.id %}" class="text-decoration-none job-card-link">
+              {% else %}
+                <a href="{% url 'login' %}" class="text-decoration-none job-card-link">
+              {% endif %}
+                <div class="job-card p-3 bg-white shadow-sm rounded-3 border position-relative h-100">
+
+                  <!-- Job Title and Company -->
+                  <h6 class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">{{ job.title|capfirst }}</h6>
+                  <p class="text-primary small mb-2" style="color:#15818E !important;">{{ job.company.company_name|default:"Confidential" }}</p>
+
+                  <!-- Salary -->
+                  {% if job.salary_range %}
+                  <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+                    <span style="color: #EB362D;">{{ job.salary_range|floatformat:0 }}</span>
+                    <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                    <span class="text-muted" style="font-size: 1rem;">| per month</span>
+                  </p>
+                  {% else %}
+                  <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+                    <span class="text-muted" style="font-size: 1rem;">Salary: Confidential</span>
+                  </p>
+                  {% endif %}
+
+                  <!-- Info Row -->
+                  <div class="d-flex flex-wrap gap-2 mb-2">
+                    <div class="info-box">
+                      <small class="text-secondary d-block">EMPLOYMENT TYPE</small>
+                      <strong>{{ job.get_job_type_display }}</strong>
+                    </div>
+                    <div class="info-box">
+                      <small class="text-secondary d-block">WORK EXPERIENCE</small>
+                      <strong>{{ job.get_experience_required_display|default:"N/A" }}</strong>
+                    </div>
+                    <div class="info-box">
+                      <small class="text-secondary d-block">EDUCATION LEVEL</small>
+                      <strong>{{ job.get_qualifications_display|default:"N/A"|truncatechars:20 }}</strong>
+
+                    </div>
+                  </div>
+
+                  <!-- Footer Info (Time | Location) -->
+                  <div class="d-flex align-items-center mt-2 text-muted small">
+                    <!-- Posted time -->
+                    <span class="text-success me-2">Posted {{ job.posted_on|timesince }} ago</span>
+                    <span class="mx-2 text-secondary">|</span> 
+
+                    <!-- Company city image -->
+                    <img src="{% static 'assets/images/Icons-03.png' %}" alt="Location" class="me-2" style="width: 18px; height: 20px;">
+                    <span>{{ job.company.city|default:"Oman" }}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+              <div class="text-center text-muted py-4">
+                <i class="fas fa-briefcase fa-3x mb-3"></i>
+                <h5>No job listings available</h5>
+                <p>Check back later for new job opportunities</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Job Categories Section -->
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0" style="color: #2c3e50;">Jobs by Categories</h4>
+  </div>
+
+  <div class="job-categories-container">
+    <!-- First 4 categories as image cards -->
+    <div class="featured-categories mb-3">
+      {% for category in categories|slice:":4" %}
+      <div class="category-card-wrapper">
+        <a href="{% url 'job' %}?job_category={{ category.id }}" class="text-decoration-none category-link">
+          <div class="category-card rounded-3" data-category-id="{{ category.id }}">
+            <div class="category-image">
+              {% if category.image %}
+                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-img">
+              {% else %}
+                <img src="{% static 'images/general.jpg' %}" alt="{{ category.name }}" class="category-img">
+              {% endif %}
+              <div class="category-overlay"></div>
+            </div>
+            <div class="category-name">{{ category.name }}</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <!-- Remaining categories as cards (hidden initially) -->
+    <div class="additional-categories" id="additional-categories" style="display: none;">
+      <div class="featured-categories mb-3">
+        {% for category in categories|slice:"4:" %}
+        <div class="category-card-wrapper">
+          <a href="{% url 'job' %}?job_category={{ category.id }}" class="text-decoration-none category-link">
+            <div class="category-card rounded-3" data-category-id="{{ category.id }}">
+              <div class="category-image">
+                {% if category.image %}
+                  <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-img">
+                {% else %}
+                  <img src="{% static 'images/general.jpg' %}" alt="{{ category.name }}" class="category-img">
+                {% endif %}
+                <div class="category-overlay"></div>
+              </div>
+              <div class="category-name">{{ category.name }}</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- View More / View Less -->
+  {% if categories|length > 4 %}
+  <div class="text-center mt-2">
+    <button id="view-more-btn" class="grid-btn px-4" onclick="toggleViewMore()">View More</button>
+  </div>
+  {% endif %}
+</section>
+<style>
+   .grid-btn:hover {
+      transform: translateY(-2px);
+      background-color: #ebebeb;
+    }
+  
+    .grid-btn {
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: white;
+        margin-top:-1px;
+        padding: 5px 10px;
+        width:120px;
+        border-radius: 16px;
+        text-decoration: none;
+       
+        font-size: 12px;
+        display: inline-block; /* Allows padding and margin */
+        text-align: center; /* Centers text horizontally */
+        line-height: 20px; /* Adjust this value to match the button height for vertical centering */
+     
+    }
+
+  
+</style>
+  <!-- Job Seekers Section -->
+  <section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold mb-0" style="color: #2c3e50;">Jobs Wanted</h4>
+      <a href="{% url 'jobseeker_list' %}" class="view-more-link" style="text-decoration: none;">
+        View More <i class="fas fa-arrow-circle-right"></i>
+      </a>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Job Seekers List -->
+        <!-- Job Seekers List -->
+<div class="col-md-12">
+  <div class="row">
+    {% for jobseeker_data in recent_jobseekers %}
+    <div class="col-xl-6 col-lg-6 col-md-6 mb-2">
+      {% if jobseeker_data.primary_profile and jobseeker_data.primary_profile.pk %}
+        <a href="{% url 'jobseeker_detail' jobseeker_data.jobseeker.pk jobseeker_data.primary_profile.pk %}" class="text-decoration-none job-card-link">
+      {% else %}
+        <div class="text-decoration-none job-card-link disabled-card">
+      {% endif %}
+          <div class="job-card p-3 bg-white shadow-sm rounded-3 border position-relative h-100">
+
+            <!-- Job Seeker Name and Headline -->
+            <h6 class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">
+              {% if jobseeker_data.jobseeker.headline %}
+                {{ jobseeker_data.jobseeker.headline }}
+              {% elif jobseeker_data.primary_profile %}
+                {{ jobseeker_data.primary_profile.job_category.name }}
+              {% else %}
+                Seeking Opportunities
+              {% endif %}
+            </h6>
+            <p class="text-primary small mb-2" style="color:#15818E !important;">
+              {{ jobseeker_data.primary_profile.job_category.name|capfirst }}
+            </p>
+
+            <!-- Expected Salary -->
+            {% if jobseeker_data.jobseeker.expected_salary and jobseeker_data.jobseeker.expected_salary != 'negotiable' %}
+            <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+              <span style="color:#EB362D;">OMR {{ jobseeker_data.jobseeker.get_expected_salary_display }}</span>
+              <span class="text-muted" style="font-size: 1rem;"> expected salary</span>
+            </p>
+            {% elif jobseeker_data.jobseeker.expected_salary == 'negotiable' %}
+            <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+              <span class="text-muted" style="font-size: 1rem;">Salary: Negotiable</span>
+            </p>
+            {% else %}
+            <p class="fw-bold text-dark mb-2" style="font-size: 1.1rem;">
+              <span class="text-muted" style="font-size: 1rem;">Salary: Not specified</span>
+            </p>
+            {% endif %}
+
+            <!-- Info Row -->
+            <div class="d-flex flex-wrap info-box-container mb-2">
+              <div class="info-box">
+                <small class="text-secondary d-block">EXPERIENCE</small>
+                <strong>{{ jobseeker_data.jobseeker.get_work_experience_display|default:"N/A" }}</strong>
+              </div>
+              <div class="info-box">
+                <small class="text-secondary d-block">EDUCATION</small>
+                <strong>{{ jobseeker_data.jobseeker.get_education_level_display|default:"N/A" }}</strong>
+              </div>
+              <div class="info-box">
+                <small class="text-secondary d-block">NOTICE PERIOD</small>
+                <strong>{{ jobseeker_data.jobseeker.get_notice_period_display|default:"N/A" }}</strong>
+              </div>
+            </div>
+
+            <!-- Footer Info (CV Status | Location) -->
+            <div class="d-flex align-items-center mt-2 text-muted small">
+              <!-- Location -->
+              <img src="{% static 'assets/images/Icons-03.png' %}" alt="Location" class="me-2" style="width: 18px; height: 20px;">
+              <span>{{ jobseeker_data.jobseeker.city|default:"Oman" }}</span>
+            </div>
+          </div>
+      {% if jobseeker_data.primary_profile and jobseeker_data.primary_profile.pk %}
+        </a>
+      {% else %}
+        </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-user-graduate fa-3x mb-3"></i>
+        <h5>No job seekers available</h5>
+        <p>Check back later for new candidates</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Job Seeker Categories Section -->
+<section class="mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0" style="color: #2c3e50;">Recruiters | Jobs Seekers by Category</h4>
+  </div>
+
+  <div class="job-categories-container">
+    <!-- First 4 categories as image cards -->
+    <div class="featured-categories mb-3">
+      {% for category in categories|slice:":4" %}
+      <div class="category-card-wrapper">
+        <a href="{% url 'jobseeker_list' %}?job_category={{ category.id }}" class="text-decoration-none category-link">
+          <div class="category-card rounded-3" data-category-id="{{ category.id }}">
+            <div class="category-image">
+              {% if category.image %}
+                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-img">
+              {% else %}
+                <img src="{% static 'images/jobseeker-general.jpg' %}" alt="{{ category.name }}" class="category-img">
+              {% endif %}
+              <div class="category-overlay"></div>
+            </div>
+            <div class="category-name">
+              {{ category.name }}
+              <small class="d-block text-muted mt-1">
+                <!-- Candidate count can be added here if needed -->
+              </small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <!-- Remaining categories as cards (hidden initially) -->
+    <div class="additional-categories" id="additional-categories-2" style="display: none;">
+      <div class="featured-categories mb-3">
+        {% for category in categories|slice:"4:" %}
+        <div class="category-card-wrapper">
+          <a href="{% url 'jobseeker_list' %}?job_category={{ category.id }}" class="text-decoration-none category-link">
+            <div class="category-card rounded-3" data-category-id="{{ category.id }}">
+              <div class="category-image">
+                {% if category.image %}
+                  <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-img">
+                {% else %}
+                  <img src="{% static 'images/jobseeker-general.jpg' %}" alt="{{ category.name }}" class="category-img">
+                {% endif %}
+                <div class="category-overlay"></div>
+              </div>
+              <div class="category-name">
+                {{ category.name }}
+                <small class="d-block text-muted mt-1">
+                  <!-- Candidate count can be added here if needed -->
+                </small>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- View More / View Less -->
+  {% if categories|length > 4 %}
+  <div class="text-center mt-2">
+    <button id="view-more-btn-2" class="grid-btn" onclick="toggleViewMore2()">View More</button>
+  </div>
+  {% endif %}
+</section>
+
+  <script>
+function toggleViewMore() {
+  const btn = document.getElementById('view-more-btn');
+  const section = document.getElementById('additional-categories');
+
+  if (!btn || !section) return;
+
+  const isHidden =
+    section.style.display === '' || section.style.display === 'none';
+
+  section.style.display = isHidden ? 'block' : 'none';
+  btn.textContent = isHidden ? 'View Less' : 'View More';
+
+  // Only scroll when collapsing (View Less)
+  if (!isHidden) {
+    btn.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }
+}
+
+function toggleViewMore2() {
+  const btn = document.getElementById('view-more-btn-2');
+  const section = document.getElementById('additional-categories-2');
+
+  if (!btn || !section) return;
+
+  const isHidden =
+    section.style.display === '' || section.style.display === 'none';
+
+  section.style.display = isHidden ? 'block' : 'none';
+  btn.textContent = isHidden ? 'View Less' : 'View More';
+
+  // Only scroll when collapsing (View Less)
+  if (!isHidden) {
+    btn.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentCategory = urlParams.get('category');
+
+  if (currentCategory) {
+    document
+      .querySelectorAll(`[data-category-id="${currentCategory}"]`)
+      .forEach(el => el.classList.add('active'));
+  }
+});
+</script>
+
+
+  <!-- Styles -->
+  <style>
+  .job-card-link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .job-card {
+    transition: all 0.25s ease-in-out;
+    border: 1px solid #eaeaea;
+    cursor: pointer;
+    border-radius: 12px !important;
+  }
+
+  .job-card:hover {
+    transform: translateY(-2px);
+    border-color: #15818E;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .job-card h6 {
+    font-size: 16px;
+  }
+
+  .job-card p {
+    margin-bottom: 4px;
+  }
+
+  .job-card .info-box {
+    background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 12px;
+  min-width: 130px;
+  text-align: left;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  white-space: nowrap;   /* prevent text wrapping */
+  overflow: hidden;      /* hide overflow */
+  text-overflow: ellipsis; /* show "..." for long text */
+  flex: 1; /* optionally make all boxes equal width */
+  }
+
+  .job-card .info-box small {
+    font-size: 11px;
+    color: #888;
+  }
+
+  .job-card .info-box strong {
+    font-size: 13px;
+    color: #000;
+  }
+
+  .job-card small {
+    font-size: 12px;
+  }
+
+  .job-categories-container {
+    padding: 0 10px;
+  }
+
+  .featured-categories {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+
+  .category-card-wrapper {
+    position: relative;
+  }
+
+  .category-link {
+    display: block;
+    position: relative;
+    z-index: 1;
+    height: 100%;
+  }
+
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    border-color: #F9AD1F;
+  }
+
+  .category-card.active {
+    border: 2px solid #F9AD1F;
+    box-shadow: 0 5px 15px rgba(249, 173, 31, 0.3);
+  }
+
+  .category-image {
+    height: 90px;
+    position: relative;
+    overflow: hidden;
+    background: #f8f9fa;
+  }
+
+  .category-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+  }
+
+  .category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(249, 173, 31, 0.1), rgba(235, 54, 45, 0.1));
+    transition: all 0.3s ease;
+  }
+
+  .category-card:hover .category-img {
+    transform: scale(1.1);
+  }
+
+  .category-card:hover .category-overlay {
+    background: linear-gradient(45deg, rgba(249, 173, 31, 0.3), rgba(235, 54, 45, 0.3));
+  }
+
+  .category-name {
+    padding: 12px 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    margin: 0;
+    min-height: 45px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .category-card:hover .category-name {
+    color:  #E35D20;
+  }
+
+  .additional-categories {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+  }
+
+  
+
+  /* View More Link Styles */
+  .view-more-link {
+      color: #7b7676;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .view-more-link:hover {
+    color: #E35D20;
+    transform: translateX(3px);
+  }
+
+  .view-more-link i {
+    transition: transform 0.3s ease;
+  }
+
+  .view-more-link:hover i {
+    transform: translateX(3px);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+    .featured-categories {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 992px) {
+    .featured-categories {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .featured-categories {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .category-image {
+      height: 70px;
+    }
+    
+    .category-name {
+      font-size: 0.85rem;
+      padding: 10px 8px;
+      min-height: 40px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .featured-categories {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    
+    .category-image {
+      height: 60px;
+    }
+    
+    .category-name {
+      font-size: 0.8rem;
+      padding: 8px 8px;
+      min-height: 35px;
+    }
+  }
+
+  /* Fallback if images don't load */
+  .category-image:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    z-index: -1;
+  }
+
+  /* Section spacing */
+  section {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .info-box-container {
+   display: flex;
+  gap: 16px; /* spacing between boxes */
+  flex-wrap: nowrap; /* prevent wrapping */
+}
+
+
+  .job-card .d-flex.flex-wrap {
+    gap: 16px !important;
+  }
+  </style>
+</div>
+ </script> 
+      <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const bannerSection = document.getElementById('banner-section');
+        if (!bannerSection) {
+            console.error("Banner section element not found");
+            return;
+        }
+
+        // Ensure the section has a height and background behavior
+        bannerSection.style.backgroundSize = 'cover';
+        bannerSection.style.backgroundPosition = 'center';
+        bannerSection.style.backgroundRepeat = 'no-repeat';
+        bannerSection.style.transition = 'background-image 0.5s ease-in-out';
+
+        const images = [
+            {% for banner in banners %}
+                "{{ banner.image.url }}",
+            {% endfor %}
+        ];
+
+        // Filter out empty strings (in case some URLs are missing)
+        const validImages = images.filter(url => url && url.trim() !== "");
+        
+        if (validImages.length === 0) {
+            console.warn("No banner images found. Set a fallback background.");
+            bannerSection.style.backgroundColor = "#f0f2f5";  // fallback color
+            return;
+        }
+
+        let currentIndex = 0;
+
+        function changeBackground() {
+            bannerSection.style.backgroundImage = `url(${validImages[currentIndex]})`;
+            currentIndex = (currentIndex + 1) % validImages.length;
+        }
+
+        // Change background every 4 seconds
+        setInterval(changeBackground, 4000);
+        changeBackground();  // set initial image
+    });
+</script>
+
+{% include 'footer.html' %}

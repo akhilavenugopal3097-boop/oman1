@@ -1,0 +1,2947 @@
+{% load static %}
+{% load humanize %}
+{% load automobile_filters %}
+{% load dict_filters %}
+
+
+ {% include 'header.html' %}
+
+          
+        
+          
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+      body.rtl .dots-container{
+        margin-right:-10px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 240px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+        /* Banner Section */
+        #banner-section {
+            background-size: cover;
+            background-position: center;
+            height:250px;
+            position: relative;
+            transition: background-image 1s ease-in-out;
+        }
+    
+        #banner-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask-composite: destination-in;
+        mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        mask-composite: intersect;
+        z-index: 1;
+        opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+        pointer-events: none; /* Ensure the mask does not block interactions */
+    }
+    
+        #banner-section .content-column {
+            position: relative;
+            z-index: 2;
+        }
+    
+        #banner-section .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            position: relative;
+            margin-top: 35px;
+            background:#E6F0F9;
+            color: #fff;
+            height: 133px; /* Adjust as needed for the container's content */
+            font-family: 'FontStyle1', Arial, sans-serif;
+            font-size:14px;
+        }
+        
+        /* Image Container */
+        .image-container {
+            position: relative;
+            width: 300px;
+            text-align: center; /* Center the image inside the container */
+            margin-top: -280px;
+            z-index: 1;
+            margin-left:-20px;
+        
+        }
+        
+        .image-container .image {
+            width: 325px;
+           
+          
+            
+        }
+        /* Content Section */
+.content-section {
+    text-align: left;
+}
+
+.content-section h2 {
+    margin-top: 10px;
+    color: black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    margin-left: -40px;
+}
+
+.content-section p {
+    line-height: 1.6;   /* more breathing room */
+    color: black;
+    margin-left: -40px;
+    font-size: 12px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    word-wrap: break-word;
+    max-width: 620px;   /* controls where the line breaks */
+}
+
+/* Arabic RTL */
+body.rtl .content-section {
+    text-align: right;
+}
+
+body.rtl .content-section h2 {
+    margin-left: 0;
+    margin-right: -35px;
+}
+
+body.rtl .content-section p {
+    margin-left: 0;
+    margin-right: -35px;
+    text-align: right;
+}
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            height: auto; /* Adjust height to fit content */
+            padding: 20px;
+            margin-top: 10px;
+        }
+        .image-container .image {
+            height: 50%;
+          
+            
+        }
+    
+        /* Image Section */
+        .image-container {
+            margin-top: -150px; /* Adjust margin for smaller screens */
+            right: 0;
+            transform: none; /* Remove transform for better alignment */
+            width: 60%; /* Reduce image size */
+            margin: 0 auto; /* Center the image */
+        }
+    
+        /* Content Section */
+        .content-section {
+            margin: 0 auto; /* Center the content section */
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center; /* Center-align text for mobile */
+        }
+    
+        .content-section h2 {
+            font-size: 1.5rem; /* Adjust heading size */
+            text-align: center; /* Center heading */
+        }
+    
+        .content-section p {
+            font-size: 0.9rem; /* Adjust font size for readability */
+            text-align: justify; /* Center-align paragraph text */
+            margin-left: 0; /* Remove unnecessary margin */
+            max-width: 100%; /* Use full width */
+            
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Further adjustments for very small screens */
+        .image-container {
+            margin-top: -45px;
+            width: 80%; /* Reduce image size further */
+        }
+    
+        .content-section h2 {
+            font-size: 1.2rem;
+            margin-left: 2px;
+        }
+    
+        .content-section p {
+            font-size: 0.8rem;
+        }
+    }
+    .about-paragraph{
+        color:black;
+    }
+    .input{
+        margin-top:3px;
+    }
+   
+    
+    </style>
+    
+    
+    
+    
+    
+           
+       <div class="auto-container">
+           
+    <!-- banner-section -->
+    <section id="banner-section" class="banner-section centred">
+        <div class="auto-container">
+            <div class="content-column">
+                <div class="content-box">
+                    <div class="custom-form">
+                        <form action="{% url 'search_results' %}" method="get" autocomplete="off">
+                            {% csrf_token %}
+                            <div class="form-group-row home">
+                                 <!-- Search Input -->
+                                <div class="form-group oval-container">
+                                    <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon5">
+                                    <div class="search-autocomplete">
+                                        <input class="input" type="search" name="keyword" id="search-input" 
+                                               placeholder="Search for Everything" value="{{ request.GET.keyword }}">
+                                        <button type="button" id="clear-search" aria-label="Clear search">×</button>
+                                        <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
+                                    </div>
+                                </div>
+                                <!-- Vertical Divider -->
+                                <div class="vertical-divider"></div>
+                                <style>
+                                .search-autocomplete {
+                                    position: relative;
+                                    width: 100%;
+                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                }
+
+                                .search-autocomplete input {
+                                    width: 100%;
+                                    
+                                }
+
+                                #clear-search {
+                                    position: absolute;
+                                    top: 70%;
+                                    right: 10px;
+                                    transform: translateY(-50%);
+                                    border: none;
+                                    background: transparent;
+                                    font-size: 18px;
+                                    cursor: pointer;
+                                    color: #999;
+                                    display: none; /* hidden initially */
+                                    padding: 0;
+                                    line-height: 1;
+                                }
+
+                                #clear-search:hover {
+                                    color: #555;
+                                }
+
+                                .autocomplete-dropdown {
+                                    position: absolute;
+                                    top: 100%;
+                                    left: 0;
+                                    width: 640px; /* Increased width */
+                                    background: #ffffff;
+                                    border: 1px solid #e2e8f0;
+                                    border-radius: 10px;
+                                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+                                    z-index: 1000;
+                                    display: none;
+                                    max-height: 400px; /* Increased height */
+                                    overflow-y: hidden;
+                                    padding: 6px 0;
+                                    transition: all 0.2s ease-in-out;
+                                    margin-top: 20px;
+                                  
+                                }
+
+                                .autocomplete-item {
+                                    padding: 12px 18px;
+                                    cursor: pointer;
+                                    font-size: 15px;
+                                    color: #2d3748;
+                                    transition: background 0.2s ease, color 0.2s ease;
+                                    border-radius: 6px;
+                                    margin: 2px 8px;
+                                    text-align: left;       /* <-- Force text alignment to the left */
+                                    display: block;         /* <-- Ensure full width alignment */
+                                    width: calc(100% - 16px); /* Align with margin, keeping item full width */
+                                }
+
+
+                                .autocomplete-item:hover,
+                                .autocomplete-item.active {
+                                    background-color: #f0f4f8;
+                                    color: #1a202c;
+                                }
+
+                                .suggestion-text strong {
+                                    font-weight: 600;
+                                    color: #1a73e8;
+                                }
+                                /* Base RTL styles for all form inputs */
+body.rtl .form-group.oval-container input,
+body.rtl .search-autocomplete input {
+    text-align: right;
+    padding-right: 25px;  /* Space for the icon on the right */
+    padding-left: 5px;   /* Space for clear button if needed */
+}
+
+/* Specific styles for search input with clear button */
+body.rtl .search-autocomplete {
+    position: relative;
+    width: 100%;
+}
+
+body.rtl .search-autocomplete input {
+    padding-right: 40px;  /* Space for search icon */
+    padding-left: 35px;   /* Space for clear button (×) */
+}
+
+body.rtl #clear-search {
+    right: auto;
+    left: 10px;  /* Position clear button on the left side in RTL */
+}
+
+/* Location and Category dropdowns */
+body.rtl .chosen-value {
+    text-align: right;
+    padding-right: 40px;  /* Space for location/category icon */
+    padding-left: 15px;   /* Normal padding on left */
+}
+
+/* Icon positioning for RTL */
+body.rtl .location-icon2,
+body.rtl .location-icon5 {
+    right: 12px;   /* Position icon on the right side */
+    left: auto;
+}
+
+/* Dropdown arrow indicators for RTL */
+body.rtl .chosen-value {
+    background-position: left 12px center;  /* Move dropdown arrow to left side */
+}
+
+/* Placeholder text alignment for all inputs in RTL */
+body.rtl input::placeholder,
+body.rtl .chosen-value::placeholder {
+    text-align: right;
+    direction: rtl;
+}
+
+/* For the All Locations placeholder text */
+body.rtl .chosen-value {
+    direction: rtl;
+}
+
+/* Adjust the vertical divider in RTL if needed */
+body.rtl .vertical-divider {
+    margin: 0 10px;
+}
+
+/* Make sure dropdown lists align properly in RTL */
+body.rtl .value-list {
+    text-align: right;
+    direction: rtl;
+}
+
+body.rtl .value-list li {
+    text-align: right;
+    padding-right: 15px;
+    padding-left: 10px;
+}
+
+/* Submenu alignment in RTL */
+body.rtl .submenus {
+    text-align: right;
+    right: 0;
+    left: auto;
+}
+
+body.rtl .district-item {
+    text-align: right;
+    padding-right: 20px;
+    padding-left: 10px;
+}
+                                </style>
+                                <!-- First Dropdown (Regions, Districts, and Cities) -->
+                                <div class="form-group oval-container">
+                                    <input class="chosen-value" type="text" 
+                                    placeholder="{% if selected_city %}{{ selected_city }}{% elif selected_district %}{{ selected_district }}{% elif selected_governate %}{{ selected_governate }}{% else %}Select Location{% endif %}" 
+                                    data-dropdown="dropdown1">
+                                    <img src="{% static 'assets/images/Icons-03.png' %}" alt="Location Icon" class="location-icon2">
+                                    <ul class="value-list" id="dropdown1">
+                                        <!-- All Locations Option -->
+                                        <li onclick="selectLocation('', '', '', 'All Locations')">All Locations</li>
+                                        
+                                        {% for governate in governates %}
+                                        <li class="main-menu1" data-governate-id="{{ governate.id }}" data-governate-name="{{ governate.name }}">
+                                            {{ governate.name }}
+                                            <div class="submenus text-black" style="max-height: 350px; overflow-y: auto;">
+                                                <!-- Districts Level -->
+                                                {% for district in governate.districts.all %}
+                                                <div class="district-item">
+                                                    <div class="district-header" data-district-id="{{ district.id }}" data-district-name="{{ district.name }}" onclick="event.stopPropagation(); selectLocation('{{ governate.id }}', '{{ district.id }}', '', '{{ district.name }}')">
+                                                        <strong>{{ district.name }}</strong>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+
+                                <!-- Vertical Divider -->
+                                <div class="vertical-divider"></div>
+
+                                <!-- Second Dropdown (Categories) -->
+                                <div class="form-group oval-container">
+                                    <input class="chosen-value" type="text" placeholder="Select Category" data-dropdown="dropdown2">
+                                    <img src="{% static 'assets/images/Icons-04.png' %}" alt="Location Icon" class="location-icon5">
+                                    <ul class="value-list" id="dropdown2">
+                                        <li class="main-menu1" data-url="{% url 'index2' %}">Motors</li>
+                                        <li class="main-menu1" data-url="{% url 'index3' %}">Real Estate</li>
+                                        <li class="main-menu1" data-url="{% url 'job' %}">Job</li>
+                                        <li class="main-menu1" data-url="{% url 'index5' %}">Other Categories</li>
+                                        <li class="main-menu1" data-url="{% url 'index6' %}">Mobiles & Tablets</li>
+                                        <li class="main-menu1" data-url="{% url 'index4' %}">Services</li>
+                                    </ul>
+                                </div>
+                                <script>
+// Track clicks per page load
+let clickHandled = false;
+
+// Function to reset the dropdown to default state
+function resetDropdownToDefault() {
+    const container = document.querySelector('.oval-container');
+    if (container) {
+        const input = container.querySelector('.chosen-value');
+        if (input) {
+            input.value = 'Select Category';
+            input.setAttribute('value', 'Select Category');
+            input.classList.remove('selected-preview');
+            input.placeholder = 'Select Category';
+        }
+    }
+    
+    // Re-enable all dropdown items
+    document.querySelectorAll('.main-menu1').forEach(menu => {
+        menu.style.cssText = '';
+        menu.style.pointerEvents = 'auto';
+        menu.style.opacity = '1';
+    });
+}
+
+// Reset dropdown on page load (before any redirect memory)
+resetDropdownToDefault();
+
+// Clear any stored session data
+sessionStorage.removeItem('selectedCategory');
+sessionStorage.removeItem('selectedUrl');
+
+// Disable all automatic behaviors
+document.querySelectorAll('.main-menu1').forEach(item => {
+    // Remove any existing event listeners by cloning and replacing
+    const newItem = item.cloneNode(true);
+    item.parentNode.replaceChild(newItem, item);
+    
+    newItem.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Only allow one click per page load
+        if (clickHandled) {
+            console.log('Click already handled on this page');
+            return false;
+        }
+        
+        const container = this.closest('.oval-container');
+        if (!container) return false;
+        
+        const input = container.querySelector('.chosen-value');
+        const clickedText = this.innerText.trim();
+        const currentValue = input.getAttribute('value');
+        
+        // Don't redirect if it's the same option
+        if (currentValue === clickedText) {
+            return false;
+        }
+        
+        const url = this.getAttribute('data-url');
+        if (!url) return false;
+        
+        // Update UI with selected value (preview)
+        input.value = clickedText;
+        input.setAttribute('value', clickedText);
+        input.classList.add('selected-preview');
+        
+        // Mark as handled
+        clickHandled = true;
+        
+        // Store selection temporarily
+        sessionStorage.setItem('selectedCategory', clickedText);
+        sessionStorage.setItem('selectedUrl', url);
+        
+        // Disable all dropdown items
+        document.querySelectorAll('.main-menu1').forEach(menu => {
+            menu.style.cssText = 'pointer-events: none; opacity: 0.5; cursor: default;';
+        });
+        
+        // Redirect with a small delay to show the selection
+        setTimeout(() => {
+            window.location.href = url;
+        }, 200);
+        
+        return false;
+    });
+});
+
+// Handle page show (including back button)
+window.addEventListener('pageshow', function(event) {
+    // Always reset on page show
+    clickHandled = false;
+    
+    // Reset dropdown to default state
+    resetDropdownToDefault();
+    
+    // Clear session storage
+    sessionStorage.removeItem('selectedCategory');
+    sessionStorage.removeItem('selectedUrl');
+});
+
+// Also handle when page loads normally
+document.addEventListener('DOMContentLoaded', function() {
+    resetDropdownToDefault();
+});
+
+// Handle before unload to clean up
+window.addEventListener('beforeunload', function() {
+    clickHandled = false;
+});
+</script>
+
+                                <!-- Submit Button -->
+                                <div class="btn-box oval-container">
+                                    <button type="submit" class="theme-btn-one">Search</button>
+                                </div>
+
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                    const dropdownLists = document.querySelectorAll('.value-list');
+
+                                    dropdownInputs.forEach(input => {
+                                        const dropdownId = input.getAttribute('data-dropdown');
+                                        const dropdown = document.getElementById(dropdownId);
+
+                                        // Toggle dropdown visibility on click
+                                        input.addEventListener('click', (event) => {
+                                            event.stopPropagation();
+                                            dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            dropdown.classList.toggle('open');
+                                        });
+
+                                        // Handle clicks on category items
+                                        dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                            item.addEventListener('click', (event) => {
+                                                const url = item.getAttribute('data-url');
+                                                if (url) {
+                                                    window.location.href = url;
+                                                }
+                                            });
+                                        });
+
+                                        // Prevent dropdown from closing when clicking inside
+                                        dropdown.addEventListener('mousedown', (event) => {
+                                            event.stopPropagation();
+                                        });
+
+                                        // Handle clicks on governate items
+                                        dropdown.querySelectorAll('.main-menu1[data-governate-id]').forEach(item => {
+                                            const governateId = item.getAttribute('data-governate-id');
+                                            const governateName = item.getAttribute('data-governate-name');
+                                            
+                                            // Handle governate click (not district or city)
+                                            item.addEventListener('click', (event) => {
+                                                if (!event.target.closest('.district-item') && !event.target.closest('.cities-list')) {
+                                                    event.stopPropagation();
+                                                    selectLocation(governateId, '', '', governateName);
+                                                    
+                                                    const url = new URL(window.location.href);
+                                                    url.searchParams.set('governate', governateId);
+                                                    url.searchParams.delete('district');
+                                                    url.searchParams.delete('city');
+                                                    window.location.href = url;
+                                                }
+                                            });
+                                        });
+                                    });
+
+                                    // Close dropdown if clicking outside
+                                    document.addEventListener('click', (event) => {
+                                        if (!event.target.matches('.chosen-value')) {
+                                            dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                        }
+                                    });
+                                });
+
+                                // Global function to select location
+                                function selectLocation(governateId, districtId, cityId, locationName) {
+                                    console.log(`Location selected: ${locationName}`);
+                                    console.log(`Governate: ${governateId}, District: ${districtId}, City: ${cityId}`);
+                                    
+                                    const url = new URL(window.location.href);
+                                    
+                                    if (governateId) {
+                                        url.searchParams.set('governate', governateId);
+                                    } else {
+                                        url.searchParams.delete('governate');
+                                    }
+                                    
+                                    if (districtId) {
+                                        url.searchParams.set('district', districtId);
+                                    } else {
+                                        url.searchParams.delete('district');
+                                    }
+                                    
+                                    if (cityId) {
+                                        url.searchParams.set('city', cityId);
+                                    } else {
+                                        url.searchParams.delete('city');
+                                    }
+                                    
+                                    // Update the input field with the name
+                                    const locationInput = document.querySelector('.chosen-value[data-dropdown="dropdown1"]');
+                                    if (locationInput) {
+                                        locationInput.value = locationName;
+                                    }
+                                    
+                                    window.location.href = url;
+                                }
+
+                                // Add CSS for districts styling
+                                const style = document.createElement('style');
+                                style.textContent = `
+                                    .district-header {
+                                        padding: 8px 15px;
+                                        cursor: pointer;
+                                        color: black;
+                                        font-weight: normal;
+                                        transition: background-color 0.2s;
+                                    }
+                                    
+                                    .district-header:hover {
+                                        background-color: #f5f5f5;
+                                    }
+                                    
+                                    .district-header strong {
+                                        color: black;
+                                        font-weight: 100;
+                                    }
+                                    
+                                    .submenus {
+                                        background-color: white;
+                                        border: 1px solid #ddd;
+                                        border-radius: 4px;
+                                        margin-top: 5px;
+                                    }
+                                    
+                                    .main-menu1 {
+                                        cursor: pointer;
+                                        position: relative;
+                                    }
+                                    
+                                    .main-menu1 > div.submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0;
+                                        min-width: 200px;
+                                        z-index: 1000;
+                                    }
+                                    
+                                    .main-menu1:hover > div.submenus {
+                                        display: block;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+                                </script>
+
+                            </div>
+                        </form>
+             
+                         <style>
+                                    .form-group-row {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 50px;
+    border: 1px solid #ccc;
+}
+
+body.rtl .form-group-row {
+    flex-direction: row-reverse;
+    margin-left: -205px; /* adjust value */
+    margin-right: 250px;
+}
+
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 20px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                   
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                    
+                                
+                    
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 38%;
+        margin-top: -75px;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+    .input, .chosen-value {
+        width: 100%;
+        font-size: 12px;
+        
+        border: none;
+        background: transparent;
+        outline: none;
+    }
+   
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+    .location-icon5 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+        top: 23px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Exclusive Offers Section (Now Below the Banner Section) -->
+            <section id="exclusive-offers" class="exclusive-offers-section">
+                <div class="auto-container">
+                    <div class="row align-items-center">
+                        <!-- Image Section (Now on the Left Side) -->
+                        <div class="col-lg-4 col-md-4 col-sm-12 image-container">
+                            <img src="{% static 'assets/images/Home_Top IMage.png' %}" alt="Image Description" class="image">
+                        </div>
+            
+                        <!-- Content Section (Now on the Right Side) -->
+                        <div class="col-lg-8 col-md-8 col-sm-12 content-section">
+                            <h2>Oman’s Ultimate Marketplace for Everything</h2>
+                            <p>The smartest way to trade locally. List your items in seconds, discover incredible deals right in your neighborhood, and connect instantly with trusted buyers and sellers.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            
+            <!-- banner-section end -->
+
+
+    
+
+
+        <div class="categories-section">
+            <h3>What are you looking for today?</h3>
+            <div class="categories">
+                <!-- Top Row: 5 Categories -->
+                <div>
+                    <h4>Motors</h4>
+                    <ul>
+                        <li><a href="{% url 'car' %}?listing_type=sell">Cars</a></li>
+                        <li><a href="{% url 'car' %}?listing_type=rent">Rental Cars</a></li>
+                        <li><a href="{% url 'numberplate' %}">Plate Numbers</a></li>
+                        <li><a href="{% url 'driving_training' %}">Driving Training</a></li>
+                        <li><a href="{% url 'index2' %}" class="highlight-red">Explore More  →</a></li>
+                    </ul>
+                </div>
+                 <div class="labelnew">
+                    <h4>Properties for Sale</h4>
+                    <ul>
+                        <li><a href="{% url 'land'%}?listing_type=sell">Lands for Sale</a></li>
+                        <li><a href="{% url 'apartment'%}?listing_type=sell">Apartments for Sale</a></li>
+                        <li><a href="{% url 'villa'%}?listing_type=sell">Villas for Sale</a></li>
+                        <li><a href="{% url 'shop'%}?listing_type=sell">Shops for Sale</a></li>
+                        <li><a href="{% url 'index3' %}" class="highlight-red">Explore More  →</a></li>
+                    </ul>
+                </div>
+                <div class="ml-2">
+                    <h4 >Properties for Rent</h4>
+                    <ul>
+                      
+                        <li><a href="{% url 'apartment'%}?listing_type=rent">Apartments for Rent</a></li>
+                        <li><a href="{% url 'villa'%}?listing_type=rent">Villas for Rent</a></li>
+                        <li><a href="{% url 'shop'%}?listing_type=rent">Shops for Rent</a></li>
+                        <li><a href="{% url 'office'%}?listing_type=rent">Offices for Rent</a></li>
+                        <li><a href="{% url 'index3' %}" class="highlight-red">Explore More →</a></li>
+                    </ul>
+                </div>
+               
+                <div class="ml-1">
+                    <h4>Electronics & Leisure</h4>
+                    <ul>
+                        <li><a href="{% url 'electronics' %}">Electronics</a></li>
+                        <li><a href="{% url 'homeappliance' %}">Home Applicances</a></li>
+                        <li><a href="{% url 'sports' %}">Sports Equipments</a></li>
+                        <li><a href="{% url 'gaming' %}">Gaming</a></li>
+                        <li><a href="{% url 'index5' %}" class="highlight-red">Explore More →</a></li>
+                    </ul>
+                    </ul>
+                </div>
+                <div>
+                  
+                </div>
+                <!-- Bottom Row: 4 Categories -->
+                <div>
+                    <!-- <h3>Education</h3>
+                    <ul>
+                        <li>Training Programs</li>
+                        <li>Online Courses</li>
+                        <li>Private Tutors</li>
+                        <li>Workshops</li>
+                        <li><a href="#">All in Education →</a></li>
+                    </ul> -->
+                </div>
+                <div>
+                    <h4>Jobs</h4>
+                   <ul>
+    {% for category in job_categories_left|slice:":4" %}
+        <li>
+            <a href="{% url 'jobseeker_list' %}?job_category={{ category.id }}">
+                {{ category.name }}
+            </a>
+        </li>
+    {% endfor %}
+    <li>
+        <a href="{% url 'job_home' %}" class="highlight-red">Explore More →</a>
+    </li>
+</ul>
+                </div>
+                <div class="labelnew">
+                    <h4>Mobiles & Tablets</h4>
+                    <ul>
+                        <li><a href="{% url 'mobiles' %}">Mobile</a></li>
+                        <li><a href="{% url 'tablets' %}">Tablets</a></li>
+                        <li><a href="{% url 'smartwatch' %}">Smart Watches</a></li>
+                        <li><a href="{% url 'headset' %}">Headsets</a></li>
+                        
+                        <li><a href="{% url 'index6' %}" class="highlight-red">Explore More →</a></li>
+                    </ul>
+                </div>
+                <div class="ml-2">
+
+                    <h4>Professional Services</h4>
+                    <ul>
+                        <li><a href="{% url 'autoservices' %}">Auto</a></li>
+                        <li><a href="{% url 'consultancy' %}">Consultancy</a></li>
+                        <li><a href="{% url 'domestic' %}">Domestic</a></li>
+                        <li><a href="{% url 'freelancer' %}">Freelancers</a></li>
+                        <li><a href="{% url 'index4' %}" class="highlight-red">Explore More →</a></li>
+                    </ul>
+                </div>
+                <div>
+                    {% comment %} <h4>Events</h4>
+                    <ul>
+                        <li><a href="#">Weddings</a></li>
+        <li><a href="#">Concerts</a></li>
+        <li><a href="#">Workshops</a></li>
+        <li><a href="#">Parties</a></li>
+        <li><a href="#" class="highlight-red">All in Events →</a></li>
+    </ul> {% endcomment %}
+                </div>
+               
+            </div>
+            <div class="categories-container" style="margin-top: 25px;">
+                <a href="{% url 'index2' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-icon">
+                    <i class="fa fa-car"></i>
+                    <span>Motors</span>
+                </a>
+                <a href="{% url 'index3' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-icon">
+                    <i class="fa fa-home"></i>
+                    <span>Real Estate</span>
+                </a>
+                <a href="{% url 'job_home' %}" class="category-icon">
+                    <i class="fa fa-briefcase"></i>
+                    <span>Jobs</span>
+                </a>
+                
+                <a href="{% url 'index5' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-icon">
+                    <i class="fa fa-cogs"></i>
+                    <span>Other Categories</span>
+                </a>
+                <a href="{% url 'index6' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-icon">
+                    <i class="fa fa-phone-alt"></i>
+                    <span>Mobiles & Tablets</span>
+                </a>
+                <a href="{% url 'index4' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-icon">
+                    <i class="fa fa-users"></i>
+                    <span>Services</span>
+                </a>
+               
+                
+            </div>
+            
+            
+                <div class="app-section">
+                    <h2 class="pt-3">Download Our App</h2>
+                    <div class="app-links pt-5 pl-3">
+                        <!-- <a href="https://play.google.com/store/apps" target="_blank"> -->
+                            <img src="{% static 'assets/images/app.png' %}" alt="Google Play">
+                        <!-- </a> -->
+                    </div>
+                     <div class="app-links1">
+                        <!-- <a href="https://apps.apple.com/app" target="_blank"> -->
+                            <img src="{% static 'assets/images/app2.svg' %}" alt="App Store">
+                        <!-- </a> -->
+                    </div>
+                
+                <div class="qr-code pt-3">
+                    <!-- <img src="{% static 'assets/images/qr-code.png' %}" alt="QR Code"> -->
+                </div>
+         
+               
+                <img class="right-image" src="{% static 'assets/images/Home Image _Saif.png' %}" alt="Omani Man">
+            </div>
+        </div>
+<style>
+.labelnew{
+    margin-left: -20px;
+}
+
+/* Base LTR styles */
+.categories-section {
+    padding: 10px;
+    position: relative;
+}
+
+.categories-section h3 {
+    text-align: left;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+body.rtl .categories-section {
+    padding: 10px;
+    position: relative;
+}
+
+body.rtl .categories-section h3 {
+    text-align: right;  
+    font-family: 'FontStyle1', Arial, sans-serif;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    direction: rtl;
+}
+
+
+body.rtl .categories h4 {
+    text-align: right;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+body.rtl .categories ul {
+    list-style: none;
+    padding-right: 0;  /* Changed from padding-left to padding-right */
+    padding-left: 0;
+    text-align: right;
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    {% comment %} gap: 5px; /* Reduce the gap between items */ {% endcomment %}
+    justify-content: flex-start; /* Align items to the left */
+    margin: 0; /* Remove any extra margins */
+    text-align: left;
+}
+
+.categories div {
+    width: 180px; /* Adjust width to fit more categories */
+    position: relative;
+    margin-bottom: 10px; /* Adds a little randomness in spacing */
+}
+
+
+
+.categories h4 {
+    color: #d32f2f;
+    font-weight: bold;
+    margin-top:15px;
+    font-family:  'FontStyle6', Arial, sans-serif;
+    font-size: 14px; /* Slightly smaller font size */
+    margin-bottom: 8px;
+}
+
+.categories ul {
+    list-style: none;
+    padding: 0;
+}
+
+{% comment %} .categories li {
+    margin: 1px 0; /* Smaller spacing between list items */
+} {% endcomment %}
+
+.categories a {
+    color:#15818E;
+    text-decoration: none;
+    font-size: 14px; 
+    font-weight:200px;
+    font-family:  'FontStyle6', Arial, sans-serif;
+}
+
+.categories a.highlight-red {
+    color: #d32f2f;
+}
+
+.categories a:hover {
+    text-decoration: underline; /* Optional: Add underline on hover for better visibility */
+}
+
+
+.categories a:hover {
+    text-decoration: underline; /* Add underline effect on hover */
+}
+
+.app-section {
+    background: linear-gradient(60deg,#7ECAB6,#15818E);
+    height: 230px;
+    /* padding: 40px 20px; */
+    text-align: center;
+    color: #333;
+    position: relative;
+
+}
+
+.app-section h2 {
+    font-size: 28px;
+   
+    color: #f5ffff;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    margin-left:-820px;
+}
+
+.app-links {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Reduced gap for medium size */
+    margin-bottom: 20px; /* Adjusted margin */
+}
+
+.app-links img {
+    transition: transform 0.3s ease;
+    margin-right: 450px; /* Reduced for medium size */
+    height: 225px; /* Adjusted height for medium size */
+    width: auto;   
+    margin-top: -130px; /* Adjusted for medium size */
+    position: relative;
+}
+
+.app-links1 img {
+    transition: transform 0.3s ease;
+    margin-right: 440px; /* Reduced for medium size */
+    height: 190px; /* Adjusted height for medium size */
+    width: 265px;   
+    margin-top: -155px; /* Adjusted for medium size */
+    position: relative;
+}
+
+.app-links img:hover {
+    transform: scale(1.05); /* Hover effect remains unchanged */
+}
+
+.app-links1 img:hover {
+    transform: scale(1.05); /* Hover effect remains unchanged */
+}
+
+
+.qr-code img {
+    width: auto;
+    height: 130px;
+    margin-top: -320px;
+    {% comment %} margin-right: 160px; {% endcomment %}
+    margin-left:-60px;
+}
+/* Heading */
+body.rtl .app-section h2 {
+    margin-left: 0;
+    margin-right: 20px;
+    text-align: right;
+}
+
+/* App Store image */
+body.rtl .app-links img {
+    margin-right: 0;
+    margin-left: 450px;
+}
+
+/* Google Play image */
+body.rtl .app-links1 img {
+    margin-right: 0;
+    margin-left: 470px;
+}
+body.rtl .view-more-link{
+    margin-left: 20px;
+}
+/* QR code */
+body.rtl .qr-code img {
+    margin-left: 0;
+    margin-right: -60px;
+}
+.jobh4{
+    margin-left:-45px;
+}
+
+
+.right-image {
+    position: absolute;
+    margin-top: -574px;
+    right: -40px;
+    transform: translateY(-20%);
+    display: flex;
+    height: 666px;
+}
+
+/* Arabic RTL */
+body.rtl .right-image {
+    right: auto;
+    left: -10px;
+}
+
+@media screen and (max-width: 768px) {
+    .categories {
+        display: none;
+    }
+
+    .app-section {
+        height: 200px; /* Adjust height for smaller screens */
+        padding: 20px 10px; /* Add padding for better spacing */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .app-section h2 {
+        font-size: 22px; /* Adjust font size */
+    }
+
+    .app-links {
+        display: flex;
+        flex-direction: column; /* Stack app links vertically */
+        align-items: center;
+        gap: 50px;
+    }
+
+    .app-links img{
+         width: 145px; /* Smaller app link images */
+        height: 140px;
+        margin-left: 260px;
+
+
+
+    }
+    .app-links1 img {
+        width: 170px; /* Smaller app link images */
+        height: 70px;
+        margin-left: 95px;
+        margin-bottom: -50px;
+    }
+
+    .qr-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .qr-code img {
+        width: 120px; /* Smaller QR code image */
+        height: auto;
+        margin: 0 auto; /* Center the QR code */
+        margin-top: -225px;
+        margin-left: 150px;
+    }
+
+    .right-image {
+        display:flex;
+        height: 200px;
+        margin-top: 21px;
+        right: 20px;
+       
+        
+    }
+}
+</style>
+
+  <style>
+    .listing-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .listing-item {
+        margin-bottom: 2rem;
+        margin-left:20px;
+        position: relative;
+    }
+
+    .listing-item img {
+    width: 320px; /* Adjusted width */
+    height: 100px; /* Adjusted height */
+    border-radius: 2.75rem; /* Rounded corners */
+    border: 50px ; /* Border with solid black color */
+    object-fit: cover;
+}
+
+
+
+    
+
+    .listing-price {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 1.125rem;
+        font-weight: bold;
+        color: #EB362D;
+        margin-top: 20px;
+    }
+
+    .listing-details {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 0.875rem;
+        color:#15818E;
+        font-size: 1rem;
+     
+    }
+    .listing-details2 {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 0.875rem;
+        color: #EB362D;
+        font-size: 1rem;
+     
+    }
+
+    .dots-container {
+        display: flex;
+        justify-content: center;
+        margin-top: -15px;
+    }
+
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: lightgray;
+        border-radius: 50%;
+        margin: 0 3px;
+        cursor: pointer;
+    }
+
+    .dot.active {
+        background-color:white;
+    }
+
+    .btn {
+    position: absolute;
+    top: 32%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+    color: white;
+    border: none;
+    height: 32px; /* Reduced height */
+    width: 1px; /* Further reduced width */
+    cursor: pointer;
+    border-radius: 08px; /* Same rounded edges */
+    z-index: 1;
+    display: flex; /* Enable flexbox for centering */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+   
+    transition: background 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+}
+
+/* backwards Button */
+.btn.backwards {
+    left: 10px; /* Adjusted for smaller button */
+    padding-bottom: 5px; /* Reduced padding */
+}
+
+.btn.backwards::before {
+    content: "<"; /* Left arrow */
+    font-size: 12px; /* Reduced size of the arrow */
+    color: white; /* White arrow */
+}
+
+/* forwards Button */
+.btn.forwards {
+    right: 10px; /* Adjusted for smaller button */
+    padding-bottom: 5px; /* Reduced padding */
+}
+
+.btn.forwards::before {
+    content: ">"; /* Right arrow */
+    font-size: 12px; /* Reduced size of the arrow */
+    color: white; /* White arrow */
+}
+
+/* Hover Effect */
+.btn:hover {
+    background: rgba(77, 73, 73, 0.9); /* Darker background on hover */
+    transform: translateY(-50%) scale(1.1); /* Slightly enlarge the button */
+}
+
+@media (min-width: 768px) {
+        
+        .listing-item img {
+            width: 200px; /* Adjusted width */
+            height: 155px; /* Adjusted height */
+            border-radius: 0.75rem; /* Rounded corners */
+            border: 20px ; /* Border with solid black color */
+            object-fit: cover;
+        }
+    }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .listing-item img {
+        max-width: 320px; /* Reduce size for smaller screens */
+        height: 220px;
+        border-radius: 1.5rem;
+        border: 1px solid rgb(250, 247, 247); /* Smaller border */
+        object-fit: cover;
+    }
+
+    .listing-title {
+        font-size: 1.1rem; /* Adjust title size */
+    }
+
+    .listing-price,
+    .listing-details,
+    .listing-details2 {
+        font-size: 0.9rem; /* Reduce font size slightly */
+    }
+
+    .btn {
+        width: 24px; /* Reduce button size */
+        height: 24px;
+    }
+
+    .btn.backwards {
+        left: 2px;
+    }
+
+    .btn.forwards {
+        right: 2px;
+    }
+}
+
+
+    
+</style>
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+{% if advertisement %}
+<section class="dual-ad-loop-box">
+    <style>
+        .dual-ad-loop-box {
+            width: 98%;
+            padding: 15px 0;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .dual-ad-loop-box .swiper-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 250px;
+            padding: 0; /* Further reduced padding */
+        }
+
+        .dual-ad-loop-box .swiper-wrapper {
+            align-items: center;
+        }
+
+        .dual-ad-loop-box .swiper-slide {
+            width: calc(50% - 3px) !important; /* Reduced gap to just 3px */
+            height: 230px;
+            transition: all 0.4s ease;
+            opacity: 1;
+        }
+
+        .dual-ad-loop-box .swiper-slide:not(.swiper-slide-visible) {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .dual-ad-loop-box .ad-box {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .dual-ad-loop-box .ad-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dual-ad-loop-box .ad-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .dual-ad-loop-box .swiper-container {
+                height: 220px;
+                padding: 0 5px; /* Minimal padding on mobile */
+            }
+
+            .dual-ad-loop-box .swiper-slide {
+                height: 200px;
+                width: calc(50% - 2px) !important; /* Nearly touching on mobile */
+            }
+        }
+    </style>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            {% for advertisement in advertisement %}
+            <div class="swiper-slide">
+                <div class="ad-box">
+                    <a href="{{ advertisement.url }}" target="_blank" {% if not advertisement.url %}onclick="return false;"{% endif %}>
+                        <img src="{{ advertisement.image.url }}" alt="Advertisement">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const swiper = new Swiper('.dual-ad-loop-box .swiper-container', {
+                slidesPerView: 2,
+                spaceBetween: 6, /* Very small gap - 6px */
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    320: {
+                        spaceBetween: 3 /* Almost touching on mobile */
+                    },
+                    768: {
+                        spaceBetween: 6 
+                    }
+                },
+                on: {
+                    init: function () {
+                        updateVisibleSlides(this);
+                    },
+                    slideChange: function () {
+                        updateVisibleSlides(this);
+                    }
+                }
+            });
+
+            function updateVisibleSlides(swiperInstance) {
+                const slides = swiperInstance.slides;
+                slides.forEach(slide => {
+                    slide.classList.remove('swiper-slide-visible');
+                });
+
+                const visibleIndices = [swiperInstance.activeIndex, swiperInstance.activeIndex + 1];
+                visibleIndices.forEach(index => {
+                    const slide = slides[index % slides.length];
+                    if (slide) {
+                        slide.classList.add('swiper-slide-visible');
+                    }
+                });
+            }
+        });
+    </script>
+</section>
+{% endif %}
+
+    <style>
+        .dual-offer-box .ad-box{
+            position:relative;
+        }
+
+        .offer-badge{
+            position:absolute;
+            top:10px;
+            right:10px;
+            background:#ff5722;
+            color:#fff;
+            font-size:12px;
+            font-weight:600;
+            padding:4px 10px;
+            border-radius:20px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.2);
+            display:flex;
+            align-items:center;
+            gap:4px;
+            z-index:2;
+        }
+
+        .offer-badge i{
+            font-size:11px;
+        }
+    </style>
+
+    <!-- Swiper Section for Offers -->
+<!-- <div class="swiper-container">
+    <div class="swiper-wrapper">
+        {% for offer in offers %}
+        <div class="swiper-slide">
+            <div class="ad-box" onclick="redirectToGallery({{ offer.id }})" style="cursor: pointer;">
+                {% if offer.image %}
+                <img src="{{ offer.image.url }}" alt="Offer {{ offer.id }}">
+                {% endif %}
+                <div class="offer-badge">
+                    <i class="fas fa-bolt"></i> Offer
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div> -->
+
+<script>
+    // Redirect to gallery page with offer ID in URL
+    function redirectToGallery(offerId) {
+        // Redirect to gallery page with offer parameter
+        window.location.href = '/offers/gallery/?offer=' + offerId;
+    }
+</script>
+
+
+
+<!-- Add this CSS to your existing styles or at the top of the template -->
+<style>
+    
+    .recently-viewed-section .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .recently-viewed-section .listing-item {
+        flex: 0 0 calc(20% - 16px);
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .recently-viewed-section .listing-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .recently-viewed-section .listing-item img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+    
+    .recently-viewed-section .listing-price {
+        padding: 10px 12px 5px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #EB362D;
+    }
+    
+    .recently-viewed-section .listing-details {
+        padding: 0 12px 8px;
+        font-size: 0.85rem;
+        color: #15818E;
+        font-weight: 500;
+    }
+    
+    .recently-viewed-section .listing-details2 {
+        padding: 0 12px 12px;
+        font-size: 0.75rem;
+        color: #999;
+    }
+    
+    .time-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 15px;
+        backdrop-filter: blur(5px);
+    }
+    
+    .empty-recently {
+        text-align: center;
+        padding: 50px;
+        color: #999;
+    }
+    
+    .empty-recently i {
+        font-size: 60px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    @media (max-width: 1200px) {
+        .recently-viewed-section .listing-item {
+            flex: 0 0 calc(25% - 15px);
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .recently-viewed-section .listing-item {
+            flex: 0 0 calc(33.333% - 14px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .recently-viewed-section .listing-item {
+            flex: 0 0 calc(50% - 10px);
+        }
+        
+        .recently-viewed-section .header-row {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+    }
+</style>
+{% if offers %}
+<div class="container mt-3 offers-section-simple">
+    <div class="header-row">
+        <div class="listing-title">Latest Offers</div>
+        <a href="{% url 'offers_gallery' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+
+    <div class="row">
+        {% for offer in offers %}
+        <div class="listing-item">
+            <a href="/offers/gallery/?offer={{ offer.id }}" target="_blank">
+                <div class="slider">
+                    {% if offer.image %}
+                    <img
+                        class="slide-image"
+                        src="{{ offer.image.url }}"
+                        alt="Offer {{ offer.id }}">
+                    {% endif %}
+
+                    <!-- Only badge -->
+                    <div class="offer-badge">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+<style>
+    /* Default: Hide all buttons in listing items */
+.listing-item .btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Show buttons on hover for all listing items */
+.listing-item:hover .btn {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Completely hide buttons and dots for Offers section */
+.offers-section-simple .listing-item .btn,
+.offers-section-simple .listing-item .backwards,
+.offers-section-simple .listing-item .forwards,
+.offers-section-simple .dots-container {
+    display: none !important;
+}
+.listing-price span {
+    font-family: 'FontStyle6', Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-left: 5px;
+    color: #EB362D;
+    margin-top: 20px;
+}
+</style>
+<!-- Recently Viewed Section -->
+{% if recently_viewed_items %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">
+            <i class="fas fa-clock"></i> Recently Viewed
+        </div>
+        <a href="{% url 'recently_viewed_page' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for item in recently_viewed_items|slice:":5" %}
+        <div class="listing-item" style="position: relative;">
+            <a href="{{ item.url }}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    {% if item.category|lower == 'numberplate' %}
+                        <!-- Number Plate Display -->
+                        {% with number_length=item.number|stringformat:"s"|length %}
+                        <div class="inner-box">
+                            <div class="numberplate-box" style="text-decoration: none;">
+                                <div class="plate {% if number_length > 4 %}small-number{% endif %}">
+                                    <div class="number">{{ item.number }}</div>
+                                    <div class="letters">
+                                        <span class="arabic">{{ item.letter_arabic }}</span>
+                                        <span class="english">{{ item.letter_english }}</span>
+                                    </div>
+                                    <div class="country">عُمان</div>
+                                </div>
+                                <div class="base"></div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    
+                    {% elif item.category|lower == 'mobilesim' %}
+                        <!-- MobileSIM Display -->
+                        <div class="simcard-wrapper">
+                            <div class="sim-plate">
+                                <div class="sim-number">{{ item.oman_number|default:item.number|default:'XXXXXXXX' }}</div>
+                                {% if item.provider %}
+                                    <div class="sim-provider">{{ item.provider }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="sim-base"></div>
+                        </div>
+                        {% if item.videos %}
+                        <div class="video-icon" style="position: absolute; top: 175px; left: 60px; background: rgba(0,0,0,0.6); border-radius: 40%; width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-video" style="color: white; font-size: 12px;"></i>
+                        </div>
+                        {% endif %}
+                    
+                    {% else %}
+                        <!-- Regular Image Display -->
+                        {% if item.images_json %}
+                            <img class="slide-image" src="{{ item.main_image }}" alt="{{ item.title }}" data-images='{{ item.images_json|safe }}'/>
+                        {% else %}
+                            <img class="slide-image" src="{{ item.main_image }}" alt="{{ item.title }}" data-images='[{"image": "{{ item.main_image }}"}]'/>
+                        {% endif %}
+                        <div class="dots-container"></div>
+                    {% endif %}
+                </div>
+            </a>
+
+            <!-- Navigation Buttons - Only show for items with images (not numberplate or mobilesim) -->
+            {% if item.category|lower != 'numberplate' and item.category|lower != 'mobilesim' %}
+                 <button class="btn backwards" onclick="navigateSlide(this, -1)">
+        <span class="material-icons-outlined"></span>
+    </button>
+    <button class="btn forwards" onclick="navigateSlide(this, 1)">
+        <span class="material-icons-outlined"></span>
+    </button>
+            {% endif %}
+
+            <!-- Price -->
+            <div class="listing-price">
+                <span style="color: #EB362D; font-size: 1em;">{{ item.price|floatformat:0|intcomma }}</span>
+                <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+                {% if item.listing_type == "rent" and item.rental_period %}
+                    - {{ item.rental_period|capfirst }}
+                {% endif %}
+            </div>
+
+            <!-- Item Details -->
+            <div class="listing-details">
+                {% if item.category|lower == 'numberplate' %}
+                    {{ item.number }} {{ item.letter_arabic }} {{ item.letter_english }}
+                
+                {% elif item.category|lower == 'mobilesim' %}
+                    {% if item.title %}
+                        {{ item.title|truncatechars:15|capfirst }}
+                    {% else %}
+                        {{ item.oman_number|default:item.number|default:'VIP Number' }}
+                    {% endif %}
+                
+                {% elif item.category == 'Automobile' or item.category == 'Motorcycle' or item.make %}
+                    {% if item.name %}{{ item.name }}, {% endif %}
+                    {% if item.model %}{{ item.model }}, {% endif %}
+                    {% if item.make %}{{ item.make }}{% endif %}
+                    {% if not item.name and not item.model and not item.make %}
+                        {{ item.title|truncatechars:35 }}
+                    {% endif %}
+                
+                {% elif item.category == 'Villa' or item.category == 'Apartment' or item.category == 'Land' or item.bedrooms %}
+                    {% if item.bedrooms %}{{ item.bedrooms }} Bed{% endif %}
+                    {% if item.bathrooms %}, {{ item.bathrooms }} Bath{% endif %}
+                    {% if item.area %}, {{ item.area }} m²{% endif %}
+                    {% if not item.bedrooms and not item.bathrooms %}
+                        {{ item.title|truncatechars:35 }}
+                    {% endif %}
+                
+                {% elif item.category == 'Mobile' or item.category == 'Tablet' or item.brand %}
+                    {% if item.brand %}{{ item.brand }}{% else %}{{ item.title|truncatechars:35 }}{% endif %}
+                
+                {% else %}
+                    {{ item.title|truncatechars:35|title }}
+                {% endif %}
+            </div>
+
+            <!-- Location -->
+            <div class="listing-details2">
+                {% if item.category|lower == 'numberplate' %}
+                    {% if item.city %}{{ item.city }}{% endif %}
+                
+                {% elif item.category|lower == 'mobilesim' %}
+                    {% if item.city %}{{ item.city }}{% endif %}
+                    {% if item.city and item.governate_name %}, {% endif %}
+                    {% if item.governate_name %}{{ item.governate_name }}{% endif %}
+                
+                {% elif item.category == 'Automobile' or item.category == 'Motorcycle' or item.make %}
+                    {% if item.year %}{{ item.year }}{% endif %}
+                    {% if item.regional_spec %}, {{ item.regional_spec|title }}{% endif %}
+                    {% if item.city %}, {{ item.city }}{% endif %}
+                
+                {% else %}
+                    {{ item.city }}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+function clearRecentlyViewed() {
+    if(confirm('Are you sure you want to clear your recently viewed history?')) {
+        fetch('{% url "clear_recently_viewed" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+</script>
+
+<!-- 3D Number Plate CSS -->
+<style>
+    .simcard-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+   
+    /* height: 10%; */
+    min-height: 120px;   /* reduced to match smaller plate */
+    border-radius: 12px;
+}
+
+/* SIM Plate Style - now using number plate dimensions */
+.sim-plate {
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* changed from margin-left hack to centered */
+    background: linear-gradient(135deg, #15818E 0%, #0E5C66 100%);
+    border: 2px solid #22221f;   /* slightly thinner border to match scale */
+    border-radius: 6px;          /* same as number plate */
+    padding: 0 10px;  
+      margin-top: 90px;           /* same as number plate */
+    width: 180px;                /* matches number plate */
+    height: 45px;                /* matches number plate */
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    animation: floating 2s infinite alternate ease-in-out;
+}
+
+.sim-plate .sim-number {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;             /* reduced from 22px to fit smaller plate */
+    font-weight: bold;
+    color: white;
+    letter-spacing: 2px;         /* reduced from 3px */
+    font-family: monospace;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sim-base {
+    width: 60px;                 /* matches number plate's base width */
+    height: 6px;                 /* matches number plate's base height */
+    background: rgba(0,0,0,0.2);
+    border-radius: 50%;
+    margin-top: 6px;             /* adjusted spacing */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Keep the same floating animation (slightly reduced movement) */
+@keyframes floating {
+    from { transform: translateY(0); }
+    to { transform: translateY(4px); }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .sim-plate {
+        width: 140px;            /* proportionally smaller on tablet */
+        height: 38px;
+        padding: 0 6px;
+    }
+    
+    .sim-plate .sim-number {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+    
+    .sim-base {
+        width: 45px;
+        height: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sim-plate {
+        width: 120px;
+        height: 34px;
+        padding: 0 4px;
+    }
+    
+    .sim-plate .sim-number {
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+    
+    .sim-base {
+        width: 38px;
+        height: 3px;
+    }
+}
+
+/* Number Plate Box */
+.numberplate-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 90px;
+}
+
+/* Number Plate */
+.plate {
+    display: flex;
+    align-items: center;
+    background: #FFD700;  /* golden plate */
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 0 10px;
+    width: 180px;
+    height: 45px;
+    font-weight: bold;
+    color: #000;       /* black text */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: floating 2s infinite alternate ease-in-out;
+    text-decoration: none;
+}
+
+/* Shrink number font if more than 4 digits */
+.plate.small-number .number {
+    font-size: 14px !important;
+}
+
+/* Plate Sections */
+.plate .number,
+.plate .letters,
+.plate .country {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #000;
+    text-decoration: none;
+}
+
+.plate .number { font-size: 18px; }           /* default number size */
+.letters .arabic { font-size: 14px; direction: rtl; font-weight: bold; }
+.letters .english { font-size: 12px; font-weight: bold; margin-top: 2px; }
+.plate .country { font-size: 12px; font-weight: bold; position: relative; }
+
+/* Vertical separator lines */
+.plate .country::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 20%;
+    height: 60%;
+    width: 1.5px;
+    background-color: #000;
+}
+.plate::before {
+    content: '';
+    position: absolute;
+    left: calc(33.33% + 10px);
+    top: 20%;
+    height: 60%;
+    width: 1.5px;
+    background-color: #000;
+}
+
+/* Base */
+.base {
+    width: 60px;
+    height: 6px;
+    background: #ddd;
+    border-radius: 50%;
+    margin-top: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Floating Animation */
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-3px); }
+}
+</style>
+<style>
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .listing-title {
+        margin-bottom: 0; /* Override any existing bottom margin */
+    }
+    
+    .view-more-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-right:0px;
+         background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size:14px;
+    display: inline-block; /* Allows padding and margin */
+    text-align: center; /* Centers text horizontally */
+    line-height: 20px; /* Adjust this value to match the button height for vertical centering */
+    }
+    
+    .view-more-link i {
+        font-size: 1.1em;
+        color: #ffffff;
+        transition: transform 0.3s ease;
+    }
+    .view-more-link:hover{
+  background: #0d1927;
+  color: white;
+  box-shadow: 0px 10px 30px 0px rgba(13,25,39,0.3);
+  text-decoration: none;
+}
+
+.view-more-link:before{
+  position: absolute;
+  content: '';
+  width: 0%;
+  height: 100%;
+  background: #0d1927;
+  border-radius: 30px;
+  left: 0px;
+  top: 0px;
+  z-index: -1;
+  transition: all 500ms ease;
+  text-decoration: none;
+}
+
+
+     
+    /* Responsive for mobile */
+    @media (max-width: 576px) {
+        .header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+<!-- Motors Section -->
+{% with motor_ads=motor_ads %}
+    {% with motor_count=motor_ads|length %}
+        {% if motor_count > 0 %}
+            <div class="container mt-3">
+                <div class="header-row">
+                    <div class="listing-title">Popular in Motors</div>
+                    <a href="{% url 'index2' %}" class="view-more-link">
+                        View More <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+                <div class="row">
+                    {% for ad in motor_ads %}
+                    <div class="listing-item">
+                        <a href="{{ ad.url }}" target="_blank">
+                            <div class="slider" data-current-index="0">
+                                <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide" data-images='{{ ad.images_json|safe }}'/>
+                                <div class="dots-container"></div>
+                            </div>
+                        </a>
+                        <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        
+                        <div class="listing-price">{{ ad.data.price|floatformat:0|intcomma }}<span>OMR</span></div>
+                        <div class="listing-details">
+                            {% if ad.data.name %}
+                                {{ ad.data.name }}
+                            {% elif ad.data.model %}
+                                {{ ad.data.model }}
+                            {% endif %}
+                            {% if ad.data.make %}
+                                , {{ ad.data.make }}
+                            {% endif %}
+                        </div>
+                        <div class="listing-details2">
+                            {{ ad.data.year }}{% if ad.data.regional_spec %}, {{ ad.data.regional_spec|format_regional_specs:"car" }}{% endif %}{% if ad.data.city.name %}, {{ ad.data.city.name|truncatechars:10 }}{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endwith %}
+
+<!-- Real Estate Section -->
+{% with property_ads=property_ads %}
+    {% with property_count=property_ads|length %}
+        {% if property_count > 0 %}
+            <div class="container mt-3">
+                <div class="header-row">
+                    <div class="listing-title">Popular in Real Estate</div>
+                    <a href="{% url 'index3' %}" class="view-more-link">
+                        View More <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+                
+                <div class="row">
+                    {% for ad in property_ads %}
+                    <div class="listing-item">
+                        <a href="{{ ad.url }}" target="_blank">
+                            <div class="slider" data-current-index="0">
+                                <img
+                                    class="slide-image"
+                                    src="{{ ad.main_image_url }}"
+                                    alt="slide"
+                                    data-images='{{ ad.images_json|safe }}'/>
+                                <div class="dots-container"></div>
+                            </div>
+                        </a>
+                        <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        
+                        <div class="listing-price">{{ ad.data.price|floatformat:0|intcomma }}<span>OMR</span></div>
+                        <div class="listing-details">
+                            {% if ad.data.bedrooms and ad.data.bathrooms %}
+                                {{ ad.data.bedrooms }} Beds - {{ ad.data.bathrooms }} Baths
+                            {% else %}
+                                {{ ad.data.property_title|capfirst|truncatechars:17 }},
+                                {{ ad.data.get_zoned_for_display }}
+                            {% endif %}
+                        </div>
+
+                        <div class="listing-details2">
+                            {{ ad.data.city }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endwith %}
+
+<!-- Electronics/Mobiles Section -->
+{% with electronics_ads=electronics_ads %}
+    {% with electronics_count=electronics_ads|length %}
+        {% if electronics_count > 0 %}
+            <div class="container mt-3">
+                <div class="header-row">
+                    <div class="listing-title">Popular in Mobiles & Tablets</div>
+                    <a href="{% url 'index6' %}" class="view-more-link">
+                        View More <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+                <div class="row">
+                    {% for ad in electronics_ads %}
+                    <div class="listing-item">
+                        <a href="{{ ad.url }}" target="_blank">
+                            <div class="slider" data-current-index="0">
+                                <img
+                                    class="slide-image"
+                                    src="{{ ad.main_image_url }}"
+                                    alt="slide"
+                                    data-images='{{ ad.images_json|safe }}'/>
+                                <div class="dots-container"></div>
+                            </div>
+                        </a>
+                        <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        
+                        <div class="listing-price">{{ ad.data.price|floatformat:0|intcomma }}<span>OMR</span></div>
+                        <div class="listing-details">
+                            {{ ad.data.brand }}, {{ ad.data.model_number }}
+                        </div>
+                        <div class="listing-details2">
+                            {{ ad.data.city }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endwith %}
+
+<!-- Services Section -->
+{% with services_ads=services_ads %}
+    {% with services_count=services_ads|length %}
+        {% if services_count > 0 %}
+            <div class="container mt-3">
+                <div class="header-row">
+                    <div class="listing-title">Popular in Services</div>
+                    <a href="{% url 'index4' %}" class="view-more-link">
+                        View More <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+                <div class="row">
+                    {% for ad in services_ads %}
+                    <div class="listing-item">
+                        <a href="{{ ad.url }}">
+                            <div class="slider" data-current-index="0">
+                                <img
+                                    class="slide-image"
+                                    src="{{ ad.main_image_url }}"
+                                    alt="slide"
+                                    data-images='{{ ad.images_json|safe }}'/>
+                                <div class="dots-container"></div>
+                            </div>
+                        </a>
+                        <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        
+                        {% if ad.data.price %}
+                            <div class="listing-price">
+                                {{ ad.data.price|floatformat:0|intcomma }}<span>OMR</span>
+                            </div>
+                        {% else %}
+                            <div class="listing-price">Price on Request</div>
+                        {% endif %}
+                        
+                        <div class="listing-details">
+                            {% if ad.data.service_title %}
+                                {{ ad.data.service_title|truncatechars:20 }}
+                            {% elif ad.data.title %}
+                                {{ ad.data.title|truncatechars:20 }}
+                            {% elif ad.data.name %}
+                                {{ ad.data.name|truncatechars:20 }}
+                            {% else %}
+                                Service #{{ ad.data.id }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="listing-details2">
+                            {% if ad.data.city %}
+                                {{ ad.data.city }}
+                            {% else %}
+                                Oman
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endwith %}
+
+<!-- Other Categories Section -->
+{% with other_ads=other_ads %}
+    {% with other_count=other_ads|length %}
+        {% if other_count > 0 %}
+            <div class="container mt-3">
+                <div class="header-row">
+                    <div class="listing-title">Popular in Other Categories</div>
+                    <a href="{% url 'index5' %}" class="view-more-link">
+                        View More <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+                <div class="row">
+                    {% for ad in other_ads %}
+                    <div class="listing-item">
+                        <a href="{{ ad.url }}">
+                            <div class="slider" data-current-index="0">
+                                <img
+                                    class="slide-image"
+                                    src="{{ ad.main_image_url }}"
+                                    alt="slide"
+                                    data-images='{{ ad.images_json|safe }}'/>
+                                <div class="dots-container"></div>
+                            </div>
+                        </a>
+                        <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                            <span class="material-icons-outlined"></span>
+                        </button>
+                        
+                        <div class="listing-price">{{ ad.data.price|floatformat:0|intcomma }}<span>OMR</span></div>
+                        <div class="listing-details">
+                            {% if ad.data.brand %}
+                                {{ ad.data.brand|title }},
+                            {% endif %}
+                            {{ ad.data.title|default:ad.data.description|truncatechars:20 }}
+                        </div>
+                        <div class="listing-details2">
+                            {{ ad.data.city }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% endwith %}
+{% endwith %}
+<script>
+    // Function to navigate between images with LOOP functionality
+    function navigateSlide(button, direction) {
+        const slider = button.closest('.listing-item').querySelector('.slider');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+        let currentIndex = parseInt(slider.getAttribute('data-current-index'));
+        
+        // MODIFIED: Calculate new index with LOOP
+        let newIndex = (currentIndex + direction + images.length) % images.length;
+
+        // Update the current image
+        slider.querySelector('img').src = images[newIndex].image;
+        slider.setAttribute('data-current-index', newIndex);
+
+        // Update dots
+        updateDots(slider, newIndex);
+        
+        // Dispatch slide changed event
+        dispatchSlideChanged(slider);
+    }
+
+    // Function to update dots for the slider
+    function updateDots(slider, currentIndex) {
+        const dotsContainer = slider.closest('.listing-item').querySelector('.dots-container');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+
+        // Clear existing dots
+        dotsContainer.innerHTML = '';
+
+        // Create new dots
+        images.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (index === currentIndex ? ' active' : '');
+            dot.onclick = () => {
+                // Update the current image
+                slider.querySelector('img').src = images[index].image;
+                slider.setAttribute('data-current-index', index);
+
+                // Update dots
+                updateDots(slider, index);
+                
+                // Dispatch slide changed event
+                dispatchSlideChanged(slider);
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // Initialize sliders and hover effects
+    document.querySelectorAll('.listing-item').forEach((item) => {
+        const slider = item.querySelector('.slider');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+        
+        // Initialize dots
+        updateDots(slider, 0);
+
+        // Hide buttons by default
+        const backwardsBtn = item.querySelector('.backwards');
+        const forwardsBtn = item.querySelector('.forwards');
+        backwardsBtn.style.opacity = '0';
+        forwardsBtn.style.opacity = '0';
+        backwardsBtn.style.pointerEvents = 'none';
+        forwardsBtn.style.pointerEvents = 'none';
+
+        // Only show navigation if there are multiple images
+        if (images.length > 1) {
+            // Mouse enter event - MODIFIED for loop
+            item.addEventListener('mouseenter', function() {
+                // MODIFIED: For loop functionality, always show both buttons
+                backwardsBtn.style.opacity = '1';
+                forwardsBtn.style.opacity = '1';
+                backwardsBtn.style.pointerEvents = 'auto';
+                forwardsBtn.style.pointerEvents = 'auto';
+            });
+
+            // Mouse leave event
+            item.addEventListener('mouseleave', function() {
+                backwardsBtn.style.opacity = '0';
+                forwardsBtn.style.opacity = '0';
+                backwardsBtn.style.pointerEvents = 'none';
+                forwardsBtn.style.pointerEvents = 'none';
+            });
+
+            // Update button visibility when navigating - MODIFIED for loop
+            slider.addEventListener('slideChanged', function() {
+                // MODIFIED: For loop functionality, always show both buttons when hovering
+                if (item.matches(':hover')) {
+                    backwardsBtn.style.opacity = '1';
+                    forwardsBtn.style.opacity = '1';
+                    backwardsBtn.style.pointerEvents = 'auto';
+                    forwardsBtn.style.pointerEvents = 'auto';
+                }
+            });
+        } else {
+            // For single-image items, hide navigation completely
+            backwardsBtn.style.display = 'none';
+            forwardsBtn.style.display = 'none';
+        }
+    });
+
+    // Dispatch custom event when slide changes
+    function dispatchSlideChanged(slider) {
+        slider.dispatchEvent(new CustomEvent('slideChanged'));
+    }
+</script>
+<script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+
+    
+        {% include 'footer.html' %}

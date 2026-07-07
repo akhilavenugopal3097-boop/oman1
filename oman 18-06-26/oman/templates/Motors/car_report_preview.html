@@ -1,0 +1,450 @@
+{% load static %}
+{% include "header.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Payment - Car History Report</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      
+        .payment-container {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .payment-card {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+        }
+
+        /* Report Preview Section */
+        .report-preview {
+            background: #E35D20;
+            padding: 40px;
+            color: rgb(255, 255, 255);
+        }
+
+        .preview-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .vehicle-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .vin-number {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .preview-sections {
+            margin-bottom: 30px;
+        }
+
+        .section-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .section-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .preview-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        /* Payment Section */
+        .payment-section {
+            padding: 40px;
+            background: var(--white);
+        }
+
+        .payment-header {
+            margin-bottom: 30px;
+        }
+
+        .payment-header h2 {
+            font-size: 24px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .payment-header p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .price-tag {
+            background: #E35D20;
+            color: var(--white);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .price-amount {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .price-period {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        #card-element {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        #card-element.StripeElement--focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(227,93,32,0.1);
+        }
+
+        #card-element.StripeElement--invalid {
+            border-color: var(--danger);
+        }
+
+        #card-errors {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: #E35D20;
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pay-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success Animation */
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .payment-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .report-preview {
+                padding: 30px;
+            }
+            
+            .payment-section {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .payment-section {
+                padding: 25px;
+            }
+            
+            .price-amount {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Processing your payment...</div>
+        <div style="color: var(--muted); margin-top: 10px;">Please don't close this window</div>
+    </div>
+
+    <!-- Success Overlay (shown briefly before download) -->
+    <div id="successOverlay" class="loading-overlay" style="background: rgba(40,167,69,0.95);">
+        <div class="success-checkmark">✓</div>
+        <div class="loading-text" style="color: white;">Payment Successful!</div>
+        <div style="color: white; margin-top: 10px;">Preparing your report for download...</div>
+    </div>
+
+    <div class="payment-container">
+        <div class="payment-card">
+            <!-- Left Side - Report Preview -->
+            <div class="report-preview">
+                <span class="preview-badge">🔍 REPORT PREVIEW</span>
+                
+                <div class="vehicle-title">
+                    {{ preview_data.vehicle_summary }}
+                </div>
+                
+                <div class="vin-number">
+                    VIN: {{ vin }}
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 15px;">Your report includes:</div>
+                    <div class="preview-sections">
+                        {% for section in preview_data.sections %}
+                        <div class="section-item">
+                            <div class="section-icon">
+                                {% if forloop.counter == 1 %}🚗
+                                {% elif forloop.counter == 2 %}💥
+                                {% elif forloop.counter == 3 %}🔧
+                                {% elif forloop.counter == 4 %}👤
+                                {% elif forloop.counter == 5 %}🚓
+                                {% elif forloop.counter == 6 %}⚠️
+                                {% elif forloop.counter == 7 %}💰
+                                {% else %}📋
+                                {% endif %}
+                            </div>
+                            <div class="section-name">{{ section }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="preview-footer">
+                    <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                        <span>✓ Instant Delivery</span>
+                        <span>✓ PDF Format</span>
+                    </div>
+                    <div class="trust-badge">
+                        <span>🔒 256-bit SSL Security</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Payment Form -->
+            <div class="payment-section">
+                <div class="payment-header">
+                    <h2>Complete Your Purchase</h2>
+                    <p>Get instant access to the full vehicle history report</p>
+                </div>
+
+                <div class="price-tag">
+                    <div class="price-amount">${{ amount }}</div>
+                    <div class="price-period">One-time payment • Instant download</div>
+                </div>
+
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label class="form-label">Card Information</label>
+                        <div id="card-element">
+                            <!-- Stripe Card Element -->
+                        </div>
+                        <div id="card-errors" role="alert"></div>
+                    </div>
+
+                    <button id="submit-btn" class="pay-btn" type="submit">
+                        <span>💳</span>
+                        Pay ${{ amount }} & Download Report
+                    </button>
+
+                    <div class="secure-badge">
+                        <span>🔒</span>
+                        <span>Secure payment powered by Stripe</span>
+                    </div>
+                </form>
+
+                <a href="{% url 'car_reports' %}" class="back-link">
+                    ← Check another VIN
+                </a>
+            </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 30px; color: white; opacity: 0.9;">
+            <span>✓ Money-back guarantee</span>
+            <span>✓ Instant delivery</span>
+            <span>✓ Verified reports</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('{{ stripe_public_key }}');
+        const elements = stripe.elements();
+        
+        // Custom styling for Stripe Elements
+        const style = {
+            base: {
+                color: '#1a1a1a',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                },
+                ':-webkit-autofill': {
+                    color: '#fce883'
+                }
+            },
+            invalid: {
+                color: '#dc3545',
+                iconColor: '#dc3545'
+            }
+        };

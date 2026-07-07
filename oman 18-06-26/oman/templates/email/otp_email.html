@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification Code | ZOQO DEAL</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #0a2540, #1f6392);
+      padding: 32px 28px;
+      text-align: center;
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin: 0;
+    }
+    .header p {
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .content {
+      padding: 36px 32px 32px;
+    }
+    .greeting {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a2c3e;
+      margin-bottom: 12px;
+    }
+    .message {
+      color: #4a5b6e;
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+    .otp-box {
+      background: #f0f9ff;
+      border-left: 4px solid #1f6392;
+      padding: 24px 20px;
+      border-radius: 18px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .otp-code {
+      font-family: 'Courier New', 'SF Mono', monospace;
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: 10px;
+      color: #0a5a8c;
+      background: white;
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 60px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin: 10px 0;
+    }
+    .expiry {
+      font-size: 13px;
+      color: #d9534f;
+      background: #fff5f5;
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 30px;
+      margin-top: 10px;
+    }
+    .footer {
+      background: #f8fafc;
+      padding: 20px 32px;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      font-size: 12px;
+      color: #7e8c9e;
+    }
+    .footer a {
+      color: #1f6392;
+      text-decoration: none;
+    }
+    @media (max-width: 560px) {
+      .otp-code { font-size: 32px; letter-spacing: 6px; padding: 10px 18px; }
+      .content { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔐 Verification Code</h1>
+      <p>Secure access to your ZOQO DEAL account</p>
+    </div>
+    <div class="content">
+      <div class="greeting">Hello,</div>
+      <div class="message">
+        You requested a verification code to access your ZOQO DEAL account. Use the code below to complete your action.
+      </div>
+      <div class="otp-box">
+        <div style="font-size: 14px; color: #4a627a; margin-bottom: 6px;">Your One-Time Password</div>
+        <div class="otp-code">{{ otp }}</div>
+        <div class="expiry">⏱️ This code expires in 5 minutes</div>
+      </div>
+      <div class="message" style="font-size: 13px; margin-top: 20px;">
+        If you didn't request this, please ignore this email or contact support.
+      </div>
+    </div>
+    <div class="footer">
+      &copy; {% now "Y" %} ZOQO DEAL. All rights reserved.<br>
+      Need help? <a href="#">Contact Support</a>
+    </div>
+  </div>
+</body>
+</html>

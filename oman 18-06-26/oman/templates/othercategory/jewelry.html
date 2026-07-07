@@ -1,0 +1,4067 @@
+{% load static %}
+{% load automobile_filters %}
+{% load static %}
+
+
+            {% include 'header2.html' %}
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }function showCitiesDropdown() {
+        var region = document.getElementById('region-dropdown').value;
+        var citiesDropdown = document.getElementById('cities-dropdown');
+        var citiesList = document.getElementById('cities-list');
+        
+        var cities = {
+            'MS': ['Muscat City', 'Qurum', 'Seeb'],
+            'DH': ['Salalah', 'Mirbat', 'Taqah'],
+            'BT': ['Sohar', 'Barka', 'Ibri'],
+            'DA': ['Nizwa', 'Izki', 'Manah'],
+            'SH': ['Sur', 'Ibra', 'Bahla'],
+            'BR': ['Buraimi', 'Mahda'],
+            'ZU': ['Salalah', 'Mirbat'],
+            'DZ': ['Khasab', 'Diba'],
+            'WT': ['Haima', 'Shinas']
+        };
+    
+        citiesList.innerHTML = ''; // Clear previous cities
+    
+        if (region && cities[region]) {
+            cities[region].forEach(function(city) {
+                var cityOption = document.createElement('div');
+                cityOption.textContent = city;
+                cityOption.onclick = function() {
+                    alert('You selected ' + city + '!');
+                    citiesDropdown.style.display = 'none'; // Hide cities dropdown after selection
+                };
+                citiesList.appendChild(cityOption);
+            });
+    
+            citiesDropdown.style.display = 'block'; // Show cities dropdown
+        } else {
+            citiesDropdown.style.display = 'none'; // Hide cities dropdown if no region is selected
+        }
+    }
+    
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            {% include 'search.html' %}
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 52px;
+        border: 1px solid #ccc;
+        width: 36%;
+        margin-top: 5px ;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon5{
+        position: absolute;
+        left: 14px !important;
+        height: 20px !important;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+      
+<style>
+.price-container,
+.condition-container,
+.location-list-container,
+.usage-container,
+.additional-filters-container {
+     padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+    margin-left: -10px;
+    z-index: 2;
+    display: none;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.price-container {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    font-size:14px;
+    gap: 5px;
+}
+
+.price-inputs label {
+    font-weight: 500;
+}
+
+.price-inputs input {
+    padding: 5px 5px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+}
+
+.location-list-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    width:345px;
+    margin-left: -10px;
+    margin-top:56px;
+     z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+     width: 260px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-left:-40px;
+    z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+    position: sticky;
+    bottom: -12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.additional-filters-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.additional-filters-inputs input,
+.additional-filters-inputs select {
+    padding: 5px;
+    border-radius: 25px;
+    border: 1px solid #aaa9a9;
+    width: 100px;
+    flex: 1;
+}
+
+/* Normal Checkbox Styles for Location Filter */
+.location-checkbox {
+    position: relative;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+.location-checkbox:checked + .location-label {
+    background-color: #e8f4fd;
+    color: #E35D20;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color:#E35D20;
+    border-color: #E35D20;
+}
+
+/* Chevron for navigation levels */
+.location-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+}
+
+.oval-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.oval-checkbox,
+.oval-radio {
+    position: fixed;   /* 🔥 key fix */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.oval-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.oval-checkbox:checked + .oval-button,
+.oval-radio:checked + .oval-button {
+    background-color: #E35D20;
+    color: white;
+    border-color: #E35D20;
+}
+
+.oval-button:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    background-color:#E35D20;
+}
+
+.dropdown-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icons2 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+    z-index: 2038;
+    transition: all 0.3s ease;
+}
+
+.filter-form.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    
+    padding: 15px 0; /* Reduced padding when sticky */
+    animation: slideDown 0.3s ease;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    border: 1px solid #5d5b5b;
+    padding: 10px;
+    border-radius: 20px;
+    width: 1120px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+}
+.filter-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width:5px;
+    position:relative;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    margin-bottom: -5px;
+}
+
+
+
+.input-value {
+    font-size: 14px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #555555;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+#region_search, #city_search {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.regions-lists {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.region-item {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.city-list {
+    list-style: none;
+    padding-left: 15px;
+    display: none;
+}
+
+.city-list li {
+    cursor: pointer;
+    color: #333;
+}
+
+#back-to-oman,
+#clear-selected-city {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#clear-selected-city {
+    margin-top: 10px;
+}
+
+#back-to-oman:hover {
+    background: #E35D20;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.loading-indicator {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+.price-label, .year-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Normal checkbox styling */
+.location-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.location-checkbox + .location-label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #E35D20;
+    border-color: #E35D20;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+}
+
+.location-checkbox:checked + .location-label {
+    color: #E35D20;
+    font-weight: 500;
+}
+
+/* Fallback for native checkboxes */
+input[type="checkbox"]:checked {
+    accent-color: #E35D20;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+/* Miscellaneous */
+.loading {
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.empty {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    padding: 10px;
+    text-align: center;
+    color: red;
+}
+
+.location-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.location-lists {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.location-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.location-item {
+  cursor: pointer;
+}
+
+.location-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.hidden-checkbox:checked + .oval-button {
+  background-color: #E35D20;
+  color: white;
+  border-color: #E35D20;
+}
+
+.select-all-container {
+  padding: 5px 15px;
+  margin-bottom: 5px;
+}
+
+.location-list-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.location-item {
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.nested-list {
+  margin-left: 20px;
+  padding-left: 10px;
+  display: none;
+}
+
+.label-item {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 3px 0;
+}
+
+.nested-label {
+  display: block;
+  background-color: #f0f0f0;
+  text-transform: uppercase; 
+  padding: 3px 8px;
+  margin: 5px 0 3px 5px;
+  border-radius: 4px;
+}
+
+#select-all-governates + label {
+  background: none;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+.all {
+    margin-left: 7px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+</style>
+
+
+<div class="auto-container">
+    <div class="row clearfix">
+        <form action="{% url 'jewelry' %}" method="GET" autocomplete="off">
+            <div class="filter-form">
+                <div class="filter-box">
+<!-- Location Filter Trigger -->
+<div class="filter-item" id="toggle-location-filter">
+  <label for="location" class="mx-3">Location</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" name="location" id="selected-location" class="input-value" style="margin-left:15px;" placeholder="Select Location" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Location Dropdown -->
+<div id="location-list-container" class="location-list-container" style="display:none;">
+  <!-- Search Box -->
+  <div class="location-search-container">
+    <input type="text" id="location-search" placeholder="Search for governate, district, or city..." class="location-search-input">
+    <i class="fas fa-search location-search-icon"></i>
+  </div>
+  
+  <ul id="location-list">
+    <!-- Governate label with background -->
+    <li class="label-item governate-label">GOVERNORATE</li>
+    <!-- All checkbox without background -->
+    <li class="all">
+      <input type="checkbox" id="select-all-governates">
+      <label for="select-all-governates">All</label>
+    </li>
+
+    {% for governate in governates %}
+    <li class="location-item" data-id="{{ governate.id }}" data-type="governate" data-name="{{ governate.name|lower }}">
+      <div class="location-item-header">
+        <input type="checkbox" name="governate" value="{{ governate.id }}">
+        <label>{{ governate.name }}</label>
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+      </div>
+      <ul class="nested-list"></ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+   <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-location-filter">Clear</button>
+  </div>
+</div>
+
+<style>
+.location-search-container {
+  position: relative;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-search-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.location-search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.district-dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.district-dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Search related styles */
+.search-hidden {
+  display: none !important;
+}
+
+.location-item, .nested-label, .label-item, .all {
+  transition: all 0.3s ease;
+}
+
+.nested-list {
+  transition: all 0.3s ease;
+}
+
+.loading-nested {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.search-highlight {
+  background-color: #fff3cd;
+  font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleLocation = document.getElementById('toggle-location-filter');
+  const locationContainer = document.getElementById('location-list-container');
+  const locationList = document.getElementById('location-list');
+  const selectAllGov = document.getElementById('select-all-governates');
+  const clearBtn = document.getElementById('clear-location-filter');
+  const selectedInput = document.getElementById('selected-location');
+  const locationSearch = document.getElementById('location-search');
+
+  // Store fetched data to avoid duplicate API calls
+  const fetchedDistricts = new Map();
+  const fetchedCities = new Map();
+
+  // Toggle dropdown
+  toggleLocation.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const wasVisible = locationContainer.style.display === 'block';
+    closeAllFilterContainers();
+    locationContainer.style.display = wasVisible ? 'none' : 'block';
+    
+    // Focus on search when dropdown opens
+    if (locationContainer.style.display === 'block') {
+      setTimeout(() => {
+        locationSearch.focus();
+        locationSearch.select();
+      }, 100);
+    }
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#location-list-container') && !e.target.closest('#toggle-location-filter')) {
+      locationContainer.style.display = 'none';
+    }
+  });
+
+  // Search functionality - SIMPLIFIED and WORKING version
+  locationSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    performSearch(searchTerm);
+  });
+
+  // Main search function
+  async function performSearch(searchTerm) {
+    const allItems = locationList.querySelectorAll('.location-item, .nested-label, .label-item, .all');
+    
+    if (!searchTerm) {
+      // Reset everything when search is cleared
+      allItems.forEach(item => {
+        item.classList.remove('search-hidden');
+        // Reset expanded state for non-user-expanded items
+        if (item.classList.contains('location-item') && !item.classList.contains('user-expanded')) {
+          const nestedList = item.querySelector('.nested-list');
+          const arrow = item.querySelector('.dropdown-arrow, .district-dropdown-arrow');
+          if (nestedList && nestedList.children.length > 0) {
+            nestedList.style.display = 'none';
+            if (arrow) arrow.classList.remove('rotated');
+          }
+        }
+      });
+      return;
+    }
+
+    // First hide everything
+    allItems.forEach(item => {
+      item.classList.add('search-hidden');
+    });
+
+    const governateItems = locationList.querySelectorAll('.location-item[data-type="governate"]');
+
+for (const governateItem of governateItems) {
+  const governateName = governateItem.querySelector('label').textContent.toLowerCase();
+
+  // 🔹 Always load districts first
+  await expandAndLoadGovernate(governateItem, searchTerm);
+
+  // 🔹 Now check district & city matches
+  const hasMatch =
+    governateName.includes(searchTerm) ||
+    await checkDistrictsForMatch(governateItem, searchTerm);
+
+  if (hasMatch) {
+    governateItem.classList.remove('search-hidden');
+  } else {
+    governateItem.classList.add('search-hidden');
+  }
+}
+
+
+    // Show labels if any items are visible
+    const visibleItems = locationList.querySelectorAll('.location-item:not(.search-hidden)');
+    if (visibleItems.length > 0) {
+      document.querySelectorAll('.label-item, .all').forEach(label => {
+        label.classList.remove('search-hidden');
+      });
+    }
+  }
+
+  // Expand and load governate data
+  async function expandAndLoadGovernate(governateItem, searchTerm) {
+    const nestedList = governateItem.querySelector('.nested-list');
+    const arrow = governateItem.querySelector('.dropdown-arrow');
+    
+    // Ensure districts are loaded
+    if (nestedList.children.length === 0) {
+      const governateId = governateItem.dataset.id;
+      await fetchDistricts(governateId, nestedList, searchTerm);
+    }
+    
+    // Expand the governate
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+    if (arrow) arrow.classList.add('rotated');
+    
+    // Apply search to loaded districts
+    if (searchTerm) {
+      const districtItems = nestedList.querySelectorAll('.location-item[data-type="district"]');
+      districtItems.forEach(districtItem => {
+        const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+        if (districtName.includes(searchTerm)) {
+          districtItem.classList.remove('search-hidden');
+        } else {
+          districtItem.classList.add('search-hidden');
+        }
+      });
+    }
+  }
+async function checkDistrictsForMatch(governateItem, searchTerm) {
+  const nestedList = governateItem.querySelector('.nested-list');
+  const districts = nestedList.querySelectorAll('.location-item[data-type="district"]');
+  let hasMatch = false;
+
+  for (const districtItem of districts) {
+    const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+    const districtNested = districtItem.querySelector('.nested-list');
+    const arrow = districtItem.querySelector('.district-dropdown-arrow');
+
+    // Always load cities
+    if (districtNested.children.length === 0) {
+      await fetchCities(districtItem.dataset.id, districtNested);
+    }
+
+    const cityMatched = await checkCitiesForMatch(districtItem, searchTerm);
+
+    if (districtName.includes(searchTerm) || cityMatched) {
+      districtItem.classList.remove('search-hidden');
+
+      // ✅ FORCE EXPAND DISTRICT
+      districtNested.style.display = 'block';
+      districtNested.classList.add('expanded');
+      if (arrow) arrow.classList.add('rotated');
+
+      hasMatch = true;
+    } else {
+      districtItem.classList.add('search-hidden');
+    }
+  }
+
+  return hasMatch;
+}
+async function checkCitiesForMatch(districtItem, searchTerm) {
+  const nestedList = districtItem.querySelector('.nested-list');
+  const cities = nestedList.querySelectorAll('.location-item[data-type="city"]');
+  let hasMatch = false;
+
+  cities.forEach(cityItem => {
+    const cityName = cityItem.querySelector('label').textContent.toLowerCase();
+
+    if (cityName.includes(searchTerm)) {
+      cityItem.classList.remove('search-hidden');
+      hasMatch = true;
+    } else {
+      cityItem.classList.add('search-hidden');
+    }
+  });
+
+  // ✅ FORCE SHOW city container
+  if (hasMatch) {
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+  }
+
+  return hasMatch;
+}
+
+
+  // Enhanced fetchDistricts with caching
+  function fetchDistricts(governateId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedDistricts.has(governateId)) {
+      const districts = fetchedDistricts.get(governateId);
+      renderDistricts(districts, nestedContainer, searchTerm);
+      return Promise.resolve(districts);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading districts...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-districts/?governate_id=${governateId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedDistricts.set(governateId, data.districts);
+      renderDistricts(data.districts, nestedContainer, searchTerm);
+      return data.districts;
+    })
+    .catch(error => {
+      console.error('Error fetching districts:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading districts</div>';
+    });
+  }
+
+  function renderDistricts(districts, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">WILAYATS(DISTRICTS)</div>
+      ${districts.map(d => `
+        <li class="location-item" data-id="${d.id}" data-type="district" data-name="${d.name.toLowerCase()}">
+          <div class="district-item-header">
+            <input type="checkbox" name="district" value="${d.id}" data-governate="${d.governate_id || ''}">
+            <label>${d.name}</label>
+            <i class="fas fa-chevron-down district-dropdown-arrow"></i>
+          </div>
+          <ul class="nested-list"></ul>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Enhanced fetchCities with caching
+  function fetchCities(districtId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedCities.has(districtId)) {
+      const cities = fetchedCities.get(districtId);
+      renderCities(cities, nestedContainer, searchTerm);
+      return Promise.resolve(cities);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading cities...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-cities/?district_id=${districtId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedCities.set(districtId, data.cities);
+      renderCities(data.cities, nestedContainer, searchTerm);
+      return data.cities;
+    })
+    .catch(error => {
+      console.error('Error fetching cities:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading cities</div>';
+    });
+  }
+
+  function renderCities(cities, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">CITIES</div>
+      ${cities.map(c => `
+        <li class="location-item city-item" data-id="${c.id}" data-type="city" data-name="${c.name.toLowerCase()}">
+          <input type="checkbox" name="city" value="${c.id}" data-district="${c.district_id || ''}">
+          <label>${c.name}</label>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Toggle governate dropdown with user-expanded marker
+  locationList.addEventListener('click', function(e) {
+    const arrow = e.target.closest('.dropdown-arrow');
+    const districtArrow = e.target.closest('.district-dropdown-arrow');
+    
+    if (arrow) {
+      e.stopPropagation();
+      const header = arrow.closest('.location-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        arrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch districts
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="governate"]');
+          if (checkbox) {
+            fetchDistricts(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          arrow.classList.add('rotated');
+        }
+      }
+    }
+    
+    if (districtArrow) {
+      e.stopPropagation();
+      const header = districtArrow.closest('.district-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        districtArrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch cities
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="district"]');
+          if (checkbox) {
+            fetchCities(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          districtArrow.classList.add('rotated');
+        }
+      }
+    }
+  });
+
+  // Handle checkbox changes
+  locationList.addEventListener('change', function(e) {
+    const checkbox = e.target;
+    const li = checkbox.closest('li');
+    if (!li) return;
+
+    if (checkbox.id === 'select-all-governates') {
+      handleSelectAllGovernates(checkbox.checked);
+    } 
+    else if (li.dataset.type === 'governate') {
+      handleGovernateChange(checkbox);
+    }
+    else if (li.dataset.type === 'district') {
+      handleDistrictChange(checkbox);
+    }
+    else if (li.dataset.type === 'city') {
+      updateSelectedLocation();
+      updateURL();
+    }
+
+    updateSelectAllState();
+  });
+
+  // Handle Select All Governates
+  function handleSelectAllGovernates(isChecked) {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    
+    allGovCheckboxes.forEach(cb => {
+      cb.checked = isChecked;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      
+      if (isChecked) {
+        // Expand and load districts for this governate
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.add('rotated');
+        }
+        li.classList.add('user-expanded');
+        fetchDistricts(cb.value, nested);
+      } else {
+        // Clear all nested content and collapse
+        clearNestedContent(nested);
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.remove('rotated');
+        }
+        li.classList.remove('user-expanded');
+      }
+    });
+
+    // If selecting all, also automatically select all districts and cities
+    if (isChecked) {
+      // Wait for districts to load, then select all districts and cities
+      setTimeout(() => {
+        selectAllDistrictsAndCities();
+      }, 500);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual governate change
+  function handleGovernateChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load districts
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchDistricts(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child districts and cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual district change
+  function handleDistrictChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.district-dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load cities
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Select all districts and cities (for "All" functionality)
+  function selectAllDistrictsAndCities() {
+    const districtCheckboxes = locationList.querySelectorAll('input[name="district"]');
+    districtCheckboxes.forEach(cb => {
+      cb.checked = true;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      const arrow = li.querySelector('.district-dropdown-arrow');
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(cb.value, nested);
+    });
+
+    // Wait for cities to load, then select all cities
+    setTimeout(() => {
+      const cityCheckboxes = locationList.querySelectorAll('input[name="city"]');
+      cityCheckboxes.forEach(cb => cb.checked = true);
+      updateSelectedLocation();
+      updateURL();
+    }, 1000);
+  }
+
+  // Clear nested content
+  function clearNestedContent(container) {
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      container.classList.remove('expanded');
+    }
+  }
+
+  // Update Select All state
+  function updateSelectAllState() {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    const checkedGovCheckboxes = locationList.querySelectorAll('input[name="governate"]:checked');
+    
+    selectAllGov.checked = allGovCheckboxes.length > 0 && allGovCheckboxes.length === checkedGovCheckboxes.length;
+    selectAllGov.indeterminate = checkedGovCheckboxes.length > 0 && checkedGovCheckboxes.length < allGovCheckboxes.length;
+  }
+
+  // NEW: Function to deselect "All" checkbox when individual locations are removed
+  function deselectAllCheckbox() {
+    if (selectAllGov) {
+      selectAllGov.checked = false;
+      selectAllGov.indeterminate = false;
+    }
+  }
+
+  // Clear button
+  clearBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    locationList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.indeterminate = false;
+    });
+    locationList.querySelectorAll('ul.nested-list').forEach(u => { 
+      u.innerHTML = ''; 
+      u.style.display = 'none';
+      u.classList.remove('expanded');
+    });
+    // Reset all arrows and user-expanded markers
+    locationList.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+      arrow.classList.remove('rotated');
+    });
+    locationList.querySelectorAll('.user-expanded').forEach(item => {
+      item.classList.remove('user-expanded');
+    });
+    locationList.querySelectorAll('.search-hidden').forEach(item => {
+      item.classList.remove('search-hidden');
+    });
+    selectedInput.value = "Select Location";
+    locationSearch.value = ''; // Clear search
+    updateURL();
+    locationContainer.style.display = 'none';
+  });
+
+  // FIXED: Update selected location with proper names
+  function updateSelectedLocation() {
+    // Get selected governates with names
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.location-item-header')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+    
+    // Get selected districts with names
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.district-item-header')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+    
+    // Get selected cities with names
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.location-item')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+
+    selectedInput.value = text || "Select Location";
+  }
+
+  function updateURL() {
+    // Get CURRENT URL parameters to preserve existing filters
+    const params = new URLSearchParams(window.location.search);
+    
+    // Remove existing location parameters to avoid duplicates
+    params.delete('governate');
+    params.delete('district');
+    params.delete('city');
+    
+    // Get selected governates
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.value);
+    selectedGovs.forEach(gov => params.append('governate', gov));
+    
+    // Get selected districts
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.value);
+    selectedDistricts.forEach(dist => params.append('district', dist));
+    
+    // Get selected cities
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.value);
+    selectedCities.forEach(city => params.append('city', city));
+
+    window.history.replaceState(null, '', '?' + params.toString());
+
+    // Refresh the results - use the complete URL with all parameters
+    const container = document.getElementById('jewelry-list-container');
+    if (container) {
+        container.innerHTML = '<div class="loading">Loading...</div>';
+        fetch(`{% url 'jewelry' %}?${params.toString()}`, { 
+            headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+        })
+        .then(r => r.text())
+        .then(html => { 
+            container.innerHTML = html; 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results</div>';
+        });
+    }
+}
+
+  // NEW: Global function to update location from URL (for breadcrumb removal)
+  window.updateLocationFromURL = function() {
+    const params = new URLSearchParams(window.location.search);
+    const governateIds = params.getAll('governate');
+    const districtIds = params.getAll('district');
+    const cityIds = params.getAll('city');
+    
+    // Get names for governates
+    const selectedGovs = governateIds.map(govId => {
+      const govItem = document.querySelector(`.location-item[data-type="governate"][data-id="${govId}"]`);
+      return govItem ? govItem.querySelector('label').textContent : govId;
+    });
+    
+    // Get names for districts
+    const selectedDistricts = districtIds.map(distId => {
+      const distItem = document.querySelector(`.location-item[data-type="district"][data-id="${distId}"]`);
+      return distItem ? distItem.querySelector('label').textContent : distId;
+    });
+    
+    // Get names for cities
+    const selectedCities = cityIds.map(cityId => {
+      const cityItem = document.querySelector(`.location-item[data-type="city"][data-id="${cityId}"]`);
+      return cityItem ? cityItem.querySelector('label').textContent : cityId;
+    });
+    
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+    
+    selectedInput.value = text || "Select Location";
+    
+    // Also deselect "All" checkbox if any location is removed
+    if (governateIds.length === 0 && districtIds.length === 0 && cityIds.length === 0) {
+      deselectAllCheckbox();
+    }
+  };
+
+  // NEW: Event listener for remove filter buttons (X buttons) - FIXED
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-filter')) {
+      const key = e.target.getAttribute('data-key');
+      const value = e.target.getAttribute('data-value');
+      
+      // If removing a location filter (governate, district, or city)
+      if (key === 'governate' || key === 'district' || key === 'city') {
+        // Deselect "All" checkbox
+        deselectAllCheckbox();
+        
+        // Also uncheck the corresponding checkbox in the location dropdown
+        if (key === 'governate') {
+          const govCheckbox = locationList.querySelector(`input[name="governate"][value="${value}"]`);
+          if (govCheckbox) {
+            govCheckbox.checked = false;
+            handleGovernateChange(govCheckbox);
+          }
+        } else if (key === 'district') {
+          const distCheckbox = locationList.querySelector(`input[name="district"][value="${value}"]`);
+          if (distCheckbox) {
+            distCheckbox.checked = false;
+            handleDistrictChange(distCheckbox);
+          }
+        } else if (key === 'city') {
+          const cityCheckbox = locationList.querySelector(`input[name="city"][value="${value}"]`);
+          if (cityCheckbox) {
+            cityCheckbox.checked = false;
+          }
+        }
+        
+        // Update URL and refresh
+        updateURL();
+        
+        // Force update the location display after a short delay
+        setTimeout(() => {
+          window.updateLocationFromURL();
+        }, 100);
+        
+        e.preventDefault();
+      }
+    }
+  });
+
+  // Initialize selected location from URL params
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Set governates
+    const govParams = urlParams.getAll('governate');
+    govParams.forEach(govId => {
+      const govCheckbox = locationList.querySelector(`input[name="governate"][value="${govId}"]`);
+      if (govCheckbox) {
+        govCheckbox.checked = true;
+        handleGovernateChange(govCheckbox);
+      }
+    });
+    
+    // Set districts
+    const districtParams = urlParams.getAll('district');
+    districtParams.forEach(distId => {
+      const distCheckbox = locationList.querySelector(`input[name="district"][value="${distId}"]`);
+      if (distCheckbox) {
+        distCheckbox.checked = true;
+        handleDistrictChange(distCheckbox);
+      }
+    });
+    
+    // Set cities
+    const cityParams = urlParams.getAll('city');
+    cityParams.forEach(cityId => {
+      const cityCheckbox = locationList.querySelector(`input[name="city"][value="${cityId}"]`);
+      if (cityCheckbox) {
+        cityCheckbox.checked = true;
+      }
+    });
+
+    updateSelectedLocation();
+    updateSelectAllState();
+  }
+
+  // Initialize from URL on page load
+  initializeFromURL();
+});
+</script>
+<!-- Price Filter -->
+<div class="filter-item" id="toggle-price">
+  <label for="price-range">Price Range</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-price" class="input-value" placeholder="Select Price Range" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="price-container" id="price-container" style="display: none;">
+  <div class="price-inputs">
+    <label>From</label>
+    <input type="number" id="price_from" placeholder="Min Price">
+    <label>To</label>
+    <input type="number" id="price_to" placeholder="Max Price">
+  </div>
+  <hr>
+  <button type="button" class="btn-apply" id="apply-price-filter">Apply</button>
+  <button type="button" class="btn-apply" id="clear-price-filter">Clear</button>
+</div>
+<script>
+document.getElementById('toggle-price').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const container = document.getElementById('price-container');
+    const wasVisible = container.style.display === 'block';
+
+    closeAllFilterContainers();
+
+    if (!wasVisible) {
+        const rect = this.getBoundingClientRect();
+        
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.display = 'block';
+    }
+});
+
+document.getElementById('apply-price-filter').addEventListener('click', function () {
+
+    let priceFrom = document.getElementById('price_from').value.trim();
+    let priceTo = document.getElementById('price_to').value.trim();
+
+    // 🔥 Validation: Show warning if ANY one is empty
+    if (priceFrom === "" || priceTo === "") {
+        alert("Please enter both 'From' and 'To' prices.");
+        return;
+    }
+
+    // Convert after validation
+    priceFrom = Number(priceFrom);
+    priceTo = Number(priceTo);
+
+    // 🔥 Validation: From must not exceed To
+    if (priceFrom > priceTo) {
+        alert("Error: 'From' price cannot be greater than 'To' price.");
+        return;
+    }
+
+    // Update URL params
+    const queryParams = new URLSearchParams(window.location.search);
+
+    queryParams.set('price_from', priceFrom);
+    queryParams.set('price_to', priceTo);
+
+    // Update selected price text in input box
+    document.getElementById('selected-price').value = `${priceFrom} - ${priceTo}`;
+
+    // Update results dynamically
+    updateCarFilters();
+
+    // Update URL (no reload)
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+
+    document.getElementById('price-container').style.display = 'none';
+});
+
+document.getElementById('clear-price-filter').addEventListener('click', function () {
+
+    document.getElementById('price_from').value = '';
+    document.getElementById('price_to').value = '';
+
+    document.getElementById('selected-price').value = "Select Price Range";
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('price_from');
+    queryParams.delete('price_to');
+
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+
+    updateCarFilters();
+
+    document.getElementById('price-container').style.display = 'none';
+});
+
+function updateCarFilters() {
+    const container = document.getElementById('jewelry-list-container');
+    if (!container) {
+        console.error('Car list container not found');
+        return;
+    }
+
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    const params = new URLSearchParams(window.location.search);
+
+    const priceFrom = document.getElementById('price_from').value.trim();
+    const priceTo = document.getElementById('price_to').value.trim();
+
+    if (priceFrom !== "") params.set('price_from', priceFrom);
+    if (priceTo !== "") params.set('price_to', priceTo);
+
+    fetch(`{% url 'jewelry' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        history.pushState(null, '', `?${params.toString()}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+    });
+}
+
+window.addEventListener('load', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const priceFrom = urlParams.get('price_from') || '';
+    const priceTo = urlParams.get('price_to') || '';
+
+    document.getElementById('price_from').value = priceFrom;
+    document.getElementById('price_to').value = priceTo;
+
+    if (priceFrom || priceTo) {
+        document.getElementById('selected-price').value = `${priceFrom || '0'} - ${priceTo || '∞'}`;
+    }
+});
+</script>
+
+<!-- Trigger Input -->
+<div class="filter-item" id="toggle-condition">
+  <label for="selected-condition">Condition</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-condition" class="input-value" placeholder="Select Condition(s)" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Condition Dropdown -->
+<div class="condition-container" id="condition-container" style="display: none;">
+  <div class="oval-button-group" style="flex-direction: column; gap: 8px;">
+    <div class="checkbox-row">
+ 
+  <input type="checkbox" name="condition" id="condition_flawless" value="flawless" class="oval-checkbox">
+  <label for="condition_flawless" class="oval-button">Flawless</label>
+
+  <input type="checkbox" name="condition" id="condition_excellent" value="excellent" class="oval-checkbox">
+  <label for="condition_excellent" class="oval-button">Excellent</label>
+</div>
+
+<div class="checkbox-row">
+  <input type="checkbox" name="condition" id="condition_good" value="good" class="oval-checkbox">
+  <label for="condition_good" class="oval-button">Good</label>
+
+  <input type="checkbox" name="condition" id="condition_average" value="average" class="oval-checkbox">
+  <label for="condition_average" class="oval-button">Average</label>
+</div>
+
+<div class="checkbox-row">
+  <input type="checkbox" name="condition" id="condition_poor" value="poor" class="oval-checkbox">
+  <label for="condition_poor" class="oval-button">Poor</label>
+
+  <input type="checkbox" name="condition" id="condition_used" value="used" class="oval-checkbox">
+  <label for="condition_used" class="oval-button">Used</label>
+</div>
+
+  </div>
+ <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-condition-filter">Clear</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown
+    document.getElementById('toggle-condition').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('condition-container');
+        const wasVisible = container.style.display === 'block';
+
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox changes
+    document.querySelectorAll('input[name="condition"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateConditionFilter();
+        });
+    });
+
+    // Clear filter
+    document.getElementById('clear-condition-filter').addEventListener('click', function() {
+        clearConditionFilter();
+    });
+
+    // Initialize from URL
+    initConditionFilterFromURL();
+});
+
+function updateConditionFilter() {
+    const selected = Array.from(document.querySelectorAll('input[name="condition"]:checked'))
+        .map(cb => cb.value);
+
+    const labels = Array.from(document.querySelectorAll('input[name="condition"]:checked'))
+        .map(cb => document.querySelector(`label[for="condition_${cb.value}"]`).textContent);
+
+    // Update UI
+    document.getElementById('selected-condition').value = labels.length > 0 ? labels.join(', ') : "Select Condition(s)";
+
+    // Update URL
+    const params = new URLSearchParams(window.location.search);
+    if (selected.length > 0) {
+        params.set('condition', selected.join(','));
+    } else {
+        params.delete('condition');
+    }
+    updateQuadbikesFilters(params);
+
+    // Keep dropdown open (optional)
+    // document.getElementById('condition-container').style.display = 'none';
+}
+
+function clearConditionFilter() {
+    document.querySelectorAll('input[name="condition"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-condition').value = "Select Condition(s)";
+    
+    const params = new URLSearchParams(window.location.search);
+    params.delete('condition');
+    updateQuadbikesFilters(params);
+    
+    document.getElementById('condition-container').style.display = 'none';
+}
+
+function initConditionFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const condition = params.get('condition');
+    
+    if (condition) {
+        const values = condition.split(',');
+        values.forEach(val => {
+            const cb = document.querySelector(`input[name="condition"][value="${val}"]`);
+            if (cb) cb.checked = true;
+        });
+        const labels = values.map(val => {
+            const label = document.querySelector(`label[for="condition_${val}"]`);
+            return label ? label.textContent : '';
+        }).filter(Boolean);
+        document.getElementById('selected-condition').value = labels.join(', ');
+    }
+}
+
+function updateQuadbikesFilters(params) {
+    const container = document.getElementById('jewelry-list-container');
+    if (!container) {
+        console.error('jewelry container not found');
+        return;
+    }
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    
+    fetch(`{% url 'jewelry' %}?${params.toString()}`, {
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+
+
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#condition-container') && !e.target.closest('#toggle-condition')) {
+        document.getElementById('condition-container').style.display = 'none';
+    }
+});
+</script>
+<!-- Trigger Input -->
+<div class="filter-item" id="toggle-usage">
+  <label for="selected-usage">Usage</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-usage" class="input-value" placeholder="Select Usage(s)" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Usage Dropdown -->
+<div class="usage-container" id="usage-container" style="display: none;">
+  <div class="oval-button-group" style="flex-direction: column; gap: 8px;">
+    <div class="checkbox-row">
+      <input type="checkbox" name="usage" id="usage_never_used" value="never_used" class="oval-checkbox">
+      <label for="usage_never_used" class="oval-button">Never Used</label>
+
+      <input type="checkbox" name="usage" id="usage_used_once" value="used_once" class="oval-checkbox">
+      <label for="usage_used_once" class="oval-button">Used Once</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="usage" id="usage_light_usage" value="light_usage" class="oval-checkbox">
+      <label for="usage_light_usage" class="oval-button">Light Usage</label>
+
+      <input type="checkbox" name="usage" id="usage_normal" value="normal" class="oval-checkbox">
+      <label for="usage_normal" class="oval-button">Normal Usage</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="usage" id="usage_heavy" value="heavy" class="oval-checkbox">
+      <label for="usage_heavy" class="oval-button">Heavy Usage</label>
+    </div>
+  </div>
+ <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-usage-filter">Clear</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown
+    document.getElementById('toggle-usage').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('usage-container');
+        const wasVisible = container.style.display === 'block';
+
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox changes
+    document.querySelectorAll('input[name="usage"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateUsageFilter();
+        });
+    });
+
+    // Clear filter
+    document.getElementById('clear-usage-filter').addEventListener('click', function() {
+        clearUsageFilter();
+    });
+
+    // Initialize from URL
+    initUsageFilterFromURL();
+});
+
+function updateUsageFilter() {
+    const selected = Array.from(document.querySelectorAll('input[name="usage"]:checked'))
+        .map(cb => cb.value);
+
+    const labels = Array.from(document.querySelectorAll('input[name="usage"]:checked'))
+        .map(cb => document.querySelector(`label[for="usage_${cb.value}"]`).textContent);
+
+    // Update UI
+    document.getElementById('selected-usage').value = labels.length > 0 ? labels.join(', ') : "Select Usage(s)";
+
+    // Update URL
+    const params = new URLSearchParams(window.location.search);
+    if (selected.length > 0) {
+        params.set('usage', selected.join(','));
+    } else {
+        params.delete('usage');
+    }
+    updatejewelryFilters(params);
+}
+
+function clearUsageFilter() {
+    document.querySelectorAll('input[name="usage"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-usage').value = "Select Usage(s)";
+    
+    const params = new URLSearchParams(window.location.search);
+    params.delete('usage');
+    updatejewelryFilters(params);
+    
+    document.getElementById('usage-container').style.display = 'none';
+}
+
+function initUsageFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const usage = params.get('usage');
+    
+    if (usage) {
+        const values = usage.split(',');
+        values.forEach(val => {
+            const cb = document.querySelector(`input[name="usage"][value="${val}"]`);
+            if (cb) cb.checked = true;
+        });
+        const labels = values.map(val => {
+            const label = document.querySelector(`label[for="usage_${val}"]`);
+            return label ? label.textContent : '';
+        }).filter(Boolean);
+        document.getElementById('selected-usage').value = labels.join(', ');
+    }
+}
+
+function updatejewelryFilters(params) {
+    const container = document.getElementById('jewelry-list-container');
+    if (!container) {
+        console.error('jewelry container not found');
+        return;
+    }
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    
+    fetch(`{% url 'jewelry' %}?${params.toString()}`, {
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#usage-container') && !e.target.closest('#toggle-usage')) {
+        document.getElementById('usage-container').style.display = 'none';
+    }
+});
+</script>
+<!-- Additional Filters Container -->
+<div class="filter-item" id="toggle-additional-filters">
+    <label for="additional_filters">Additional Filters</label>
+    <i class="fas fa-chevron-down dropdown-icons2"></i>
+    <input type="text" id="selected-additional-filters" class="input-value" placeholder="Select Filters" readonly>
+</div>
+
+<div class="additional-filters-container" id="additional-filters-container" style="display: none;">
+    <div class="additional-filters-inputs">
+        <!-- Subcategory (Dynamic) -->
+        <div id="subcategory-container" style="display: none;">
+            <label>Subcategory</label>
+            <div class="oval-button-group" id="subcategory-buttons">
+                <!-- Subcategory options will be dynamically populated here -->
+            </div>
+        </div>
+
+        <!-- Listing Type -->
+        <label>Listing Type</label>
+        <div class="oval-button-group">
+            <input type="radio" name="listing_type" id="listing_sale" value="sale" class="oval-radio">
+            <label for="listing_sale" class="oval-button">For Sale</label>
+            
+            <input type="radio" name="listing_type" id="listing_wanted" value="wanted" class="oval-radio">
+            <label for="listing_wanted" class="oval-button">Wanted</label>
+        </div>
+
+        <!-- Age -->
+        <label>Age</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="age" id="age_brand_new" value="brand_new" class="oval-checkbox">
+            <label for="age_brand_new" class="oval-button">Brand New</label>
+            
+            <input type="checkbox" name="age" id="age_1_year" value="1_year" class="oval-checkbox">
+            <label for="age_1_year" class="oval-button">1 Year</label>
+            
+            <input type="checkbox" name="age" id="age_2_years" value="2_years" class="oval-checkbox">
+            <label for="age_2_years" class="oval-button">2 Years</label>
+            
+            <input type="checkbox" name="age" id="age_3_years" value="3_years" class="oval-checkbox">
+            <label for="age_3_years" class="oval-button">3 Years</label>
+            
+            <input type="checkbox" name="age" id="age_4_years" value="4_years" class="oval-checkbox">
+            <label for="age_4_years" class="oval-button">4 Years</label>
+            
+            <input type="checkbox" name="age" id="age_5_years" value="5_years" class="oval-checkbox">
+            <label for="age_5_years" class="oval-button">5 Years</label>
+            
+            <input type="checkbox" name="age" id="age_6_10_years" value="6_10_years" class="oval-checkbox">
+            <label for="age_6_10_years" class="oval-button">6-10 Years</label>
+            
+            <input type="checkbox" name="age" id="age_10_plus" value="10_plus" class="oval-checkbox">
+            <label for="age_10_plus" class="oval-button">10+ Years</label>
+        </div>
+
+        <!-- Warranty -->
+        <label>Warranty</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="warranty" id="warranty_yes" value="yes" class="oval-checkbox">
+            <label for="warranty_yes" class="oval-button">Yes</label>
+            
+            <input type="checkbox" name="warranty" id="warranty_no" value="no" class="oval-checkbox">
+            <label for="warranty_no" class="oval-button">No</label>
+            
+            <input type="checkbox" name="warranty" id="warranty_not_apply" value="not_apply" class="oval-checkbox">
+            <label for="warranty_not_apply" class="oval-button">Do Not Apply</label>
+        </div>
+    </div>
+   
+    <div class="additional-filters-footer mt-3">
+        <button type="button" class="btn-apply mx-2" id="clear-additional-filters">Clear</button>
+        
+    </div>
+</div>
+
+<script>
+// Jewelry subcategory data
+const subcategories = {
+    "watches": [
+        { value: "childrens_watches", text: "Children's Watches" },
+        { value: "mens_sport_watches", text: "Men's Sport Watches" },
+        { value: "mens_watches", text: "Men's Watches" },
+        { value: "pocket_stop_watches", text: "Pocket Watches & Stop Watches" },
+        { value: "womens_sport_watches", text: "Women's Sport Watches" },
+        { value: "womens_watches", text: "Women's Watches" }
+    ],
+    "womens_jewelry": [
+        { value: "body_jewelry", text: "Body Jewelry" },
+        { value: "bracelets", text: "Bracelets" },
+        { value: "earrings", text: "Earrings" },
+        { value: "ethnic_artisan", text: "Ethnic & Artisan Jewelry" },
+        { value: "hair_jewelry", text: "Hair Jewelry" },
+        { value: "pins_brooches", text: "Pins & Brooches" },
+        { value: "rings", text: "Rings" },
+        { value: "other", text: "Other" }
+    ],
+    "mens_jewelry": [
+        { value: "belt_buckles", text: "Belt Buckles" },
+        { value: "bracelets", text: "Bracelets" },
+        { value: "chains_necklaces", text: "Chains & Necklaces" },
+        { value: "cufflinks", text: "Cufflinks" },
+        { value: "pins_tie_clips", text: "Pins & Tie Clips" },
+        { value: "rings", text: "Rings" },
+        { value: "studs", text: "Studs" },
+        { value: "other", text: "Other" }
+    ],
+    "loose_diamonds_gems": [
+        { value: "cz", text: "CZ" },
+        { value: "diamonds", text: "Diamonds" },
+        { value: "gemstones", text: "Gemstones" },
+        { value: "other", text: "Other" }
+    ]
+};
+
+// Function to get current main category from URL or badge
+function getCurrentMainCategory() {
+    // Try to get from URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('main_category')) {
+        return urlParams.get('main_category');
+    }
+    
+    // If not in URL, try to get from badge element
+    const mainCategoryBadge = document.querySelector('.main-category-badge');
+    if (mainCategoryBadge) {
+        return mainCategoryBadge.getAttribute('data-category');
+    }
+    
+    return null;
+}
+
+// Function to update subcategory options based on main category
+function updateSubcategoryOptions() {
+    const mainCategory = getCurrentMainCategory();
+    const subcategoryContainer = document.getElementById('subcategory-container');
+    const subcategoryButtons = document.getElementById('subcategory-buttons');
+    
+    if (mainCategory && subcategories[mainCategory] && subcategories[mainCategory].length > 0) {
+        // Show subcategory container
+        subcategoryContainer.style.display = 'block';
+        
+        // Clear existing subcategory buttons
+        subcategoryButtons.innerHTML = '';
+        
+        // Add new subcategory buttons
+        subcategories[mainCategory].forEach(subcategory => {
+            const id = `subcategory_${subcategory.value}`;
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'sub_category'; // Changed from 'subcategory' to 'sub_category'
+            checkbox.id = id;
+            checkbox.value = subcategory.value;
+            checkbox.className = 'oval-checkbox';
+            
+            const label = document.createElement('label');
+            label.htmlFor = id;
+            label.className = 'oval-button';
+            label.textContent = subcategory.text;
+            
+            subcategoryButtons.appendChild(checkbox);
+            subcategoryButtons.appendChild(label);
+        });
+        
+        // Add event listeners to new checkboxes
+        document.querySelectorAll('#subcategory-buttons input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateSelectedFiltersDisplay();
+                updateJewelryFilters();
+            });
+        });
+        
+        // Restore previously selected sub_categories from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('sub_category')) { // Changed from 'subcategory' to 'sub_category'
+            const selectedSubcategories = urlParams.get('sub_category').split(','); // Changed from 'subcategory' to 'sub_category'
+            selectedSubcategories.forEach(value => {
+                const checkbox = document.querySelector(`#subcategory-buttons input[value="${value}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+    } else {
+        // Hide subcategory container if no main category is selected or no subcategories
+        subcategoryContainer.style.display = 'none';
+    }
+}
+
+document.querySelectorAll('.oval-radio').forEach(radio => {
+    radio.dataset.wasChecked = 'false';
+    radio.addEventListener('click', function () {
+        const groupRadios = document.querySelectorAll(`input[name="${this.name}"]`);
+        if (this.checked && this.dataset.wasChecked === 'true') {
+            groupRadios.forEach(r => {
+                r.checked = false;
+                r.dataset.wasChecked = 'false';
+            });
+        } else {
+            groupRadios.forEach(r => {
+                r.checked = (r === this);
+                r.dataset.wasChecked = (r === this).toString();
+            });
+        }
+        updateSelectedFiltersDisplay();
+        updateJewelryFilters();
+    });
+});
+
+document.getElementById('toggle-additional-filters').addEventListener('click', function (e) {
+    e.stopPropagation();
+    const container = document.getElementById('additional-filters-container');
+    const wasVisible = container.style.display === 'block';
+    closeAllFilterContainers();
+    if (!wasVisible) {
+        const rect = this.getBoundingClientRect();
+        
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.display = 'block';
+        
+        // Update subcategory options when opening the filter
+        updateSubcategoryOptions();
+    }
+});
+
+function updateSelectedFiltersDisplay() {
+    const selectedFilters = [];
+
+    function addFilterGroup(name, labelText) {
+        const selected = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`));
+        if (selected.length > 0) {
+            const labels = selected.map(input => {
+                const label = input.nextElementSibling;
+                return label.textContent.trim();
+            });
+            selectedFilters.push(`${labelText}: ${labels.join(', ')}`);
+        }
+    }
+
+    // Add checkbox filter groups
+    const checkboxGroups = [
+        ['sub_category', 'Subcategory'], // Changed from 'subcategory' to 'sub_category'
+        ['condition', 'Condition'],
+        ['age', 'Age'],
+        ['warranty', 'Warranty']
+    ];
+    checkboxGroups.forEach(([name, label]) => addFilterGroup(name, label));
+
+    // Add radio filters
+    const radioGroups = [
+        ['listing_type', 'Listing Type']
+    ];
+    radioGroups.forEach(([name, label]) => {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        if (selected) selectedFilters.push(`${label}: ${selected.nextElementSibling.textContent}`);
+    });
+
+    const displayInput = document.getElementById('selected-additional-filters');
+    if (selectedFilters.length > 0) {
+        displayInput.value = selectedFilters.join(' | ');
+        document.getElementById('toggle-additional-filters').classList.add('active');
+    } else {
+        displayInput.value = '';
+        document.getElementById('toggle-additional-filters').classList.remove('active');
+    }
+}
+
+function updateJewelryFilters() {
+    const container = document.getElementById('jewelry-list-container');
+    if (!container) return console.error('Jewelry list container not found');
+
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    const params = new URLSearchParams(window.location.search);
+
+    function addCheckboxGroup(name) {
+        params.delete(name);
+        const selected = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`));
+        if (selected.length > 0) params.set(name, selected.map(input => input.value).join(','));
+    }
+
+    const checkboxGroups = ['sub_category', 'condition', 'age', 'warranty']; // Changed from 'subcategory' to 'sub_category'
+    checkboxGroups.forEach(addCheckboxGroup);
+
+    const radioGroups = ['listing_type'];
+    radioGroups.forEach(name => {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        selected ? params.set(name, selected.value) : params.delete(name);
+    });
+
+    const rangeFields = ['price'];
+    rangeFields.forEach(field => {
+        const from = document.getElementById(`${field}_from`).value;
+        const to = document.getElementById(`${field}_to`).value;
+        if (from) params.set(`${field}_from`, from);
+        if (to) params.set(`${field}_to`, to);
+    });
+
+    fetch(`{% url 'jewelry' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(html => {
+            container.innerHTML = html;
+            initializeSliders();
+            initializeChatDropdowns();
+            history.pushState(null, '', `?${params.toString()}`);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+        });
+}
+
+function initializeSliders() {
+    document.querySelectorAll('.feature-block-one').forEach(block => {
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        const backwardBtn = block.querySelector('.backward');
+        const forwardBtn = block.querySelector('.forward');
+        const dotsContainer = slider.querySelector('.dots-container');
+        const imageCounter = block.querySelector('.image-counter');
+
+        if (images.length > 0) {
+            imgElement.src = images[0];
+            slider.setAttribute('data-current-index', 0);
+
+            // Initialize dots
+            if (dotsContainer) {
+                dotsContainer.innerHTML = '';
+                images.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                    dot.onclick = (e) => {
+                        e.stopPropagation();
+                        updateSlider(block, index);
+                    };
+                    dotsContainer.appendChild(dot);
+                });
+            }
+
+            if (imageCounter) {
+                imageCounter.innerHTML = `<i class="fas fa-image"></i> 1/${images.length}`;
+            }
+        }
+
+        if (images.length <= 1) {
+            if (backwardBtn) backwardBtn.style.display = 'none';
+            if (forwardBtn) forwardBtn.style.display = 'none';
+        }
+    });
+}
+
+function updateSlider(block, newIndex) {
+    const slider = block.querySelector('.slider');
+    const imgElement = slider.querySelector('img');
+    const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+    const backwardBtn = block.querySelector('.backward');
+    const forwardBtn = block.querySelector('.forward');
+    const dotsContainer = slider.querySelector('.dots-container');
+    const imageCounter = block.querySelector('.image-counter');
+
+    imgElement.src = images[newIndex];
+    slider.setAttribute('data-current-index', newIndex);
+    if (imageCounter) imageCounter.innerHTML = `<i class="fas fa-image"></i> ${newIndex + 1}/${images.length}`;
+    if (images.length > 1) {
+        backwardBtn.style.display = newIndex === 0 ? 'none' : 'block';
+        forwardBtn.style.display = newIndex === images.length - 1 ? 'none' : 'block';
+    }
+
+    if (dotsContainer) {
+        const dots = dotsContainer.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === newIndex);
+        });
+    }
+}
+
+function initializeChatDropdowns() {
+    document.querySelectorAll('.chat-dropdown a').forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            let menu = event.target.closest('.chat-dropdown').querySelector('.chat-options');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest('.chat-dropdown')) {
+            document.querySelectorAll('.chat-options').forEach(menu => menu.style.display = 'none');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const checkboxGroups = ['sub_category', 'condition', 'age', 'warranty']; // Changed from 'subcategory' to 'sub_category'
+    const radioGroups = ['listing_type'];
+
+    // Update subcategory options on page load
+    updateSubcategoryOptions();
+
+    checkboxGroups.forEach(group => {
+        if (urlParams.has(group)) {
+            const values = urlParams.get(group).split(',');
+            values.forEach(value => {
+                const checkbox = document.querySelector(`input[name="${group}"][value="${value}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+    });
+
+    radioGroups.forEach(group => {
+        if (urlParams.has(group)) {
+            const radio = document.querySelector(`input[name="${group}"][value="${urlParams.get(group)}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dataset.wasChecked = 'true';
+            }
+        }
+    });
+
+    updateSelectedFiltersDisplay();
+
+    document.querySelectorAll('.additional-filters-inputs input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            updateSelectedFiltersDisplay();
+            updateJewelryFilters();
+        });
+    });
+
+    document.querySelectorAll('.additional-filters-inputs input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateSelectedFiltersDisplay();
+            updateJewelryFilters();
+        });
+    });
+
+    document.getElementById('clear-additional-filters').addEventListener('click', () => {
+        document.querySelectorAll('.additional-filters-inputs input[type="checkbox"]').forEach(c => c.checked = false);
+        document.querySelectorAll('.additional-filters-inputs input[type="radio"]').forEach(r => {
+            r.checked = false;
+            r.dataset.wasChecked = 'false';
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        [...checkboxGroups, ...radioGroups].forEach(group => params.delete(group));
+        history.pushState(null, '', `?${params.toString()}`);
+
+        updateSelectedFiltersDisplay();
+        updateJewelryFilters();
+    });
+});
+
+function closeAllFilterContainers() {
+    document.querySelectorAll('.filter-container').forEach(container => {
+        container.style.display = 'none';
+    });
+}
+
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.filter-item') && !e.target.closest('.filter-container')) {
+        closeAllFilterContainers();
+    }
+});
+</script>
+
+<script>
+    function closeAllFilterContainers() {
+    document.getElementById('location-list-container').style.display = 'none';
+    document.getElementById('price-container').style.display = 'none';
+    document.getElementById('condition-container').style.display = 'none';
+    document.getElementById('usage-container').style.display = 'none';
+    document.getElementById('additional-filters-container').style.display = 'none';
+}
+    
+    document.addEventListener("click", function (event) {
+        var bedroomsContainer = document.getElementById('price-container');
+        var bathroomContainer = document.getElementById('condition-container');
+        var furnishedContainer = document.getElementById('usage-container');
+        var regionsContainer = document.getElementById('location-list-container');
+        var additionalfiltersContainer = document.getElementById('additional-filters-container');
+    
+        var bedroomsToggle = document.getElementById('toggle-bedrooms');
+        var bathroomToggle = document.getElementById('toggle-condition');
+        var furnishedToggle = document.getElementById('toggle-usage');
+        var regionsToggle = document.getElementById('toggle-location-filter');
+        var additionalfiltersToggle = document.getElementById('toggle-additional-filters');
+    
+       
+        if (!bedroomsContainer.contains(event.target) && !bedroomsToggle.contains(event.target)) {
+            bedroomsContainer.style.display = 'none';
+        }
+        if (!bathroomContainer.contains(event.target) && !bathroomToggle.contains(event.target)) {
+            bathroomContainer.style.display = 'none';
+        }
+        if (!furnishedContainer.contains(event.target) && !furnishedToggle.contains(event.target)) {
+            furnishedContainer.style.display = 'none';
+        }
+        if (!regionsContainer.contains(event.target) && !regionsToggle.contains(event.target)) {
+            regionsContainer.style.display = 'none';
+        }
+        if (!additionalfiltersContainer.contains(event.target) && !additionalfiltersToggle.contains(event.target)) {
+            additionalfiltersContainer.style.display = 'none';
+        }
+    });
+    
+    // Close all containers when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.filter-item') && 
+        !event.target.closest('#location-list-container') && 
+        !event.target.closest('#price-container') && 
+        !event.target.closest('#condition-container') && 
+        !event.target.closest('#usage-container') && 
+        !event.target.closest('#additional-filters-container')) {
+        closeAllFilterContainers();
+    }
+});
+    
+    // Prevent containers from closing when clicking inside them
+document.getElementById('location-list-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('price-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('condition-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('usage-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('additional-filters-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+    </script>
+ 
+                </div>
+            </div>
+        </form>
+      
+    </div>
+</div>
+
+
+                         
+
+             
+                              
+             
+                                <!-- Replace your existing list view section with this: -->
+<div class="category-block wrapper list-view-active" id="list-view">
+    
+    <div class="list-item feature-style2-three pd-0" id="jewelry-list-container" style="margin-top: -40px;">
+        {% include 'othercategory/jewelry_list_partial.html' %}
+    </div>
+    
+</div>
+                                  <script>
+// Favorite toggle function
+function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const productId = button.getAttribute('data-product-id');
+    const productType = button.getAttribute('data-product-type');
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = '/login/';
+        return;
+    }
+    
+    const isCurrentlyFavorite = icon.classList.contains('filled');
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    
+    // Toggle visual state immediately for better UX
+    if (isCurrentlyFavorite) {
+        icon.classList.remove('fas', 'filled');
+        icon.classList.add('far');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas', 'filled');
+    }
+
+    // Update localStorage
+    localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+    
+    // Send AJAX request
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: 'GET',
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            // Revert visual state if there was an error
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+            console.error("Error updating favorite:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error updating favorite:", error);
+        // Revert visual state on error
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize favorite icons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn i').forEach(icon => {
+        const button = icon.closest('.favorite-btn');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        // Check localStorage for favorite status
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+});
+</script>
+                                
+                                
+                                
+                                <!-- Add some CSS to handle the filled state -->
+                                <style>
+                                .far.fa-heart {
+                                transition: color 0.3s ease; /* For smooth transition */
+                                }
+                                
+                                .far.fa-heart.filled {
+                                color: red;  /* Change color when the icon is filled */
+                                font-weight: bold;  /* Make the icon bold */
+                                }
+                                
+                                
+                                </style> 
+                                 
+                               
+                                 <style>
+                                     .gradient1-text {
+       background: #EB362D;
+       -webkit-background-clip: text; /* Clips the background to the text */
+       -webkit-text-fill-color: transparent; /* Makes the text transparent to show the gradient */
+       font-weight: bold; /* Optional */
+     }                         .slide-image{
+        height:200px;
+        border-radius:8px 8px 8px 8px;
+     }
+  
+                                 </style>
+                                 
+    
+                                                                         
+                                 </div>
+                                
+                                    
+        
+                                 
+                                    <style>
+                               
+                                        /* General Styles for Mobile */
+                                        @media (max-width: 768px) {
+                                          .category-block .feature-style2-three {
+                                            width: 90%; /* Adjust width for mobile responsiveness */
+                                            margin: 0 auto; /* Center the container */
+                                           
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one {
+                                            margin-bottom: 20px;
+                                            width: 100%;
+                                            border: 1px solid #ddd; /* Border around the container */
+                                            border-radius: 8px; /* Rounded corners */
+                                            padding: 20px; /* Space between content and border */
+                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                                            background: #fff; /* White background for contrast */
+                                            height: 450px; /* Allow the container to expand with content */
+                                          }
+                                        
+                                          
+                                          .feature-style2-three .feature-block-one .inner-box {
+                                            display: flex;
+                                            flex-direction: column;
+                                            padding: 0;
+                                            width: 100%;
+                                           
+                                            border-radius: 8px;
+                                            background-color: #fff;
+                                          }
+                                        
+                                          /* Image Box */
+                                          .feature-style2-three .feature-block-one .inner-box .image-box {
+                                            width: 100%;
+                                            margin-bottom: 15px;
+                                            text-align: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .inner-box .image-box img {
+                                            width: 100%;
+                                           
+                                            border-radius: 8px 8px 0 0; /* Rounded corners on the top */
+                                          }
+                                        
+                                          /* Content Section (below and outside the inner box) */
+                                          .feature-style2-three .feature-block-one .lower-content {
+                                            padding: 20px; /* Add padding around the content */
+                                            margin-top: 250px; /* Add space between image and content */
+                                            border-top: 1px solid #ddd; /* Optional: Add border between image and content */
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content h4 {
+                                            margin-bottom: 10px;
+                                            font-size: 18px;
+                                            font-weight: bold;
+                                            color: #333;
+                                          }
+                                        
+                                          /* Action Buttons */
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons {
+                                            display: flex;
+                                            flex-direction: row;
+                                            gap: 10px; /* Space between buttons */
+                                            justify-content: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li {
+                                            list-style: none;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a {
+                                            display: inline-block;
+                                            padding: 12px 20px;
+                                            font-size: 16px;
+                                            color: #fff;
+                                            background: #EB362D;
+                                            border-radius: 5px;
+                                            text-decoration: none;
+                                            transition: background 0.3s ease;
+                                            margin-left: -9px;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a:hover {
+                                            background: #F9AD1F; /* Hover effect */
+                                          }
+                                        }
+                                        
+                                            </style>
+                                 
+                                 
+                                
+             
+             <script>
+                function showListView() {
+                    document.getElementById('grid-view').style.display = 'none';
+                    document.getElementById('list-view').style.display = 'block';
+                }
+            
+                function showGridView() {
+                    document.getElementById('list-view').style.display = 'none';
+                    document.getElementById('grid-view').style.display = 'block';
+                }
+            </script>
+            
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+        const gridButton = document.querySelector(".grid-view");
+        const listButton = document.querySelector(".list-view");
+        const categoryBlock = document.querySelector(".category-block.wrapper");
+    
+        // Set initial state: List view active
+        categoryBlock.classList.add("list-view-active");
+        listButton.classList.add("on");
+        gridButton.classList.remove("on");
+    
+        gridButton.addEventListener("click", () => {
+            categoryBlock.classList.add("grid-view-active");
+            categoryBlock.classList.remove("list-view-active");
+            gridButton.classList.add("on");
+            listButton.classList.remove("on");
+            console.log("Switched to Grid View");
+        });
+    
+        listButton.addEventListener("click", () => {
+            categoryBlock.classList.add("list-view-active");
+            categoryBlock.classList.remove("grid-view-active");
+            listButton.classList.add("on");
+            gridButton.classList.remove("on");
+            console.log("Switched to List View");
+        });
+    });
+    
+            </script>
+    
+    
+            </div>
+
+             <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+          
+                                                                        <style>
+                                                                        .loading-indicator {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #666;
+                                                                        }
+                                                                        
+                                                                        .error-message {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #EB362D;
+                                                                        }
+                                                                        </style>      
+                                                                        
+                                                                
+                                                                        
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        // Price Range
+        const priceFromInput = document.querySelector('#price_from');
+        const priceToInput = document.querySelector('#price_to');
+        const priceFrom = new URLSearchParams(window.location.search).get('price_from');
+        const priceTo = new URLSearchParams(window.location.search).get('price_to');
+
+        if (priceFromInput) priceFromInput.value = priceFrom || '';
+        if (priceToInput) priceToInput.value = priceTo || '';
+
+        const priceField = document.querySelector('#selected-price');
+        if (priceField) {
+            if (priceFrom && priceTo) {
+                priceField.value = `${priceFrom} - ${priceTo}`;
+            } else if (priceFrom) {
+                priceField.value = `From ${priceFrom}`;
+            } else if (priceTo) {
+                priceField.value = `Up to ${priceTo}`;
+            } else {
+                priceField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = new URLSearchParams(window.location.search).get('year_from');
+        const yearTo = new URLSearchParams(window.location.search).get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // ... existing code ...
+
+// Make and Model Filters
+const makeParam = new URLSearchParams(window.location.search).get('make');
+const nameParam = new URLSearchParams(window.location.search).get('name');
+
+if (makeParam) {
+    // Select the brand visually
+    const brandCard = document.querySelector(`.brand-card[data-make="${makeParam}"]`);
+    if (brandCard) {
+        brandCard.classList.add('selected');
+        
+        // Show models container
+        const brandGrid = document.getElementById('brandGrid');
+        const modelsContainer = document.getElementById('modelsContainer');
+        if (brandGrid) brandGrid.style.display = 'none';
+        if (modelsContainer) modelsContainer.style.display = 'block';
+        
+        // Update models title
+        const selectedBrandTitle = document.getElementById('selectedBrandTitle');
+        if (selectedBrandTitle) selectedBrandTitle.textContent = `${makeParam} Models`;
+    }
+    
+    // Add make to selected filters
+    selectedFilters.push(`Brand: ${makeParam}`);
+}
+
+if (nameParam) {
+    const models = nameParam.split(',');
+    // Select models visually
+    models.forEach(model => {
+        const modelCard = [...document.querySelectorAll('.model-card span')]
+            .find(span => span.textContent === model);
+        if (modelCard) modelCard.parentElement.classList.add('selected');
+    });
+    
+    // Add models to selected filters
+    selectedFilters.push(`Models: ${models.join(', ')}`);
+}
+
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = new URLSearchParams(window.location.search).get('kilometers_from');
+        const kmTo = new URLSearchParams(window.location.search).get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters
+        const governateField = document.querySelector('#selected-governate');
+        const districtField = document.querySelector('#selected-district');
+        const cityField = document.querySelector('#selected-city');
+
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        if (governateField) governateField.value = governates.join(', ') || '';
+        if (districtField) districtField.value = districts.join(', ') || '';
+        if (cityField) cityField.value = cities.join(', ') || '';
+
+        // 🔁 Additional Filters Display
+const additionalFiltersField = document.querySelector('#selected-additional-filters');
+if (additionalFiltersField) {
+    const selectedFilters = [];
+
+    // ✅ Delivery
+    const provide = params.get('provide');
+    if (provide) {
+        selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+    }
+
+
+    // ✅ Service Type (map values to labels)
+    const service_type = params.getAll('service_type');
+    if (service_type.length > 0) {
+        const accLabels = service_type.map(a => {
+            switch (a) {
+                case 'box': return 'Original Box';
+                case 'charger': return 'Charger';
+                case 'headset': return 'Headset';
+                default: return a;
+            }
+        });
+        selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+    }
+
+    const multiKeys = {
+        listing_type: 'Listing Type',
+        warranty: 'Warranty',
+        age: 'Age',
+        sub_category:'Sub Category',
+       
+    };
+    Object.entries(multiKeys).forEach(([key, label]) => {
+        const values = params.getAll(key).flatMap(v => v.split(','));
+        if (values.length > 0) {
+            selectedFilters.push(`${label}: ${values.join(', ')}`);
+        }
+    });
+
+    // Update field
+    additionalFiltersField.value = selectedFilters.join(' | ');
+
+    // Toggle active class
+    const toggleEl = document.getElementById('toggle-additional-filters');
+    if (toggleEl) {
+        toggleEl.classList.toggle('active', selectedFilters.length > 0);
+    }
+}
+
+        // Other Filters
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            priceFrom && priceTo ? `Price: ${priceFrom} - ${priceTo}` : 
+                priceFrom ? `Price from ${priceFrom}` : 
+                priceTo ? `Price to ${priceTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+    }
+
+    // Unified function to handle filter removal
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        if (['warranty','age','listing_type','sub_category'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            /// Update the display field if it exists
+const displayField = document.querySelector(`#selected-additional-filters`);
+if (displayField) {
+    const allValues = ['warranty','age','listing_type','sub_category']
+        .flatMap(k => params.getAll(k).flatMap(v => v.split(',')));
+
+    displayField.value = allValues.join(', ') || '';
+}
+
+        } 
+       
+else if (['governate', 'district', 'city'].includes(key)) {
+    // Remove the value from its parameter
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v && v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Handle hierarchy clearing
+    if (key === 'governate') {
+        // Clear districts and cities if governate removed
+        params.delete('district');
+        params.delete('city');
+        document.querySelectorAll(`input[name="district"], input[name="city"]`).forEach(cb => cb.checked = false);
+    } else if (key === 'district') {
+        // Clear cities if district removed
+        params.delete('city');
+        document.querySelectorAll(`input[name="city"]`).forEach(cb => cb.checked = false);
+    }
+
+    // ✅ Collect selected labels instead of IDs
+    const selectedLabels = [];
+    ['governate', 'district', 'city'].forEach(type => {
+        document.querySelectorAll(`input[name="${type}"]:checked`).forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`);
+            if (label) {
+                selectedLabels.push(label.innerText.trim());
+            } else {
+                // fallback if label not found
+                selectedLabels.push(cb.value);
+            }
+        });
+    });
+
+    // Update the display field with human-readable names
+    const displayField = document.querySelector('#selected-location');
+    if (displayField) {
+        displayField.value = selectedLabels.length > 0 ? selectedLabels.join(', ') : '';
+    }
+}
+
+
+        else if (key === 'price_range') {
+    const [from, to] = value.split('-');
+    params.delete('price_from');
+    params.delete('price_to');
+    const fromInput = document.querySelector('#price_from');
+    const toInput = document.querySelector('#price_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-price');
+    if (displayField) displayField.value = '';
+}
+else if (['condition'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-condition`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+else if (['usage'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-usage`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+ else if (key === 'year_range') {
+    const [from, to] = value.split('-');
+    params.delete('year_from');
+    params.delete('year_to');
+    const fromInput = document.querySelector('#year_from');
+    const toInput = document.querySelector('#year_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-year');
+    if (displayField) displayField.value = '';
+}
+else if (['main_category'].includes(key)) {
+    // Multi-value parameters
+    const currentValues = params.getAll('main_category').flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v !== value);
+    
+    // Update URL params
+    params.delete('main_category');
+    if (updatedValues.length > 0) {
+        params.set('main_category', updatedValues.join(','));
+    }
+    
+    // Uncheck the corresponding checkbox (if exists)
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+    
+    // Update the display field if it exists
+    const displayField = document.querySelector(`#selected-main-category`);
+    if (displayField) {
+        displayField.value = updatedValues.join(', ') || '';
+    }
+    
+    // ✅ FIX: Get ALL selected categories from updated URL params
+    const allSelected = params.get('main_category') 
+        ? params.get('main_category').split(',') 
+        : [];
+    
+    // Update badge states immediately
+    updateBadgeStates(allSelected);
+    
+    // Update URL and refresh content
+    updateContent(params);
+}
+else if (['brand'].includes(key)) {
+    // Multi-value parameters
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        // Re-add remaining values
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox (if exists)
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Update the display field if it exists
+    const displayField = document.querySelector(`#selected-condition`);
+    if (displayField) {
+        displayField.value = updatedValues.join(', ') || '';
+    }
+
+    // ✅ Get ALL selected categories from URL, not just updatedValues
+    const allSelected = params.get('brand')
+        ? params.get('brand').split(',')
+        : [];
+
+    updateBadgeStates(allSelected);
+}
+
+
+else if (key === 'name') {
+    // Remove specific model from URL param
+    const currentModels = params.get('name')?.split(',') || [];
+    const updatedModels = currentModels.filter(m => m !== value);
+
+    if (updatedModels.length > 0) {
+        params.set('name', updatedModels.join(','));
+    } else {
+        params.delete('name');
+    }
+
+    // Unselect the model visually
+    document.querySelectorAll('.model-card').forEach(card => {
+        if (card.textContent.trim() === value) {
+            card.classList.remove('selected');
+        }
+    });
+
+    // Remove badge immediately from DOM
+    const badge = document.querySelector(
+        `.remove-filter[data-key="name"][data-value="${value}"]`
+    );
+    if (badge) badge.parentElement.remove();
+}
+
+ else if (key === 'kilometer_range') {
+    const [from, to] = value.split('-');
+    params.delete('kilometers_from');
+    params.delete('kilometers_to');
+    const fromInput = document.querySelector('#kilometers_from');
+    const toInput = document.querySelector('#kilometers_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-kilometer');
+    if (displayField) displayField.value = '';
+}
+        else if (key === 'sort') {
+            // Special case for sort
+            params.delete('sort');
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    // Function to update content via AJAX
+    function updateContent(params) {
+        fetch(`{% url 'jewelry' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById('jewelry-list-container');
+            if (container) container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+            updateFilterDisplay(); // Update filter display after content loads
+
+            // ✅ Ensure badge states are preserved after AJAX
+        const allSelected = params.get('main_category') 
+            ? params.get('main_category').split(',') 
+            : [];
+        updateBadgeStates(allSelected);
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+
+    // Clear all filters
+document.body.addEventListener('click', function(e) {
+    if (e.target.matches('#clear-all-filters')) {
+        e.preventDefault();
+
+        // Clear all checkboxes and radios
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear all input fields
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+            if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                input.value = '';
+            }
+        });
+
+        // Clear all hidden/selected fields
+        const filterFields = [
+            '#selected-price', '#selected-condition', '#selected-usage',
+            '#selected-governate', '#selected-district', '#selected-city',
+            '#selected-all-filters', '#selected-additional-filters',
+            '#selected-listing-type', '#selected-category', '#selected-age', '#selected-subcategory'
+        ];
+        filterFields.forEach(id => {
+            const el = document.querySelector(id);
+            if (el) el.value = '';
+        });
+
+        // Reset brand and model selections
+        document.querySelectorAll('.brand-card.selected, .model-card.selected').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Show brand grid and hide models container
+        const brandGrid = document.getElementById('brandGrid');
+        const modelsContainer = document.getElementById('modelsContainer');
+        if (brandGrid) brandGrid.style.display = 'grid';
+        if (modelsContainer) modelsContainer.style.display = 'none';
+// Clear all URL params
+const url = new URL(window.location.href);
+url.search = ''; // wipe everything
+
+// Update the browser URL without reloading
+window.history.replaceState({}, document.title, url);
+
+        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const container = document.querySelector('#jewelry-list-container');
+                if (container) container.innerHTML = html;
+                history.pushState(null, '', url.toString());
+                updateFilterDisplay();
+            })
+            .catch(err => console.error('Error:', err));
+    }
+});
+
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script>                                          
+                </div>  
+
+<style>
+#jewelry-list-container {
+    min-height: 600px; 
+    position: relative;
+}
+</style>     
+                                                           
+            {% include 'footer.html' %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+

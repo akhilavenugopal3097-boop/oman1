@@ -1,0 +1,1390 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .badge-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    /* Alert Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert a {
+        color: inherit;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    .alert .close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert .close:hover {
+        opacity: 1;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .form-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-header h5 i {
+        color: #15818E;
+    }
+
+    .btn-back {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    /* Form Groups */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group label i {
+        color: #15818E;
+        margin-right: 0.375rem;
+    }
+
+    .form-group .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .form-control:hover:not(:focus) {
+        border-color: #cbd5e1;
+    }
+
+    .form-control.error {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+
+    .form-control.valid {
+        border-color: #10b981;
+        background-color: #f0fdf9;
+    }
+
+    /* Password Input with Eye Icon */
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-wrapper .form-control {
+        padding-right: 3rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: color 0.2s;
+    }
+
+    .toggle-password:hover {
+        color: #15818E;
+    }
+
+    .toggle-password:focus {
+        outline: none;
+    }
+
+    /* Password Strength Meter */
+    .password-strength {
+        margin-top: 0.5rem;
+    }
+
+    .strength-meter {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .strength-segment {
+        height: 4px;
+        flex: 1;
+        background: #e2e8f0;
+        border-radius: 2px;
+        transition: all 0.2s;
+    }
+
+    .strength-segment.weak { background: #ef4444; }
+    .strength-segment.medium { background: #f59e0b; }
+    .strength-segment.strong { background: #10b981; }
+
+    .strength-text {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+
+    /* Password Match Indicator */
+    .match-indicator {
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .match-indicator i {
+        font-size: 0.75rem;
+    }
+
+    .match-indicator.match {
+        color: #10b981;
+    }
+
+    .match-indicator.no-match {
+        color: #ef4444;
+    }
+
+    /* Toggle Switch */
+    .toggle-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 28px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e2e8f0;
+        transition: .3s;
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .toggle-slider {
+        background-color: #15818E;
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+
+    .toggle-label {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .toggle-label-text {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.875rem;
+    }
+
+    .toggle-label-description {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Permissions Section */
+    .permissions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .permissions-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-select-all, .btn-clear-all, .btn-approval-only {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .btn-select-all:hover {
+        background: #15818E;
+        border-color: #15818E;
+        color: white;
+    }
+
+    .btn-clear-all:hover {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+    }
+
+    .btn-approval-only:hover {
+        background: #15818E;
+        color: white;
+    }
+
+    /* Category Groups */
+    .permission-category-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .category-group-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #0f172a;
+        padding: 0.5rem 0;
+        margin-bottom: 0.75rem;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .category-group-title i {
+        color: #15818E;
+        font-size: 1rem;
+    }
+
+    .category-group-title .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .permissions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .permission-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .permission-item:hover {
+        border-color: #15818E;
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .permission-item.selected {
+        border-color: #15818E;
+        background: #f0f9fa;
+    }
+
+    /* Approval category specific styles */
+    .permission-item.approval-properties.selected { border-color: #15818E; background: #e0f2f4; }
+    .permission-item.approval-vehicles.selected { border-color: #F9AD1F; background: #fef7e0; }
+    .permission-item.approval-electronics.selected { border-color: #4f46e5; background: #ede9fe; }
+    .permission-item.approval-classifieds.selected { border-color: #10b981; background: #d1fae5; }
+    .permission-item.approval-services.selected { border-color: #f59e0b; background: #fef3c7; }
+
+    .permission-item .custom-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .permission-item .custom-checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 5px;
+        cursor: pointer;
+        accent-color: #15818E;
+        margin-top: 0.2rem;
+    }
+
+    .permission-item .checkbox-label {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.875rem;
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .permission-actions {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #f1f5f9;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .permission-badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.625rem;
+        font-weight: 600;
+    }
+
+    .permission-badge.view { background: #e0f2f4; color: #15818E; }
+    .permission-badge.edit { background: #fef3c7; color: #d97706; }
+    .permission-badge.create { background: #d1fae5; color: #059669; }
+    .permission-badge.approve { background: #e0f2f4; color: #15818E; }
+    .permission-badge.delete { background: #fee2e2; color: #dc2626; }
+
+    .selected-count {
+        margin-top: 1rem;
+        font-size: 0.75rem;
+        color: #64748b;
+        text-align: right;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+
+    /* Submit Button */
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .btn-submit {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.875rem 2.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+        background: #0e5f68;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-submit i {
+        font-size: 1rem;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .permissions-grid {
+            grid-template-columns: 1fr;
+            padding: 1rem;
+            max-height: 400px;
+        }
+        
+        .form-card {
+            padding: 1.5rem;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .permissions-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .permissions-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-user-plus"></i>
+                Create New Sub-Admin
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-info-circle"></i>
+                    All fields with * are required
+                </span>
+                <span class="badge badge-purple">
+                    <i class="fas fa-check-double"></i>
+                    Approval Permissions Available
+                </span>
+            </div>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Info Alert for Approval Permissions -->
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Ads Approval Permissions:</strong> You can assign sub-admins to manage specific ad categories. 
+                There are 5 separate approval categories: Properties, Vehicles, Electronics, Classifieds, and Services.
+                Each category can be assigned to different sub-admins for specialized management.
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <div class="form-header">
+                <h5>
+                    <i class="fas fa-user-shield"></i>
+                    Sub-Admin Information
+                </h5>
+                <a href="{% url 'subadmin_list' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to List
+                </a>
+            </div>
+
+            <form method="POST" id="subadminForm">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-grid">
+                    <!-- First Name -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user"></i>
+                            First Name
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" 
+                               placeholder="Enter first name" required
+                               pattern="[A-Za-z\s]+" title="Only letters and spaces"
+                               value="{{ request.POST.first_name|default:'' }}">
+                        <small style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem; display: block;">
+                            <i class="fas fa-info-circle"></i> Only letters and spaces allowed
+                        </small>
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user"></i>
+                            Last Name
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" 
+                               placeholder="Enter last name" required
+                               pattern="[A-Za-z\s]+" title="Only letters and spaces"
+                               value="{{ request.POST.last_name|default:'' }}">
+                        <small style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem; display: block;">
+                            <i class="fas fa-info-circle"></i> Only letters and spaces allowed
+                        </small>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user-tag"></i>
+                            Username
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Enter username (e.g., properties_admin)" required
+                               value="{{ request.POST.username|default:'' }}">
+                        <small style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem; display: block;">
+                            <i class="fas fa-info-circle"></i> 
+                            Only letters, numbers, and underscores allowed
+                        </small>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-envelope"></i>
+                            Email
+                            <span class="required">*</span>
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="Enter email address (e.g., admin@example.com)" required
+                               value="{{ request.POST.email|default:'' }}">
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-lock"></i>
+                            Password
+                            <span class="required">*</span>
+                        </label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Enter password (min. 6 characters)" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="strength-meter">
+                                <div class="strength-segment"></div>
+                                <div class="strength-segment"></div>
+                                <div class="strength-segment"></div>
+                            </div>
+                            <span class="strength-text">Enter a password</span>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-check-circle"></i>
+                            Confirm Password
+                            <span class="required">*</span>
+                        </label>
+                        <div class="password-wrapper">
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                   placeholder="Confirm password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirm_password', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="match-indicator" id="passwordMatch"></div>
+                    </div>
+                </div>
+
+                <!-- Status Toggle -->
+                <div class="form-group">
+                    <div class="toggle-wrapper">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="is_active" name="is_active" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div class="toggle-label">
+                            <span class="toggle-label-text">
+                                <i class="fas fa-toggle-on" style="color: #15818E;"></i>
+                                Active Status
+                            </span>
+                            <span class="toggle-label-description">
+                                If active, the sub-admin can log in and access assigned sections
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3" 
+                              placeholder="Enter any additional notes about this sub-admin (optional)">{{ request.POST.notes|default:'' }}</textarea>
+                </div>
+
+                <!-- Permissions Section -->
+                <div class="form-group">
+                    <div class="permissions-header">
+                        <label style="margin-bottom: 0;">
+                            <i class="fas fa-key"></i>
+                            Permissions
+                            <span class="required">*</span>
+                        </label>
+                        <div class="permissions-actions">
+                            <button type="button" class="btn-approval-only" onclick="selectApprovalPermissions()">
+                                <i class="fas fa-check-double"></i>
+                                Select All Approval Permissions
+                            </button>
+                            <button type="button" class="btn-select-all" onclick="selectAllPermissions()">
+                                <i class="fas fa-check-double"></i>
+                                Select All
+                            </button>
+                            <button type="button" class="btn-clear-all" onclick="clearAllPermissions()">
+                                <i class="fas fa-times"></i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {% if permissions %}
+                        {% regroup permissions by get_category_display as permission_categories %}
+                        
+                        {% for category in permission_categories %}
+                            <div class="permission-category-group">
+                                <div class="category-group-title">
+                                    <i class="fas {% if category.grouper == 'Ads Approval' %}fa-check-double{% elif category.grouper == 'Location Management' %}fa-map-marker-alt{% elif category.grouper == 'Content Management' %}fa-file-alt{% elif category.grouper == 'Company Related' %}fa-building{% elif category.grouper == 'Job Related' %}fa-briefcase{% else %}fa-cog{% endif %}"></i>
+                                    {{ category.grouper }}
+                                    {% if category.grouper == 'Ads Approval' %}
+                                        <span class="badge badge-purple">5 Categories Available</span>
+                                    {% endif %}
+                                </div>
+                                <div class="permissions-grid">
+                                    {% for perm in category.list %}
+                                        <div class="permission-item 
+                                            {% if perm.section == 'ads_approval_properties' %}approval-properties
+                                            {% elif perm.section == 'ads_approval_vehicles' %}approval-vehicles
+                                            {% elif perm.section == 'ads_approval_electronics' %}approval-electronics
+                                            {% elif perm.section == 'ads_approval_classifieds' %}approval-classifieds
+                                            {% elif perm.section == 'ads_approval_services' %}approval-services
+                                            {% endif %}"
+                                            onclick="togglePermissionCheckbox({{ perm.id }})">
+                                            <label class="custom-checkbox">
+                                                <input type="checkbox" class="permission-checkbox" 
+                                                       id="perm_{{ perm.id }}" name="permissions" value="{{ perm.id }}"
+                                                       {% if perm.id in request.POST.permissions %}checked{% endif %}>
+                                                <span class="checkbox-label">{{ perm.get_section_display }}</span>
+                                            </label>
+                                            
+                                            <div class="permission-actions">
+                                                {% if perm.can_view %}
+                                                    <span class="permission-badge view" title="Can view">View</span>
+                                                {% endif %}
+                                                {% if perm.can_edit %}
+                                                    <span class="permission-badge edit" title="Can edit">Edit</span>
+                                                {% endif %}
+                                                {% if perm.can_create %}
+                                                    <span class="permission-badge create" title="Can create">Create</span>
+                                                {% endif %}
+                                                {% if perm.can_approve %}
+                                                    <span class="permission-badge approve" title="Can approve">Approve</span>
+                                                {% endif %}
+                                                {% if perm.can_delete %}
+                                                    <span class="permission-badge delete" title="Can delete">Delete</span>
+                                                {% endif %}
+                                            </div>
+                                            
+                                            {% if perm.description %}
+                                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.5rem;">
+                                                <i class="fas fa-info-circle" style="color: #15818E;"></i>
+                                                {{ perm.description|truncatechars:60 }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No permissions defined. 
+                        <a href="{% url 'subadmin_permission_create' %}">Create permissions first</a>.
+                    </div>
+                    {% endif %}
+                    
+                    <div class="selected-count" id="selectedCount">
+                        <i class="fas fa-check-circle" style="color: #15818E;"></i>
+                        <span id="selectedCountValue">0</span> permission(s) selected
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i>
+                        <span>Create Sub-Admin</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    // Toggle password visibility
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            button.setAttribute('title', 'Hide password');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            button.setAttribute('title', 'Show password');
+        }
+    }
+
+    // Password strength checker
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 6) strength += 1;
+        if (password.length >= 8) strength += 1;
+        if (/[A-Z]/.test(password)) strength += 1;
+        if (/[0-9]/.test(password)) strength += 1;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+        
+        return Math.min(strength, 3);
+    }
+
+    // Update password strength meter
+    function updatePasswordStrength(password) {
+        const strength = checkPasswordStrength(password);
+        const segments = document.querySelectorAll('.strength-segment');
+        const strengthText = document.querySelector('.strength-text');
+        
+        segments.forEach((segment, index) => {
+            segment.className = 'strength-segment';
+            if (index < strength) {
+                if (strength <= 2) segment.classList.add('weak');
+                else if (strength === 3) segment.classList.add('medium');
+                else segment.classList.add('strong');
+            }
+        });
+        
+        if (strength === 0) strengthText.textContent = 'Too weak';
+        else if (strength <= 2) strengthText.textContent = 'Weak password';
+        else if (strength === 3) strengthText.textContent = 'Medium password';
+        else strengthText.textContent = 'Strong password';
+    }
+
+    // Update password match indicator
+    function updatePasswordMatch(password, confirm) {
+        const indicator = document.getElementById('passwordMatch');
+        
+        if (confirm.length === 0) {
+            indicator.innerHTML = '';
+            return;
+        }
+        
+        if (password === confirm) {
+            indicator.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match';
+            indicator.className = 'match-indicator match';
+        } else {
+            indicator.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+            indicator.className = 'match-indicator no-match';
+        }
+    }
+
+    // Validate name (only letters and spaces)
+    function validateName(name) {
+        return /^[A-Za-z\s]+$/.test(name);
+    }
+
+    // Validate username format
+    function validateUsername(username) {
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        return usernameRegex.test(username);
+    }
+
+    // Toggle permission checkbox when clicking on item
+    function togglePermissionCheckbox(permId) {
+        const checkbox = document.getElementById('perm_' + permId);
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            updateSelectedCount();
+            updatePermissionItemHighlight(checkbox);
+        }
+    }
+
+    // Update permission item highlight
+    function updatePermissionItemHighlight(checkbox) {
+        const item = checkbox.closest('.permission-item');
+        if (checkbox.checked) {
+            item.classList.add('selected');
+        } else {
+            item.classList.remove('selected');
+        }
+    }
+
+    // Select all permissions
+    function selectAllPermissions() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+            updatePermissionItemHighlight(cb);
+        });
+        updateSelectedCount();
+    }
+
+    // Select only approval permissions
+    function selectApprovalPermissions() {
+        const approvalSections = [
+            'ads_approval_properties',
+            'ads_approval_vehicles', 
+            'ads_approval_electronics',
+            'ads_approval_classifieds',
+            'ads_approval_services'
+        ];
+        
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        checkboxes.forEach(cb => {
+            const item = cb.closest('.permission-item');
+            let isApproval = false;
+            
+            for (const section of approvalSections) {
+                if (item.classList.contains(section.replace('_', '-'))) {
+                    isApproval = true;
+                    break;
+                }
+            }
+            
+            if (isApproval) {
+                cb.checked = true;
+            } else {
+                cb.checked = false;
+            }
+            updatePermissionItemHighlight(cb);
+        });
+        updateSelectedCount();
+    }
+
+    // Clear all permissions
+    function clearAllPermissions() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+            updatePermissionItemHighlight(cb);
+        });
+        updateSelectedCount();
+    }
+
+    // Update selected count
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox:checked');
+        const count = checkboxes.length;
+        document.getElementById('selectedCountValue').textContent = count;
+    }
+
+    // Form validation
+    document.getElementById('subadminForm').addEventListener('submit', function(e) {
+        const firstName = document.getElementById('first_name').value.trim();
+        const lastName = document.getElementById('last_name').value.trim();
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirm_password').value;
+        const submitBtn = document.getElementById('submitBtn');
+        const errors = [];
+        
+        // First Name validation
+        if (!firstName) {
+            errors.push('First name is required!');
+            document.getElementById('first_name').classList.add('error');
+        } else if (!validateName(firstName)) {
+            errors.push('First name can only contain letters and spaces!');
+            document.getElementById('first_name').classList.add('error');
+        } else {
+            document.getElementById('first_name').classList.remove('error');
+            document.getElementById('first_name').classList.add('valid');
+        }
+        
+        // Last Name validation
+        if (!lastName) {
+            errors.push('Last name is required!');
+            document.getElementById('last_name').classList.add('error');
+        } else if (!validateName(lastName)) {
+            errors.push('Last name can only contain letters and spaces!');
+            document.getElementById('last_name').classList.add('error');
+        } else {
+            document.getElementById('last_name').classList.remove('error');
+            document.getElementById('last_name').classList.add('valid');
+        }
+        
+        // Username validation
+        if (!username) {
+            errors.push('Username is required!');
+            document.getElementById('username').classList.add('error');
+        } else if (!validateUsername(username)) {
+            errors.push('Username can only contain letters, numbers, and underscores!');
+            document.getElementById('username').classList.add('error');
+        } else {
+            document.getElementById('username').classList.remove('error');
+            document.getElementById('username').classList.add('valid');
+        }
+        
+        // Email validation
+        if (!email) {
+            errors.push('Email is required!');
+            document.getElementById('email').classList.add('error');
+        } else if (!email.includes('@')) {
+            errors.push('Please enter a valid email address!');
+            document.getElementById('email').classList.add('error');
+        } else {
+            document.getElementById('email').classList.remove('error');
+            document.getElementById('email').classList.add('valid');
+        }
+        
+        // Password length validation
+        if (!password) {
+            errors.push('Password is required!');
+            document.getElementById('password').classList.add('error');
+        } else if (password.length < 6) {
+            errors.push('Password must be at least 6 characters long!');
+            document.getElementById('password').classList.add('error');
+        } else {
+            document.getElementById('password').classList.remove('error');
+        }
+        
+        // Password match validation
+        if (!confirm) {
+            errors.push('Please confirm your password!');
+            document.getElementById('confirm_password').classList.add('error');
+        } else if (password !== confirm) {
+            errors.push('Passwords do not match!');
+            document.getElementById('confirm_password').classList.add('error');
+        } else {
+            document.getElementById('confirm_password').classList.remove('error');
+        }
+        
+        // Permission validation
+        const checkboxes = document.querySelectorAll('.permission-checkbox:checked');
+        if (checkboxes.length === 0) {
+            errors.push('Please select at least one permission!');
+        }
+        
+        // Show errors if any
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert('Please fix the following errors:\n\n- ' + errors.join('\n- '));
+            return false;
+        }
+        
+        // Disable submit button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Creating...';
+    });
+
+    // Real-time validation for first name
+    document.getElementById('first_name').addEventListener('input', function(e) {
+        const val = this.value.trim();
+        if (val && validateName(val)) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (val.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+    });
+
+    // Real-time validation for last name
+    document.getElementById('last_name').addEventListener('input', function(e) {
+        const val = this.value.trim();
+        if (val && validateName(val)) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (val.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+    });
+
+    // Real-time validation for username
+    document.getElementById('username').addEventListener('input', function(e) {
+        if (validateUsername(this.value)) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (this.value.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+    });
+
+    // Real-time validation for email
+    document.getElementById('email').addEventListener('input', function(e) {
+        if (this.value && this.value.includes('@')) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (this.value.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+    });
+
+    // Password strength and match
+    document.getElementById('password').addEventListener('input', function(e) {
+        const password = this.value;
+        const confirmInput = document.getElementById('confirm_password');
+        const confirm = confirmInput.value;
+        
+        updatePasswordStrength(password);
+        
+        if (password.length >= 6) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (password.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+        
+        if (confirm.length > 0) {
+            updatePasswordMatch(password, confirm);
+        }
+    });
+
+    document.getElementById('confirm_password').addEventListener('input', function(e) {
+        const password = document.getElementById('password').value;
+        const confirm = this.value;
+        
+        updatePasswordMatch(password, confirm);
+        
+        if (password === confirm && confirm.length > 0) {
+            this.classList.remove('error');
+            this.classList.add('valid');
+        } else if (confirm.length > 0) {
+            this.classList.add('error');
+            this.classList.remove('valid');
+        } else {
+            this.classList.remove('error', 'valid');
+        }
+    });
+
+    // Initialize permission checkboxes
+    document.querySelectorAll('.permission-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            updateSelectedCount();
+            updatePermissionItemHighlight(this);
+        });
+        updatePermissionItemHighlight(cb);
+    });
+
+    // Update selected count on page load
+    updateSelectedCount();
+
+    // Auto-dismiss messages after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+</script>

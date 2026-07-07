@@ -1,0 +1,460 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 for better alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #ef4444 !important;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    /* Confirmation Card */
+    .confirm-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .warning-icon {
+        width: 80px;
+        height: 80px;
+        background: #fee2e2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .warning-icon i {
+        font-size: 3rem;
+        color: #ef4444;
+    }
+
+    .confirm-card h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .confirm-card .warning-text {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 2rem;
+    }
+
+    /* User Info */
+    .user-summary {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid #f1f5f9;
+    }
+
+    .user-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        background: #15818E;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 auto 1rem;
+    }
+
+    .user-summary h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .detail-item i {
+        color: #15818E;
+        width: 16px;
+    }
+
+    /* Warning Box */
+    .warning-box {
+        background: #fff7e6;
+        border: 1px solid #fcd34d;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        text-align: left;
+    }
+
+    .warning-box i {
+        color: #d97706;
+        font-size: 1.1rem;
+        margin-top: 0.1rem;
+    }
+
+    .warning-box p {
+        color: #92400e;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .warning-box ul {
+        margin: 0.5rem 0 0 1rem;
+        padding: 0;
+        color: #92400e;
+        font-size: 0.875rem;
+    }
+
+    .warning-box li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn-confirm {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-confirm:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-confirm, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-trash-alt"></i>
+                Delete Sub-Admin
+            </h1>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; color: inherit; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Confirmation Card -->
+        <div class="confirm-card">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            
+            <h2>Delete Sub-Admin?</h2>
+            <p class="warning-text">This action cannot be undone. The user will permanently lose all access.</p>
+            
+            <!-- User Summary -->
+            <div class="user-summary">
+                <div class="user-avatar">
+                    {{ subadmin.user.username|first|upper }}
+                </div>
+                <h3>{{ subadmin.user.username }}</h3>
+                
+                <div class="user-details">
+                    <div class="detail-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ subadmin.user.email }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Created by: {{ subadmin.created_by.username|default:"System" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Created: {{ subadmin.created_at|date:"Y-m-d H:i" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-history"></i>
+                        <span>Last Login: {{ subadmin.last_login|date:"Y-m-d H:i"|default:"Never" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-toggle-on"></i>
+                        <span>Status: {% if subadmin.is_active %}Active{% else %}Inactive{% endif %}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <p><strong>What will happen:</strong></p>
+                    <ul>
+                        <li>The user account will be permanently deleted</li>
+                        <li>All associated permissions will be removed</li>
+                        <li>The sub-admin will lose all access immediately</li>
+                        <li>This action cannot be reversed</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Form -->
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-confirm" id="confirmBtn">
+                        <i class="fas fa-trash"></i>
+                        Yes, Delete Sub-Admin
+                    </button>
+                    <a href="{% url 'subadmin_edit' subadmin.id %}" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Confirm delete with SweetAlert (double confirmation)
+    document.getElementById('confirmBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        Swal.fire({
+            title: 'Are you absolutely sure?',
+            text: 'This will permanently delete this sub-admin and all associated data. This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Yes, delete permanently',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Show loading state
+                const btn = document.getElementById('confirmBtn');
+                btn.innerHTML = '<span class="spinner"></span> Deleting...';
+                btn.disabled = true;
+                
+                // Submit the form
+                e.target.closest('form').submit();
+            }
+        });
+    });
+
+    // Auto-dismiss messages after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.3s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+</script>
+
+{% include 'admin1/footeradmin.html' %}

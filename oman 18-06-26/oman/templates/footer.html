@@ -1,0 +1,830 @@
+{% load static %}
+<style>
+    .about-paragraph{
+        font-family: 'FontStyle6', Arial, sans-serif;
+        color: black;
+        margin-left:-80px;
+        margin-top:-20px;
+        font-size:12px;
+        line-height: 1.5;
+
+
+     
+    }
+    /* Let the footer grow with the new stacked layout */
+    .main-footer {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding-bottom: 5px !important;
+    }
+    .footer-top {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+    .footer-top .widget-section {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+   /* ============================================================
+   FOOTER — TABLET VIEW (769px to 1100px)
+   ============================================================ */
+@media (min-width: 769px) and (max-width: 1100px) {
+    .footer-top {
+        padding: 45px 30px !important;
+        background-size: cover !important;
+        background-position: center !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+    }
+
+    .main-footer {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding-bottom: 30px !important;
+    }
+
+    .footer-top .widget-section {
+        height: auto !important;
+        overflow: visible !important;
+        margin-left: 0 !important;
+    }
+
+    /* Row → flex wrap, left aligned */
+    .footer-top .row.clearfix {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        column-gap: 40px !important;
+        row-gap: 35px !important;
+    }
+    /* Kill the fixed-height vertical separators */
+    .footer-top .col-separator { display: none !important; }
+    /* Reset helper margins / paddings */
+    .footer-top .ml-70 { margin-left: 0 !important; }
+    .footer-top .links-widget {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ============== ROW 1: Logo + About us + Contact us ============== */
+    /* Logo — small */
+    .footer-top .row.clearfix > .footer-column:first-child {
+        flex: 0 0 160px !important;
+        max-width: 160px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        order: 1 !important;
+    }
+    .footer-logo { text-align: left !important; margin: 0 !important; }
+    .footer-logo img { height: 75px !important; width: auto !important; margin: 0 !important; }
+
+    /* About us — wide (takes remaining space) */
+    .footer-top .row.clearfix > .col-lg-4 {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        order: 2 !important;
+    }
+
+    /* Contact us — fixed side column on row 1 */
+    .footer-top .row.clearfix > .links-widget {
+        flex: 0 0 280px !important;
+        max-width: 300px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        order: 3 !important;
+    }
+
+    /* full-width break after Contact us → forces Business to a new row */
+    .footer-top .row.clearfix::after {
+        content: "" !important;
+        flex: 0 0 100% !important;
+        height: 0 !important;
+        order: 4 !important;
+    }
+
+    /* ============== ROW 2: Business Collaboration (full width, CENTERED) ============== */
+    .footer-top .row.clearfix > .col-lg-3 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 10px 0 0 0 !important;
+        padding: 0 !important;
+        order: 5 !important;
+    }
+    .footer-top .row.clearfix > .col-lg-3 .contact-widget {
+        text-align: center !important;
+    }
+    .footer-top .row.clearfix > .col-lg-3 .widget-title2 {
+        text-align: center !important;
+    }
+    .footer-top .row.clearfix > .col-lg-3 .widget-title2 h3 {
+        text-align: center !important;
+    }
+
+    /* ---- Widget titles: remove all negative margins, left align ---- */
+    .footer-top .footer-widget .widget-title,
+    .footer-top .footer-widget .widget-title1,
+    .footer-top .footer-widget .widget-title2 {
+        margin: 0 0 14px 0 !important;
+        text-align: left !important;
+    }
+    .footer-top .footer-widget .widget-title h3,
+    .footer-top .footer-widget .widget-title1 h3,
+    .footer-top .footer-widget .widget-title2 h3 {
+        margin: 0 0 4px 0 !important;
+        font-size: 22px !important;
+        text-align: left !important;
+    }
+
+    /* ---- About paragraph ---- */
+    .about-paragraph {
+        margin: 0 !important;
+        font-size: 13px !important;
+        line-height: 1.65 !important;
+        text-align: justify !important;
+    }
+
+    /* ---- Contact links ---- */
+    .links-list { margin-top: 0 !important; padding-left: 0 !important; }
+    .links-list li { margin: 0 0 8px 0 !important; justify-content: flex-start !important; }
+    .footer-inline-links { flex-wrap: wrap !important; justify-content: flex-start !important; }
+
+    /* ---- Business form (CENTERED) ---- */
+    .contact-widget .widget-content {
+        margin-top: 18px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .business-form {
+        margin-top: 0 !important;
+        width: 100% !important;
+        max-width: 480px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .business-form .form-group {
+        margin-bottom: 14px !important;
+        width: 100% !important;
+        max-width: 480px !important;
+    }
+    .business-form input,
+    .business-form textarea {
+        width: 100% !important;
+        max-width: 480px !important;
+        box-sizing: border-box !important;
+    }
+    .business-form button { margin-left: 0 !important; }
+}
+</style>
+</div>
+        <!-- main-footer -->
+        <footer class="main-footer" >
+            <div class="footer-top" style="background-image: url(assets/images/banner/banner-1.jpg);">
+               
+                    <div class="widget-section" style="margin-left:-20px;">
+                        <div class="row clearfix" style="justify-content: flex-start;"> <!-- Ensures everything aligns left -->
+                            <div class="col-lg-2 col-md-6 col-sm-12 footer-column">
+                                <div class="footer-widget logo-widget">
+                                    <figure class="footer-logo" style="text-align: left;">
+                                        <a href="{% url 'index' %}"><img src="{% static 'assets/images/Zoqo-02.png' %}" alt="oman" style="height: 100px; width: 200px;"></a>
+                                    </figure>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-3 col-sm-10 footer-column">
+                                <div class="footer-widget links-widget ml-70" style="text-align: left; padding: 30px;">
+                                    <div class="widget-title ml-3">
+                                        <h3 style="margin-left: -90px; margin-top: 10px;">About us</h3>
+                                    </div>
+                                    <p class="about-paragraph text-justify"> 
+                                        At ZOQO Deal, we are redefining the online classifieds 
+landscape in Oman by providing a powerful, easy-to-use 
+platform where the community can connect and trade 
+instantly. Whether you are looking to find your next home, 
+upgrade your vehicle, or discover everyday essentials, 
+our website and app serve as a comprehensive digital 
+hub tailored specifically for the local market. Committed 
+to transparency and convenience, we bridge the gap be
+tween traditional commerce and modern technology, 
+ensuring that every transaction across the Sultanate is 
+just a click away. 
+                                    </p>
+                                </div>
+                                
+                            </div>
+
+                            <div class="col-separator"></div>
+                            
+                           <div class="footer-widget links-widget ml-70" style="text-align: left; padding: 20px;">
+    <div class="widget-title1 ml-1">
+        <h3 style="margin-left: -85px;">Contact us</h3>
+    </div>
+    <div class="widget-content">
+        <ul class="links-list clearfix" style="margin-top: -25px;">
+            
+            <li>
+                <a href="#">Al Ansab, Muscat, Sultanate of Oman</a>
+            </li>
+
+            <li class="footer-inline-links">
+                <i class="fas fa-phone-alt"></i>
+                <a href="tel:+96897719555">(+968) 92525149</a>
+                
+            </li>
+
+            <li>
+                <i class="fas fa-envelope"></i>
+                <a href="mailto:zoqodeal@gmail.com">zoqodeal@gmail.com</a>
+            </li>
+
+            <li class="footer-inline-links">
+                <a href="{% url 'public_faq' %}">FAQ</a>
+                <span class="divider">|</span>
+                 <a href="{% url 'public_blog' %}">Blog</a>
+                 <span class="divider">|</span>
+                 <a href="{% url 'public_aboutus' %}">About Us</a>
+                 <span class="divider">|</span>
+                 <a href="{% url 'public_contactus' %}">Contact Us</a>
+               
+                
+                
+            </li>
+
+            <li class="footer-inline-links">
+               
+                <a href="{% url 'public_refundpolicy' %}">Refund Policy</a>
+    <span class="divider">|</span>
+     <a href="{% url 'public_privacy_policy' %}">Privacy Policy</a> 
+                 
+            </li>
+            <li class="footer-inline-links">
+                <a href="{% url 'public_terms' %}">Terms & Conditions</a>
+  
+    
+    
+            </li>
+            <li class="footer-inline-links">
+
+
+    <a href="https://www.instagram.com/zoqodeal" target="_blank" class="social-link">
+        <i class="fab fa-instagram"></i>
+    </a>
+
+    <a href="https://www.facebook.com/zoqodeal" target="_blank" class="social-link">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+
+    <a href="https://www.linkedin.com/company/zoqodeal" target="_blank" class="social-link">
+        <i class="fab fa-linkedin-in"></i>
+    </a>
+
+    <a href="https://x.com/zoqodeal" target="_blank" class="social-link">
+        <i class="fab fa-x-twitter"></i>
+    </a>
+</li>
+
+           
+
+        </ul>
+    </div>
+</div>
+<style>
+ 
+  .footer-widget i {
+    margin-right: 3px;   /* reduce space between icon and text */
+    font-size: 14px;
+    color: #666;
+}
+
+.links-list li {
+    display: flex;
+    align-items: center;
+    gap: 1px; /* tighter overall spacing */
+}
+
+.footer-inline-links {
+    display: flex;
+    align-items: center;
+    gap: 1px; /* controls spacing between numbers */
+}
+
+.footer-inline-links a {
+    margin: 0;
+    padding: 0;
+}
+
+.footer-inline-links .divider {
+    margin: 0 -1px;
+    color: #aaa;
+}
+
+
+@media screen and (max-width: 768px) {
+
+    /* Fix widget titles – remove negative margins and center them */
+    .footer-top .footer-widget .widget-title,
+    .footer-top .footer-widget .widget-title1,
+    .footer-top .footer-widget .widget-title2 {
+        margin: -20px 0 20px 0 !important;   /* Reset all negative margins */
+        text-align: center !important;
+        position: relative;
+        
+    }
+
+    /* Ensure h3 inside titles is centered and has no negative margins */
+    .footer-top .footer-widget .widget-title h3,
+    .footer-top .footer-widget .widget-title1 h3,
+    .footer-top .footer-widget .widget-title2 h3 {
+        margin-left: 0 !important;
+        text-align: center;
+        font-size: 24px;  /* Slightly smaller on mobile if desired */
+        
+    }
+
+    /* Fix links list – remove negative margins and center items */
+    .footer-top .links-widget .links-list li {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        text-align: center;
+        
+    }
+
+    /* Optional: make inline links wrap nicely */
+    .footer-inline-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Business form adjustments (already in your code, but ensure it works) */
+    .business-form input,
+    .business-form textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+    .business-form button {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Hide the column separator on mobile (you already have this) */
+    .col-separator {
+        display: none;
+    }
+
+    /* Make the about paragraph margin reset */
+    .about-paragraph {
+        margin-left: 0 !important;
+        text-align: justify !important;
+        padding: 0 15px;
+    }
+
+    /* Adjust logo size and centering */
+    .footer-logo {
+        text-align: center;
+    }
+    .footer-logo img {
+        max-width: 150px;
+        height: auto;
+        margin-left: 100px !important;
+        margin-bottom: -60px;
+    }
+
+    /* Stack columns vertically */
+    .footer-top .row {
+        flex-direction: column;
+    }
+    .footer-column {
+        width: 100%;
+        /* margin-bottom: 30px; */
+    }
+}
+    </style>
+
+                            <div class="col-separator"></div>
+                            
+                            <div class="col-lg-3 col-md-6 col-sm-12 footer-column" style="padding: 20px;">  
+                                <div class="footer-widget contact-widget" style="text-align: left;">
+                                    <div class="widget-title2">
+                                        <h3 style="margin-top: -100px;margin-left: -15px;">Business Collaboration</h3>
+                                    </div>
+                                    <div class="widget-content" style="margin-top: 57px;">
+                                        <form action="{% url 'submit_collaboration' %}" method="post" class="business-form">
+    {% csrf_token %}
+                                            <!-- Name Field -->
+                                            <div class="form-group">
+                                                <input type="text" id="name" name="name" class="form-control" placeholder="Name" required>
+                                            </div>
+                                            <!-- Email Field -->
+                                            <div class="form-group">
+                                                <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                                            </div>
+                                            <!-- Message Field -->
+                                            <div class="form-group">
+                                                <textarea id="message" name="message" class="form-control" placeholder="Message" rows="4" required></textarea>
+                                            </div>
+                                            <div>
+                                                <button type="submit"></i>Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="successPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-container">
+        <!-- <div class="popup-icon">
+            <span class="checkmark">✓</span>
+        </div> -->
+        <h3 class="popup-title">Thank you for your interest in collaborating with ZOQO DEAL!</h3>
+        <p class="popup-message">We have received your details and will reach out to discuss potential opportunities soon.</p>
+        <button class="popup-button" onclick="closePopup()">Got it</button>
+    </div>
+</div>
+
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.3s ease;
+    }
+    .popup-container {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 20px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s ease;
+    }
+    .popup-icon {
+        background: #15818E;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .checkmark {
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+    }
+    .popup-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 10px 0;
+        color: #1e2a3a;
+    }
+    .popup-message {
+        font-size: 16px;
+        color: #4a5568;
+        line-height: 1.5;
+        margin-bottom: 25px;
+    }
+    .popup-button {
+        background: #15818E;
+        border: none;
+        color: white;
+        padding: 12px 28px;
+        border-radius: 40px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .popup-button:hover {
+        background: #0f5f69;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    // Show popup if session flag is set
+    {% if request.session.show_success_popup %}
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('successPopup').style.display = 'flex';
+        });
+    {% endif %}
+
+    function closePopup() {
+        document.getElementById('successPopup').style.display = 'none';
+        // Clear the session flag via AJAX so it doesn't show again on refresh
+        fetch('{% url "clear_popup_flag" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+        }).catch(err => console.log('Error clearing flag:', err));
+    }
+
+    // Close popup when clicking outside the container
+    const popupElement = document.getElementById('successPopup');
+    if (popupElement) {
+        popupElement.addEventListener('click', function(e) {
+            if (e.target === this) closePopup();
+        });
+    }
+</script>
+
+                                </div>
+                            </div>
+                            
+                            <style>
+                                .business-form {
+                                   
+                                    font-family: 'FontStyle6', Arial, sans-serif;
+                                    margin-top: -30px;
+                                }
+                            
+                                .business-form .form-group {
+                                    {% comment %} margin-bottom: 15px; {% endcomment %}
+                                    font-family: 'FontStyle6', Arial, sans-serif;
+                                }
+                            
+                                .business-form input, 
+                                .business-form textarea {
+                                    width: 390px;
+                                    padding: 20px;
+                                    border: 1px solid transparent;
+                                    border-radius: 20px;
+                                    font-size: 14px;
+                                    outline: none;
+                                    transition: all 0.3s ease;
+                                }
+                            
+                                .business-form input:focus, 
+                                .business-form textarea:focus {
+                                    border-color: #007bff;
+                                    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+                                }
+                            
+                                .business-form button {
+                                    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+                                    font-family: 'FontStyle1', Arial, sans-serif;
+                                    color: white;
+                                    border-radius: 25px;
+                                    padding: 12px 40px;
+                                    text-decoration: none;
+                                    margin-left: 260px;
+                                    font-size: 16px;
+                                }
+                                .business-form button:hover{
+                                    background:rgb(0, 0, 0);
+                                    box-shadow: 0px 10px 30px 0px rgba(13,25,39,0.3);
+                                    text-decoration: none;
+                                  }
+                                  
+                               /* Separator between columns */
+                                .column-separator {
+                                    border-right: 1px solid #ccc; /* Light border */
+                                     padding: 20px;
+                                }
+
+.col-separator {
+    width: 1px; /* Separator width */
+    background-color: #171616; /* Light gray separator */
+    margin: 0 25px; /* Space around separator */
+    display: inline-block;
+    height: 320px; /* Stretch based on content height */
+    margin-top: -49px;
+    margin-left: -5px;
+}
+
+.footer-row {
+    display: flex;
+    align-items: stretch;
+}
+
+                            </style>
+                            
+                        </div>
+                    </div>
+                </div>
+            
+           
+        </footer>
+        
+        <!-- main-footer end -->
+
+<style>
+    .footer-widget {
+    text-align: left; /* Aligns all text in the footer to the left */
+}
+
+.footer-top .row {
+    justify-content: flex-start; /* Ensures all columns align left */
+}
+
+.footer-widget .widget-title h3 {
+    margin-bottom: 10px; /* Adjusts spacing for titles */
+}
+
+.footer-widget ul {
+    padding-left: 0; /* Removes extra padding from lists */
+    
+}
+
+.footer-bottom {
+    text-align: left; /* Aligns the bottom section to the left */
+}
+
+</style>
+
+<style>
+  /* ===== MOBILE RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+  .main-footer {
+    height: auto;
+    padding-bottom: 20px;
+  }
+
+  .footer-top {
+    padding: 40px 15px !important; /* reduce side padding */
+  }
+
+  /* ---- Columns ---- */
+  .footer-top .row {
+    flex-direction: column;
+    gap: 30px; /* consistent vertical spacing */
+  }
+
+  .footer-column {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  /* ---- Separator ---- */
+  .col-separator {
+    display: none !important;
+  }
+
+  /* ---- Logo ---- */
+  .footer-logo {
+    text-align: center;
+  }
+  .footer-logo img {
+    max-width: 140px;
+    height: auto;
+  }
+
+  /* ---- Widget titles ---- */
+  .footer-widget .widget-title,
+  .footer-widget .widget-title1,
+  .footer-widget .widget-title2 {
+    margin: 0 0 15px 0 !important;
+    text-align: center !important;
+  }
+  .footer-widget .widget-title h3,
+  .footer-widget .widget-title1 h3,
+  .footer-widget .widget-title2 h3 {
+    margin-left: 0 !important;
+    font-size: 22px;
+  }
+
+  /* ---- About paragraph ---- */
+  .about-paragraph {
+    margin-left: 0 !important;
+    padding: 0 10px;
+    font-size: 13px;
+    text-align: justify;
+  }
+
+  /* ---- Links lists (contact, footer nav) ---- */
+  .links-list {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .links-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 !important;
+  }
+
+  /* inline links (FAQ | Blog | ...) */
+  .footer-inline-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 2px;
+  }
+  .footer-inline-links .divider {
+    margin: 0 1px;
+  }
+
+  /* Social icons – keep inline */
+  .footer-inline-links .social-link {
+    margin: 0 6px;
+  }
+
+  /* ---- Business Collaboration form ---- */
+  .business-form {
+    margin-top: 0;
+    padding: 0 5px;
+  }
+  .business-form .form-group {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .business-form input,
+  .business-form textarea {
+    width: 100% !important;
+    max-width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+  .business-form button {
+    width: 100%;
+    margin: 5px 0 0 0 !important;
+    padding: 14px 20px;
+    font-size: 16px;
+    display: block;
+    text-align: center;
+  }
+
+  /* ---- Contact widget icons & text ---- */
+  .footer-widget i {
+    margin-right: 6px;
+  }
+
+  /* ---- Popup on mobile ---- */
+  .popup-container {
+    width: 92%;
+    padding: 25px 15px;
+  }
+  .popup-title {
+    font-size: 18px;
+  }
+  .popup-message {
+    font-size: 14px;
+  }
+}
+
+</style>
+
+
+        
+
+       
+    </div>
+
+   
+    <!-- jequery plugins -->
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/validation.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.fancybox.js' %}"></script>
+    <script src="{% static 'assets/js/appear.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script> 
+   
+    
+
+
+
+
+    <!-- main-js -->
+    <script src="{% static 'assets/js/script.js' %}"></script>
+
+</body><!-- End of .page_wrapper -->
+</html>

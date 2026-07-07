@@ -1,0 +1,3090 @@
+{% load static %}
+{% include 'header2.html' %}
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load humanize %}
+{% load product_views %}
+
+<!-- Material Icons & Font Awesome -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    
+/* ================= BASE RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= MAIN CONTAINER ================= */
+.products-container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+body.has-fixed-navbar .products-container {
+    margin-top: 80px;
+}
+
+.user-title {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #F9AD1F, #EB362D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    text-align: center;
+    margin-bottom: 40px;
+    font-family: 'FontStyle6';
+}
+
+/* ================= STATS CARDS ================= */
+.listing-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.listing-circle .inner {
+    width: 86px;
+    height: 86px;
+    background: #fff;
+    border-radius: 50%;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.circle-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.circle-label {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.stat-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 14px 16px;
+    height: 100%;
+}
+
+.stat-number {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* ================= FILTER BUTTONS (Status) ================= */
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.filter-pill {
+    padding: 10px 18px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.filter-pill:hover {
+    background: #e5e7eb;
+    color: #111827;
+    text-decoration: none;
+}
+
+.filter-pill.active {
+    background: #ffffff;
+    border-color: #EB362D;
+    box-shadow: 0 4px 14px rgba(235, 54, 45, 0.15);
+    font-weight: 600;
+    color: #EB362D;
+}
+
+/* ================= MODERN FILTER BAR STYLES ================= */
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 0;
+    z-index: 2038;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.filter-form.sticky {
+    position: fixed !important;
+    top: 1px !important;
+    left: 0;
+    right: 0;
+    background: white !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    animation: slideDown 0.3s ease;
+    z-index: 9999 !important;
+}
+
+.filter-form.sticky.has-navbar-offset {
+    top: var(--navbar-height, 70px);
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #5d5b5b;
+    padding: 0;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 1100px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+.filter-item {
+    flex: 1;
+    display: flex;
+    padding: 12px 20px;
+    position: relative;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 150px;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-right: 8px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ddd;
+    height: 40px;
+    margin: auto 0;
+}
+
+.input-value {
+    font-size: 14px;
+    color: #666;
+    border: none;
+    background: transparent;
+    flex: 1;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+}
+
+.input-value::placeholder {
+    color: #999;
+}
+
+.dropdown-icons {
+    font-size: 12px;
+    color: #999;
+    margin-left: 8px;
+}
+
+/* ================= DROPDOWN CONTAINERS - FIXED: No double scrollbars ================= */
+.location-list-container,
+.condition-container {
+    position: fixed;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    z-index: 10001;
+    padding: 15px;
+    min-width: 350px;
+    max-width: 350px;
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.condition-container {
+    min-width: 280px;
+    width: auto;
+    max-width: 950px;
+    margin-left: -125px;
+}
+
+/* Category Badges Grid */
+.category-badges-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 10px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+    text-decoration: none;
+    box-sizing: border-box;
+    width: 100%;
+    font-weight: 500;
+}
+
+.category-badge:hover {
+    background: #e0e0e0;
+    border-color: #F9AD1F;
+    text-decoration: none;
+}
+
+.category-badge.active {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-color: transparent;
+}
+
+.category-badge.active:hover {
+    background: linear-gradient(60deg, #e09e1c, #d62f27);
+}
+
+/* Location search - Fixed at top */
+.location-search-container {
+    position: relative;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.location-search-input {
+    width: 100%;
+    padding: 10px 35px 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.location-search-icon {
+    position: absolute;
+    right: 15px;
+    top: 40%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* Location list - Only one scrollbar */
+#location-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    flex: 1;
+}
+
+.label-item {
+    padding: 8px 15px;
+    background: #f0f0f0;
+    font-weight: 600;
+    font-size: 12px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    /* z-index: 1; */
+}
+
+.location-item {
+    padding: 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.location-item-header {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.location-item input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: #EB362D;
+}
+
+.location-item label {
+    font-size: 14px;
+    color: #2d3748;
+    cursor: pointer;
+    flex: 1;
+    text-transform: none;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.nested-list {
+    list-style: none;
+    padding-left: 35px;
+    margin: 0;
+    background: #f9fafc;
+    display: none;
+}
+
+.nested-list.expanded {
+    display: block;
+}
+
+.dropdown-arrow, .district-dropdown-arrow {
+    margin-left: auto;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+    color: #666;
+    font-size: 12px;
+}
+
+.dropdown-arrow.rotated, .district-dropdown-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+/* Footer fixed at bottom */
+.additional-filters-footer {
+    flex-shrink: 0;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Buttons */
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(233, 78, 42, 0.3);
+}
+
+/* Clear Filters Section */
+.clear-filters-section {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 20px 20px 0;
+    min-height: 40px;
+}
+
+.clear-filters-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    color: #e01919;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.clear-filters-link:hover {
+    border-color: #EB362D;
+    color: #EB362D;
+    text-decoration: none;
+}
+
+.clear-filters-link i {
+    font-size: 14px;
+}
+
+.clear-filters-link.hidden {
+    display: none;
+}
+
+/* Loading and search helpers */
+.search-highlight {
+    background-color: #fff3cd;
+    font-weight: bold;
+}
+
+.search-hidden {
+    display: none !important;
+}
+
+.loading-nested {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* ================= PRODUCT CARDS ================= */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.product-card-horizontal {
+    display: flex;
+    border: none;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    height: 240px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-card-horizontal:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-image-container {
+    flex: 0 0 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image-horizontal {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.product-card-horizontal:hover .product-image-horizontal {
+    transform: scale(1.05);
+}
+
+.product-details-horizontal {
+    flex: 1;
+    padding: 18px 18px 15px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-status-horizontal {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    z-index: 10;
+    font-family: 'FontStyle6';
+    background-color: #fff;
+    border: 2px solid currentColor;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transform: rotate(-2deg);
+    display: inline-block;
+    cursor: default;
+}
+
+.product-status-horizontal.approved {
+    color: #28a745;
+}
+
+.product-status-horizontal.pending {
+    color: #ff9800;
+}
+
+.product-status-horizontal.rejected {
+    color: #dc3545;
+}
+
+.product-status-horizontal.soldout {
+    color: #6c757d;
+}
+
+.price-section {
+    font-family: 'FontStyle6';
+    padding-bottom: 8px;
+}
+
+.product-price-main {
+    color: #EB362D;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.vehicle-details .vehicle-title {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    margin: 0;
+    font-family: 'FontStyle6';
+}
+
+.make-section .vehicle-make {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.details-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    color: #333;
+    align-items: center;
+    font-family: 'FontStyle6';
+    margin-bottom: 6px;
+}
+
+.icon-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.location-section .vehicle-location {
+    font-size: 1rem;
+    color: #495057;
+    margin: 0;
+    padding-top: 8px;
+    font-family: 'FontStyle6';
+}
+
+.vehicle-views {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    gap: 4px;
+}
+
+.action-buttons {
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding-top: 12px;
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+}
+
+.promote-btn, .repost-btn {
+    font-size: 12px;
+    padding: 6px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.promote-btn {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    animation: softPulse 2s infinite ease-in-out;
+}
+
+.promote-btn:hover:not(:disabled) {
+    background: linear-gradient(60deg, #e09e1c, #d62f27);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(233, 78, 42, 0.3);
+}
+
+.promote-btn:disabled {
+    background: linear-gradient(60deg, #c0c0c0, #a0a0a0);
+    cursor: not-allowed;
+    opacity: 0.6;
+    animation: none;
+}
+
+.repost-btn {
+    background: linear-gradient(60deg, #EB362D, #F9AD1F);
+    color: white;
+}
+
+.repost-btn:hover {
+    background: linear-gradient(60deg, #d62f27, #e09e1c);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(233, 78, 42, 0.3);
+}
+
+@keyframes softPulse {
+    0% { box-shadow: 0 4px 10px rgba(233, 78, 42, 0.2); }
+    50% { box-shadow: 0 6px 15px rgba(233, 78, 42, 0.4); }
+    100% { box-shadow: 0 4px 10px rgba(233, 78, 42, 0.2); }
+}
+
+/* Image Slider */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 35px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: all 0.25s ease;
+    pointer-events: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.prev-btn {
+    left: 8px;
+}
+
+.next-btn {
+    right: 8px;
+}
+
+.slider-btn .material-icons {
+    font-size: 18px;
+    color: #fff;
+}
+
+.listing-image-container:hover .slider-btn {
+    opacity: 1;
+}
+
+.slider-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    z-index: 10;
+    pointer-events: auto;
+    padding: 4px;
+}
+
+.slider-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.slider-dots span.active {
+    background-color: #fff;
+    transform: scale(1.2);
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f9fafb;
+    border-radius: 12px;
+    grid-column: span 2;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .filter-box {
+        flex-wrap: wrap;
+    }
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .filter-box {
+        flex-direction: column;
+        border-radius: 30px;
+    }
+    .filter-item {
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+    }
+    .filter-item:last-child {
+        border-bottom: none;
+    }
+    .separators {
+        display: none;
+    }
+    .location-list-container,
+    .condition-container {
+        min-width: 280px;
+        width: auto;
+        max-width: 90vw;
+    }
+    .category-badges-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+    body.has-fixed-navbar .products-container {
+        margin-top: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        padding: 10px;
+    }
+    .filter-form.sticky {
+        top: 0;
+    }
+    .filter-form.sticky.has-navbar-offset {
+        top: 60px !important;
+    }
+    .filter-item {
+        padding: 10px 15px;
+    }
+    .category-badges-grid {
+        grid-template-columns: 1fr;
+    }
+    .clear-filters-section {
+        justify-content: center;
+        margin: 10px 0 20px 0;
+    }
+    .product-card-horizontal {
+        flex-direction: column;
+        height: auto;
+    }
+    .product-image-container {
+        flex: 0 0 200px;
+        width: 100%;
+    }
+    .product-image-horizontal {
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        border-bottom-left-radius: 0;
+    }
+    body.has-fixed-navbar .products-container {
+        margin-top: 60px;
+    }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: #E35D2A;
+}
+
+.location-item.all-governate-item {
+    padding: 0 !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.location-item.all-governate-item .location-item-header {
+    padding: 8px 10px !important;
+    display: flex;
+    align-items: center;
+    border: none !important;
+}
+
+.location-item.all-governate-item input[type="checkbox"] {
+    margin-right: 10px;
+    accent-color: #E35D2A;
+}
+
+
+.location-item.all-governate-item label {
+    font-size: 14px;
+    color: #2d3748;
+    cursor: pointer;
+    flex: 1;
+    text-transform: none;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+/* RTL (Arabic) Layout Support */
+body.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Product Card RTL Adjustments */
+body.rtl .product-card-horizontal {
+    direction: rtl;
+}
+
+body.rtl .product-details-horizontal {
+    text-align: right;
+}
+
+body.rtl .details-icons {
+    justify-content: flex-start;
+}
+
+body.rtl .details-icons .icon-item {
+    margin-left: 15px;
+    margin-right: 0;
+}
+
+body.rtl .details-icons .icon-item img {
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+body.rtl .price-section {
+    text-align: right;
+}
+
+body.rtl .vehicle-title,
+body.rtl .vehicle-make,
+body.rtl .vehicle-location {
+    text-align: right;
+}
+
+body.rtl .location-section {
+    flex-direction: row-reverse;
+}
+
+body.rtl .action-buttons {
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+}
+
+body.rtl .action-buttons .btn {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+body.rtl .action-buttons .btn:first-child {
+    margin-right: 0;
+}
+
+/* Slider Controls RTL */
+body.rtl .slider-controls .prev-btn {
+    left: auto;
+    right: 5px;
+}
+
+body.rtl .slider-controls .next-btn {
+    right: auto;
+    left: 5px;
+}
+
+/* Boost Badge RTL */
+body.rtl .boost-badge {
+    right: auto !important;
+    left: 10px !important;
+}
+
+/* Number Plate RTL Fixes */
+body.rtl .plate {
+    flex-direction: row-reverse;
+}
+
+body.rtl .plate .number,
+body.rtl .plate .letters,
+body.rtl .plate .country {
+    direction: rtl;
+}
+
+body.rtl .letters .arabic {
+    direction: rtl;
+}
+
+body.rtl .motorcycle-plate {
+    flex-direction: row-reverse;
+}
+
+/* SIM Card RTL */
+body.rtl .sim-plate .sim-number {
+    direction: ltr; /* Keep numbers LTR */
+}
+
+/* Category Title RTL */
+body.rtl .category-title {
+    text-align: right;
+    border-right: 4px solid #EB362D;
+    border-left: none;
+    padding-right: 15px;
+    padding-left: 0;
+}
+
+/* Price Currency Position */
+body.rtl .product-price-main span {
+    display: inline-block;
+    margin-right: 3px;
+    margin-left: 0;
+}
+
+/* Vehicle Views RTL */
+body.rtl .vehicle-views {
+    flex-direction: row-reverse;
+}
+
+/* Location Section - City Name RTL */
+body.rtl .vehicle-location {
+    direction: rtl;
+}
+
+/* Icon Items - Reverse direction */
+body.rtl .icon-item {
+    display: inline-flex;
+    align-items: center;
+    flex-direction: row-reverse;
+}
+
+body.rtl .icon-item img {
+    margin-left: 5px;
+    margin-right: 0;
+}
+
+/* Badge in Icon Item */
+body.rtl .icon-item .badge {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+/* Modal/Dropdown RTL Support */
+body.rtl .dropdown-menu {
+    text-align: right;
+}
+
+body.rtl .dropdown-item {
+    text-align: right;
+}
+
+/* Product Grid - keep as is but text RTL */
+body.rtl .products-grid {
+    direction: rtl;
+}
+
+/* Number Plate Display - Fix right/left positioning */
+body.rtl .plate::before {
+    left: auto;
+    right: 34%;
+}
+
+body.rtl .plate::after {
+    right: auto;
+    left: 34%;
+}
+/* ==========================================================
+   RESPONSIVE CSS – FILTER BAR & RELATED ELEMENTS
+   ========================================================== */
+
+/* --- Large screens (≤ 1200px) --- */
+@media (max-width: 1200px) {
+  .filter-box {
+    flex-wrap: wrap;              /* Allow filter items to wrap */
+  }
+}
+
+/* --- Tablets & small laptops (≤ 992px) --- */
+@media (max-width: 992px) {
+  .filter-box {
+    flex-direction: column;       /* Stack filter items vertically */
+    border-radius: 30px;
+  }
+
+  .filter-item {
+    width: 100%;                 /* Full width on tablet */
+    border-bottom: 1px solid #ddd;
+  }
+  .filter-item:last-child {
+    border-bottom: none;
+  }
+
+  .separators {
+    display: none;               /* Hide vertical dividers */
+  }
+
+  /* Dropdown containers */
+  .location-list-container,
+  .condition-container {
+    min-width: 280px;
+    width: auto;
+    max-width: 90vw;             /* Prevent overflow on smaller screens */
+  }
+
+  .category-badges-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for categories */
+  }
+
+  /* Adjust main container margin if navbar is fixed */
+  body.has-fixed-navbar .products-container {
+    margin-top: 60px;
+  }
+}
+
+/* --- Mobile (≤ 768px) --- */
+@media (max-width: 768px) {
+  /* Filter form container */
+  .filter-form {
+    padding: 10px;               /* Reduce padding */
+  }
+
+  /* Sticky state – always stick below the navbar on mobile */
+  .filter-form.sticky {
+    top: 0;                      /* Will be overridden by JS, but fallback */
+  }
+  .filter-form.sticky.has-navbar-offset {
+    top: 60px !important;        /* Default offset, JS sets actual navbar height */
+  }
+
+  /* Filter items – reduce padding for tight spaces */
+  .filter-item {
+    padding: 10px 15px;
+  }
+
+  /* Category badges – single column */
+  .category-badges-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Clear filters section – center aligned */
+  .clear-filters-section {
+    justify-content: center;
+    margin: 10px 0 20px 0;
+  }
+
+  /* Status filter pills – wrap nicely */
+  .filter-buttons {
+    gap: 4px;                    /* Tighter spacing */
+    justify-content: center;      /* Center pills on mobile */
+  }
+  .filter-pill {
+    font-size: 12px;             /* Slightly smaller text */
+    padding: 6px 12px;
+  }
+
+  /* Ensure dropdowns are positioned correctly (JS handles positioning) */
+  .location-list-container,
+  .condition-container {
+    max-width: 90vw;
+    left: 5% !important;         /* Fallback if JS fails */
+  }
+
+  /* No‑results message adjustments */
+  .no-results-message {
+    padding: 40px 15px;
+    margin: 20px 0;
+  }
+  .no-results-title {
+    font-size: 20px;
+  }
+  .no-results-text {
+    font-size: 14px;
+  }
+  .no-results-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .clear-filter-btn {
+    width: 100%;
+    max-width: 250px;
+    justify-content: center;
+  }
+}
+
+/* --- Extra small phones (≤ 480px) --- */
+@media (max-width: 480px) {
+  .filter-item {
+    padding: 8px 12px;
+  }
+  .filter-item label {
+    font-size: 12px;             /* Smaller label */
+  }
+  .input-value {
+    font-size: 12px;             /* Smaller input text */
+  }
+  .dropdown-icons {
+    font-size: 10px;
+  }
+  .filter-pill {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  .category-badge {
+    font-size: 12px;             /* Smaller category badges */
+    padding: 8px 10px;
+  }
+}
+
+/* --- Optional: force filter bar to be always sticky on mobile --- 
+     Uncomment if you want it fixed at top even before scrolling.
+@media (max-width: 768px) {
+  .filter-form {
+    position: sticky !important;
+    top: var(--navbar-height, 60px) !important;
+    z-index: 9999 !important;
+    background: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 10px 0 !important;
+  }
+  .filter-form.sticky {
+    animation: none !important;   /* Remove slide animation */
+  }
+}
+*/
+</style>
+
+<body>
+    <div class="products-container">
+        <!-- Stats Section -->
+        <section class="container my-1">
+    <div class="mb-4">
+        <h2 class="fw-bold user-title">My Ads</h2>
+    </div>
+    <a href="{% url 'edit_jobseeker' %}" class="theme-btn-one mt-2" style="margin-left: 800px;"> My Job Profile</a>
+    <a href="{% url 'jobapplication' user.id %}" class="theme-btn-one mt-2" style="white-space: nowrap;">My Applications</a>
+
+    <div class="row g-4">
+        <!-- Live Listings Card -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm border-0 p-4">
+                <h5 class="fw-bold mb-4">Live Listings</h5>
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        {% with count=aggregated_counts.approved %}
+                        <div class="listing-circle mx-auto"
+                             style="background: conic-gradient(#F9AD1F 0%, #EB362D {{ count|floatformat:0 }}0%, #e5e7eb 0);">
+                            <div class="inner">
+                                <div class="circle-value">{{ count }}</div>
+                                <div class="circle-label">total</div>
+                            </div>
+                        </div>
+                        {% endwith %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="stat-box">
+                                    <div class="stat-label"><b>Free Listings</b></div>
+                                    <div class="stat-number">{{ free_credits_left|default:0 }}</div>
+                                    <div class="stat-label">Remaining</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-box">
+                                    <div class="stat-label"><b>Purchased</b></div>
+                                    <div class="stat-number">{{ purchased_credits_left|default:0 }}</div>
+                                    <div class="stat-label">Listing Credits</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credits Card -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm border-0 p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h5 class="fw-bold mb-1">Credits</h5>
+                        <div class="text-muted">
+                            Free tier expires in 
+                            <strong>{{ free_tier_days_left|default:45 }}</strong> days
+                        </div>
+                    </div>
+                    <a href="{% url 'credit_packages' %}" class="theme-btn-one mt-2"> Buy Credits</a>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-label"><b> Listing Credits</b></div>
+                            <div class="stat-number">{{ credits.available_listing_credits|default:0 }}</div>
+                            <div class="stat-label">
+                                {% if free_credits_left > 0 %}
+                                    {{ free_credits_left }} free + {{ purchased_credits_left }} paid
+                                {% else %}
+                                    Available to use
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <div class="stat-label"><b> Boost Days</b></div>
+                            <div class="stat-number">{{ boost_days_left|default:0 }}</div>
+                            <div class="stat-label">Available for promotion</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar for Free Listings Usage -->
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>Free Listings Used</span>
+                        <span>{{ credits.free_listings_used }}/{{ credits.free_listings_total }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" 
+                             role="progressbar" 
+                             style="width: {% widthratio credits.free_listings_used credits.free_listings_total 100 %}%; 
+                                    background: linear-gradient(90deg, #F9AD1F, #EB362D);"
+                             aria-valuenow="{{ credits.free_listings_used }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="{{ credits.free_listings_total }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Payment Banner - Shows when user has pending exclusive listing -->
+{% if exclusive_with_pending_payment and pending_exclusive_listing %}
+    {% if credits.purchased_listing_credits >= 25 %}
+    <div class="payment-banner payment-banner-success">
+    {% else %}
+    <div class="payment-banner payment-banner-warning">
+    {% endif %}
+        <div class="payment-banner-content">
+            <div class="payment-banner-icon">
+                {% if credits.purchased_listing_credits >= 25 %}
+                    <i class="fas fa-check-circle"></i>
+                {% else %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% endif %}
+            </div>
+            <div class="payment-banner-text">
+                <h4 class="payment-banner-title">
+                    {% if credits.purchased_listing_credits >= 25 %}
+                        ✅ Credits Available!
+                    {% else %}
+                        ⚠️ Payment Required to Publish Your Ad
+                    {% endif %}
+                </h4>
+                <p class="payment-banner-message">
+                    {% if credits.purchased_listing_credits >= 25 %}
+                        You have <strong>{{ credits.purchased_listing_credits }}</strong> credits. 
+                        Your exclusive listing will be published automatically once admin approves.
+                    {% else %}
+                        <strong>Your exclusive listing is approved but NOT yet published.</strong> 
+                        You need <strong>25 credits</strong> to publish it publicly. 
+                        Currently you have only <strong>{{ credits.purchased_listing_credits }}</strong> credit(s).
+                        <span class="payment-warning-text">⚠️ Your ad will remain hidden until payment is completed.</span>
+                    {% endif %}
+                </p>
+            </div>
+            <!-- {% if credits.purchased_listing_credits < 25 %}
+            <div class="payment-banner-action">
+                <a href="{% url 'initiate_paymob_payment' listing_id=pending_exclusive_listing.id %}" class="payment-btn">
+                    <i class="fas fa-credit-card"></i> Pay 26.250 OMR Now
+                </a>
+            </div>
+            {% endif %} -->
+            <button type="button" class="payment-banner-close" data-dismiss="alert" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+{% endif %}
+
+
+   
+  
+   
+       <!-- <div class="listing-submitted-box">
+  
+    <p>Your listing has been submitted and is currently under review. It will be published once approved by our team.</p>
+</div> -->
+
+<style>
+.listing-submitted-box{
+    text-align:center;
+    padding:20px;
+    border-radius:12px;
+    background:#f8fff9;
+    border:1px solid #d4edda;
+    max-width:450px;
+    margin:15px auto;
+}
+
+.listing-submitted-box i{
+    font-size:40px;
+    color:#28a745;
+    margin-bottom:10px;
+}
+
+.listing-submitted-box h6{
+    margin-bottom:8px;
+    font-weight:600;
+    color:#155724;
+}
+
+.listing-submitted-box p{
+    margin:0;
+    font-size:14px;
+    color:#555;
+}
+</style>
+   
+       
+    
+
+
+
+<style>
+.payment-banner {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    animation: slideDown 0.5s ease;
+}
+
+.payment-banner-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+    border-left: 5px solid #ffc107;
+}
+
+.payment-banner-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 5px solid #28a745;
+}
+
+.payment-banner-content {
+    padding: 20px 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.payment-banner-icon {
+    font-size: 48px;
+}
+
+.payment-banner-warning .payment-banner-icon {
+    color: #ffc107;
+}
+
+.payment-banner-success .payment-banner-icon {
+    color: #28a745;
+}
+
+.payment-banner-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.payment-banner-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.payment-banner-warning .payment-banner-title {
+    color: #856404;
+}
+
+.payment-banner-success .payment-banner-title {
+    color: #155724;
+}
+
+.payment-banner-message {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.payment-banner-warning .payment-banner-message {
+    color: #856404;
+}
+
+.payment-banner-success .payment-banner-message {
+    color: #155724;
+}
+
+.payment-warning-text {
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 500;
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.payment-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.payment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.payment-banner-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.payment-banner-close:hover {
+    opacity: 1;
+}
+
+.payment-banner-warning .payment-banner-close {
+    color: #856404;
+}
+
+.payment-banner-success .payment-banner-close {
+    color: #155724;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .payment-banner-icon {
+        font-size: 36px;
+    }
+    
+    .payment-banner-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+}
+</style>
+
+<script>
+// Auto-dismiss after 15 seconds for warning banner
+document.addEventListener('DOMContentLoaded', function() {
+    const banner = document.querySelector('.payment-banner-warning');
+    if (banner) {
+        setTimeout(function() {
+            banner.style.opacity = '0';
+            banner.style.transition = 'opacity 0.5s';
+            setTimeout(function() {
+                if (banner.parentNode) {
+                    banner.parentNode.removeChild(banner);
+                }
+            }, 500);
+        }, 15000);
+    }
+});
+</script>
+
+        <!-- Filter Bar -->
+        <div class="auto-container">
+            <div class="row clearfix">
+                <form action="" method="GET" class="filter-form" id="filterForm">
+                    <input type="hidden" name="status" id="status-filter" value="{{ status_filter }}">
+                    
+                    <div class="filter-box">
+                        <!-- Search Filter - MODIFICATION 1: Enhanced search placeholder -->
+                        <div class="filter-item" id="toggle-search-filter">
+                            <label for="search" class="mx-3">Search</label>
+                            <i class="fas fa-search dropdown-icons"></i>
+                            <input type="text" name="title" id="search-input" class="input-value" style="margin-left:15px;" 
+                                   placeholder="Search by title, name, number, ID..." 
+                                   value="{{ request.GET.title }}" 
+                                   autocomplete="off">
+                        </div>
+
+                        <div class="separators"></div>
+
+                        <div class="filter-item" id="toggle-location-filter">
+                            <label for="location" class="mx-3">Location</label>
+                            <i class="fas fa-chevron-down dropdown-icons"></i>
+                            <input type="text" name="location" id="selected-location" class="input-value" style="margin-left:15px;" 
+                                   placeholder="Select Location" 
+                                   value="{% if request.GET.governate or request.GET.district or request.GET.city %}Selected{% endif %}" 
+                                   readonly>
+                        </div>
+
+                        <div class="separators"></div>
+
+                        <div class="filter-item" id="toggle-condition">
+                            <label for="selected-category">Category</label>
+                            <i class="fas fa-chevron-down dropdown-icons"></i>
+                            <input type="text" id="selected-category" class="input-value" placeholder="All Categories"
+                                   value="{% if request.GET.category %}{% if request.GET.category == 'motors' %} Motors{% elif request.GET.category == 'real_estate' %} Real Estate{% elif request.GET.category == 'mobiles_tablets' %} Mobiles & Tablets{% elif request.GET.category == 'services' %} Services{% elif request.GET.category == 'other_categories' %} Other Categories{% endif %}{% endif %}" 
+                                   readonly>
+                        </div>
+                    </div>
+
+                    <!-- Location Dropdown -->
+                    <div id="location-list-container" class="location-list-container" style="display:none; margin-top: -6px;">
+                        <div class="location-search-container">
+                            <input type="text" id="location-search" placeholder="Search for governate, district, or city..." class="location-search-input">
+                            <i class="fas fa-search location-search-icon"></i>
+                        </div>
+                        
+                        <ul id="location-list">
+                            <li class="label-item governate-label">GOVERNORATE</li>
+                            <li class="location-item all-governate-item" style="border: none; padding: 0;">
+                                <div class="location-item-header" style="border: none; padding: 8px 10px;">
+                                    <input type="checkbox" id="select-all-governates" style="margin-right: 10px;">
+                                    <label for="select-all-governates" style="font-weight: 400; text-transform: none;">All</label>
+                                </div>
+                            </li>
+
+                            {% for governate in governates %}
+                            <li class="location-item" data-id="{{ governate.id }}" data-type="governate" data-name="{{ governate.name|lower }}" style="border: none;">
+                                <div class="location-item-header" style="border: none;">
+                                    <input type="checkbox" name="governate" value="{{ governate.id }}" {% if request.GET.governate == governate.id|stringformat:"i" %}checked{% endif %}>
+                                    <label>{{ governate.name }}</label>
+                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                                </div>
+                                <ul class="nested-list"></ul>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="additional-filters-footer mt-3">
+                            <button type="button" class="btn-apply" id="clear-location-filter">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- Category Dropdown -->
+                    <div class="condition-container" id="condition-container" style="display: none; margin-top: -4px;">
+                        <div class="category-badges-grid">
+                            <a href="?{% if request.GET.status %}status={{ request.GET.status }}{% endif %}" 
+                               class="category-badge {% if not request.GET.category %}active{% endif %}"
+                               data-category="">
+                                All Categories
+                            </a>
+                            <a href="?category=motors{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.governate %}{% for gov in request.GET.governate %}&governate={{ gov }}{% endfor %}{% endif %}{% if request.GET.district %}{% for dist in request.GET.district %}&district={{ dist }}{% endfor %}{% endif %}{% if request.GET.city %}{% for city in request.GET.city %}&city={{ city }}{% endfor %}{% endif %}" 
+                               class="category-badge {% if request.GET.category == 'motors' %}active{% endif %}"
+                               data-category="motors">
+                                Motors
+                            </a>
+                            <a href="?category=real_estate{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.governate %}{% for gov in request.GET.governate %}&governate={{ gov }}{% endfor %}{% endif %}{% if request.GET.district %}{% for dist in request.GET.district %}&district={{ dist }}{% endfor %}{% endif %}{% if request.GET.city %}{% for city in request.GET.city %}&city={{ city }}{% endfor %}{% endif %}" 
+                               class="category-badge {% if request.GET.category == 'real_estate' %}active{% endif %}"
+                               data-category="real_estate">
+                                Real Estate
+                            </a>
+                            <a href="?category=mobiles_tablets{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.governate %}{% for gov in request.GET.governate %}&governate={{ gov }}{% endfor %}{% endif %}{% if request.GET.district %}{% for dist in request.GET.district %}&district={{ dist }}{% endfor %}{% endif %}{% if request.GET.city %}{% for city in request.GET.city %}&city={{ city }}{% endfor %}{% endif %}" 
+                               class="category-badge {% if request.GET.category == 'mobiles_tablets' %}active{% endif %}"
+                               data-category="mobiles_tablets">
+                                Mobiles & Tablets
+                            </a>
+                            <a href="?category=services{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.governate %}{% for gov in request.GET.governate %}&governate={{ gov }}{% endfor %}{% endif %}{% if request.GET.district %}{% for dist in request.GET.district %}&district={{ dist }}{% endfor %}{% endif %}{% if request.GET.city %}{% for city in request.GET.city %}&city={{ city }}{% endfor %}{% endif %}" 
+                               class="category-badge {% if request.GET.category == 'services' %}active{% endif %}"
+                               data-category="services">
+                                Services
+                            </a>
+                            <a href="?category=other_categories{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.governate %}{% for gov in request.GET.governate %}&governate={{ gov }}{% endfor %}{% endif %}{% if request.GET.district %}{% for dist in request.GET.district %}&district={{ dist }}{% endfor %}{% endif %}{% if request.GET.city %}{% for city in request.GET.city %}&city={{ city }}{% endfor %}{% endif %}" 
+                               class="category-badge {% if request.GET.category == 'other_categories' %}active{% endif %}"
+                               data-category="other_categories">
+                                Other Categories
+                            </a>
+                        </div>
+                        <div class="additional-filters-footer">
+                            <button type="button" class="btn-apply" id="clear-category-filter">Clear</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Clear Filters Section -->
+        <div class="clear-filters-section">
+            <a href="?status={{ status_filter }}" class="clear-filters-link {% if not request.GET.title and not request.GET.governate and not request.GET.district and not request.GET.city and not request.GET.category %}hidden{% endif %}" id="clear-all-filters">
+                Clear All Filters
+            </a>
+        </div>
+
+        <!-- Status Filter Buttons -->
+        <div class="filter-buttons">
+            <a data-status="approved" class="filter-pill status-filter {% if status_filter == 'approved' %}active{% endif %}">
+                Approved (<span id="count-approved">{{ aggregated_counts.approved }}</span>)
+            </a>
+
+            <a data-status="exclusive"
+   class="filter-pill status-filter {% if status_filter == 'exclusive' %}active{% endif %}"
+   style="background: linear-gradient(60deg, #F9AD1F, #EB362D);
+          color: white;
+          padding: 8px 18px;
+          border-radius: 20px;
+          text-decoration: none;
+          
+          font-size: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;">
+
+    <!-- Text -->
+    <span>Sell it for</span>
+
+    <!-- Logo Image -->
+    <img src="{% static 'assets/images/ZoqoWhite-01.png' %}" 
+         alt="OmanDeal"
+         style="height:20px; object-fit:contain;">
+
+</a>
+            <a data-status="pending" class="filter-pill status-filter {% if status_filter == 'pending' %}active{% endif %}">
+                Pending (<span id="count-pending">{{ aggregated_counts.pending }}</span>)
+            </a>
+       
+            <a data-status="rejected" class="filter-pill status-filter {% if status_filter == 'rejected' %}active{% endif %}">
+                Rejected (<span id="count-rejected">{{ aggregated_counts.rejected }}</span>)
+            </a>
+            <a data-status="soldout" class="filter-pill status-filter {% if status_filter == 'soldout' %}active{% endif %}">
+                Sold Out (<span id="count-soldout">{{ aggregated_counts.soldout }}</span>)
+            </a>
+            <a data-status="expired" class="filter-pill status-filter {% if status_filter == 'expired' %}active{% endif %}">
+                Expired Ads (<span id="count-expired">{{ aggregated_counts.expired|default:'0' }}</span>)
+            </a>
+            <a data-status="paid_listing" class="filter-pill status-filter {% if status_filter == 'paid_listing' %}active{% endif %}">
+                Paid Listing (<span id="count-paid-listing">{{ aggregated_counts.paid_listing|default:'0' }}</span>)
+            </a>
+            <a data-status="paid_promotion" class="filter-pill status-filter {% if status_filter == 'paid_promotion' %}active{% endif %}">
+                Paid Promotion (<span id="count-paid-promotion">{{ aggregated_counts.paid_promotion|default:'0' }}</span>)
+            </a>
+        </div>
+
+        <!-- Products Grid Container -->
+        <div class="container mt-4 products-grid-container" id="products-grid-container">
+            {% include 'partials/products_grid.html' %}
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+    // ============================================
+    // GLOBAL VARIABLES
+    // ============================================
+    let currentRequest = null;
+    let searchTimeout = null;
+    let filterTimeout = null;
+    const fetchedDistricts = new Map();
+    const fetchedCities = new Map();
+
+    // ============================================
+    // FIX NAVBAR OVERLAP
+    // ============================================
+    function detectAndFixNavbarOverlap() {
+        const navbar = document.querySelector('nav') || document.querySelector('.navbar') || document.querySelector('header');
+        if (!navbar) return;
+        
+        const navbarHeight = navbar.offsetHeight;
+        const navbarStyle = window.getComputedStyle(navbar);
+        const isFixed = navbarStyle.position === 'fixed';
+        
+        if (isFixed) {
+            document.body.classList.add('has-fixed-navbar');
+            document.documentElement.style.setProperty('--navbar-height', navbarHeight + 'px');
+            const productsContainer = document.querySelector('.products-container');
+            if (productsContainer && !productsContainer.style.marginTop) {
+                productsContainer.style.marginTop = navbarHeight + 'px';
+            }
+            return true;
+        } else {
+            document.body.classList.remove('has-fixed-navbar');
+            return false;
+        }
+    }
+
+    function createNavbarSpacer() {
+        const navbar = document.querySelector('nav') || document.querySelector('.navbar') || document.querySelector('header');
+        if (!navbar) return;
+        
+        const isFixed = window.getComputedStyle(navbar).position === 'fixed';
+        if (isFixed && !document.getElementById('navbar-spacer')) {
+            const spacer = document.createElement('div');
+            spacer.id = 'navbar-spacer';
+            spacer.style.height = navbar.offsetHeight + 'px';
+            spacer.style.width = '100%';
+            spacer.style.display = 'block';
+            navbar.parentNode.insertBefore(spacer, navbar.nextSibling);
+        }
+    }
+
+    // ============================================
+    // DROPDOWN POSITIONING
+    // ============================================
+    function positionDropdown(dropdown, triggerElement) {
+        if (!dropdown || !triggerElement) return;
+        
+        const triggerRect = triggerElement.getBoundingClientRect();
+        
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = (triggerRect.bottom + 5) + 'px';
+        dropdown.style.left = triggerRect.left + 'px';
+        dropdown.style.right = 'auto';
+        dropdown.style.maxHeight = '400px';
+        dropdown.style.overflowY = 'auto';
+
+        if (triggerRect.left + dropdown.offsetWidth > window.innerWidth) {
+            dropdown.style.left = (triggerRect.right - dropdown.offsetWidth) + 'px';
+        }
+    }
+
+    function repositionDropdowns() {
+        const locationContainer = document.getElementById('location-list-container');
+        const categoryContainer = document.getElementById('condition-container');
+        const toggleLocation = document.getElementById('toggle-location-filter');
+        const toggleCategory = document.getElementById('toggle-condition');
+        
+        if (locationContainer && locationContainer.style.display === 'block' && toggleLocation) {
+            positionDropdown(locationContainer, toggleLocation);
+        }
+        if (categoryContainer && categoryContainer.style.display === 'block' && toggleCategory) {
+            positionDropdown(categoryContainer, toggleCategory);
+        }
+    }
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+    function hasActiveFilters() {
+        const searchValue = document.getElementById('search-input')?.value.trim();
+        const selectedGovs = document.querySelectorAll('input[name="governate"]:checked').length;
+        const selectedDistricts = document.querySelectorAll('input[name="district"]:checked').length;
+        const selectedCities = document.querySelectorAll('input[name="city"]:checked').length;
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        return searchValue || selectedGovs > 0 || selectedDistricts > 0 || selectedCities > 0 || category;
+    }
+
+    function updateClearFiltersVisibility() {
+        const clearFiltersLink = document.getElementById('clear-all-filters');
+        if (clearFiltersLink) {
+            if (hasActiveFilters()) {
+                clearFiltersLink.classList.remove('hidden');
+            } else {
+                clearFiltersLink.classList.add('hidden');
+            }
+        }
+    }
+
+    function closeAllFilterContainers() {
+        const locationContainer = document.getElementById('location-list-container');
+        const categoryContainer = document.getElementById('condition-container');
+        if (locationContainer) locationContainer.style.display = 'none';
+        if (categoryContainer) categoryContainer.style.display = 'none';
+    }
+
+    function updateSelectedLocationDisplay() {
+        const selectedGovs = Array.from(document.querySelectorAll('#location-list input[name="governate"]:checked'))
+            .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+        const selectedDistricts = Array.from(document.querySelectorAll('#location-list input[name="district"]:checked'))
+            .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+        const selectedCities = Array.from(document.querySelectorAll('#location-list input[name="city"]:checked'))
+            .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+
+        let text = '';
+        if (selectedGovs.length) text += selectedGovs.join(', ');
+        if (selectedDistricts.length) text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+        if (selectedCities.length) text += (text ? ' > ' : '') + selectedCities.join(', ');
+        document.getElementById('selected-location').value = text || "Select Location";
+    }
+
+    // ============================================
+    // UNIFIED NO RESULTS HANDLER (Location + Search)
+    // ============================================
+    function checkNoResults() {
+        const hasLocationFilter = document.querySelectorAll('input[name="governate"]:checked, input[name="district"]:checked, input[name="city"]:checked').length > 0;
+        const searchInput = document.getElementById('search-input');
+        const hasSearchFilter = searchInput && searchInput.value.trim().length > 0;
+        const hasActiveFilters = hasLocationFilter || hasSearchFilter;
+        
+        const productsGrid = document.querySelector('.products-grid');
+        const productsContainer = document.getElementById('products-grid-container');
+        const hasProducts = document.querySelectorAll('.product-card-horizontal, .listing-card').length > 0;
+        
+        // Remove existing error message
+        const existingError = document.querySelector('.no-results-message');
+        if (existingError) existingError.remove();
+        
+        // If no products and filters are active, show error message
+        if (!hasProducts && hasActiveFilters) {
+            // Build filter description
+            let filterText = [];
+            let clearButtons = [];
+            
+            if (hasSearchFilter) {
+                const searchTerm = searchInput.value.trim();
+                filterText.push(`Search: "${searchTerm}"`);
+                clearButtons.push(`<button onclick="clearSearchFilter()" class="clear-filter-btn"><i class="fas fa-search"></i> Clear Search</button>`);
+            }
+            
+            if (hasLocationFilter) {
+                const govNames = Array.from(document.querySelectorAll('input[name="governate"]:checked'))
+                    .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+                const distNames = Array.from(document.querySelectorAll('input[name="district"]:checked'))
+                    .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+                const cityNames = Array.from(document.querySelectorAll('input[name="city"]:checked'))
+                    .map(cb => cb.closest('.location-item')?.querySelector('label')?.textContent || '');
+                
+                let locationStr = [];
+                if (govNames.length) locationStr.push(govNames.join(', '));
+                if (distNames.length) locationStr.push(distNames.join(', '));
+                if (cityNames.length) locationStr.push(cityNames.join(', '));
+                
+                if (locationStr.length) filterText.push(`Location: ${locationStr.join(' > ')}`);
+                clearButtons.push(`<button onclick="clearLocationFiltersOnly()" class="clear-filter-btn"><i class="fas fa-map-marker-alt"></i> Clear Location</button>`);
+            }
+            
+            // Also add clear all filters button if multiple filters are active
+            if (hasSearchFilter && hasLocationFilter) {
+                clearButtons.push(`<button onclick="clearAllFiltersAndRetry()" class="clear-filter-btn clear-all-btn"><i class="fas fa-times-circle"></i> Clear All Filters</button>`);
+            }
+            
+            const noResultsHtml = `
+                <div class="no-results-message">
+                    <div class="no-results-icon">🔍</div>
+                    <h3 class="no-results-title">No Listings Found</h3>
+                    <p class="no-results-text">
+                        We couldn't find any listings matching your criteria.
+                    </p>
+                    ${filterText.length ? `<p class="no-results-filters">${filterText.join(' • ')}</p>` : ''}
+                    <div class="no-results-buttons">
+                        ${clearButtons.join('')}
+                        <button onclick="clearAllFiltersAndRetry()" class="clear-filter-btn clear-all-btn">
+                            <i class="fas fa-undo-alt"></i> Reset All
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            if (productsGrid) {
+                productsGrid.style.display = 'none';
+            }
+            
+            if (productsContainer && !productsContainer.querySelector('.no-results-message')) {
+                productsContainer.insertAdjacentHTML('beforeend', noResultsHtml);
+            }
+        } else if (hasProducts && productsGrid) {
+            productsGrid.style.display = 'grid';
+        }
+    }
+    
+    // Clear only search filter
+    function clearSearchFilter() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        
+        const url = new URL(window.location);
+        url.searchParams.delete('title');
+        url.searchParams.delete('page');
+        window.history.pushState({}, '', url);
+        applyFilters();
+    }
+    
+    // Clear only location filters
+    function clearLocationFiltersOnly() {
+        document.querySelectorAll('#location-list input[type="checkbox"]').forEach(cb => {
+            if (cb.name === 'governate' || cb.name === 'district' || cb.name === 'city') {
+                cb.checked = false;
+            }
+        });
+        
+        document.querySelectorAll('#location-list .nested-list').forEach(nl => {
+            nl.innerHTML = '';
+            nl.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+            arrow.classList.remove('rotated');
+        });
+        
+        const selectedLocation = document.getElementById('selected-location');
+        if (selectedLocation) selectedLocation.value = 'Select Location';
+        
+        const selectAllGov = document.getElementById('select-all-governates');
+        if (selectAllGov) selectAllGov.checked = false;
+        
+        const url = new URL(window.location);
+        url.searchParams.delete('governate');
+        url.searchParams.delete('district');
+        url.searchParams.delete('city');
+        url.searchParams.delete('page');
+        window.history.pushState({}, '', url);
+        applyFilters();
+    }
+    
+    // Clear all filters (location, search, category)
+    function clearAllFiltersAndRetry() {
+        // Clear search
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.value = '';
+        
+        // Clear location
+        document.querySelectorAll('#location-list input[type="checkbox"]').forEach(cb => {
+            if (cb.name === 'governate' || cb.name === 'district' || cb.name === 'city') {
+                cb.checked = false;
+            }
+        });
+        document.querySelectorAll('#location-list .nested-list').forEach(nl => {
+            nl.innerHTML = '';
+            nl.style.display = 'none';
+        });
+        document.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+            arrow.classList.remove('rotated');
+        });
+        const selectedLocation = document.getElementById('selected-location');
+        if (selectedLocation) selectedLocation.value = 'Select Location';
+        const selectAllGov = document.getElementById('select-all-governates');
+        if (selectAllGov) selectAllGov.checked = false;
+        
+        // Clear category
+        document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+        const allBadge = document.querySelector('.category-badge[data-category=""]');
+        if (allBadge) allBadge.classList.add('active');
+        document.getElementById('selected-category').value = '';
+        
+        // Clear URL and reload
+        const url = new URL(window.location);
+        const statusValue = document.getElementById('status-filter')?.value || 'approved';
+        url.search = `status=${statusValue}`;
+        window.history.pushState({}, '', url);
+        applyFilters();
+        updateClearFiltersVisibility();
+    }
+
+    // ============================================
+    // FETCH FUNCTIONS
+    // ============================================
+    async function fetchDistricts(governateId, nestedContainer) {
+        if (fetchedDistricts.has(governateId)) {
+            renderDistricts(fetchedDistricts.get(governateId), nestedContainer);
+            return;
+        }
+
+        nestedContainer.innerHTML = '<div class="loading-nested">Loading districts...</div>';
+        nestedContainer.style.display = 'block';
+
+        try {
+            const response = await fetch(`/get-districts/?governate_id=${governateId}`, { 
+                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+            });
+            const data = await response.json();
+            fetchedDistricts.set(governateId, data.districts);
+            renderDistricts(data.districts, nestedContainer);
+        } catch (error) {
+            nestedContainer.innerHTML = '<div class="loading-nested">Error loading districts</div>';
+        }
+    }
+
+    function renderDistricts(districts, nestedContainer) {
+        nestedContainer.innerHTML = `
+            <li class="label-item">DISTRICTS</li>
+            ${districts.map(d => `
+                <li class="location-item" data-id="${d.id}" data-type="district">
+                    <div class="location-item-header">
+                        <input type="checkbox" name="district" value="${d.id}">
+                        <label>${d.name}</label>
+                        <i class="fas fa-chevron-down district-dropdown-arrow"></i>
+                    </div>
+                    <ul class="nested-list"></ul>
+                </li>
+            `).join('')}
+        `;
+        
+        nestedContainer.querySelectorAll('.district-dropdown-arrow').forEach(arrow => {
+            arrow.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const listItem = this.closest('.location-item');
+                const nestedList = listItem.querySelector('.nested-list');
+                if (nestedList.style.display === 'block') {
+                    nestedList.style.display = 'none';
+                    this.classList.remove('rotated');
+                } else {
+                    if (nestedList.children.length <= 1) {
+                        const checkbox = listItem.querySelector('input[name="district"]');
+                        if (checkbox) {
+                            fetchCities(checkbox.value, nestedList).then(() => {
+                                nestedList.style.display = 'block';
+                                this.classList.add('rotated');
+                            });
+                        }
+                    } else {
+                        nestedList.style.display = 'block';
+                        this.classList.add('rotated');
+                    }
+                }
+            });
+        });
+    }
+
+    async function fetchCities(districtId, nestedContainer) {
+        if (fetchedCities.has(districtId)) {
+            renderCities(fetchedCities.get(districtId), nestedContainer);
+            return;
+        }
+
+        nestedContainer.innerHTML = '<div class="loading-nested">Loading cities...</div>';
+        nestedContainer.style.display = 'block';
+
+        try {
+            const response = await fetch(`/get-cities/?district_id=${districtId}`, { 
+                headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+            });
+            const data = await response.json();
+            fetchedCities.set(districtId, data.cities);
+            renderCities(data.cities, nestedContainer);
+        } catch (error) {
+            nestedContainer.innerHTML = '<div class="loading-nested">Error loading cities</div>';
+        }
+    }
+
+    function renderCities(cities, nestedContainer) {
+        nestedContainer.innerHTML = `
+            <li class="label-item">CITIES</li>
+            ${cities.map(c => `
+                <li class="location-item city-item">
+                    <div class="location-item-header">
+                        <input type="checkbox" name="city" value="${c.id}">
+                        <label>${c.name}</label>
+                    </div>
+                </li>
+            `).join('')}
+        `;
+    }
+
+    // ============================================
+    // SELECT ALL GOVERNATES
+    // ============================================
+    async function checkAllNestedItems(governateItem, checked) {
+        const nestedList = governateItem.querySelector('.nested-list');
+        if (!nestedList) return;
+        
+        if (nestedList.children.length === 0) {
+            const checkbox = governateItem.querySelector('input[name="governate"]');
+            if (checkbox) await fetchDistricts(checkbox.value, nestedList);
+        }
+        
+        if (checked) {
+            nestedList.style.display = 'block';
+            governateItem.querySelector('.dropdown-arrow')?.classList.add('rotated');
+        }
+        
+        const districtItems = nestedList.querySelectorAll('.location-item[data-type="district"]');
+        for (const districtItem of districtItems) {
+            const districtCheckbox = districtItem.querySelector('input[name="district"]');
+            if (districtCheckbox) {
+                districtCheckbox.checked = checked;
+                const districtNested = districtItem.querySelector('.nested-list');
+                if (checked && districtNested) {
+                    if (districtNested.children.length <= 1) {
+                        await fetchCities(districtCheckbox.value, districtNested);
+                    }
+                    districtNested.style.display = 'block';
+                    districtItem.querySelector('.district-dropdown-arrow')?.classList.add('rotated');
+                    districtNested.querySelectorAll('input[name="city"]').forEach(c => c.checked = true);
+                } else if (!checked && districtNested) {
+                    districtNested.style.display = 'none';
+                    districtItem.querySelector('.district-dropdown-arrow')?.classList.remove('rotated');
+                    districtNested.querySelectorAll('input[name="city"]').forEach(c => c.checked = false);
+                }
+            }
+        }
+    }
+
+    function uncheckAllNestedItems(governateItem) {
+        const nestedList = governateItem.querySelector('.nested-list');
+        if (!nestedList) return;
+        
+        nestedList.style.display = 'none';
+        governateItem.querySelector('.dropdown-arrow')?.classList.remove('rotated');
+        
+        nestedList.querySelectorAll('.location-item[data-type="district"]').forEach(districtItem => {
+            const districtCheckbox = districtItem.querySelector('input[name="district"]');
+            if (districtCheckbox) districtCheckbox.checked = false;
+            const districtNested = districtItem.querySelector('.nested-list');
+            if (districtNested) {
+                districtNested.style.display = 'none';
+                districtItem.querySelector('.district-dropdown-arrow')?.classList.remove('rotated');
+                districtNested.querySelectorAll('input[name="city"]').forEach(c => c.checked = false);
+            }
+        });
+    }
+
+    // ============================================
+    // MAIN FILTER FUNCTION
+    // ============================================
+    function applyFilters() {
+        if (currentRequest) currentRequest.abort();
+        
+        const params = new URLSearchParams();
+        
+        const activeStatus = document.querySelector('.status-filter.active');
+        if (activeStatus) params.append('status', activeStatus.dataset.status);
+        
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && searchInput.value.trim()) params.append('title', searchInput.value.trim());
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        if (category) params.append('category', category);
+        
+        document.querySelectorAll('input[name="governate"]:checked').forEach(cb => params.append('governate', cb.value));
+        document.querySelectorAll('input[name="district"]:checked').forEach(cb => params.append('district', cb.value));
+        document.querySelectorAll('input[name="city"]:checked').forEach(cb => params.append('city', cb.value));
+        
+        params.append('ajax', 'true');
+        
+        const gridContainer = document.getElementById('products-grid-container');
+        if (gridContainer) {
+            gridContainer.innerHTML = '<div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin" style="font-size: 30px; color: #EB362D;"></i><p>Loading...</p></div>';
+        }
+        
+        currentRequest = fetch(window.location.pathname + '?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            if (gridContainer) gridContainer.innerHTML = html;
+            
+            const url = new URL(window.location);
+            url.search = params.toString().replace('&ajax=true', '');
+            window.history.pushState({}, '', url);
+            
+            initSliders();
+            updateSelectedLocationDisplay();
+            updateClearFiltersVisibility();
+            checkNoResults();
+            
+            currentRequest = null;
+        })
+        .catch(error => {
+            if (error.name !== 'AbortError') console.error('Error:', error);
+            currentRequest = null;
+        });
+    }
+
+    function handleLocationChange() {
+        if (filterTimeout) clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => { applyFilters(); filterTimeout = null; }, 50);
+    }
+
+    // ============================================
+    // CLEAR ALL FILTERS
+    // ============================================
+    function clearAllFilters() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.value = '';
+        
+        document.querySelectorAll('#location-list input[type="checkbox"]').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#location-list .nested-list').forEach(nl => {
+            nl.innerHTML = '';
+            nl.style.display = 'none';
+        });
+        document.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => arrow.classList.remove('rotated'));
+        document.getElementById('selected-location').value = 'Select Location';
+        const locationSearch = document.getElementById('location-search');
+        if (locationSearch) locationSearch.value = '';
+        
+        document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+        const allBadge = document.querySelector('.category-badge[data-category=""]');
+        if (allBadge) allBadge.classList.add('active');
+        document.getElementById('selected-category').value = '';
+        
+        const url = new URL(window.location);
+        const statusValue = document.getElementById('status-filter').value;
+        url.search = statusValue ? `status=${statusValue}` : '';
+        window.history.pushState({}, '', url);
+        
+        applyFilters();
+        updateClearFiltersVisibility();
+    }
+
+    // ============================================
+    // CATEGORY BADGE HANDLERS
+    // ============================================
+    function updateCategoryBadgeHandlers() {
+        document.querySelectorAll('.category-badge').forEach(badge => {
+            const newBadge = badge.cloneNode(true);
+            badge.parentNode.replaceChild(newBadge, badge);
+            
+            newBadge.addEventListener('click', function(e) {
+                e.preventDefault();
+                const currentStatus = document.getElementById('status-filter')?.value || 'approved';
+                const categoryValue = this.dataset.category || '';
+                const isActive = this.classList.contains('active');
+                
+                if (isActive && categoryValue) {
+                    document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+                    const allBadge = document.querySelector('.category-badge[data-category=""]');
+                    if (allBadge) allBadge.classList.add('active');
+                    document.getElementById('selected-category').value = '';
+                    
+                    const url = new URL(window.location);
+                    url.searchParams.delete('category');
+                    url.searchParams.set('status', currentStatus);
+                    url.searchParams.delete('page');
+                    
+                    fetch(url.pathname + '?' + url.searchParams.toString() + '&ajax=true', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('products-grid-container').innerHTML = html;
+                        window.history.pushState({}, '', url);
+                        initSliders();
+                        updateClearFiltersVisibility();
+                        checkNoResults();
+                    });
+                } else {
+                    document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('selected-category').value = categoryValue ? this.textContent.trim() : '';
+                    
+                    const url = new URL(window.location);
+                    if (categoryValue) url.searchParams.set('category', categoryValue);
+                    else url.searchParams.delete('category');
+                    url.searchParams.set('status', currentStatus);
+                    url.searchParams.delete('page');
+                    
+                    fetch(url.pathname + '?' + url.searchParams.toString() + '&ajax=true', {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('products-grid-container').innerHTML = html;
+                        window.history.pushState({}, '', url);
+                        initSliders();
+                        updateClearFiltersVisibility();
+                        checkNoResults();
+                    });
+                }
+                document.getElementById('condition-container').style.display = 'none';
+            });
+        });
+    }
+
+    // ============================================
+    // STATUS FILTER HANDLERS
+    // ============================================
+    function updateStatusFilterHandlers() {
+        document.querySelectorAll('.status-filter').forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.status-filter').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const statusInput = document.getElementById('status-filter');
+                if (statusInput) statusInput.value = this.dataset.status;
+                const url = new URL(window.location);
+                url.searchParams.set('status', this.dataset.status);
+                url.searchParams.delete('page');
+                window.history.pushState({}, '', url);
+                applyFilters();
+                updateClearFiltersVisibility();
+            });
+        });
+    }
+
+    // ============================================
+    // SEARCH HANDLER
+    // ============================================
+    function initSearchHandler() {
+        const searchInput = document.getElementById('search-input');
+        if (!searchInput) return;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const url = new URL(window.location);
+                if (this.value.trim()) url.searchParams.set('title', this.value.trim());
+                else url.searchParams.delete('title');
+                url.searchParams.delete('page');
+                window.history.pushState({}, '', url);
+                applyFilters();
+                updateClearFiltersVisibility();
+            }, 500);
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                const url = new URL(window.location);
+                if (this.value.trim()) url.searchParams.set('title', this.value.trim());
+                else url.searchParams.delete('title');
+                url.searchParams.delete('page');
+                window.history.pushState({}, '', url);
+                applyFilters();
+                updateClearFiltersVisibility();
+            }
+        });
+    }
+
+    // ============================================
+    // IMAGE SLIDER
+    // ============================================
+    function initSliders() {
+        document.querySelectorAll('.product-card-horizontal, .listing-card').forEach(card => {
+            const img = card.querySelector('.slider-image');
+            if (!img) return;
+            
+            const imagesJSON = img.getAttribute('data-images');
+            if (!imagesJSON || imagesJSON === '[]') return;
+            
+            try {
+                const images = JSON.parse(imagesJSON);
+                if (images.length <= 1) return;
+                
+                const dotsContainer = card.querySelector('.slider-dots');
+                const prevBtn = card.querySelector('.prev-btn');
+                const nextBtn = card.querySelector('.next-btn');
+                let currentIndex = 0;
+                
+                function updateDots() {
+                    if (!dotsContainer) return;
+                    dotsContainer.innerHTML = '';
+                    for (let i = 0; i < images.length; i++) {
+                        const dot = document.createElement('span');
+                        if (i === currentIndex) dot.className = 'active';
+                        dotsContainer.appendChild(dot);
+                    }
+                }
+                updateDots();
+                
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        currentIndex = (currentIndex - 1 + images.length) % images.length;
+                        img.src = images[currentIndex].image;
+                        updateDots();
+                    });
+                }
+                
+                if (nextBtn) {
+                    nextBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        currentIndex = (currentIndex + 1) % images.length;
+                        img.src = images[currentIndex].image;
+                        updateDots();
+                    });
+                }
+                
+                if (dotsContainer) {
+                    dotsContainer.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'SPAN') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const dotIndex = Array.from(dotsContainer.children).indexOf(e.target);
+                            if (dotIndex !== -1) {
+                                currentIndex = dotIndex;
+                                img.src = images[currentIndex].image;
+                                updateDots();
+                            }
+                        }
+                    });
+                }
+            } catch(e) {}
+        });
+    }
+
+    // ============================================
+    // STICKY FILTER BAR
+    // ============================================
+    function getNavbarHeight() {
+        const navbar = document.querySelector('nav') || document.querySelector('.navbar') || document.querySelector('header');
+        return navbar ? navbar.offsetHeight : 70;
+    }
+
+    function updateStickyOffset() {
+        const filterForm = document.querySelector('.filter-form');
+        if (filterForm && filterForm.classList.contains('sticky')) {
+            filterForm.style.top = getNavbarHeight() + 'px';
+            filterForm.classList.add('has-navbar-offset');
+            setTimeout(repositionDropdowns, 50);
+        }
+    }
+
+    // ============================================
+    // DOM CONTENT LOADED
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        detectAndFixNavbarOverlap();
+        createNavbarSpacer();
+        
+        const toggleLocation = document.getElementById('toggle-location-filter');
+        const locationContainer = document.getElementById('location-list-container');
+        const toggleCategory = document.getElementById('toggle-condition');
+        const categoryContainer = document.getElementById('condition-container');
+        const locationList = document.getElementById('location-list');
+        const selectAllGov = document.getElementById('select-all-governates');
+        const locationSearch = document.getElementById('location-search');
+        
+        // Toggle location dropdown
+        if (toggleLocation && locationContainer) {
+            toggleLocation.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wasVisible = locationContainer.style.display === 'block';
+                if (categoryContainer) categoryContainer.style.display = 'none';
+                
+                if (!wasVisible) {
+                    locationContainer.style.display = 'block';
+                    setTimeout(() => {
+                        positionDropdown(locationContainer, toggleLocation);
+                        locationSearch?.focus();
+                    }, 10);
+                } else {
+                    locationContainer.style.display = 'none';
+                }
+            });
+        }
+        
+        // Toggle category dropdown
+        if (toggleCategory && categoryContainer) {
+            toggleCategory.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const wasVisible = categoryContainer.style.display === 'block';
+                if (locationContainer) locationContainer.style.display = 'none';
+                
+                if (!wasVisible) {
+                    categoryContainer.style.display = 'block';
+                    setTimeout(() => {
+                        positionDropdown(categoryContainer, toggleCategory);
+                    }, 10);
+                } else {
+                    categoryContainer.style.display = 'none';
+                }
+            });
+        }
+        
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#location-list-container') && 
+                !e.target.closest('#toggle-location-filter') &&
+                !e.target.closest('#condition-container') &&
+                !e.target.closest('#toggle-condition')) {
+                closeAllFilterContainers();
+            }
+        });
+        
+        // Select All Governates
+        if (selectAllGov) {
+            selectAllGov.addEventListener('change', async function() {
+                const isChecked = this.checked;
+                const governateCheckboxes = document.querySelectorAll('#location-list input[name="governate"]');
+                
+                for (const cb of governateCheckboxes) {
+                    cb.checked = isChecked;
+                    const locationItem = cb.closest('.location-item');
+                    if (locationItem) {
+                        if (isChecked) await checkAllNestedItems(locationItem, true);
+                        else uncheckAllNestedItems(locationItem);
+                    }
+                }
+                updateSelectedLocationDisplay();
+                applyFilters();
+                updateClearFiltersVisibility();
+            });
+        }
+        
+        // Location checkbox changes
+        if (locationList) {
+            locationList.addEventListener('change', function(e) {
+                if (e.target.type === 'checkbox') {
+                    const checkbox = e.target;
+                    const locationItem = checkbox.closest('.location-item');
+                    
+                    if (locationItem) {
+                        const nestedList = locationItem.querySelector('.nested-list');
+                        const arrow = locationItem.querySelector('.dropdown-arrow, .district-dropdown-arrow');
+                        
+                        if (checkbox.checked) {
+                            if (nestedList) {
+                                if (nestedList.children.length === 0 && checkbox.name === 'governate') {
+                                    fetchDistricts(checkbox.value, nestedList).then(() => {
+                                        nestedList.style.display = 'block';
+                                        if (arrow) arrow.classList.add('rotated');
+                                    });
+                                } else if (nestedList.children.length === 0 && checkbox.name === 'district') {
+                                    fetchCities(checkbox.value, nestedList).then(() => {
+                                        nestedList.style.display = 'block';
+                                        if (arrow) arrow.classList.add('rotated');
+                                    });
+                                } else {
+                                    nestedList.style.display = 'block';
+                                    if (arrow) arrow.classList.add('rotated');
+                                }
+                            }
+                        } else {
+                            if (nestedList) {
+                                nestedList.style.display = 'none';
+                                if (arrow) arrow.classList.remove('rotated');
+                                
+                                if (checkbox.name === 'governate') {
+                                    nestedList.querySelectorAll('input[name="district"]').forEach(distCb => {
+                                        distCb.checked = false;
+                                        const distItem = distCb.closest('.location-item');
+                                        if (distItem) {
+                                            const cityNested = distItem.querySelector('.nested-list');
+                                            const cityArrow = distItem.querySelector('.district-dropdown-arrow');
+                                            if (cityNested) {
+                                                cityNested.style.display = 'none';
+                                                if (cityArrow) cityArrow.classList.remove('rotated');
+                                                cityNested.querySelectorAll('input[name="city"]').forEach(c => c.checked = false);
+                                            }
+                                        }
+                                    });
+                                } else if (checkbox.name === 'district') {
+                                    nestedList.querySelectorAll('input[name="city"]').forEach(c => c.checked = false);
+                                }
+                            }
+                        }
+                    }
+                    
+                    updateSelectedLocationDisplay();
+                    handleLocationChange();
+                    updateClearFiltersVisibility();
+                }
+            });
+            
+            // Arrow click handlers
+            locationList.addEventListener('click', function(e) {
+                const arrow = e.target.closest('.dropdown-arrow');
+                const districtArrow = e.target.closest('.district-dropdown-arrow');
+                
+                if (arrow) {
+                    e.stopPropagation();
+                    const listItem = arrow.closest('.location-item');
+                    const nestedList = listItem.querySelector('.nested-list');
+                    const checkbox = listItem.querySelector('input[name="governate"]');
+                    
+                    if (nestedList.style.display === 'block') {
+                        nestedList.style.display = 'none';
+                        arrow.classList.remove('rotated');
+                    } else {
+                        if (nestedList.children.length === 0 && checkbox) {
+                            fetchDistricts(checkbox.value, nestedList).then(() => {
+                                nestedList.style.display = 'block';
+                                arrow.classList.add('rotated');
+                            });
+                        } else {
+                            nestedList.style.display = 'block';
+                            arrow.classList.add('rotated');
+                        }
+                    }
+                }
+                
+                if (districtArrow) {
+                    e.stopPropagation();
+                    const listItem = districtArrow.closest('.location-item');
+                    const nestedList = listItem.querySelector('.nested-list');
+                    const checkbox = listItem.querySelector('input[name="district"]');
+                    
+                    if (nestedList.style.display === 'block') {
+                        nestedList.style.display = 'none';
+                        districtArrow.classList.remove('rotated');
+                    } else {
+                        if (nestedList.children.length <= 1 && checkbox) {
+                            fetchCities(checkbox.value, nestedList).then(() => {
+                                nestedList.style.display = 'block';
+                                districtArrow.classList.add('rotated');
+                            });
+                        } else {
+                            nestedList.style.display = 'block';
+                            districtArrow.classList.add('rotated');
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Location search
+        if (locationSearch) {
+            locationSearch.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const allItems = locationList.querySelectorAll('.location-item, .label-item');
+                    
+                    if (!searchTerm) {
+                        allItems.forEach(item => item.classList.remove('search-hidden'));
+                        return;
+                    }
+                    
+                    allItems.forEach(item => item.classList.add('search-hidden'));
+                    
+                    document.querySelectorAll('.location-item[data-type="governate"]').forEach(async gov => {
+                        const govName = gov.querySelector('label').textContent.toLowerCase();
+                        const nestedList = gov.querySelector('.nested-list');
+                        let hasMatch = govName.includes(searchTerm);
+                        
+                        if (nestedList && nestedList.children.length === 0) {
+                            const cb = gov.querySelector('input[name="governate"]');
+                            if (cb) await fetchDistricts(cb.value, nestedList);
+                        }
+                        
+                        const districts = gov.querySelectorAll('.location-item[data-type="district"]');
+                        for (const district of districts) {
+                            const distName = district.querySelector('label').textContent.toLowerCase();
+                            let distMatch = distName.includes(searchTerm);
+                            
+                            const cityNested = district.querySelector('.nested-list');
+                            if (cityNested && cityNested.children.length <= 1) {
+                                const distCb = district.querySelector('input[name="district"]');
+                                if (distCb) await fetchCities(distCb.value, cityNested);
+                            }
+                            
+                            let cityMatch = false;
+                            district.querySelectorAll('.city-item').forEach(city => {
+                                if (city.querySelector('label').textContent.toLowerCase().includes(searchTerm)) {
+                                    city.classList.remove('search-hidden');
+                                    cityMatch = true;
+                                }
+                            });
+                            
+                            if (distMatch || cityMatch) {
+                                district.classList.remove('search-hidden');
+                                if (cityNested) cityNested.style.display = 'block';
+                                hasMatch = true;
+                            }
+                        }
+                        
+                        if (hasMatch) {
+                            gov.classList.remove('search-hidden');
+                            if (nestedList) nestedList.style.display = 'block';
+                        }
+                    });
+                }, 300);
+            });
+        }
+        
+        // Clear buttons
+        document.getElementById('clear-location-filter')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            clearLocationFiltersOnly();
+        });
+        
+        document.getElementById('clear-category-filter')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+            const allBadge = document.querySelector('.category-badge[data-category=""]');
+            if (allBadge) allBadge.classList.add('active');
+            document.getElementById('selected-category').value = '';
+            categoryContainer.style.display = 'none';
+            const url = new URL(window.location);
+            url.searchParams.delete('category');
+            window.history.pushState({}, '', url);
+            applyFilters();
+            updateClearFiltersVisibility();
+        });
+        
+        document.getElementById('clear-all-filters')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAllFiltersAndRetry();
+        });
+        
+        // Initialize handlers
+        initSearchHandler();
+        updateStatusFilterHandlers();
+        updateCategoryBadgeHandlers();
+        
+        // Sticky filter bar
+        let scrollTimer;
+        window.addEventListener('scroll', function() {
+            const filterForm = document.querySelector('.filter-form');
+            if (!filterForm) return;
+            
+            const filterTop = filterForm.offsetTop;
+            if (window.pageYOffset > filterTop) {
+                if (!filterForm.classList.contains('sticky')) {
+                    filterForm.classList.add('sticky');
+                    updateStickyOffset();
+                }
+            } else {
+                if (filterForm.classList.contains('sticky')) {
+                    filterForm.classList.remove('sticky');
+                    filterForm.classList.remove('has-navbar-offset');
+                    filterForm.style.top = '';
+                }
+            }
+            
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => repositionDropdowns(), 100);
+        });
+        
+        window.addEventListener('resize', function() {
+            detectAndFixNavbarOverlap();
+            updateStickyOffset();
+            closeAllFilterContainers();
+        });
+        
+        // Initialize from URL
+        async function initializeFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            const searchTitle = urlParams.get('title');
+            if (searchTitle) document.getElementById('search-input').value = searchTitle;
+            
+            const category = urlParams.get('category');
+            if (category) {
+                const badge = document.querySelector(`.category-badge[data-category="${category}"]`);
+                if (badge) {
+                    document.querySelectorAll('.category-badge').forEach(b => b.classList.remove('active'));
+                    badge.classList.add('active');
+                    document.getElementById('selected-category').value = badge.textContent.trim();
+                }
+            }
+            
+            const govParams = urlParams.getAll('governate');
+            const districtParams = urlParams.getAll('district');
+            const cityParams = urlParams.getAll('city');
+            
+            for (const govId of govParams) {
+                const govCheckbox = document.querySelector(`input[name="governate"][value="${govId}"]`);
+                if (govCheckbox) {
+                    govCheckbox.checked = true;
+                    const listItem = govCheckbox.closest('.location-item');
+                    const nestedList = listItem.querySelector('.nested-list');
+                    if (nestedList) {
+                        await fetchDistricts(govId, nestedList);
+                        nestedList.style.display = 'block';
+                        listItem.querySelector('.dropdown-arrow')?.classList.add('rotated');
+                        
+                        for (const distId of districtParams) {
+                            const distCheckbox = nestedList.querySelector(`input[name="district"][value="${distId}"]`);
+                            if (distCheckbox) {
+                                distCheckbox.checked = true;
+                                const distItem = distCheckbox.closest('.location-item');
+                                const distNested = distItem.querySelector('.nested-list');
+                                if (distNested) {
+                                    await fetchCities(distId, distNested);
+                                    distNested.style.display = 'block';
+                                    distItem.querySelector('.district-dropdown-arrow')?.classList.add('rotated');
+                                    
+                                    for (const cityId of cityParams) {
+                                        const cityCheckbox = distNested.querySelector(`input[name="city"][value="${cityId}"]`);
+                                        if (cityCheckbox) cityCheckbox.checked = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            updateSelectedLocationDisplay();
+            updateClearFiltersVisibility();
+            setTimeout(checkNoResults, 500);
+        }
+        
+        initializeFromURL();
+        initSliders();
+    });
+    
+    function promoteListing(type, id) {
+        if (event) event.preventDefault();
+        alert('Promote functionality - ' + type + ' ID: ' + id);
+    }
+    
+    function repostListing(type, id) {
+        if (event) event.preventDefault();
+        alert('Repost functionality - ' + type + ' ID: ' + id);
+    }
+</script>
+
+
+<!-- CSS for Unified No Results Message -->
+<style>
+    .no-results-message {
+        text-align: center;
+        padding: 60px 20px;
+        background: #ffffff;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid #f0f0f0;
+        animation: fadeInUp 0.4s ease-out;
+        grid-column: 1 / -1 !important;
+    }
+    
+    .no-results-icon {
+        font-size: 72px;
+        margin-bottom: 20px;
+    }
+    
+    .no-results-title {
+        color: #dc3545;
+        font-weight: 700;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+    
+    .no-results-text {
+        color: #6c757d;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .no-results-filters {
+        color: #495057;
+        margin-bottom: 25px;
+        font-size: 14px;
+        background: #f8f9fa;
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        margin-top: 10px;
+    }
+    
+    .no-results-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .clear-filter-btn {
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .clear-filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(235, 54, 45, 0.3);
+    }
+    
+    .clear-all-btn {
+        background: #6c757d;
+    }
+    
+    .clear-all-btn:hover {
+        background: #5a6268;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+
+<!-- Custom Boost Popup (Lightweight, no Bootstrap) -->
+<div id="boostCustomModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999999; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 20px; padding: 25px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeInUp 0.3s ease;">
+        <h3 style="margin-top: 0; color: #EB362D;">🚀 Boost Ad</h3>
+        <p id="customBoostListingName" style="font-size: 16px; margin: 15px 0;"></p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 20px 0;">
+            <button class="custom-boost-option" data-days="7" style="background: linear-gradient(60deg, #F9AD1F, #EB362D); border: none; color: white; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s;">7 days (cost 7)</button>
+            <button class="custom-boost-option" data-days="14" style="background: linear-gradient(60deg, #F9AD1F, #EB362D); border: none; color: white; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s;">14 days (cost 14)</button>
+            <button class="custom-boost-option" data-days="30" style="background: linear-gradient(60deg, #F9AD1F, #EB362D); border: none; color: white; padding: 10px 20px; border-radius: 40px; font-weight: bold; cursor: pointer; transition: 0.2s;">30 days (cost 30)</button>
+        </div>
+        <p id="customBoostBalance" style="font-size: 13px; color: #6c757d; margin-bottom: 20px;"></p>
+        <button id="closeBoostModal" style="background: #6c757d; border: none; color: white; padding: 8px 25px; border-radius: 40px; cursor: pointer;">Cancel</button>
+    </div>
+</div>
+
+<style>
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.custom-boost-option:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(235,54,45,0.4);
+}
+.custom-boost-option:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+</style>
+<script>
+    // Store pending boost data
+let pendingBoost = { listingType: null, listingId: null, listingName: null };
+
+function confirmBoost(listingType, listingId, listingName) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    pendingBoost = { listingType, listingId, listingName };
+    
+    const modal = document.getElementById('boostCustomModal');
+    const listingNameSpan = document.getElementById('customBoostListingName');
+    const balanceSpan = document.getElementById('customBoostBalance');
+    
+    listingNameSpan.innerHTML = `Boost "<strong>${listingName}</strong>" for how many days?`;
+    
+    const availableDays = parseInt('{{ boost_days_left|default:0 }}');
+    balanceSpan.innerHTML = `Your boost days balance: <strong>${availableDays}</strong>`;
+    
+    // Enable/disable options
+    document.querySelectorAll('.custom-boost-option').forEach(btn => {
+        const daysNeeded = parseInt(btn.getAttribute('data-days'));
+        if (daysNeeded > availableDays) {
+            btn.disabled = true;
+            btn.title = `Need ${daysNeeded} days, you have ${availableDays}`;
+        } else {
+            btn.disabled = false;
+            btn.title = `Boost for ${daysNeeded} days`;
+        }
+    });
+    
+    modal.style.display = 'flex';
+}
+
+// Handle option clicks
+document.querySelectorAll('.custom-boost-option').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const days = this.getAttribute('data-days');
+        if (days && pendingBoost.listingType && pendingBoost.listingId) {
+            window.location.href = `/boost-listing/${pendingBoost.listingType}/${pendingBoost.listingId}/${days}/`;
+        }
+    });
+});
+
+// Close modal
+document.getElementById('closeBoostModal').addEventListener('click', function() {
+    document.getElementById('boostCustomModal').style.display = 'none';
+});
+
+// Also close when clicking outside the white box
+document.getElementById('boostCustomModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.style.display = 'none';
+    }
+});
+</script>
+    {% include 'footer.html' %}
+</body>

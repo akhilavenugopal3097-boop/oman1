@@ -1,0 +1,864 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-success {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-warning {
+        background: #fff3e0;
+        color: #f59e0b;
+    }
+
+    .badge-info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(21, 129, 142, 0.1), 0 10px 10px -5px rgba(21, 129, 142, 0.05);
+        border-color: #15818E;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon-primary { background: #e0f2f4; color: #15818E; }
+    .stat-icon-success { background: #e0f2f4; color: #15818E; }
+    .stat-icon-warning { background: #fff3e0; color: #f59e0b; }
+    .stat-icon-info { background: #e0f2f4; color: #15818E; }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    /* Filter and Search Bar */
+    .filter-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-label i {
+        color: #15818E;
+    }
+
+    .filter-select {
+        padding: 0.5rem 2rem 0.5rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        background: white;
+        cursor: pointer;
+        min-width: 150px;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .btn-filter {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-filter:hover {
+        background: #e0f2f4;
+        border-color: #15818E;
+        color: #15818E;
+    }
+
+    .search-wrapper {
+        flex: 1;
+        max-width: 400px;
+        position: relative;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    /* Table Card */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-header h5 i {
+        color: #15818E;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    .table th {
+        text-align: left;
+        padding: 1rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table td {
+        padding: 1rem 1rem;
+        font-size: 0.875rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* Category Badge */
+    .category-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    /* Status Badge */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .status-active {
+        background: #e0f2e0;
+        color: #059669;
+    }
+
+    .status-expired {
+        background: #fee9e9;
+        color: #ef4444;
+    }
+
+    .status-warning {
+        background: #fff3e0;
+        color: #f59e0b;
+    }
+
+    /* Job Type Badge */
+    .job-type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    /* Job Title with ID */
+    .job-title {
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+    }
+
+    .job-id {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        display: block;
+    }
+
+    /* Empty state */
+    .empty-state-container {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .empty-state {
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    /* No results */
+    .no-results-row {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .no-results {
+        text-align: center;
+    }
+
+    .no-results i {
+        font-size: 3rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-results h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-results p {
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+
+    .clear-search {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        margin-top: 1rem;
+    }
+
+    .clear-search:hover {
+        background: #e2e8f0;
+    }
+
+    /* Messages */
+    .messages-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border: none;
+    }
+
+    .alert-success {
+        background: #e0f2e0;
+        color: #059669;
+    }
+
+    .alert-error {
+        background: #fee9e9;
+        color: #ef4444;
+    }
+
+    .alert-warning {
+        background: #fff3e0;
+        color: #f59e0b;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-wrapper {
+            max-width: none;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-briefcase"></i>
+                Job Post Management
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-briefcase"></i>
+                    Total: {{ job_posts|length|default:"0" }}
+                </span>
+                <!-- <span class="badge badge-success">
+                    <i class="fas fa-check-circle"></i>
+                    Active: {{ active_jobs_count|default:"0" }}
+                </span>
+                <span class="badge badge-warning">
+                    <i class="fas fa-clock"></i>
+                    Expired: {{ expired_jobs_count|default:"0" }}
+                </span> -->
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        
+
+        <!-- Filter and Search Bar -->
+        <div class="filter-bar">
+            
+            
+          
+            
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search jobs by title, company, category..." onkeyup="searchTable()">
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5>
+                    <i class="fas fa-list"></i>
+                    All Job Posts
+                </h5>
+                <span class="badge badge-primary">Last updated: {% now "F j, Y" %}</span>
+            </div>
+
+            <div class="table-responsive">
+                <table id="jobTable" class="table">
+                    <thead>
+                        <tr>
+                            <th width="60px">#</th>
+                            <th>Job Title</th>
+                            <th>Category</th>
+                            <th>Company</th>
+                            <th>Posted By</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for job in job_posts %}
+                        <tr class="data-row" 
+                            data-category="{{ job.job_category.id|default:'' }}" 
+                            data-company="{{ job.company.id|default:'' }}"
+                            data-user="{{ job.user.id|default:'' }}"
+                            data-status="{% if job.application_deadline %}{% if job.application_deadline >= now %}active{% else %}expired{% endif %}{% else %}no_deadline{% endif %}" 
+                            data-search="{{ job.title|lower }} {{ job.job_category.name|default:''|lower }} {{ job.company.name|default:''|lower }} {{ job.user.username|default:''|lower }} {{ job.get_job_type_display|default:''|lower }}">
+                            <td>
+                                <span class="badge badge-primary" style="background: #e0f2f4; color: #15818E;">{{ forloop.counter }}</span>
+                            </td>
+                            <td>
+                                <div class="job-title">{{ job.title|title|default:"Not specified" }}</div>
+                                <span class="job-id">ID: {{ job.id }}</span>
+                            </td>
+                            <td>
+                                {% if job.job_category %}
+                                <span class="category-badge">
+                                    <i class="fas fa-tag"></i>
+                                    {{ job.job_category.name|title }}
+                                </span>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.875rem;">
+                                    <i class="fas fa-times-circle"></i> No category
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if job.company %}
+                                <span style="font-weight: 500;">{{ job.company.name|title|default:job.company|title }}</span>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.875rem;">
+                                    <i class="fas fa-times-circle"></i> No company
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if job.user %}
+                                <span>{{ job.user.username|title }}</span>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.875rem;">
+                                    <i class="fas fa-times-circle"></i> No user
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if job.job_type %}
+                                <span class="job-type-badge">
+                                    <i class="fas fa-clock"></i>
+                                    {{ job.get_job_type_display }}
+                                </span>
+                                {% else %}
+                                <span style="color: #94a3b8; font-size: 0.875rem;">
+                                    <i class="fas fa-times"></i> Not set
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if job.application_deadline %}
+                                    {% if job.application_deadline >= now %}
+                                    <span class="status-badge status-active">
+                                        <i class="fas fa-check-circle"></i>
+                                        Active
+                                    </span>
+                                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.25rem;">
+                                        Until {{ job.application_deadline|date:"M d, Y" }}
+                                    </div>
+                                    {% else %}
+                                    <span class="status-badge status-expired">
+                                        <i class="fas fa-clock"></i>
+                                        Expired
+                                    </span>
+                                    <div style="font-size: 0.7rem; color: #ef4444; margin-top: 0.25rem;">
+                                        Since {{ job.application_deadline|date:"M d, Y" }}
+                                    </div>
+                                    {% endif %}
+                                {% else %}
+                                <span class="status-badge status-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    No deadline
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr class="empty-state-container">
+                            <td colspan="7" style="padding: 0; border: none;">
+                                <div class="empty-state">
+                                    <i class="fas fa-briefcase"></i>
+                                    <p>No job posts available.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Search results info -->
+            <div id="searchInfo" style="margin-top: 1rem; padding: 0.5rem; display: none;">
+                <div class="badge badge-info" style="background: #e0f2f4; color: #15818E;">
+                    <i class="fas fa-search"></i>
+                    Found <span id="resultsCount">0</span> results
+                </div>
+            </div>
+            
+            <!-- Debug Info (optional) -->
+            {% if debug %}
+            <div class="mt-4 text-start">
+                <small class="text-muted">
+                    <strong>Debug:</strong> Found {{ job_posts|length }} job posts
+                </small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    // Apply filters
+    function applyFilters() {
+        const category = document.getElementById('categoryFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const company = document.getElementById('companyFilter').value;
+        
+        let url = new URL(window.location.href);
+        
+        if (category) {
+            url.searchParams.set('category', category);
+        } else {
+            url.searchParams.delete('category');
+        }
+        
+        if (status) {
+            url.searchParams.set('status', status);
+        } else {
+            url.searchParams.delete('status');
+        }
+        
+        if (company) {
+            url.searchParams.set('company', company);
+        } else {
+            url.searchParams.delete('company');
+        }
+        
+        window.location.href = url.toString();
+    }
+    
+    // Clear filters
+    function clearFilters() {
+        window.location.href = window.location.pathname;
+    }
+    
+    // Search functionality
+    function searchTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const tbody = document.getElementById('tableBody');
+        const rows = tbody.getElementsByClassName('data-row');
+        const emptyStateContainer = document.querySelector('.empty-state-container');
+        
+        let visibleCount = 0;
+        let hasDataRows = rows.length > 0;
+        
+        // Hide empty state initially if we have data rows
+        if (emptyStateContainer) {
+            emptyStateContainer.style.display = 'none';
+        }
+        
+        // Filter data rows
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const searchData = row.getAttribute('data-search') || '';
+            
+            if (searchData.toUpperCase().indexOf(filter) > -1) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Handle no results scenario
+        const searchInfo = document.getElementById('searchInfo');
+        
+        if (filter.trim() !== '') {
+            // Show search info
+            searchInfo.style.display = 'block';
+            document.getElementById('resultsCount').textContent = visibleCount;
+            
+            // If no results and we have data rows, show no results message
+            if (visibleCount === 0 && hasDataRows) {
+                // Check if no results row already exists
+                let noResultsRow = document.getElementById('noResultsRow');
+                if (!noResultsRow) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'noResultsRow';
+                    noResultsRow.className = 'no-results-row';
+                    noResultsRow.innerHTML = `
+                        <td colspan="7" style="padding: 0; border: none;">
+                            <div class="no-results">
+                                <i class="fas fa-search"></i>
+                                <h6>No matching job posts</h6>
+                                <p>No job posts found matching "${input.value}"</p>
+                                <button class="clear-search" onclick="clearSearch()">
+                                    <i class="fas fa-times"></i>
+                                    Clear Search
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            } else {
+                // Remove no results row if it exists
+                const noResultsRow = document.getElementById('noResultsRow');
+                if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            }
+        } else {
+            // Clear search
+            searchInfo.style.display = 'none';
+            
+            // Remove no results row
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (noResultsRow) {
+                noResultsRow.remove();
+            }
+            
+            // Show all rows
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+        }
+        
+        // If no data rows at all, show empty state
+        if (!hasDataRows && filter.trim() === '') {
+            if (emptyStateContainer) {
+                emptyStateContainer.style.display = '';
+            }
+        }
+    }
+    
+    // Clear search
+    function clearSearch() {
+        const searchInput = document.getElementById('searchInput');
+        searchInput.value = '';
+        searchTable();
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Any initialization code if needed
+    });
+</script>

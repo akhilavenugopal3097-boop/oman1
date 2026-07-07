@@ -1,0 +1,1233 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 for better alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert .close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert .close:hover {
+        opacity: 1;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .form-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-header h5 i {
+        color: #15818E;
+    }
+
+    .btn-back {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    /* User Info Card */
+    .user-info-card {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .user-avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: #15818E;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .user-details h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+    }
+
+    .user-meta {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .meta-item i {
+        color: #15818E;
+    }
+
+    /* Form Groups */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group label i {
+        color: #15818E;
+        margin-right: 0.375rem;
+    }
+
+    .form-group .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .form-control:hover:not(:focus) {
+        border-color: #cbd5e1;
+    }
+
+    .form-control[readonly] {
+        background-color: #f8fafc;
+        color: #64748b;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-text {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .form-text i {
+        color: #15818E;
+        font-size: 0.75rem;
+    }
+
+    /* Status Toggle */
+    .status-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        background: #f8fafc;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 28px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e2e8f0;
+        transition: .3s;
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .toggle-slider {
+        background-color: #15818E;
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+
+    .status-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-badge.active {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .status-badge.inactive {
+        background: #fee9e9;
+        color: #ef4444;
+    }
+
+    /* Permissions Grid */
+    .permissions-section {
+        margin-top: 2rem;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 2rem;
+    }
+
+    .permissions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .permissions-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .selected-count {
+        background: #e0f2f4;
+        color: #15818E;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-quick {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-quick:hover {
+        background: #e2e8f0;
+    }
+
+    .btn-quick i {
+        color: #15818E;
+    }
+
+    .permissions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        max-height: 600px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .permissions-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .permission-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .permission-card:hover {
+        border-color: #15818E;
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .permission-card.selected {
+        border-color: #15818E;
+        background: #f0f9fa;
+    }
+
+    .permission-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .permission-checkbox input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 5px;
+        cursor: pointer;
+        accent-color: #15818E;
+    }
+
+    .permission-checkbox label {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 0.875rem;
+        cursor: pointer;
+    }
+
+    .permission-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .perm-badge {
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.625rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .perm-badge.view { background: #e0f2f4; color: #15818E; }
+    .perm-badge.edit { background: #fef3c7; color: #d97706; }
+    .perm-badge.create { background: #d1fae5; color: #059669; }
+    .perm-badge.approve { background: #e0f2f4; color: #15818E; }
+    .perm-badge.delete { background: #fee2e2; color: #dc2626; }
+    .perm-badge.disabled { background: #f1f5f9; color: #94a3b8; }
+
+    .permission-description {
+        font-size: 0.7rem;
+        color: #64748b;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed #f1f5f9;
+    }
+
+    .permission-description i {
+        color: #15818E;
+        font-size: 0.7rem;
+        margin-top: 0.1rem;
+    }
+
+    /* Alert */
+    .alert {
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-warning {
+        background: #fff7e6;
+        border: 1px solid #fcd34d;
+        color: #92400e;
+    }
+
+    .alert-warning a {
+        color: #15818E;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .alert-warning a:hover {
+        text-decoration: underline;
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+        margin-top: 2rem;
+        border-top: 1px solid #fee2e2;
+        padding-top: 2rem;
+    }
+
+    .danger-zone h6 {
+        color: #ef4444;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .danger-zone h6 i {
+        color: #ef4444;
+    }
+
+    .danger-card {
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .danger-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .danger-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #fee2e2;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .danger-text {
+        font-size: 0.875rem;
+    }
+
+    .danger-text strong {
+        color: #ef4444;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .btn-delete {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Submit Button */
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-submit {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+        background: #0e5f68;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    /* Loading Spinner */
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .permissions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-card {
+            padding: 1.5rem;
+        }
+        
+        .user-info-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .user-meta {
+            justify-content: center;
+        }
+        
+        .status-wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .permissions-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .quick-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .danger-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .danger-info {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-submit, .btn-cancel, .btn-delete {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-user-edit"></i>
+                Edit Sub-Admin
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-info-circle"></i>
+                    Editing: {{ subadmin.user.username }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <div class="form-header">
+                <h5>
+                    <i class="fas fa-user-shield"></i>
+                    Sub-Admin Information
+                </h5>
+                <a href="{% url 'subadmin_list' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to List
+                </a>
+            </div>
+
+            <!-- User Info Card -->
+            <div class="user-info-card">
+                <div class="user-avatar-large">
+                    {{ subadmin.user.username|first|upper }}
+                </div>
+                <div class="user-details">
+                    <h3>{{ subadmin.user.username }}</h3>
+                    <div class="user-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-envelope"></i>
+                            {{ subadmin.user.email }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-user-tie"></i>
+                            Created by: {{ subadmin.created_by.username|default:"System" }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            Created: {{ subadmin.created_at|date:"Y-m-d H:i" }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-history"></i>
+                            Last Login: {{ subadmin.last_login|date:"Y-m-d H:i"|default:"Never" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" id="subadminForm">
+                {% csrf_token %}
+                
+                <!-- Notes (Editable) -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-sticky-note"></i>
+                        Notes
+                    </label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3" 
+                              placeholder="Enter any additional notes about this sub-admin">{{ subadmin.notes|default:'' }}</textarea>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle"></i>
+                        Optional notes about this sub-admin
+                    </div>
+                </div>
+
+                <!-- Status Toggle -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-toggle-on"></i>
+                        Account Status
+                    </label>
+                    <div class="status-wrapper">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="is_active" name="is_active" 
+                                   {% if subadmin.is_active %}checked{% endif %}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <div class="status-label">
+                            <span>Sub-admin account is</span>
+                            <span id="statusBadge" class="status-badge {% if subadmin.is_active %}active{% else %}inactive{% endif %}">
+                                {% if subadmin.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permissions Section -->
+                <div class="permissions-section">
+                    <div class="permissions-header">
+                        <div class="permissions-info">
+                            <label class="fw-semibold fs-6">
+                                <i class="fas fa-key" style="color: #15818E;"></i>
+                                Permissions
+                                <span class="required">*</span>
+                            </label>
+                            <span class="selected-count" id="selectedCount">
+                                <i class="fas fa-check-circle"></i>
+                                <span id="selectedCountValue">{{ current_permissions|length }}</span> selected
+                            </span>
+                        </div>
+                        
+                        {% if permissions %}
+                        <div class="quick-actions">
+                            <button type="button" class="btn-quick" id="selectAll">
+                                <i class="fas fa-check-double"></i>
+                                Select All
+                            </button>
+                            <button type="button" class="btn-quick" id="deselectAll">
+                                <i class="fas fa-times"></i>
+                                Deselect All
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if permissions %}
+                    <div class="permissions-grid" id="permissionsGrid">
+                        {% for perm in permissions %}
+                        <div class="permission-card" data-perm-id="{{ perm.id }}" onclick="togglePermission({{ perm.id }})">
+                            <div class="permission-checkbox">
+                                <input type="checkbox" class="permission-checkbox-input" 
+                                       id="perm_{{ perm.id }}" 
+                                       name="permissions" 
+                                       value="{{ perm.id }}"
+                                       {% if perm.id in current_permissions %}checked{% endif %}
+                                       onclick="event.stopPropagation()">
+                                <label for="perm_{{ perm.id }}">{{ perm.get_section_display }}</label>
+                            </div>
+                            
+                            <div class="permission-badges">
+                                {% if perm.can_view %}
+                                    <span class="perm-badge view"><i class="fas fa-eye"></i> View</span>
+                                {% else %}
+                                    <span class="perm-badge disabled"><i class="fas fa-eye-slash"></i> View</span>
+                                {% endif %}
+                                
+                                {% if perm.can_edit %}
+                                    <span class="perm-badge edit"><i class="fas fa-edit"></i> Edit</span>
+                                {% else %}
+                                    <span class="perm-badge disabled"><i class="fas fa-edit"></i> Edit</span>
+                                {% endif %}
+                                
+                                {% if perm.can_create %}
+                                    <span class="perm-badge create"><i class="fas fa-plus"></i> Create</span>
+                                {% else %}
+                                    <span class="perm-badge disabled"><i class="fas fa-plus"></i> Create</span>
+                                {% endif %}
+                                
+                                {% if perm.can_approve %}
+                                    <span class="perm-badge approve"><i class="fas fa-check"></i> Approve</span>
+                                {% else %}
+                                    <span class="perm-badge disabled"><i class="fas fa-check"></i> Approve</span>
+                                {% endif %}
+                                
+                                {% if perm.can_delete %}
+                                    <span class="perm-badge delete"><i class="fas fa-trash"></i> Delete</span>
+                                {% else %}
+                                    <span class="perm-badge disabled"><i class="fas fa-trash"></i> Delete</span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if perm.description %}
+                            <div class="permission-description">
+                                <i class="fas fa-info-circle"></i>
+                                {{ perm.description|truncatechars:60 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No permissions defined. 
+                        <a href="{% url 'subadmin_permission_create' %}">Create permissions first</a>.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i>
+                        Update Sub-Admin
+                    </button>
+                    <a href="{% url 'subadmin_list' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Danger Zone - Delete Section -->
+            <div class="danger-zone">
+                <h6>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Danger Zone
+                </h6>
+                <div class="danger-card">
+                    <div class="danger-info">
+                        <div class="danger-icon">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                        <div class="danger-text">
+                            <strong>Delete this sub-admin</strong>
+                            <span>Once deleted, this sub-admin will lose all access and cannot be recovered.</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'subadmin_delete' subadmin.id %}" class="btn-delete" onclick="return confirmDelete(event)">
+                        <i class="fas fa-trash"></i>
+                        Delete Sub-Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Status toggle badge update
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeCheckbox = document.getElementById('is_active');
+        const statusBadge = document.getElementById('statusBadge');
+        
+        if (activeCheckbox && statusBadge) {
+            activeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    statusBadge.className = 'status-badge active';
+                    statusBadge.textContent = 'Active';
+                } else {
+                    statusBadge.className = 'status-badge inactive';
+                    statusBadge.textContent = 'Inactive';
+                }
+            });
+        }
+
+        // Initialize permission cards highlighting
+        document.querySelectorAll('.permission-card').forEach(card => {
+            const checkbox = card.querySelector('.permission-checkbox-input');
+            if (checkbox && checkbox.checked) {
+                card.classList.add('selected');
+            }
+        });
+        
+        // Update selected count
+        updateSelectedCount();
+    });
+
+    // Toggle permission function
+    function togglePermission(permId) {
+        const checkbox = document.getElementById('perm_' + permId);
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            const card = checkbox.closest('.permission-card');
+            if (checkbox.checked) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+            updateSelectedCount();
+        }
+    }
+
+    // Update selected count
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('.permission-checkbox-input:checked');
+        const count = checkboxes.length;
+        document.getElementById('selectedCountValue').textContent = count;
+        
+        // Update count badge color based on selection
+        const countBadge = document.getElementById('selectedCount');
+        if (count === 0) {
+            countBadge.style.background = '#fee9e9';
+            countBadge.style.color = '#ef4444';
+        } else {
+            countBadge.style.background = '#e0f2f4';
+            countBadge.style.color = '#15818E';
+        }
+    }
+
+    // Select All button
+    document.getElementById('selectAll')?.addEventListener('click', function() {
+        document.querySelectorAll('.permission-checkbox-input').forEach(function(checkbox) {
+            checkbox.checked = true;
+            const card = checkbox.closest('.permission-card');
+            if (card) card.classList.add('selected');
+        });
+        updateSelectedCount();
+    });
+    
+    // Deselect All button
+    document.getElementById('deselectAll')?.addEventListener('click', function() {
+        document.querySelectorAll('.permission-checkbox-input').forEach(function(checkbox) {
+            checkbox.checked = false;
+            const card = checkbox.closest('.permission-card');
+            if (card) card.classList.remove('selected');
+        });
+        updateSelectedCount();
+    });
+
+    // Form submission validation
+    document.getElementById('subadminForm')?.addEventListener('submit', function(e) {
+        const checkboxes = document.querySelectorAll('.permission-checkbox-input:checked');
+        
+        if (checkboxes.length === 0) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Permissions Selected',
+                text: 'Please select at least one permission for this sub-admin.',
+                confirmButtonColor: '#15818E',
+                confirmButtonText: 'OK'
+            });
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerHTML = '<span class="spinner"></span> Updating...';
+        submitBtn.disabled = true;
+    });
+
+    // Confirm delete function
+    function confirmDelete(event) {
+        event.preventDefault();
+        const deleteUrl = event.currentTarget.href;
+        
+        Swal.fire({
+            title: 'Delete Sub-Admin?',
+            text: 'Are you sure you want to delete this sub-admin? This action cannot be undone and the user will lose all access.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = deleteUrl;
+            }
+        });
+        
+        return false;
+    }
+
+    // Auto-dismiss messages after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.3s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+</script>
+{% include 'admin1/footeradmin.html' %}

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ZOQO Deal | Login</title>
+
+    <!-- Static files and header include (Django context) -->
+    {% load static %}
+    {% include 'header.html' %}
+    {% load socialaccount %}
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* RESET */
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Inter', sans-serif;
+        }
+
+        /* HERO BACKGROUND - ONLY IMAGE REMAINS */
+        .login-hero{
+            height:100vh;
+            background: url("{% static 'assets/images/banner/20.png' %}");
+            background-size:cover;
+            background-position:center;
+        }
+
+        /* LAYOUT - SHIFTED RIGHT */
+        .login-wrapper{
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:flex-end;
+            padding:0 60px 0 40px;
+        }
+
+        /* INNER FLEX */
+        .login-inner{
+            display:flex;
+            align-items:center;
+            justify-content:flex-end;
+            gap: 30px;
+            width:100%;
+            max-width:1400px;
+            margin:0;
+            margin-left:auto;
+        }
+
+        /* LEFT SECTION */
+        .login-left{
+            width:38%;
+            color:white;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+        }
+
+        .login-left h1{
+            font-size:65px;
+            font-weight:200;
+            margin-bottom:10px;
+            color:white;
+            font-family:'FontStyle5';
+        }
+
+        .login-left p{
+            font-size:15px;
+            margin-bottom:30px;
+            color:white;
+            font-family:'Inter', sans-serif;
+        }
+
+        /* FORM CENTERED */
+        .login-left form{
+            width:100%;
+            max-width:500px;
+        }
+
+        /* INPUTS */
+        .login-left input{
+            width:100%;
+            padding:14px 18px;
+            border:none;
+            border-radius:12px;
+            margin-bottom:14px;
+            font-size:13px;
+            background:#f3f3f3;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Phone input group styling */
+        .phone-input-group {
+            width: 100%;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .country-code-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f3f3f3;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .country-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 12px 14px 18px;
+            background: #f3f3f3;
+            border-right: 1px solid #ddd;
+        }
+
+        .flag-icon {
+            width: 24px;
+            height: 18px;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+
+        .country-code-text {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        .phone-number-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            background: #f3f3f3;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* BUTTON */
+        .login-left button{
+            width:100%;
+            padding:10px;
+            border-radius:20px;
+            background:black;
+            color:white;
+            font-weight:700;
+            border:none;
+            cursor:pointer;
+            transition:0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-left button:hover{
+            transform:scale(0.96);
+        }
+
+        /* LINKS CENTERED */
+        .links{
+            margin-top:12px;
+            font-size:12px;
+            text-align:center;
+            width:100%;
+        }
+
+        .links a{
+            color:white;
+            text-decoration:underline;
+        }
+
+        /* SIGNUP CENTERED */
+        .signup{
+            margin-top:12px;
+            font-size:13px;
+            text-align:center;
+            width:100%;
+        }
+
+        .signup a{
+            color:white;
+            font-weight:700;
+            text-decoration:underline;
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            width:100%;
+            max-width:500px;
+        }
+        .alert-danger { background: rgba(220, 53, 69, 0.9); color: white; }
+        .alert-success { background: rgba(40, 167, 69, 0.9); color: white; }
+
+        /* RIGHT SECTION - VERTICAL SLIDER */
+        .login-right{
+            width:48%;
+            display:flex;
+            flex-direction:column;
+            align-items:flex-start;
+            gap:25px;
+            position: relative;
+            height: 100%;
+            justify-content: center;
+        }
+
+        /* VERTICAL CAROUSEL CONTAINER */
+        .vertical-carousel-container {
+            width: 100%;
+            max-width: 620px;
+            height: 620px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 36px;
+            background: transparent;
+        }
+
+        /* TRACK - smooth continuous animation */
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            will-change: transform;
+            gap: 20px;
+        }
+
+        /* EACH SLIDE - VIDEO CARD */
+        .carousel-slide {
+            width: 100%;
+            height: 540px !important;
+            position: relative;
+            overflow: hidden;
+            border-radius: 32px;
+            background: #0a0a0a;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.35);
+            flex-shrink: 0;
+            transition: none;
+            transform: none;
+            cursor: pointer;
+        }
+
+        .carousel-slide video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 32px;
+            pointer-events: none;
+            transition: none;
+        }
+
+        /* CAPTION OVERLAY */
+        .slide-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+            z-index: 2;
+            background: linear-gradient(90deg, rgba(0,0,0,0.65), transparent);
+            padding: 10px 18px;
+            border-radius: 40px;
+            backdrop-filter: blur(5px);
+            font-family: 'Inter', 'FontStyle6', sans-serif;
+            letter-spacing: 0.3px;
+            pointer-events: none;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 1200px){
+            .login-wrapper{
+                padding:0 40px;
+                justify-content:center;
+            }
+            .login-inner{
+                justify-content:center;
+                margin-left:0;
+            }
+            .vertical-carousel-container {
+                max-width: 550px;
+                height: 580px;
+            }
+            .carousel-slide {
+                height: 500px !important;
+            }
+        }
+
+        @media(max-width: 1000px){
+            .login-inner{
+                gap: 25px;
+            }
+            .vertical-carousel-container {
+                max-width: 500px;
+                height: 540px;
+            }
+            .carousel-slide {
+                height: 470px !important;
+            }
+        }
+
+        @media(max-width:900px){
+            .login-wrapper{
+                padding:0 20px;
+                justify-content:center;
+            }
+            .login-inner{
+                flex-direction:column;
+                justify-content:center;
+                gap:40px;
+                padding:40px 0;
+            }
+            .login-left{
+                width:100%;
+            }
+            .login-right{
+                width:100%;
+                align-items:center;
+            }
+            .vertical-carousel-container{
+                width:100%;
+                max-width:520px;
+                height: 560px;
+            }
+            .carousel-slide {
+                height: 490px !important;
+            }
+        }
+
+        @media(max-width:550px){
+            .vertical-carousel-container{
+                height: 500px;
+            }
+            .carousel-slide {
+                height: 430px !important;
+            }
+        }
+
+        /* Performance optimizations */
+        .carousel-track {
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+        .carousel-slide video {
+            backface-visibility: hidden;
+        }
+        
+        /* Very subtle pause indicator - barely noticeable */
+        .carousel-slide.paused-highlight {
+            box-shadow: 0 0 0 2px rgba(255,215,0,0.4), 0 25px 45px rgba(0,0,0,0.35);
+            transition: box-shadow 0.15s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-hero">
+    <div class="login-wrapper">
+        <div class="login-inner">
+
+            <!-- LEFT - PHONE LOGIN FORM -->
+            <div class="login-left">
+                <h1>LOGIN WITH PHONE</h1>
+                <p>LOGIN TO YOUR OMAN DEAL</p>
+
+                <!-- Django Messages Block -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Phone Login Form -->
+                <form action="" method="post" id="phoneLoginForm">
+                    {% csrf_token %}
+                    
+                    <!-- Phone input with Oman country code (fixed) -->
+                    <div class="phone-input-group">
+                        <div class="country-code-wrapper">
+                            <div class="country-display">
+                                <img id="countryFlag" class="flag-icon" src="{% static 'images/om-flag.png' %}" alt="Oman" onerror="this.src='https://flagcdn.com/w320/om.png'">
+                                <span class="country-code-text">+968</span>
+                            </div>
+                            <input type="tel" name="phone_number" id="phoneNumber" class="phone-number-input" 
+                                   placeholder="PHONE NUMBER" required autocomplete="off"
+                                   pattern="[0-9]{7,12}" title="Enter valid phone number (7-12 digits)">
+                            <input type="hidden" name="country_code" id="countryCodeHidden" value="+968">
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <input type="password" name="password" id="password" placeholder="PASSWORD" required>
+
+                    <button type="submit">CONTINUE</button>
+                </form>
+
+                <div class="links">
+                    <a href="{% url 'password_reset' %}">FORGOT PASSWORD?</a> |
+                    <a href="{% url 'password_reset' %}">FORGOT USERNAME?</a>
+                </div>
+
+                <div class="signup">
+                    DON'T HAVE AN ACCOUNT?
+                    <a href="{% url 'sign' %}">SIGN UP</a>
+                </div>
+            </div>
+
+            <!-- RIGHT - SMOOTH VERTICAL CAROUSEL (VERY BRIEF STOP, CONSTANT MOTION) -->
+            <div class="login-right">
+                <div class="vertical-carousel-container" id="verticalCarousel">
+                    <div class="carousel-track" id="carouselTrack"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // 7 VIDEOS DATA
+    const originalSlidesData = [
+        {
+            videoSrc: "{% static 'assets/images/video/1.mp4' %}",
+            caption: "BUY AND SELL CERTIFIED PRE-OWNED VEHICLES WITH CONFIDENCE"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/2.mp4' %}",
+            caption: "EXPLORE LUXURY VEHICLES AT BEST PRICES IN OMAN"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/3.mp4' %}",
+            caption: "DISCOVER AMAZING DEALS WITH OMAN DEAL MARKETPLACE"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/4.mp4' %}",
+            caption: "TRUSTED BY THOUSANDS OF HAPPY CUSTOMERS"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/5.mp4' %}",
+            caption: "PREMIUM VEHICLES WITH BEST WARRANTY IN OMAN"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/6.mp4' %}",
+            caption: "FINANCE YOUR DREAM CAR WITH EASY INSTALLMENTS"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/7.mp4' %}",
+            caption: "JOIN 50,000+ HAPPY CUSTOMERS ACROSS OMAN"
+        }
+    ];
+
+    // Infinite duplication
+    let carouselSlidesData = [];
+    const DUPLICATE_COUNT = 4;
+    for (let i = 0; i < DUPLICATE_COUNT; i++) {
+        carouselSlidesData = carouselSlidesData.concat(originalSlidesData.map((slide, idx) => ({
+            ...slide,
+            originalIndex: idx,
+            copyId: i
+        })));
+    }
+
+    let track = document.getElementById('carouselTrack');
+    let container = document.getElementById('verticalCarousel');
+    let slideHeight = 0;
+    let gapSize = 20;
+    let totalSlides = carouselSlidesData.length;
+    
+    // Animation variables - SMOOTH CONTINUOUS MOTION
+    let animationFrameId = null;
+    let currentTranslateY = 0;
+    let isAnimating = true;
+    let pauseTimer = null;
+    let currentPauseSlideIndex = -1;
+    let lastTimestamp = null;
+    
+    // SMOOTH & FAST ENOUGH - doesn't feel sluggish
+    const SCROLL_SPEED_PX_PER_SEC = 130;
+    
+    // VERY SHORT PAUSE - just a tiny moment to notice each slide, then moves instantly
+    const PAUSE_DURATION_MS = 180;  // Brief pause, then continuous motion
+    
+    // Center detection
+    const CENTER_THRESHOLD = 5;
+    
+    function buildSlides() {
+        if (!track) return;
+        track.innerHTML = '';
+        
+        for (let i = 0; i < carouselSlidesData.length; i++) {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'carousel-slide';
+            slideDiv.setAttribute('data-slide-index', i);
+            
+            const videoElem = document.createElement('video');
+            videoElem.muted = true;
+            videoElem.loop = true;
+            videoElem.playsInline = true;
+            videoElem.setAttribute('preload', 'auto');
+            
+            let videoPath = carouselSlidesData[i].videoSrc;
+            if (videoPath.includes("{% static")) {
+                const match = videoPath.match(/'([^']+)'/);
+                if (match) videoPath = match[1];
+            }
+            videoElem.src = videoPath;
+            
+            videoElem.addEventListener('error', function() {
+                const fallbackPath = `/static/assets/images/video/${(carouselSlidesData[i].originalIndex % 7) + 1}.mp4`;
+                videoElem.src = fallbackPath;
+                videoElem.load();
+            });
+            
+            const captionDiv = document.createElement('div');
+            captionDiv.className = 'slide-caption';
+            captionDiv.textContent = carouselSlidesData[i].caption;
+            
+            slideDiv.appendChild(videoElem);
+            slideDiv.appendChild(captionDiv);
+            track.appendChild(slideDiv);
+        }
+        
+        setTimeout(() => {
+            updateDimensionsAndReset();
+            startSmoothContinuousScroll();
+            startVideoPlayback();
+        }, 100);
+    }
+    
+    function updateDimensionsAndReset() {
+        if (!container || !track) return;
+        const containerHeight = container.clientHeight;
+        if (containerHeight === 0) return;
+        
+        gapSize = 20;
+        const calculatedSlideHeight = (containerHeight - (2 * gapSize)) / 2;
+        if (calculatedSlideHeight <= 0) return;
+        slideHeight = calculatedSlideHeight;
+        
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach(slide => {
+            slide.style.height = `${slideHeight}px`;
+        });
+        
+        const totalTrackHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+        track.style.height = `${totalTrackHeight}px`;
+        
+        currentTranslateY = 0;
+        applyTransform(currentTranslateY);
+        clearPauseState();
+        isAnimating = true;
+    }
+    
+    function applyTransform(yPos) {
+        if (!track) return;
+        track.style.transform = `translateY(${yPos}px)`;
+        currentTranslateY = yPos;
+    }
+    
+    function getCenteredSlideIndex() {
+        if (!track || slideHeight === 0) return -1;
+        const slides = track.querySelectorAll('.carousel-slide');
+        if (slides.length === 0) return -1;
+        
+        const containerRect = container.getBoundingClientRect();
+        const containerCenterWorld = containerRect.top + (containerRect.height / 2);
+        
+        let closestIndex = -1;
+        let minDistance = CENTER_THRESHOLD;
+        
+        for (let i = 0; i < slides.length; i++) {
+            const slideRect = slides[i].getBoundingClientRect();
+            const slideCenter = slideRect.top + (slideRect.height / 2);
+            const distance = Math.abs(slideCenter - containerCenterWorld);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
+    }
+    
+    function highlightSlide(index) {
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach((slide, i) => {
+            if (i === index) slide.classList.add('paused-highlight');
+            else slide.classList.remove('paused-highlight');
+        });
+    }
+    
+    function clearHighlight() {
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach(slide => slide.classList.remove('paused-highlight'));
+    }
+    
+    // Very brief pause - keeps carousel moving quickly
+    function briefPause(duration, centeredSlideIndex) {
+        if (pauseTimer) clearTimeout(pauseTimer);
+        if (!isAnimating) return;
+        
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        
+        isAnimating = false;
+        highlightSlide(centeredSlideIndex);
+        
+        pauseTimer = setTimeout(() => {
+            clearHighlight();
+            isAnimating = true;
+            pauseTimer = null;
+            currentPauseSlideIndex = -1;
+            startSmoothContinuousScroll();
+        }, duration);
+    }
+    
+    function clearPauseState() {
+        if (pauseTimer) {
+            clearTimeout(pauseTimer);
+            pauseTimer = null;
+        }
+        isAnimating = true;
+        clearHighlight();
+        currentPauseSlideIndex = -1;
+    }
+    
+    // MAIN SMOOTH ANIMATION - continuous with tiny pauses
+    function startSmoothContinuousScroll() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        lastTimestamp = null;
+        
+        function animate(now) {
+            if (!isAnimating) return;
+            if (!track || slideHeight === 0) {
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            if (lastTimestamp === null) {
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            let delta = Math.min(100, now - lastTimestamp);
+            if (delta <= 0) {
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            let moveDistance = (SCROLL_SPEED_PX_PER_SEC * delta) / 1000;
+            let newY = currentTranslateY - moveDistance;
+            
+            const totalTrackHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+            const resetThreshold = -(totalTrackHeight / 2);
+            if (newY <= resetThreshold) {
+                newY = newY + (totalTrackHeight / 2);
+                applyTransform(newY);
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            applyTransform(newY);
+            
+            // DETECT CENTER AND APPLY VERY SHORT PAUSE
+            if (isAnimating && !pauseTimer) {
+                const centeredIdx = getCenteredSlideIndex();
+                if (centeredIdx !== -1 && centeredIdx !== currentPauseSlideIndex) {
+                    currentPauseSlideIndex = centeredIdx;
+                    if (animationFrameId) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                    // Very brief pause - carousel keeps moving almost instantly
+                    briefPause(PAUSE_DURATION_MS, centeredIdx);
+                    return;
+                } else if (centeredIdx === -1) {
+                    currentPauseSlideIndex = -1;
+                }
+            }
+            
+            lastTimestamp = now;
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(animate);
+    }
+    
+    function startVideoPlayback() {
+        if (!track) return;
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach((slide) => {
+            const video = slide.querySelector('video');
+            if (video) {
+                video.muted = true;
+                video.loop = true;
+                video.play().catch(e => {
+                    setTimeout(() => video.play().catch(() => {}), 200);
+                });
+            }
+        });
+    }
+    
+    let resizeTimeout;
+    function handleResize() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (container && container.clientHeight > 0) {
+                const oldTotalHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+                const oldProgress = oldTotalHeight > 0 ? -currentTranslateY / oldTotalHeight : 0;
+                updateDimensionsAndReset();
+                const newTotalHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+                let newY = -oldProgress * newTotalHeight;
+                const maxY = 0;
+                const minY = -(newTotalHeight - container.clientHeight);
+                newY = Math.min(maxY, Math.max(minY, newY));
+                applyTransform(newY);
+                if (pauseTimer) { clearTimeout(pauseTimer); pauseTimer = null; }
+                isAnimating = true;
+                clearHighlight();
+                currentPauseSlideIndex = -1;
+                startSmoothContinuousScroll();
+                startVideoPlayback();
+            }
+        }, 200);
+    }
+    
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            startVideoPlayback();
+            if (!isAnimating && !pauseTimer) {
+                isAnimating = true;
+                startSmoothContinuousScroll();
+            }
+        }
+    });
+    
+    function enableAutoplayOnInteraction() {
+        startVideoPlayback();
+        if (!isAnimating && !pauseTimer) {
+            startSmoothContinuousScroll();
+        }
+        document.removeEventListener('click', enableAutoplayOnInteraction);
+        document.removeEventListener('touchstart', enableAutoplayOnInteraction);
+    }
+    
+    function attachGlobalVideoError() {
+        if (!track) return;
+        const videos = track.querySelectorAll('video');
+        videos.forEach(vid => {
+            vid.addEventListener('error', () => {
+                setTimeout(() => { vid.load(); vid.play().catch(()=>{}); }, 500);
+            });
+        });
+    }
+    
+    function initCarousel() {
+        buildSlides();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => setTimeout(handleResize, 100));
+        document.addEventListener('click', enableAutoplayOnInteraction, { once: true });
+        document.addEventListener('touchstart', enableAutoplayOnInteraction, { once: true });
+        setTimeout(() => {
+            attachGlobalVideoError();
+            startVideoPlayback();
+        }, 600);
+    }
+    
+    const noTransitionStyle = document.createElement('style');
+    noTransitionStyle.textContent = `
+        .carousel-slide {
+            transition: none !important;
+            transform: none !important;
+            scale: none !important;
+            filter: none !important;
+        }
+        .carousel-slide video {
+            transition: none !important;
+        }
+        .carousel-slide:hover {
+            transform: none !important;
+        }
+        .carousel-track {
+            transition: none !important;
+        }
+    `;
+    document.head.appendChild(noTransitionStyle);
+    
+    initCarousel();
+    console.log("=== ULTRA SMOOTH CAROUSEL - VERY BRIEF PAUSES, CONSTANT MOTION ===");
+</script>
+
+</body>
+</html>

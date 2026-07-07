@@ -1,0 +1,1086 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-info {
+        background: #e0f2fe;
+        color: #0284c7;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert .close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert .close:hover {
+        opacity: 1;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .form-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-header h5 i {
+        color: #15818E;
+    }
+
+    .btn-back {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group label i {
+        color: #15818E;
+        margin-right: 0.375rem;
+    }
+
+    .form-group .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .form-control:hover:not(:focus) {
+        border-color: #cbd5e1;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Section Groups */
+    .section-group {
+        margin-bottom: 1rem;
+    }
+
+    .section-group-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-group-title i {
+        color: #15818E;
+        width: 20px;
+    }
+
+    .section-group-title span {
+        background: #e0f2f4;
+        color: #15818E;
+        padding: 0.15rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        margin-left: 0.5rem;
+    }
+
+    /* Permissions Grid */
+    .permissions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        margin-top: 0.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .permissions-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 10px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .permissions-grid::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    .permission-checkbox-item {
+        background: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .permission-checkbox-item:hover {
+        border-color: #15818E;
+        box-shadow: 0 2px 4px -1px rgba(21, 129, 142, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .permission-checkbox-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 4px;
+        cursor: pointer;
+        accent-color: #15818E;
+    }
+
+    .permission-checkbox-item .checkbox-label {
+        font-size: 0.813rem;
+        font-weight: 500;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        flex: 1;
+        cursor: pointer;
+    }
+
+    .permission-checkbox-item .checkbox-label i {
+        color: #15818E;
+        font-size: 0.875rem;
+        width: 16px;
+    }
+
+    /* Quick Action Buttons */
+    .quick-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .btn-quick {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-quick:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+    }
+
+    .btn-quick.primary {
+        background: #e0f2f4;
+        border-color: #15818E;
+        color: #15818E;
+    }
+
+    .btn-quick.primary:hover {
+        background: #15818E;
+        color: white;
+    }
+
+    .btn-quick i {
+        font-size: 0.75rem;
+    }
+
+    /* Section note */
+    .section-note {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .section-note i {
+        color: #15818E;
+        font-size: 0.75rem;
+    }
+
+    /* Alert */
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #b8e0e6;
+        color: #15818E;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .alert-info i {
+        font-size: 1.25rem;
+    }
+
+    .alert-warning {
+        background: #fff7e6;
+        border: 1px solid #fcd34d;
+        color: #92400e;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .alert-warning i {
+        font-size: 1.25rem;
+    }
+
+    /* Submit Button */
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-submit {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.875rem 2.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+        background: #0e5f68;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-submit i {
+        font-size: 1rem;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    /* Selected count badge */
+    .selected-count {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #15818E;
+        color: white;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    /* Loading spinner */
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .permissions-grid {
+            grid-template-columns: 1fr;
+            padding: 1rem;
+            max-height: 300px;
+        }
+        
+        .form-card {
+            padding: 1.5rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-submit, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .quick-actions {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-key"></i>
+                Create New Permission
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-info-circle"></i>
+                    All fields with * are required
+                </span>
+                <span class="badge badge-info">
+                    <i class="fas fa-user-shield"></i>
+                    For Sub-admins Only
+                </span>
+            </div>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Info Alert -->
+        <div class="alert-info">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Note:</strong> Permissions created here are for <strong>sub-admins only</strong>. 
+                Administrators (superusers) automatically have access to everything.
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <div class="form-header">
+                <h5>
+                    <i class="fas fa-lock"></i>
+                    Permission Information
+                </h5>
+                <a href="{% url 'subadmin_permissions_list' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Permissions
+                </a>
+            </div>
+
+            <form method="POST" id="permissionForm">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-tag"></i>
+                        Permission Name
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="name" name="name" required 
+                           placeholder="e.g., Manage Real Estate, View Motors"
+                           value="{{ request.POST.name|default:'' }}">
+                    <div class="section-note">
+                        <i class="fas fa-info-circle"></i>
+                        A descriptive name for this permission
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-folder"></i>
+                        Section
+                        <span class="required">*</span>
+                    </label>
+                    <select class="form-control" id="section" name="section" required>
+                        <option value="">Select Section</option>
+                        
+                        <!-- Location Management -->
+                        <optgroup label="📍 LOCATION MANAGEMENT">
+                            <option value="governates" {% if request.POST.section == 'governates' %}selected{% endif %}>Governates</option>
+                            <option value="districts" {% if request.POST.section == 'districts' %}selected{% endif %}>Districts</option>
+                            <option value="cities" {% if request.POST.section == 'cities' %}selected{% endif %}>Cities</option>
+                        </optgroup>
+                        
+                        <!-- Amenities -->
+                        <optgroup label="🏨 AMENITIES">
+                            <option value="amenities" {% if request.POST.section == 'amenities' %}selected{% endif %}>Amenities (Main, Additional, Nearby)</option>
+                        </optgroup>
+                        
+                        <!-- Motors Options -->
+                        <optgroup label="🚗 MOTORS OPTIONS">
+                            <option value="interior_options" {% if request.POST.section == 'interior_options' %}selected{% endif %}>Interior Options</option>
+                            <option value="exterior_options" {% if request.POST.section == 'exterior_options' %}selected{% endif %}>Exterior Options</option>
+                            <option value="technology_options" {% if request.POST.section == 'technology_options' %}selected{% endif %}>Technology Options</option>
+                        </optgroup>
+                        
+                        <!-- Content Management -->
+                        <optgroup label="📄 CONTENT MANAGEMENT">
+                            <option value="faq" {% if request.POST.section == 'faq' %}selected{% endif %}>FAQ Management</option>
+                            <option value="blog" {% if request.POST.section == 'blog' %}selected{% endif %}>Blog Management</option>
+                            <option value="banner" {% if request.POST.section == 'banner' %}selected{% endif %}>Banner Management</option>
+                        </optgroup>
+                        
+                        <!-- Advertisement -->
+                        <optgroup label="📢 ADVERTISEMENT">
+                            <option value="advertisement" {% if request.POST.section == 'advertisement' %}selected{% endif %}>Advertisement Management</option>
+                        </optgroup>
+                        
+                        <!-- NEW: ADS APPROVAL - 5 CATEGORIES -->
+                        <optgroup label="✅ ADS APPROVAL (5 Categories)">
+                            <option value="ads_approval_properties" {% if request.POST.section == 'ads_approval_properties' %}selected{% endif %}>Ads Approval - Properties (Land, Villa, Commercial, etc.)</option>
+                            <option value="ads_approval_vehicles" {% if request.POST.section == 'ads_approval_vehicles' %}selected{% endif %}>Ads Approval - Vehicles (Cars, Motorcycles, Boats, etc.)</option>
+                            <option value="ads_approval_electronics" {% if request.POST.section == 'ads_approval_electronics' %}selected{% endif %}>Ads Approval - Electronics & Mobile (Phones, Tablets, Computers, etc.)</option>
+                            <option value="ads_approval_classifieds" {% if request.POST.section == 'ads_approval_classifieds' %}selected{% endif %}>Ads Approval - Classifieds & Listings (Fashion, Toys, Books, etc.)</option>
+                            <option value="ads_approval_services" {% if request.POST.section == 'ads_approval_services' %}selected{% endif %}>Ads Approval - Services (Auto, Domestic, Tutoring, etc.)</option>
+                        </optgroup>
+                        
+                        <!-- Company Related -->
+                        <optgroup label="🏢 COMPANY RELATED">
+                            <option value="companies" {% if request.POST.section == 'companies' %}selected{% endif %}>Company Management</option>
+                            <option value="company_approval" {% if request.POST.section == 'company_approval' %}selected{% endif %}>Company Approval</option>
+                        </optgroup>
+                        
+                        <!-- Job Related -->
+                        <optgroup label="💼 JOB RELATED">
+                            <option value="job_posts" {% if request.POST.section == 'job_posts' %}selected{% endif %}>Job Posts</option>
+                            <option value="job_categories" {% if request.POST.section == 'job_categories' %}selected{% endif %}>Job Categories</option>
+                        </optgroup>
+                        
+                        <!-- Reported Ads -->
+                        <optgroup label="🚨 REPORTED ADS">
+                            <option value="reported_ads" {% if request.POST.section == 'reported_ads' %}selected{% endif %}>Reported Ads</option>
+                        </optgroup>
+                        
+                        <!-- User Related -->
+                        <optgroup label="👥 USER RELATED">
+                            <option value="users_view" {% if request.POST.section == 'users_view' %}selected{% endif %}>View Users</option>
+                            <option value="user_reports" {% if request.POST.section == 'user_reports' %}selected{% endif %}>User Reports</option>
+                            <option value="user_activity" {% if request.POST.section == 'user_activity' %}selected{% endif %}>User Activity Log</option>
+                        </optgroup>
+                    </select>
+                    <div class="section-note">
+                        <i class="fas fa-info-circle"></i>
+                        Select the section this permission applies to
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </label>
+                    <textarea class="form-control" id="description" name="description" rows="3" 
+                              placeholder="Enter a brief description of what this permission allows">{{ request.POST.description|default:'' }}</textarea>
+                    <div class="section-note">
+                        <i class="fas fa-info-circle"></i>
+                        Optional: Helpful for understanding the permission's purpose
+                    </div>
+                </div>
+
+                <!-- Permission Actions -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-shield-alt"></i>
+                        Allowed Actions
+                        <span class="required">*</span>
+                        <span class="selected-count" id="selectedCount">0 selected</span>
+                    </label>
+                    
+                    <div class="quick-actions">
+                        <button type="button" class="btn-quick primary" onclick="selectViewOnly()">
+                            <i class="fas fa-eye"></i> View Only
+                        </button>
+                        <button type="button" class="btn-quick" onclick="selectFullAccess()">
+                            <i class="fas fa-check-double"></i> Full Access
+                        </button>
+                        <button type="button" class="btn-quick" onclick="deselectAll()">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                    </div>
+
+                    <div class="permissions-grid">
+                        <div class="permission-checkbox-item">
+                            <input type="checkbox" id="can_view" name="can_view" checked>
+                            <label for="can_view" class="checkbox-label">
+                                <i class="fas fa-eye"></i>
+                                Can View
+                            </label>
+                        </div>
+                        
+                        <div class="permission-checkbox-item">
+                            <input type="checkbox" id="can_create" name="can_create">
+                            <label for="can_create" class="checkbox-label">
+                                <i class="fas fa-plus-circle"></i>
+                                Can Create
+                            </label>
+                        </div>
+                        
+                        <div class="permission-checkbox-item">
+                            <input type="checkbox" id="can_edit" name="can_edit">
+                            <label for="can_edit" class="checkbox-label">
+                                <i class="fas fa-edit"></i>
+                                Can Edit
+                            </label>
+                        </div>
+                        
+                        <div class="permission-checkbox-item">
+                            <input type="checkbox" id="can_approve" name="can_approve">
+                            <label for="can_approve" class="checkbox-label">
+                                <i class="fas fa-check-circle"></i>
+                                Can Approve
+                            </label>
+                        </div>
+                        
+                        <div class="permission-checkbox-item">
+                            <input type="checkbox" id="can_delete" name="can_delete">
+                            <label for="can_delete" class="checkbox-label">
+                                <i class="fas fa-trash"></i>
+                                Can Delete
+                            </label>
+                        </div>
+                    </div>
+                    <div class="section-note">
+                        <i class="fas fa-info-circle"></i>
+                        Select at least one action this permission should allow
+                    </div>
+                </div>
+
+                <!-- Warning for important permissions -->
+                <div class="alert-warning" id="warningMessage" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="warningText"></span>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i>
+                        Create Permission
+                    </button>
+                    <a href="{% url 'subadmin_permissions_list' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    // Update selected count
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        document.getElementById('selectedCount').textContent = checkedCount + ' selected';
+        
+        // Show warning if no permissions selected
+        const warningMsg = document.getElementById('warningMessage');
+        const warningText = document.getElementById('warningText');
+        
+        if (checkedCount === 0) {
+            warningMsg.style.display = 'flex';
+            warningText.textContent = 'You need to select at least one permission action.';
+        } else {
+            warningMsg.style.display = 'none';
+        }
+        
+        // Show recommendation for approval permissions
+        const section = document.getElementById('section').value;
+        if (section && section.startsWith('ads_approval')) {
+            const approveCheckbox = document.getElementById('can_approve');
+            if (checkedCount > 0 && !approveCheckbox.checked) {
+                warningMsg.style.display = 'flex';
+                warningText.textContent = 'For ads approval permissions, we recommend enabling "Can Approve" action.';
+            } else if (approveCheckbox.checked) {
+                warningMsg.style.display = 'none';
+            }
+        }
+    }
+
+    // Quick selection functions
+    function selectViewOnly() {
+        document.getElementById('can_view').checked = true;
+        document.getElementById('can_create').checked = false;
+        document.getElementById('can_edit').checked = false;
+        document.getElementById('can_approve').checked = false;
+        document.getElementById('can_delete').checked = false;
+        updateSelectedCount();
+    }
+    
+    function selectFullAccess() {
+        document.getElementById('can_view').checked = true;
+        document.getElementById('can_create').checked = true;
+        document.getElementById('can_edit').checked = true;
+        document.getElementById('can_approve').checked = true;
+        document.getElementById('can_delete').checked = true;
+        updateSelectedCount();
+    }
+    
+    function deselectAll() {
+        document.getElementById('can_view').checked = false;
+        document.getElementById('can_create').checked = false;
+        document.getElementById('can_edit').checked = false;
+        document.getElementById('can_approve').checked = false;
+        document.getElementById('can_delete').checked = false;
+        updateSelectedCount();
+    }
+    
+    // Set default permissions for specific sections
+    function setDefaultPermissionsForSection(section) {
+        if (section.startsWith('ads_approval')) {
+            // For ads approval, default to view and approve only
+            document.getElementById('can_view').checked = true;
+            document.getElementById('can_approve').checked = true;
+            document.getElementById('can_create').checked = false;
+            document.getElementById('can_edit').checked = false;
+            document.getElementById('can_delete').checked = false;
+        } else if (section === 'company_approval') {
+            // For company approval, default to view and approve
+            document.getElementById('can_view').checked = true;
+            document.getElementById('can_approve').checked = true;
+            document.getElementById('can_create').checked = false;
+            document.getElementById('can_edit').checked = false;
+            document.getElementById('can_delete').checked = false;
+        } else if (section === 'users_view') {
+            // For user view, default to view only
+            document.getElementById('can_view').checked = true;
+            document.getElementById('can_approve').checked = false;
+            document.getElementById('can_create').checked = false;
+            document.getElementById('can_edit').checked = false;
+            document.getElementById('can_delete').checked = false;
+        } else if (section === 'advertisement') {
+            // For advertisements, default to full access
+            document.getElementById('can_view').checked = true;
+            document.getElementById('can_create').checked = true;
+            document.getElementById('can_edit').checked = true;
+            document.getElementById('can_approve').checked = true;
+            document.getElementById('can_delete').checked = true;
+        } else {
+            // For other sections, default to view only
+            document.getElementById('can_view').checked = true;
+            document.getElementById('can_create').checked = false;
+            document.getElementById('can_edit').checked = false;
+            document.getElementById('can_approve').checked = false;
+            document.getElementById('can_delete').checked = false;
+        }
+        updateSelectedCount();
+    }
+
+    // Auto-fill description based on section
+    function autoFillDescription(section) {
+        const descriptions = {
+            'ads_approval_properties': 'Allows sub-admin to approve or reject property listings including Land, Villa, Commercial, Farm, Apartment, Factory, Complex, Clinic, Hostel, Office, Shop, Cafe, Staff, Warehouse, Townhouse, Fullfloors, Showrooms, Wholebuilding, Supermarket, Foreign, Shared, Suits.',
+            'ads_approval_vehicles': 'Allows sub-admin to approve or reject vehicle listings including Automobile, Motorcycle, Scooter, HelmetClothes, Quadbikes, HeavyVehicle, Boat, AutoAccessoryPart, NumberPlate, Part, SportsCar, TiresAndCaps, JunkCar, CarRepairMaintenance, DrivingTraining.',
+            'ads_approval_electronics': 'Allows sub-admin to approve or reject electronics and mobile listings including Mobile, Tablet, SmartWatch, Headset, Cover, Accessory, MobileSIM, Computer, Sound, ComputerListing, ElectronicsListing.',
+            'ads_approval_classifieds': 'Allows sub-admin to approve or reject classified listings including Fashion, Toys, Food, Fitness, Pet, Book, Appliance, Business, Education, Service, BusinessIndustrialListing, PetListing, SportsListing, MusicalListing, GamingListing, TicketVoucherListing, CollectibleListing, BooksListing, MusicListing, DVDsMoviesListing, FurnitureHomeGardenListing, BabyItemsListing, ToysListing, LostFoundListing, CameraListing, JewelryListing, HomeApplianceListing, ClothingAccessoriesListing.',
+            'ads_approval_services': 'Allows sub-admin to approve or reject service listings including AutoServiceListing, ConsultancyServiceListing, DomesticServiceListing, EventEntertainmentServiceListing, HealthWellbeingServiceListing, HomeMaintenanceServiceListing, MoversServiceListing, RestorationServiceListing, TutorsServiceListing, WebComputerServiceListing, FreelancersServiceListing, OtherServiceListing.',
+            'governates': 'Allows sub-admin to manage governates/locations.',
+            'districts': 'Allows sub-admin to manage districts within governates.',
+            'cities': 'Allows sub-admin to manage cities within districts.',
+            'amenities': 'Allows sub-admin to manage all amenities including main amenities, additional amenities, and nearby locations.',
+            'interior_options': 'Allows sub-admin to manage interior options for vehicle listings.',
+            'exterior_options': 'Allows sub-admin to manage exterior options for vehicle listings.',
+            'technology_options': 'Allows sub-admin to manage technology options for vehicle listings.',
+            'faq': 'Allows sub-admin to manage frequently asked questions.',
+            'blog': 'Allows sub-admin to manage blog posts and articles.',
+            'banner': 'Allows sub-admin to manage website banners and sliders.',
+            'advertisement': 'Allows sub-admin to manage advertisements.',
+            'companies': 'Allows sub-admin to manage company profiles.',
+            'company_approval': 'Allows sub-admin to approve or reject company registrations.',
+            'job_posts': 'Allows sub-admin to manage job postings.',
+            'job_categories': 'Allows sub-admin to manage job categories.',
+            'reported_ads': 'Allows sub-admin to view and manage reported ads.',
+            'users_view': 'Allows sub-admin to view user information.',
+            'user_reports': 'Allows sub-admin to view user reports.',
+            'user_activity': 'Allows sub-admin to view user activity logs.'
+        };
+        
+        const descriptionField = document.getElementById('description');
+        if (descriptions[section] && !descriptionField.value.trim()) {
+            descriptionField.value = descriptions[section];
+        }
+    }
+
+    // Form validation
+    document.getElementById('permissionForm').addEventListener('submit', function(e) {
+        const name = document.getElementById('name').value.trim();
+        const section = document.getElementById('section').value;
+        const submitBtn = document.getElementById('submitBtn');
+        const errors = [];
+        
+        // Name validation
+        if (!name) {
+            errors.push('Permission name is required');
+            document.getElementById('name').classList.add('is-invalid');
+        } else {
+            document.getElementById('name').classList.remove('is-invalid');
+        }
+        
+        // Section validation
+        if (!section) {
+            errors.push('Please select a section');
+            document.getElementById('section').classList.add('is-invalid');
+        } else {
+            document.getElementById('section').classList.remove('is-invalid');
+        }
+        
+        // Check if at least one action is selected
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        
+        if (checkedCount === 0) {
+            errors.push('Please select at least one allowed action');
+        }
+        
+        // Special validation for approval permissions
+        if (section && section.startsWith('ads_approval')) {
+            const approveCheckbox = document.getElementById('can_approve');
+            if (!approveCheckbox.checked) {
+                if (confirm('This is an ads approval permission. It\'s recommended to enable "Can Approve" action. Do you want to continue without approval permission?')) {
+                    // User confirmed, continue
+                } else {
+                    e.preventDefault();
+                    approveCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    approveCheckbox.parentElement.style.backgroundColor = '#fff7e6';
+                    setTimeout(() => {
+                        approveCheckbox.parentElement.style.backgroundColor = '';
+                    }, 1000);
+                    return;
+                }
+            }
+        }
+        
+        // Show errors if any
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert('Please fix the following errors:\n\n- ' + errors.join('\n- '));
+            return false;
+        }
+        
+        // Disable submit button and show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span> Creating...';
+    });
+
+    // Add real-time validation
+    document.getElementById('name').addEventListener('input', function() {
+        if (this.value.trim()) {
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    document.getElementById('section').addEventListener('change', function() {
+        const section = this.value;
+        if (section) {
+            this.classList.remove('is-invalid');
+            setDefaultPermissionsForSection(section);
+            autoFillDescription(section);
+        }
+    });
+
+    // Add event listeners to checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+
+    // Initialize selected count
+    updateSelectedCount();
+
+    // Auto-dismiss messages after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.3s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+</script>

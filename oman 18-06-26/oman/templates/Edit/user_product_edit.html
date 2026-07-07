@@ -1,0 +1,455 @@
+{% load static %}
+{% load l10n %}
+
+{% include 'header.html' %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABBUguQag71PdtznQPtePBzovoFsVeuHk&callback=initMap&libraries=places,geometry" async defer></script>
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(60deg, #F9AD1F, #EB362D);
+        --primary-color: #F9AD1F;
+        --secondary-color: #EB362D;
+        --border-color: #e9ecef;
+        --text-primary: #2c3e50;
+        --text-secondary: #6c757d;
+        --radius: 14px;
+        --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+    }
+    body { background: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text-primary); }
+    .edit-wrapper { max-width: 1100px; margin: 30px auto 60px; padding: 0 20px; }
+
+    .page-header { background: var(--primary-gradient); color: #fff; padding: 22px 28px; border-radius: var(--radius); margin-bottom: 22px; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+    .page-header h2 { margin: 0; font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+    .page-header .sub { font-size: 13px; opacity: .9; margin-top: 4px; }
+    .id-badge { background: rgba(255,255,255,.22); padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; backdrop-filter: blur(5px); }
+
+    .alert { padding: 14px 18px; border-radius: var(--radius); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+    .alert-success { background: rgba(16,185,129,.1); border-left: 4px solid var(--success); color: var(--success); }
+    .alert-danger, .alert-error { background: rgba(239,68,68,.1); border-left: 4px solid var(--danger); color: var(--danger); }
+    .alert-warning { background: rgba(245,158,11,.1); border-left: 4px solid var(--warning); color: var(--warning); }
+    .alert-info { background: rgba(59,130,246,.1); border-left: 4px solid var(--info); color: var(--info); }
+
+    .card-block { background: #fff; border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border-color); margin-bottom: 22px; }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 10px; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 2px solid var(--border-color); }
+    .card-title i { color: var(--primary-color); }
+    .count-pill { margin-left: auto; background: linear-gradient(135deg, rgba(249,173,31,.12), rgba(235,54,45,.12)); color: var(--secondary-color); padding: 4px 12px; border-radius: 30px; font-size: 12px; font-weight: 700; }
+
+    .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+    .media-item { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1; border: 2px solid var(--border-color); }
+    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-del { position: absolute; bottom: 6px; left: 6px; right: 6px; background: rgba(0,0,0,.7); color: #fff; font-size: 11px; padding: 3px 6px; border-radius: 6px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+    .media-del input { accent-color: var(--secondary-color); }
+    .empty-note { color: var(--text-secondary); font-size: 14px; text-align: center; padding: 18px 0; }
+    .upload-row { margin-top: 16px; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 7px; }
+    .form-label i { color: var(--primary-color); margin-right: 5px; font-size: 12px; }
+    .req { color: var(--secondary-color); margin-left: 3px; }
+    .opt { font-size: 10px; font-weight: 500; background: #eef0f3; color: var(--text-secondary); padding: 2px 7px; border-radius: 20px; margin-left: 7px; }
+    .form-control, .form-select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 14px; background: #fff; transition: border-color .2s, box-shadow .2s; }
+    .form-control:focus, .form-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249,173,31,.12); outline: none; }
+    textarea.form-control { min-height: 96px; resize: vertical; }
+    .check-row { display: flex; align-items: center; gap: 9px; padding: 8px 0; }
+    .check-row input { width: 18px; height: 18px; accent-color: var(--primary-color); cursor: pointer; }
+    .help { font-size: 12px; color: var(--text-secondary); margin-top: 5px; }
+    .preview { margin-top: 8px; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+    .preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .map-canvas { width: 100%; height: 380px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+    .coord-line { font-size: 12px; color: var(--text-secondary); margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .coord-line b { color: var(--text-primary); }
+
+    .actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    .btn { padding: 12px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: transform .2s, box-shadow .2s; text-decoration: none; }
+    .btn-save { background: var(--primary-gradient); color: #fff; }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(235,54,45,.28); color: #fff; }
+    .btn-cancel { background: #fff; color: var(--text-secondary); border: 1.5px solid var(--border-color); }
+    .btn-cancel:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+    @media (max-width: 768px) {
+        .form-grid { grid-template-columns: 1fr; }
+        .form-group.full { grid-column: 1; }
+        .actions { flex-direction: column-reverse; }
+        .btn { width: 100%; justify-content: center; }
+    }
+</style>
+
+<div class="edit-wrapper">
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="page-header">
+        <div>
+            <h2><i class="fas fa-pen-to-square"></i> Edit your {{ product_type|title }}</h2>
+            <div class="sub">Make changes and save &mdash; your listing updates right away.</div>
+        </div>
+        <span class="id-badge"><i class="fas fa-hashtag"></i> ID {{ product.id }}</span>
+    </div>
+
+    <form method="POST" id="editForm" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ===== Images ===== -->
+        <div class="card-block">
+            <h3 class="card-title">
+                <i class="fas fa-images"></i> Photos
+                <span class="count-pill">{{ existing_images|length }}</span>
+            </h3>
+            {% if existing_images %}
+            <div class="media-grid">
+                {% for image in existing_images %}
+                <div class="media-item">
+                    <img src="{{ image.image.url }}" alt="Photo">
+                    <label class="media-del">
+                        <input type="checkbox" name="delete_images" value="{{ image.id }}"> Remove
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-note">No photos yet &mdash; add some below.</p>
+            {% endif %}
+            <div class="upload-row">
+                <label class="form-label"><i class="fas fa-plus-circle"></i> Add photos</label>
+                <input type="file" name="new_images" multiple accept="image/*" class="form-control">
+                <div class="help">JPG, PNG or GIF. You can pick several at once.</div>
+            </div>
+        </div>
+
+        <!-- ===== Videos ===== -->
+        <div class="card-block">
+            <h3 class="card-title">
+                <i class="fas fa-video"></i> Videos
+                <span class="count-pill">{{ existing_videos|length }}</span>
+            </h3>
+            {% if existing_videos %}
+            <div class="media-grid">
+                {% for video in existing_videos %}
+                <div class="media-item">
+                    <video muted><source src="{{ video.video.url }}" type="video/mp4"></video>
+                    <label class="media-del">
+                        <input type="checkbox" name="delete_videos" value="{{ video.id }}"> Remove
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-note">No videos yet &mdash; add one below.</p>
+            {% endif %}
+            <div class="upload-row">
+                <label class="form-label"><i class="fas fa-plus-circle"></i> Add videos</label>
+                <input type="file" name="new_videos" multiple accept="video/mp4,video/quicktime" class="form-control">
+                <div class="help">MP4 format. You can pick several at once.</div>
+            </div>
+        </div>
+
+        <!-- ===== Details ===== -->
+        <div class="card-block">
+            <h3 class="card-title"><i class="fas fa-sliders"></i> Listing details</h3>
+            <div class="form-grid">
+                {% for field in fields %}
+                <div class="form-group {% if field.type == 'TextField' %}full{% endif %}">
+                    <label class="form-label" for="id_{{ field.name }}">
+                        <i class="fas fa-{% if field.type == 'TextField' %}align-left{% elif field.is_relation %}link{% elif field.choices %}list{% elif field.type == 'BooleanField' %}toggle-on{% else %}tag{% endif %}"></i>
+                        {{ field.verbose_name }}
+                        {% if field.required %}<span class="req">*</span>{% else %}<span class="opt">Optional</span>{% endif %}
+                    </label>
+
+                    {% if field.type == 'TextField' %}
+                        <textarea class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+
+                    {% elif field.type == 'BooleanField' %}
+                        <div class="check-row">
+                            <input type="checkbox" id="id_{{ field.name }}" name="{{ field.name }}" {% if field.value %}checked{% endif %}>
+                            <label for="id_{{ field.name }}" style="margin:0; cursor:pointer;">Yes</label>
+                        </div>
+
+                    {% elif field.choices %}
+                        <select class="form-select searchable" id="id_{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            <option value="">&mdash; select &mdash;</option>
+                            {% for cval, clabel in field.choices %}
+                            <option value="{{ cval }}" {% if field.value == cval %}selected{% endif %}>{{ clabel }}</option>
+                            {% endfor %}
+                        </select>
+
+                    {% elif field.is_relation %}
+                        <select class="form-select searchable" id="id_{{ field.name }}" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                            <option value="">&mdash; select &mdash;</option>
+                            {% for choice in field.related_choices %}
+                            <option value="{{ choice.id }}"
+                                {% if field.name == 'city' %}data-latitude="{{ choice.latitude|unlocalize }}" data-longitude="{{ choice.longitude|unlocalize }}"{% endif %}
+                                {% if field.value and field.value.id == choice.id %}selected{% endif %}>{{ choice }}</option>
+                            {% endfor %}
+                        </select>
+
+                    {% elif field.type in 'IntegerField,PositiveIntegerField,SmallIntegerField,BigIntegerField' %}
+                        <input type="number" step="1" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'DecimalField' %}
+                        <input type="number" step="0.01" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'DateField' %}
+                        <input type="date" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'DateTimeField' %}
+                        <input type="datetime-local" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d\TH:i' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'TimeField' %}
+                        <input type="time" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|time:'H:i' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'EmailField' %}
+                        <input type="email" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'URLField' %}
+                        <input type="url" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+
+                    {% elif field.type == 'ImageField' %}
+                        <input type="file" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" accept="image/*">
+                        {% if field.value %}<div class="preview"><img src="{{ field.value.url }}" alt="Current"></div>{% endif %}
+
+                    {% elif field.type == 'FileField' %}
+                        <input type="file" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}">
+                        {% if field.value %}<div class="help"><a href="{{ field.value.url }}" target="_blank">View current file</a></div>{% endif %}
+
+                    {% else %}
+                        <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+                    {% endif %}
+
+                    {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ===== Location map ===== -->
+        {% if has_map %}
+        <div class="card-block">
+            <h3 class="card-title"><i class="fas fa-map-location-dot"></i> Location on map</h3>
+            <p class="help" style="margin-bottom:12px;">Your saved location is pinned below. Drag the pin or click the map to move it. It stays within 3&nbsp;km of the selected city.</p>
+            <div id="map-{{ product.id }}" class="map-canvas"></div>
+            {% localize off %}
+            <div class="coord-line">
+                <span>Latitude: <b id="coord-lat-{{ product.id }}">{{ product.latitude|default_if_none:'&mdash;' }}</b></span>
+                <span>Longitude: <b id="coord-lng-{{ product.id }}">{{ product.longitude|default_if_none:'&mdash;' }}</b></span>
+            </div>
+            <input type="hidden" name="latitude"  id="id_latitude"  value="{{ product.latitude|default_if_none:'' }}">
+            <input type="hidden" name="longitude" id="id_longitude" value="{{ product.longitude|default_if_none:'' }}">
+            {% endlocalize %}
+        </div>
+        {% endif %}
+
+        <!-- ===== Many-to-Many ===== -->
+        {% if many_to_many_fields %}
+        <div class="card-block">
+            <h3 class="card-title"><i class="fas fa-link"></i> Related items</h3>
+            <div class="form-grid">
+                {% for m2m in many_to_many_fields %}
+                <div class="form-group full">
+                    <label class="form-label">{{ m2m.verbose_name }}</label>
+                    <select class="form-select searchable" name="{{ m2m.name }}" multiple>
+                        {% for option in m2m.related_choices %}
+                        <option value="{{ option.id }}" {% if option in m2m.value %}selected{% endif %}>{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help">Pick one or more.</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <button type="submit" class="btn btn-save"><i class="fas fa-floppy-disk"></i> Save changes</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('select.searchable').forEach(function (sel) {
+            new Choices(sel, {
+                searchEnabled: true,
+                shouldSort: false,
+                itemSelectText: '',
+                removeItemButton: sel.multiple,
+                searchResultLimit: 50,
+                placeholderValue: 'Search...'
+            });
+        });
+    });
+</script>
+
+{% if has_map %}
+<!--
+  NOTE: Google Maps must be loaded ONCE on the page, with the geometry library,
+  e.g. in header.html:
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&callback=initMap&libraries=places,geometry" async defer></script>
+  This block defines window.initMap (chaining any existing one) so that loader's
+  callback starts the map. It also self-starts if Maps is already loaded.
+  Do NOT add a second Maps <script> here, or you'll get the
+  "included multiple times" / "didn't load correctly" error.
+-->
+<script>
+(function () {
+    let started = false;
+
+    function startMap() {
+        if (started) return;
+        if (!(window.google && google.maps && google.maps.geometry)) return;
+
+        const mapEl = document.getElementById('map-{{ product.id }}');
+        if (!mapEl) return;
+        started = true;
+
+        const form       = mapEl.closest('form');
+        const citySelect = form.querySelector('select[name="city"]');
+        const latInput   = form.querySelector('input[name="latitude"]');
+        const lngInput   = form.querySelector('input[name="longitude"]');
+        const latLabel   = document.getElementById('coord-lat-{{ product.id }}');
+        const lngLabel   = document.getElementById('coord-lng-{{ product.id }}');
+        const RADIUS     = 3000; // metres
+        let map, circle, marker;
+
+        // Parse coords safely even if a locale rendered them with a comma.
+        function num(v) { return parseFloat(String(v).replace(',', '.')); }
+
+        // Snap a point to the circle edge if it falls outside the radius.
+        function constrain(latLng, center) {
+            const d = google.maps.geometry.spherical.computeDistanceBetween(center, latLng);
+            if (d <= RADIUS) return latLng;
+            const h = google.maps.geometry.spherical.computeHeading(center, latLng);
+            return google.maps.geometry.spherical.computeOffset(center, RADIUS, h);
+        }
+        function setInputs(p) {
+            const lat = p.lat().toFixed(6), lng = p.lng().toFixed(6);
+            if (latInput) latInput.value = lat;
+            if (lngInput) lngInput.value = lng;
+            if (latLabel) latLabel.textContent = lat;
+            if (lngLabel) lngLabel.textContent = lng;
+        }
+        function placeMarker(pos) {
+            if (marker) { marker.setPosition(pos); return; }
+            marker = new google.maps.Marker({
+                position: pos, map, draggable: true, title: 'Selected Location',
+                icon: { url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png', scaledSize: new google.maps.Size(40, 40) },
+                animation: google.maps.Animation.DROP
+            });
+            marker.addListener('dragend', function () {
+                const c = circle ? circle.getCenter() : marker.getPosition();
+                const p = circle ? constrain(marker.getPosition(), c) : marker.getPosition();
+                marker.setPosition(p); setInputs(p);
+            });
+        }
+        function cityCenter() {
+            if (!citySelect) return null;
+            const opt = citySelect.options[citySelect.selectedIndex];
+            if (!opt) return null;
+            const lat = num(opt.getAttribute('data-latitude'));
+            const lng = num(opt.getAttribute('data-longitude'));
+            return (isNaN(lat) || isNaN(lng)) ? null : new google.maps.LatLng(lat, lng);
+        }
+        function drawCircle(center) {
+            if (circle) circle.setMap(null);
+            circle = new google.maps.Circle({
+                strokeColor: '#FF9800', strokeOpacity: .8, strokeWeight: 2,
+                fillColor: '#FF5722', fillOpacity: .1, map, center, radius: RADIUS,
+                clickable: false, zIndex: -1
+            });
+        }
+
+        // --- The saved (registered) location, if any. This is what gets pinned. ---
+        const saved = (latInput && lngInput && latInput.value && lngInput.value)
+            ? new google.maps.LatLng(num(latInput.value), num(lngInput.value)) : null;
+        const cc = cityCenter();
+        const center = saved || cc || { lat: 23.6145, lng: 58.5453 };
+
+        map = new google.maps.Map(mapEl, {
+            zoom: (saved || cc) ? 14 : 6,
+            center: center,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true,
+            zoomControl: true,
+            clickableIcons: false
+        });
+
+        // Boundary: around the city if known, else around the saved point.
+        if (cc) drawCircle(cc); else if (saved) drawCircle(saved);
+
+        // Pin the saved location on load.
+        if (saved) placeMarker(saved);
+
+        // Click to move the pin (kept inside the circle).
+        map.addListener('click', function (e) {
+            const c = circle ? circle.getCenter() : e.latLng;
+            const p = circle ? constrain(e.latLng, c) : e.latLng;
+            placeMarker(p); setInputs(p);
+        });
+
+        // City change re-centres + snaps the pin -- but do NOT clobber the saved
+        // pin on the synthetic 'change' Choices.js fires during initialisation.
+        if (citySelect) {
+            let sawFirstChange = false;
+            citySelect.addEventListener('change', function () {
+                if (!sawFirstChange) {
+                    sawFirstChange = true;
+                    if (saved) return; // keep the registered pin on load
+                }
+                const c = cityCenter();
+                if (!c) return;
+                map.setCenter(c); map.setZoom(14);
+                drawCircle(c); placeMarker(c); setInputs(c);
+            });
+        }
+    }
+
+    // Hook into the loader's callback=initMap, preserving any existing one.
+    const prevInitMap = window.initMap;
+    window.initMap = function () {
+        if (typeof prevInitMap === 'function') { try { prevInitMap(); } catch (e) {} }
+        startMap();
+    };
+
+    // Fallback: if Maps already finished loading before this ran, start anyway.
+    document.addEventListener('DOMContentLoaded', function () {
+        (function wait(n) {
+            if (window.google && google.maps && google.maps.geometry) startMap();
+            else if (n < 50) setTimeout(function () { wait(n + 1); }, 150);
+        })(0);
+    });
+})();
+</script>
+{% endif %}
+
+<script>
+    document.querySelectorAll('.nav-item.dropdown > a.nav-link[href]').forEach(function(link) {
+    link.removeAttribute('data-bs-toggle');
+    link.parentElement.addEventListener('mouseenter', function() {
+        let dropdown = this.querySelector('.dropdown-menu');
+        if (dropdown) { dropdown.classList.add('show'); }
+    });
+    link.parentElement.addEventListener('mouseleave', function() {
+        let dropdown = this.querySelector('.dropdown-menu');
+        if (dropdown) { dropdown.classList.remove('show'); }
+    });
+});</script>

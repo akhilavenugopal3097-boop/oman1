@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Messages - Chat Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff3e0;
+            color: #F9AD1F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .stat-info h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .stat-info p {
+            margin: 0;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        tr:hover td {
+            background: #f8f9fa;
+        }
+        
+        .message-content {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #666;
+        }
+        
+        .badge-user {
+            background: #fff3e0;
+            color: #F9AD1F;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .badge-admin {
+            background: #e0f0f2;
+            color: #15818E;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        
+        .reason-box {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .unhide-btn {
+            background: #e0f0f2;
+            color: #15818E;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .unhide-btn:hover {
+            background: #15818E;
+            color: white;
+        }
+        
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .page-link {
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: white;
+            color: #333;
+            text-decoration: none;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .page-link.active {
+            background: #F9AD1F;
+            color: white;
+            border-color: #F9AD1F;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            color: #F9AD1F;
+            margin-bottom: 15px;
+        }
+        
+        .timestamp {
+            color: #999;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-eye-slash"></i>
+                Hidden Messages
+            </h1>
+            <a href="{% url 'admin_chat_monitor' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-card">
+            <div class="stat-item">
+                <div class="stat-icon">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_hidden }}</h3>
+                    <p>Total Hidden Messages</p>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon" style="background: #e0f0f2; color: #15818E;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ hidden_messages.paginator.count }}</h3>
+                    <p>Showing on this page</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hidden Messages Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time Hidden</th>
+                        <th>Sender</th>
+                        <th>Receiver</th>
+                        <th>Message</th>
+                        <th>Hidden By</th>
+                        <th>Reason</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in hidden_messages %}
+                    <tr>
+                        <td>
+                            <div>{{ msg.hidden_at|date:"H:i" }}</div>
+                            <div class="timestamp">{{ msg.hidden_at|date:"M d, Y" }}</div>
+                        </td>
+                        <td>
+                            <span class="badge-user">{{ msg.sender.username }}</span>
+                        </td>
+                        <td>
+                            <span class="badge-user">{{ msg.receiver.username }}</span>
+                        </td>
+                        <td>
+                            <div class="message-content" title="{{ msg.message }}">
+                                {{ msg.message|truncatechars:50 }}
+                            </div>
+                            {% if msg.product_type %}
+                                <small style="color: #15818E;">
+                                    <i class="fas fa-tag"></i> {{ msg.product_type }}
+                                </small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge-admin">
+                                <i class="fas fa-shield-alt"></i> {{ msg.hidden_by.username }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if msg.hide_reason %}
+                                <div class="reason-box">{{ msg.hide_reason }}</div>
+                            {% else %}
+                                <span style="color: #999;">No reason provided</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="unhide-btn" onclick="unhideMessage({{ msg.id }})">
+                                <i class="fas fa-eye"></i> Unhide
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-eye-slash"></i>
+                            <h5>No Hidden Messages</h5>
+                            <p style="color: #999;">When you hide messages from the chat monitor, they will appear here.</p>
+                            <a href="{% url 'admin_chat_monitor' %}" class="btn" style="background: #F9AD1F; color: white; margin-top: 10px;">
+                                <i class="fas fa-arrow-left"></i> Back to Chat Monitor
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if hidden_messages.has_other_pages %}
+        <div class="pagination">
+            {% if hidden_messages.has_previous %}
+                <a href="?page={{ hidden_messages.previous_page_number }}" class="page-link">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            {% endif %}
+            
+            {% for i in hidden_messages.paginator.page_range %}
+                {% if hidden_messages.number == i %}
+                    <a href="#" class="page-link active">{{ i }}</a>
+                {% else %}
+                    <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if hidden_messages.has_next %}
+                <a href="?page={{ hidden_messages.next_page_number }}" class="page-link">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Toast for notifications -->
+    <div class="toast" id="toast" style="display: none; position: fixed; bottom: 20px; right: 20px; background: #15818E; color: white; padding: 12px 20px; border-radius: 5px; z-index: 1000;">
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+    
+    <script>
+        function unhideMessage(messageId) {
+            if (!confirm('Are you sure you want to unhide this message? It will become visible to admins and users again.')) {
+                return;
+            }
+            
+            fetch(`/admin/chat/unhide-message/${messageId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Message unhidden successfully');
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(() => showToast('Failed to unhide message', 'error'));
+        }
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.style.backgroundColor = type === 'success' ? '#15818E' : '#EB362D';
+            toast.style.display = 'block';
+            
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

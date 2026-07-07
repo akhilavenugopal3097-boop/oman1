@@ -1,0 +1,104 @@
+<!-- templates/buy_credits.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Buy Credits</h2>
+            <p>Purchase credits to list your properties. Each listing costs 1 credit.</p>
+            
+            {% if pending_listing %}
+            <div class="alert alert-warning">
+                <strong>⚠️ Pending Listing!</strong> You have a property ready to list. 
+                Purchase credits below to complete your listing.
+            </div>
+            {% endif %}
+            
+            <!-- Credit Packages -->
+            <div class="row mt-4">
+                {% for package in packages %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ package.name }}</h5>
+                            <h3 class="text-primary">{{ package.credits_amount }} Credits</h3>
+                            <p class="card-text">Price: {{ package.price_omr }} OMR</p>
+                            <p class="text-muted small">≈ {{ package.price_omr|floatformat:2 }} OMR per credit</p>
+                            <form method="post" action="{% url 'initiate_credit_purchase' package.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    Buy Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Credit Status Card -->
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">My Credit Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <h2>{{ current_balance }}</h2>
+                        <p class="text-muted">Available Credits</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6>Free Listings (Phase 1)</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success" 
+                             style="width: {% widthratio free_listings_used free_listings_limit 100 %}%">
+                            {{ free_listings_used }}/{{ free_listings_limit }}
+                        </div>
+                    </div>
+                    <p class="small text-muted">{{ free_listings_remaining }} free listings remaining</p>
+                    
+                    {% if is_business_user %}
+                    <div class="alert alert-success mt-3">
+                        <strong>Business Package Active</strong><br>
+                        Unlimited free listings!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Transactions -->
+            {% if transactions %}
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6>Recent Transactions</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for transaction in transactions %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                    {% if transaction.amount > 0 %}
+                                    <span class="text-success">+{{ transaction.amount }}</span>
+                                    {% else %}
+                                    <span class="text-danger">{{ transaction.amount }}</span>
+                                    {% endif %}
+                                </span>
+                                <span class="text-muted small">{{ transaction.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <small class="text-muted">{{ transaction.description|truncatechars:40 }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

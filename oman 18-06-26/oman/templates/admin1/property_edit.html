@@ -1,0 +1,479 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABBUguQag71PdtznQPtePBzovoFsVeuHk&callback=initMap&libraries=places,geometry" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+<style>
+    /* ========== YOUR EXISTING CSS (keep exactly as you have) ========== */
+    :root {
+        --primary-gradient: linear-gradient(60deg, #F9AD1F, #EB362D);
+        --primary-color: #F9AD1F;
+        --secondary-color: #EB362D;
+        --light-bg: #f8f9fa;
+        --border-color: #e9ecef;
+        --text-primary: #2c3e50;
+        --text-secondary: #6c757d;
+        --border-radius: 12px;
+        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+    }
+    body { background-color: #f4f6f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .edit-wrapper { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .page-header { background: var(--primary-gradient); color: white; padding: 20px 30px; border-radius: var(--border-radius); margin-bottom: 25px; box-shadow: var(--box-shadow); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+    .page-header h2 { margin: 0; font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+    .page-header h2 i { font-size: 28px; }
+    .product-badge { background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 30px; font-size: 14px; font-weight: 500; backdrop-filter: blur(5px); }
+    .horizontal-grid { display: flex; flex-direction: column; gap: 20px; }
+    .info-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .info-card { background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: var(--box-shadow); display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; border: 1px solid var(--border-color); }
+    .info-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(249, 173, 31, 0.15); border-color: var(--primary-color); }
+    .info-icon { width: 50px; height: 50px; background: linear-gradient(135deg, rgba(249, 173, 31, 0.1), rgba(235, 54, 45, 0.1)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--primary-color); }
+    .info-content { flex: 1; }
+    .info-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+    .info-value { font-size: 16px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .info-value small { font-size: 13px; font-weight: 400; color: var(--text-secondary); }
+    .status-badge { padding: 4px 12px; border-radius: 30px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+    .status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .status-inactive { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .media-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .media-section { background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: var(--box-shadow); border: 1px solid var(--border-color); }
+    .media-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); }
+    .media-header h4 { margin: 0; font-size: 16px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+    .media-header h4 i { color: var(--primary-color); }
+    .media-count { background: linear-gradient(135deg, rgba(249, 173, 31, 0.1), rgba(235, 54, 45, 0.1)); color: var(--secondary-color); padding: 4px 10px; border-radius: 30px; font-size: 12px; font-weight: 600; }
+    .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; max-height: 300px; overflow-y: auto; padding: 5px; }
+    .media-item { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1; border: 2px solid transparent; transition: all 0.3s ease; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .media-item:hover { border-color: var(--primary-color); transform: scale(1.05); box-shadow: 0 8px 20px rgba(249, 173, 31, 0.3); }
+    .media-item img, .media-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: var(--primary-gradient); color: white; padding: 4px; font-size: 10px; text-align: center; opacity: 0; transition: opacity 0.3s ease; }
+    .media-item:hover .media-overlay { opacity: 1; }
+    .map-card { background: white; border-radius: var(--border-radius); padding: 20px; box-shadow: var(--box-shadow); border: 1px solid var(--border-color); }
+    .map-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .map-header i { color: var(--primary-color); font-size: 20px; }
+    .map-header h4 { margin: 0; font-size: 16px; font-weight: 600; color: var(--text-primary); }
+    .map-container { height: 250px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
+    .form-section { background: white; border-radius: var(--border-radius); padding: 25px; box-shadow: var(--box-shadow); border: 1px solid var(--border-color); }
+    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
+    .form-header h3 { margin: 0; font-size: 18px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+    .form-header h3 i { color: var(--primary-color); }
+    .edit-badge { background: linear-gradient(135deg, rgba(249, 173, 31, 0.1), rgba(235, 54, 45, 0.1)); color: var(--secondary-color); padding: 5px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; }
+    .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .form-group { margin-bottom: 5px; }
+    .form-group.full-width { grid-column: span 3; }
+    .form-group.half-width { grid-column: span 2; }
+    .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 8px; }
+    .form-label i { color: var(--primary-color); margin-right: 5px; font-size: 12px; }
+    .required-star { color: var(--secondary-color); margin-left: 3px; }
+    .optional-badge { font-size: 10px; font-weight: normal; background: #e9ecef; color: var(--text-secondary); padding: 2px 6px; border-radius: 20px; margin-left: 8px; }
+    .form-control, .form-select { width: 100%; padding: 12px 15px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 14px; transition: all 0.3s ease; background: white; }
+    .form-control:focus, .form-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(249, 173, 31, 0.1); outline: none; }
+    .form-control[readonly] { background-color: #f8f9fa; cursor: not-allowed; }
+    textarea.form-control { min-height: 100px; resize: vertical; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; padding: 12px 0; }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; }
+    .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); }
+    .checkbox-item label { margin: 0; font-size: 14px; cursor: pointer; }
+    .radio-group { display: flex; flex-wrap: wrap; gap: 15px; padding: 12px 0; }
+    .radio-item { display: flex; align-items: center; gap: 8px; }
+    .radio-item input[type="radio"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color); }
+    .radio-item label { margin: 0; font-size: 14px; cursor: pointer; }
+    .color-preview { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer; }
+    .image-preview-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .image-preview-item { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+    .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+    .action-buttons { display: flex; justify-content: flex-end; gap: 15px; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+    .btn { padding: 12px 30px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; cursor: pointer; }
+    .btn-primary { background: var(--primary-gradient); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(235, 54, 45, 0.3); }
+    .btn-outline { background: white; color: var(--text-secondary); border: 1.5px solid var(--border-color); }
+    .btn-outline:hover { border-color: var(--primary-color); color: var(--primary-color); background: #fff5e6; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
+    .alert { padding: 15px 20px; border-radius: var(--border-radius); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .alert-success { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); color: var(--success); }
+    .alert-danger { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); color: var(--danger); }
+    .alert-warning { background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); color: var(--warning); }
+    .alert-info { background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--info); color: var(--info); }
+    .spinner-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 9999; display: none; }
+    .spinner { width: 50px; height: 50px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 1200px) { .info-row { grid-template-columns: repeat(2, 1fr); } .media-row { grid-template-columns: 1fr; } .form-grid { grid-template-columns: repeat(2, 1fr); } .form-group.full-width { grid-column: span 2; } }
+    @media (max-width: 768px) { .info-row { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } .form-group.full-width, .form-group.half-width { grid-column: span 1; } .action-buttons { flex-direction: column; } .btn { width: 100%; justify-content: center; } }
+    .media-grid::-webkit-scrollbar { width: 6px; }
+    .media-grid::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .media-grid::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #F9AD1F, #EB362D); border-radius: 10px; }
+    .choices { width: 100%; }
+    .choices__inner { background-color: white; border: 1.5px solid var(--border-color); border-radius: 10px; padding: 10px 15px; min-height: 48px; }
+    .choices__inner:focus { border-color: var(--primary-color); }
+    .choices__list--dropdown .choices__item--selectable.is-highlighted { background-color: rgba(249, 173, 31, 0.1); color: var(--primary-color); }
+</style>
+
+<div class="edit-wrapper">
+    <div id="spinnerOverlay" class="spinner-overlay"><div class="spinner"></div></div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="page-header">
+        <h2><i class="fas fa-edit"></i> Edit {{ product_type|title }}</h2>
+        <span class="product-badge"><i class="fas fa-hashtag"></i> ID: {{ product.id }}</span>
+    </div>
+
+    <div class="horizontal-grid">
+        <!-- Top Row - Read Only Info Cards -->
+        <div class="info-row">
+            <div class="info-card">
+                <div class="info-icon"><i class="fas fa-user-circle"></i></div>
+                <div class="info-content">
+                    <div class="info-label">Seller</div>
+                    <div class="info-value">{{ product.user.username }} <small>({{ product.user.email }})</small></div>
+                    {% if product.user.phone %}<div style="font-size:13px; margin-top:5px;"><i class="fas fa-phone"></i> {{ product.user.phone }}</div>{% endif %}
+                </div>
+            </div>
+            {% if product.city %}
+            <div class="info-card">
+                <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="info-content">
+                    <div class="info-label">Location</div>
+                    <div class="info-value">{{ product.city.name }}{% if product.city.governorate %} <small>{{ product.city.governorate }}</small>{% endif %}</div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="info-card">
+                <div class="info-icon"><i class="fas fa-flag"></i></div>
+                <div class="info-content">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">
+                        <span class="status-badge {% if product.is_active %}status-active{% else %}status-inactive{% endif %}">
+                            <i class="fas fa-circle"></i> {{ product.is_active|yesno:"Active,Inactive" }}
+                        </span>
+                        {% if product.is_featured %}
+                        <span class="status-badge" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="fas fa-star"></i> Featured</span>
+                        {% endif %}
+                    </div>
+                    <div style="font-size:12px; margin-top:5px;"><i class="far fa-calendar"></i> {{ product.created_at|date:'M d, Y' }}</div>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon"><i class="fas fa-clock"></i></div>
+                <div class="info-content">
+                    <div class="info-label">Last Updated</div>
+                    <div class="info-value">{{ product.updated_at|date:'M d, Y' }}</div>
+                    <div style="font-size:12px; margin-top:5px;"><i class="fas fa-history"></i> {{ product.updated_at|timesince }} ago</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Map Section (outside form, just display) -->
+        {% if product.city and product.city.latitude and product.city.longitude %}
+        <div class="map-card">
+            <div class="map-header">
+                <i class="fas fa-map"></i>
+                <h4>Location Map - {{ product.city.name }}</h4>
+                <span class="edit-badge" style="margin-left:auto;"><i class="fas fa-map-marker-alt"></i> {{ product.city.latitude|floatformat:4 }}, {{ product.city.longitude|floatformat:4 }}</span>
+            </div>
+            <div class="map-container" id="location-map"></div>
+        </div>
+        {% endif %}
+
+        <!-- Editable Form Section (now includes media row inside the form) -->
+        <div class="form-section">
+            <div class="form-header">
+                <h3><i class="fas fa-pencil-alt"></i> Edit All Fields</h3>
+                <span class="edit-badge"><i class="fas fa-lock-open"></i> All Fields Editable</span>
+            </div>
+
+            <form method="POST" id="editForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="product_type" value="{{ product_type }}">
+
+                <!-- ========== MEDIA ROW (NOW INSIDE THE FORM) ========== -->
+                <div class="media-row">
+                    <!-- Images Section -->
+                    <div class="media-section">
+                        <div class="media-header">
+                            <h4><i class="fas fa-images"></i> Product Images</h4>
+                            <span class="media-count">{{ product.images.count }} images</span>
+                        </div>
+                        {% if product.images.exists %}
+                        <div class="media-grid">
+                            {% for image in product.images.all %}
+                            <div class="media-item">
+                                <img src="{{ image.image.url }}" alt="Product image" onclick="openImageModal('{{ image.image.url }}')">
+                                <div class="media-overlay">
+                                    <label style="cursor:pointer; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:5px; display:inline-flex; align-items:center; gap:4px;">
+                                        <input type="checkbox" name="delete_images" value="{{ image.id }}"> Delete
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center py-3">No images uploaded yet.</p>
+                        {% endif %}
+                        <div style="margin-top:15px;">
+                            <label class="form-label"><i class="fas fa-plus-circle"></i> Add New Images</label>
+                            <input type="file" name="new_images" multiple accept="image/*" class="form-control">
+                            <small class="text-muted">You can select multiple images (JPG, PNG, GIF).</small>
+                        </div>
+                    </div>
+
+                    <!-- Videos Section -->
+                    <div class="media-section">
+                        <div class="media-header">
+                            <h4><i class="fas fa-video"></i> Product Videos</h4>
+                            <span class="media-count">{{ product.videos.count }} videos</span>
+                        </div>
+                        {% if product.videos.exists %}
+                        <div class="media-grid">
+                            {% for video in product.videos.all %}
+                            <div class="media-item">
+                                <video onclick="playVideo('{{ video.video.url }}')">
+                                    <source src="{{ video.video.url }}" type="video/mp4">
+                                </video>
+                                <div class="media-overlay">
+                                    <label style="cursor:pointer; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:5px; display:inline-flex; align-items:center; gap:4px;">
+                                        <input type="checkbox" name="delete_videos" value="{{ video.id }}"> Delete
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center py-3">No videos uploaded yet.</p>
+                        {% endif %}
+                        <div style="margin-top:15px;">
+                            <label class="form-label"><i class="fas fa-plus-circle"></i> Add New Videos</label>
+                            <input type="file" name="new_videos" multiple accept="video/mp4,video/quicktime" class="form-control">
+                            <small class="text-muted">You can select multiple MP4 videos.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard Fields -->
+                {% if fields %}
+                    <div class="form-grid">
+                        {% for field in fields %}
+                            {% if field.name not in 'id,created_at,updated_at,is_active' %}
+                                <div class="form-group 
+                                    {% if field.type == 'TextField' or field.type == 'Textarea' %}full-width
+                                    {% elif field.type == 'CharField' and field.name|length > 50 %}full-width
+                                    {% endif %}">
+                                    
+                                    <label class="form-label">
+                                        <i class="fas fa-{% if field.type == 'CharField' %}tag{% elif field.type == 'TextField' %}align-left{% elif field.type == 'NumberField' %}calculator{% elif field.type == 'BooleanField' %}check-square{% else %}pencil-alt{% endif %}"></i>
+                                        {{ field.verbose_name }}
+                                        {% if field.required %}<span class="required-star">*</span>{% else %}<span class="optional-badge">Optional</span>{% endif %}
+                                    </label>
+                                    
+                                    {% if field.type == 'TextField' or field.type == 'Textarea' %}
+                                        <textarea class="form-control" name="{{ field.name }}" rows="3" {% if field.required %}required{% endif %}>{{ field.value|default:'' }}</textarea>
+                                    {% elif field.type == 'BooleanField' %}
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="{{ field.name }}" id="{{ field.name }}" {% if field.value %}checked{% endif %} {% if field.required %}required{% endif %}>
+                                            <label for="{{ field.name }}">Yes, enable this</label>
+                                        </div>
+                                    {% elif field.type in 'IntegerField,PositiveIntegerField,SmallIntegerField' %}
+                                        <input type="number" class="form-control" name="{{ field.name }}" value="{{ field.value|default:'' }}" step="1" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'DecimalField' %}
+                                        <input type="number" class="form-control" name="{{ field.name }}" value="{{ field.value|default:'' }}" step="0.01" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'DateField' %}
+                                        <input type="date" class="form-control" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d'|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'DateTimeField' %}
+                                        <input type="datetime-local" class="form-control" name="{{ field.name }}" value="{{ field.value|date:'Y-m-d\TH:i'|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'TimeField' %}
+                                        <input type="time" class="form-control" name="{{ field.name }}" value="{{ field.value|time:'H:i'|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'EmailField' %}
+                                        <input type="email" class="form-control" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'URLField' %}
+                                        <input type="url" class="form-control" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% elif field.type == 'ImageField' %}
+                                        <input type="file" class="form-control" name="{{ field.name }}" accept="image/*">
+                                        {% if field.value %}<div class="image-preview-container mt-2"><div class="image-preview-item"><img src="{{ field.value.url }}" alt="Current"></div></div>{% endif %}
+                                    {% elif field.type == 'FileField' %}
+                                        <input type="file" class="form-control" name="{{ field.name }}">
+                                        {% if field.value %}<div class="mt-2"><a href="{{ field.value.url }}" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-download"></i> Current file</a></div>{% endif %}
+                                    {% elif field.choices %}
+                                        <select class="form-select searchable" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                                            <option value="">---------</option>
+                                            {% for choice_value, choice_label in field.choices %}
+                                            <option value="{{ choice_value }}" {% if field.value == choice_value %}selected{% endif %}>{{ choice_label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% elif field.is_relation %}
+                                        <select class="form-select searchable" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+                                            <option value="">---------</option>
+                                            {% for choice in field.related_choices %}
+                                            <option value="{{ choice.id }}" {% if field.value and field.value.id == choice.id %}selected{% endif %}>{{ choice }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% else %}
+                                        <input type="text" class="form-control" name="{{ field.name }}" value="{{ field.value|default:'' }}" {% if field.required %}required{% endif %}>
+                                    {% endif %}
+                                    {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- ManyToMany Fields (excluding images/videos) -->
+                {% if many_to_many_fields %}
+                <div class="form-group full-width mt-4">
+                    <label class="form-label"><i class="fas fa-link"></i> Related Items (Many-to-Many)</label>
+                    {% for m2m in many_to_many_fields %}
+                    <div class="mb-3">
+                        <label class="form-label" style="font-weight:600;">{{ m2m.verbose_name }}</label>
+                        <select class="form-select searchable" name="{{ m2m.name }}" multiple>
+                            {% for option in m2m.related_choices %}
+                            <option value="{{ option.id }}" {% if option in m2m.value %}selected{% endif %}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Hold Ctrl/Cmd to select multiple.</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="action-buttons">
+                    <!-- <a href="{% url 'admin_dashboard' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Back to Dashboard</a> -->
+                    <a href="{% url 'property_detail' product_type product.id %}" class="btn btn-outline"><i class="fas fa-times"></i> Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-save"></i> Save All Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-gradient); color: white;">
+                <h5 class="modal-title"><i class="fas fa-image"></i> Product Image</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <img src="" id="modalImage" style="max-width: 100%; max-height: 70vh;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Modal -->
+<div class="modal fade" id="videoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-gradient); color: white;">
+                <h5 class="modal-title"><i class="fas fa-video"></i> Product Video</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <video id="modalVideo" controls style="width:100%; max-height:70vh;"><source src="" type="video/mp4"></video>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<script>
+    function openImageModal(imageUrl) {
+        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        document.getElementById('modalImage').src = imageUrl;
+        modal.show();
+    }
+
+    function playVideo(videoUrl) {
+        const modal = new bootstrap.Modal(document.getElementById('videoModal'));
+        const video = document.getElementById('modalVideo');
+        video.querySelector('source').src = videoUrl;
+        video.load();
+        modal.show();
+        document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () { video.pause(); });
+    }
+
+    function initSearchableSelects() {
+        document.querySelectorAll('select.searchable').forEach(select => {
+            new Choices(select, {
+                searchEnabled: true,
+                itemSelectText: '',
+                shouldSort: false,
+                searchPlaceholderValue: 'Search...',
+                searchResultLimit: 50,
+                fuseOptions: { threshold: 0.3, distance: 100, ignoreLocation: true }
+            });
+        });
+    }
+
+    function initMap() {
+        const mapDiv = document.getElementById('location-map');
+        if (mapDiv) {
+            {% if product.city and product.city.latitude and product.city.longitude %}
+                var location = { lat: {{ product.city.latitude }}, lng: {{ product.city.longitude }} };
+                var map = new google.maps.Map(mapDiv, { center: location, zoom: 12 });
+                var marker = new google.maps.Marker({ position: location, map: map, title: "{{ product.city.name }}" });
+                var infowindow = new google.maps.InfoWindow({ content: "<b>{{ product.city.name }}</b><br>{{ product.city.governorate|default:'' }}" });
+                marker.addListener('click', function() { infowindow.open(map, marker); });
+            {% else %}
+                new google.maps.Map(mapDiv, { center: { lat: 21.4735, lng: 55.9754 }, zoom: 6 });
+            {% endif %}
+        }
+    }
+
+    function showSpinner() { document.getElementById('spinnerOverlay').style.display = 'flex'; }
+
+    function autoExpandTextareas() {
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        });
+    }
+
+    function validateForm() {
+        let isValid = true;
+        document.querySelectorAll('[required]').forEach(field => {
+            if (!field.value.trim()) { field.classList.add('is-invalid'); isValid = false; }
+            else { field.classList.remove('is-invalid'); }
+        });
+        if (!isValid) alert('Please fill in all required fields.');
+        return isValid;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initSearchableSelects();
+        autoExpandTextareas();
+        const form = document.getElementById('editForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (!validateForm()) { e.preventDefault(); return false; }
+                showSpinner();
+            });
+        }
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', function() { this.classList.remove('is-invalid'); });
+        });
+    });
+</script>
+
+{% include 'admin1/footeradmin.html' %}

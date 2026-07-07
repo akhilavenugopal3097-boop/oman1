@@ -1,0 +1,258 @@
+{% extends 'admin1/admin_notifications/base.html' %}
+{% load static %}
+
+{% block title %}Automated Alerts{% endblock %}
+
+{% block page_title %}
+<h1 class="h3 mb-0 text-gray-800">Automated Alerts</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/notifications_dashboard/">Notifications</a></li>
+                    <li class="breadcrumb-item active">Automated Alerts</li>
+                </ol>
+            </nav>
+            <p class="text-muted">Configure system automated alerts</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">System Alert Types</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Alert Type</th>
+                                    <th>Description</th>
+                                    <th>Channels</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Listing Approved -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Listing Approved</h6>
+                                        <small class="text-muted">listing.approved</small>
+                                    </td>
+                                    <td>Notify users when their listing is approved</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-primary">Push</span>
+                                        <span class="badge bg-secondary">In-App</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Payment Successful -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Payment Successful</h6>
+                                        <small class="text-muted">payment.success</small>
+                                    </td>
+                                    <td>Notify users when a payment is successful</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-primary">Push</span>
+                                        <span class="badge bg-success">SMS</span>
+                                        <span class="badge bg-secondary">In-App</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Password Reset -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Password Reset</h6>
+                                        <small class="text-muted">auth.password.reset</small>
+                                    </td>
+                                    <td>Send password reset instructions</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-success">SMS</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- New Message Received -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">New Message Received</h6>
+                                        <small class="text-muted">message.new</small>
+                                    </td>
+                                    <td>Alert users when they receive a new message</td>
+                                    <td>
+                                        <span class="badge bg-primary">Push</span>
+                                        <span class="badge bg-secondary">In-App</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Order Shipped -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Order Shipped</h6>
+                                        <small class="text-muted">order.shipped</small>
+                                    </td>
+                                    <td>Notify when an order is shipped</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-primary">Push</span>
+                                        <span class="badge bg-success">SMS</span>
+                                    </td>
+                                    <td><span class="badge bg-warning">Inactive</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Review Received -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Review Received</h6>
+                                        <small class="text-muted">review.new</small>
+                                    </td>
+                                    <td>Notify when a user receives a new review</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-primary">Push</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Account Suspended -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Account Suspended</h6>
+                                        <small class="text-muted">account.suspended</small>
+                                    </td>
+                                    <td>Alert when an account is suspended</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-success">SMS</span>
+                                    </td>
+                                    <td><span class="badge bg-success">Active</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Low Stock Alert -->
+                                <tr>
+                                    <td>
+                                        <h6 class="mb-1">Low Stock Alert</h6>
+                                        <small class="text-muted">inventory.low_stock</small>
+                                    </td>
+                                    <td>Notify sellers when inventory is low</td>
+                                    <td>
+                                        <span class="badge bg-info">Email</span>
+                                        <span class="badge bg-primary">Push</span>
+                                    </td>
+                                    <td><span class="badge bg-warning">Inactive</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" disabled>Configure</button>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>Test</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Alert Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="defaultChannel" class="form-label">Default Notification Channel</label>
+                            <select class="form-select" id="defaultChannel">
+                                <option>All Channels</option>
+                                <option>Email Only</option>
+                                <option>Push Only</option>
+                                <option>SMS Only</option>
+                                <option>In-App Only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="rateLimit" class="form-label">Rate Limit (per user/hour)</label>
+                            <input type="number" class="form-control" id="rateLimit" value="10">
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="digestMode">
+                            <label class="form-check-label" for="digestMode">Send non-urgent alerts in digest mode</label>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" disabled>Save Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Alert Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h3>2,847</h3>
+                            <small class="text-muted">Sent Today</small>
+                        </div>
+                        <div class="col-4">
+                            <h3>98.2%</h3>
+                            <small class="text-muted">Delivery Rate</small>
+                        </div>
+                        <div class="col-4">
+                            <h3>12</h3>
+                            <small class="text-muted">Active Alerts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

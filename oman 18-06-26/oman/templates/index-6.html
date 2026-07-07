@@ -1,0 +1,1676 @@
+{% load static %}
+{% load humanize %}
+{% load dict_filters %}
+
+            {% include 'header.html' %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+     body.rtl .dots-container{
+        margin-right:-10px;
+    }
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }function showCitiesDropdown() {
+        var region = document.getElementById('region-dropdown').value;
+        var citiesDropdown = document.getElementById('cities-dropdown');
+        var citiesList = document.getElementById('cities-list');
+        
+        var cities = {
+            'MS': ['Muscat City', 'Qurum', 'Seeb'],
+            'DH': ['Salalah', 'Mirbat', 'Taqah'],
+            'BT': ['Sohar', 'Barka', 'Ibri'],
+            'DA': ['Nizwa', 'Izki', 'Manah'],
+            'SH': ['Sur', 'Ibra', 'Bahla'],
+            'BR': ['Buraimi', 'Mahda'],
+            'ZU': ['Salalah', 'Mirbat'],
+            'DZ': ['Khasab', 'Diba'],
+            'WT': ['Haima', 'Shinas']
+        };
+    
+        citiesList.innerHTML = ''; // Clear previous cities
+    
+        if (region && cities[region]) {
+            cities[region].forEach(function(city) {
+                var cityOption = document.createElement('div');
+                cityOption.textContent = city;
+                cityOption.onclick = function() {
+                    alert('You selected ' + city + '!');
+                    citiesDropdown.style.display = 'none'; // Hide cities dropdown after selection
+                };
+                citiesList.appendChild(cityOption);
+            });
+    
+            citiesDropdown.style.display = 'block'; // Show cities dropdown
+        } else {
+            citiesDropdown.style.display = 'none'; // Hide cities dropdown if no region is selected
+        }
+    }
+    
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 131px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+         <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            {% include 'search.html' %}
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                   
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 38%;
+        margin-top: -75px;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+    .input, .chosen-value {
+        width: 100%;
+        font-size: 12px;
+        
+        border: none;
+        background: transparent;
+        outline: none;
+    }
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+           
+                <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <section class="dual-ad-loop-box">
+    
+ <style>
+        .dual-ad-loop-box {
+            width: 100%;
+            padding: 15px 0;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .dual-ad-loop-box .swiper-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 250px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .dual-ad-loop-box .swiper-wrapper {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .dual-ad-loop-box .swiper-slide {
+            width: calc(50% - 3px) !important;
+            height: 230px;
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+        }
+
+        .dual-ad-loop-box .ad-box {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .dual-ad-loop-box .ad-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dual-ad-loop-box .ad-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .dual-ad-loop-box .swiper-container {
+                height: 220px;
+                padding: 0 5px;
+            }
+
+            .dual-ad-loop-box .swiper-slide {
+                height: 200px;
+                width: calc(50% - 2px) !important;
+            }
+        }
+    </style>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper" id="ad-swiper-wrapper">
+            {% for advertisement in advertisement %}
+            <div class="swiper-slide">
+                <div class="ad-box">
+                    <a href="{{ advertisement.url }}" target="_blank" {% if not advertisement.url %}onclick="return false;"{% endif %}>
+                        <img src="{{ advertisement.image.url }}" alt="Advertisement">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        let swiperInstance;
+
+        function initializeSwiper() {
+            if (swiperInstance) swiperInstance.destroy(true, true); // Properly destroy the swiper including clones
+
+            swiperInstance = new Swiper('.dual-ad-loop-box .swiper-container', {
+                slidesPerView: 2,
+                spaceBetween: 6,
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    320: {
+                        spaceBetween: 3
+                    },
+                    768: {
+                        spaceBetween: 6
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeSwiper();
+        });
+
+        // Function to update advertisements and reinitialize Swiper
+        function applyFilter(newAdsHTML) {
+            const swiperWrapper = document.getElementById('ad-swiper-wrapper');
+
+            if (swiperInstance) {
+                swiperInstance.destroy(true, true); // Destroy swiper and remove loop clones
+            }
+
+            // Replace slides (newAdsHTML should be new <div class="swiper-slide">...</div> blocks)
+            swiperWrapper.innerHTML = newAdsHTML;
+
+            // Re-initialize Swiper after DOM update
+            initializeSwiper();
+        }
+    </script>
+    </section>
+
+<style>
+    .category-wrapper {
+        max-width: 1100px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #c2c2c2ff;
+        border-radius: 18px;
+    }
+
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); 
+        gap: 20px;
+    }
+    
+    .category-card {
+        background: #f3f3f3ff;
+        border-radius: 20px;
+        padding: 8px 8px;  
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        height: 120px;
+    }
+
+    .category-card img {
+        width: 70px;   
+        height: 50px;
+        object-fit: contain;
+        margin-bottom: 8px;
+    }
+    .category-title {
+    font-size: 13px;   
+    font-weight: 600;
+    text-transform: uppercase;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    line-height: 1.2;
+    max-width: 100%;
+    text-align: center;
+    padding: 0 5px;
+    display: block;
+    white-space: normal;
+    overflow: visible;
+}
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+        border-color: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: #fff;
+        text-decoration:none;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .category-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .category-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+<div class="category-wrapper">
+    <div class="category-grid">
+        <a href="{% url 'mobiles' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/phone.png' %}" alt="Mobiles">
+            <div class="category-title">Mobiles</div>
+        </a>
+        <a href="{% url 'tablets' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/tablet.png' %}" alt="Tablets">
+            <div class="category-title">Tablets</div>
+        </a>
+        <a href="{% url 'smartwatch' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/smartwatch.png' %}" alt="Smart Watches">
+            <div class="category-title">Smart Watches</div>
+        </a>
+        <a href="{% url 'headset' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/headset.png' %}" alt="Headsets">
+            <div class="category-title">Headsets</div>
+        </a>
+        <a href="{% url 'cover' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img id="imagess3" src="{% static 'assets/images/icon/cover.png' %}" alt="Covers & Protectors">
+            <div class="category-title">Covers & Protectors</div>
+        </a>
+        <a href="{% url 'accessory' %}?type=charger{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/charger.png' %}" alt="Chargers & Cables">
+            <div class="category-title">Chargers & Cables</div>
+        </a>
+        <a href="{% url 'accessory' %}?type=sparepart{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img id="imagess3" src="{% static 'assets/images/icon/spareparts.png' %}" alt="Mobile-Tablet Spare Parts">
+            <div class="category-title">Mobile-Tablet Spare Parts</div>
+        </a>
+        <a href="{% url 'accessory' %}?type=accessory{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/accessories.png' %}" alt="Accessories">
+            <div class="category-title">Accessories</div>
+        </a>
+        <a href="{% url 'mobilesim' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}" class="category-card">
+            <img src="{% static 'assets/images/icon/sim.png' %}" alt="VIP Phone Numbers">
+            <div class="category-title">VIP Phone Numbers</div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .listing-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .listing-item {
+        margin-bottom: 2rem;
+        margin-left:20px;
+        position: relative;
+    }
+
+    .listing-item img {
+        width: 320px;
+        height: 100px;
+        border-radius: 2.75rem;
+        border: 50px ;
+        object-fit: cover;
+    }
+
+    .listing-price {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 1.125rem;
+        font-weight: bold;
+        color: #EB362D;
+        margin-top: 20px;
+    }
+
+    .listing-details {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 0.875rem;
+        color:#15818E;
+        font-size: 1rem;
+    }
+    
+    .listing-details2 {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-size: 0.875rem;
+        color: #EB362D;
+        font-size: 1rem;
+    }
+
+    .dots-container {
+        display: flex;
+        justify-content: center;
+        margin-top: -15px;
+    }
+
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: lightgray;
+        border-radius: 50%;
+        margin: 0 3px;
+        cursor: pointer;
+    }
+
+    .dot.active {
+        background-color:white;
+    }
+
+    .btn {
+        position: absolute;
+        top: 32%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        height: 32px;
+        width: 1px;
+        cursor: pointer;
+        border-radius: 08px;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    /* backwards Button */
+    .btn.backwards {
+        left: 10px;
+        padding-bottom: 5px;
+    }
+
+    .btn.backwards::before {
+        content: "<";
+        font-size: 12px;
+        color: white;
+    }
+
+    /* forwards Button */
+    .btn.forwards {
+        right: 10px;
+        padding-bottom: 5px;
+    }
+
+    .btn.forwards::before {
+        content: ">";
+        font-size: 12px;
+        color: white;
+    }
+
+    /* Hover Effect */
+    .btn:hover {
+        background: rgba(77, 73, 73, 0.9);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    @media (min-width: 768px) {
+        .listing-item img {
+            width: 200px;
+            height: 155px;
+            border-radius: 0.75rem;
+            border: 20px;
+            object-fit: cover;
+        }
+    }
+
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 768px) {
+        .listing-item img {
+            max-width: 320px;
+            height: 220px;
+            border-radius: 1.5rem;
+            border: 1px solid rgb(250, 247, 247);
+            object-fit: cover;
+        }
+
+        .listing-title {
+            font-size: 1.1rem;
+        }
+
+        .listing-price,
+        .listing-details,
+        .listing-details2 {
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn.backwards {
+            left: 2px;
+        }
+
+        .btn.forwards {
+            right: 2px;
+        }
+    }
+</style>
+<style>
+    .view-more-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #7b7676;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-right: -17px;
+        
+    }
+    
+    .view-more-link i {
+        font-size: 1.1em;
+        color: #7b7676;
+        transition: transform 0.3s ease;
+    }
+    
+    .view-more-link:hover {
+        color: #E35D20;
+        text-decoration: none;
+    }
+    
+    .view-more-link:hover i {
+        transform: translateX(3px);
+        color: #E35D20;
+    }
+    </style>
+{% if mobile_ads %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">Mobiles</div>
+        <a href="{% url 'mobiles' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in mobile_ads %}
+        <div class="listing-item">
+            <a href="{% url 'mobiles_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.brand }}, {{ ad.data.model_number }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if tablet_ads %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">Tablets</div>
+        <a href="{% url 'tablets' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in tablet_ads %}
+        <div class="listing-item">
+            <a href="{% url 'tablets_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.brand }}, {{ ad.data.model_number }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if smartwatch_ads %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">Smart Watches</div>
+        <a href="{% url 'smartwatch' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in smartwatch_ads %}
+        <div class="listing-item">
+            <a href="{% url 'smartwatch_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.brand }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if headset_ads %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">Headsets</div>
+        <a href="{% url 'headset' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in headset_ads %}
+        <div class="listing-item">
+            <a href="{% url 'headset_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.title|truncatechars:15 }}</div>
+
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if cover_ads %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">Covers & Protectors</div>
+        <a href="{% url 'cover' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in cover_ads %}
+        <div class="listing-item">
+            <a href="{% url 'cover_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.title|truncatechars:15  }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% if accessory_ads %}
+<div class="container mt-3">
+
+    <!-- Chargers & Cables Section -->
+    <div class="accessory-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="listing-title">Chargers & Cables</div>
+            <a href="{% url 'accessory' %}?type=charger" class="view-more-link">
+                View More <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for ad in accessory_ads %}
+                {% if ad.data.type == 'charger' %}
+               <div class="listing-item">
+            <a href="{% url 'accessory_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.title|truncatechars:15  }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Mobile-Tablet Spare Parts Section -->
+    <div class="accessory-section mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="listing-title">Mobile-Tablet Spare Parts</div>
+            <a href="{% url 'accessory' %}?type=sparepart" class="view-more-link">
+                View More <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for ad in accessory_ads %}
+                {% if ad.data.type == 'sparepart' %}
+               <div class="listing-item">
+            <a href="{% url 'accessory_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.title|truncatechars:15  }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Accessories Section -->
+    <div class="accessory-section mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="listing-title">Accessories</div>
+            <a href="{% url 'accessory' %}?type=accessory" class="view-more-link">
+                View More <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for ad in accessory_ads %}
+                {% if ad.data.type == 'accessory' %}
+                <div class="listing-item">
+            <a href="{% url 'accessory_details' ad.data.id %}" target="_blank">
+                <div class="slider" data-current-index="0">
+                    <img class="slide-image" src="{{ ad.main_image_url }}" alt="slide"
+                         data-images='{{ ad.images_json|safe }}' />
+                    <div class="dots-container"></div>
+                </div>
+            </a>
+             <button class="btn backwards" onclick="navigateSlide(this, -1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <button class="btn forwards" onclick="navigateSlide(this, 1)">
+                <span class="material-icons-outlined"></span>
+            </button>
+            <div class="listing-price">
+  <span style="color: #EB362D; font-size: 1em;">
+    {{ ad.data.price|floatformat:0|intcomma }}
+  </span>
+  <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+</div>
+
+            <div class="listing-details">{{ ad.data.title|truncatechars:15  }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }} </div>
+        </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endif %}
+
+{% if mobilesim_ads %}
+<div class="container mt-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="listing-title">VIP Phone Numbers</div>
+        <a href="{% url 'mobilesim' %}" class="view-more-link">
+            View More <i class="fas fa-arrow-circle-right"></i>
+        </a>
+    </div>
+    <div class="row">
+        {% for ad in mobilesim_ads %}
+        <div class="listing-item" style="position: relative;">
+            <a href="{% url 'mobilesim_details' ad.data.id %}" target="_blank">
+                <!-- SIM PLATE DESIGN (replaces image slider) -->
+                <div class="simcard-wrapper">
+                    <div class="sim-plate">
+                        <div class="sim-number">{{ ad.data.oman_number|default:'XXXXXXXX' }}</div>
+                    </div>
+                    <div class="sim-base"></div>
+                </div>
+                {% if ad.data.videos.all %}
+                <div class="video-icon" style="position: absolute; top: 175px; left: 60px; background: rgba(0,0,0,0.6); border-radius: 40%; width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-video" style="color: white; font-size: 12px;"></i>
+                </div>
+                {% endif %}
+            </a>
+            <!-- REMOVED backwards/forwards buttons because no slider -->
+            <div class="listing-price">
+                <span style="color: #EB362D; font-size: 1em;">{{ ad.data.price|floatformat:0|intcomma }}</span>
+                <span style="color: #EB362D; font-size: 0.8em;">OMR</span>
+            </div>
+            <div class="listing-details">{{ ad.data.title|truncatechars:15 }}</div>
+            <div class="listing-details2">{{ ad.data.city.name }}, {{ ad.data.city.district.governate.name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+<style>
+    .simcard-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    /* height: 10%; */
+    min-height: 120px;   /* reduced to match smaller plate */
+    border-radius: 12px;
+}
+
+/* SIM Plate Style - now using number plate dimensions */
+.sim-plate {
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* changed from margin-left hack to centered */
+    background: linear-gradient(135deg, #15818E 0%, #0E5C66 100%);
+    border: 2px solid #22221f;   /* slightly thinner border to match scale */
+    border-radius: 6px;          /* same as number plate */
+    padding: 0 10px;             /* same as number plate */
+    width: 180px;                /* matches number plate */
+    height: 45px;                /* matches number plate */
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    animation: floating 2s infinite alternate ease-in-out;
+}
+
+.sim-plate .sim-number {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;             /* reduced from 22px to fit smaller plate */
+    font-weight: bold;
+    color: white;
+    letter-spacing: 2px;         /* reduced from 3px */
+    font-family: monospace;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.sim-base {
+    width: 60px;                 /* matches number plate's base width */
+    height: 6px;                 /* matches number plate's base height */
+    background: rgba(0,0,0,0.2);
+    border-radius: 50%;
+    margin-top: 6px;             /* adjusted spacing */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Keep the same floating animation (slightly reduced movement) */
+@keyframes floating {
+    from { transform: translateY(0); }
+    to { transform: translateY(4px); }
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .sim-plate {
+        width: 140px;            /* proportionally smaller on tablet */
+        height: 38px;
+        padding: 0 6px;
+    }
+    
+    .sim-plate .sim-number {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+    
+    .sim-base {
+        width: 45px;
+        height: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sim-plate {
+        width: 120px;
+        height: 34px;
+        padding: 0 4px;
+    }
+    
+    .sim-plate .sim-number {
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+    
+    .sim-base {
+        width: 38px;
+        height: 3px;
+    }
+}
+</style>
+<script>
+    // Function to navigate between images with LOOP functionality
+    function navigateSlide(button, direction) {
+        const slider = button.closest('.listing-item').querySelector('.slider');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+        let currentIndex = parseInt(slider.getAttribute('data-current-index'));
+        
+        // MODIFIED: Calculate new index with LOOP
+        let newIndex = (currentIndex + direction + images.length) % images.length;
+
+        // Update the current image
+        slider.querySelector('img').src = images[newIndex].image;
+        slider.setAttribute('data-current-index', newIndex);
+
+        // Update dots
+        updateDots(slider, newIndex);
+        
+        // Dispatch slide changed event
+        dispatchSlideChanged(slider);
+    }
+
+    // Function to update dots for the slider
+    function updateDots(slider, currentIndex) {
+        const dotsContainer = slider.closest('.listing-item').querySelector('.dots-container');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+
+        // Clear existing dots
+        dotsContainer.innerHTML = '';
+
+        // Create new dots
+        images.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (index === currentIndex ? ' active' : '');
+            dot.onclick = () => {
+                // Update the current image
+                slider.querySelector('img').src = images[index].image;
+                slider.setAttribute('data-current-index', index);
+
+                // Update dots
+                updateDots(slider, index);
+                
+                // Dispatch slide changed event
+                dispatchSlideChanged(slider);
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // Initialize sliders and hover effects
+    document.querySelectorAll('.listing-item').forEach((item) => {
+        const slider = item.querySelector('.slider');
+        const images = JSON.parse(slider.querySelector('img').getAttribute('data-images'));
+        
+        // Initialize dots
+        updateDots(slider, 0);
+
+        // Hide buttons by default
+        const backwardsBtn = item.querySelector('.backwards');
+        const forwardsBtn = item.querySelector('.forwards');
+        backwardsBtn.style.opacity = '0';
+        forwardsBtn.style.opacity = '0';
+        backwardsBtn.style.pointerEvents = 'none';
+        forwardsBtn.style.pointerEvents = 'none';
+
+        // Only show navigation if there are multiple images
+        if (images.length > 1) {
+            // Mouse enter event - MODIFIED for loop
+            item.addEventListener('mouseenter', function() {
+                // MODIFIED: For loop functionality, always show both buttons
+                backwardsBtn.style.opacity = '1';
+                forwardsBtn.style.opacity = '1';
+                backwardsBtn.style.pointerEvents = 'auto';
+                forwardsBtn.style.pointerEvents = 'auto';
+            });
+
+            // Mouse leave event
+            item.addEventListener('mouseleave', function() {
+                backwardsBtn.style.opacity = '0';
+                forwardsBtn.style.opacity = '0';
+                backwardsBtn.style.pointerEvents = 'none';
+                forwardsBtn.style.pointerEvents = 'none';
+            });
+
+            // Update button visibility when navigating - MODIFIED for loop
+            slider.addEventListener('slideChanged', function() {
+                // MODIFIED: For loop functionality, always show both buttons when hovering
+                if (item.matches(':hover')) {
+                    backwardsBtn.style.opacity = '1';
+                    forwardsBtn.style.opacity = '1';
+                    backwardsBtn.style.pointerEvents = 'auto';
+                    forwardsBtn.style.pointerEvents = 'auto';
+                }
+            });
+        } else {
+            // For single-image items, hide navigation completely
+            backwardsBtn.style.display = 'none';
+            forwardsBtn.style.display = 'none';
+        }
+    });
+
+    // Dispatch custom event when slide changes
+    function dispatchSlideChanged(slider) {
+        slider.dispatchEvent(new CustomEvent('slideChanged'));
+    }
+</script>
+ <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+{% include 'footer.html' %}

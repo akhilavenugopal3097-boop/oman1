@@ -1,0 +1,4078 @@
+{% load static %}
+{% load automobile_filters %}
+{% load static %}
+
+{% load static %}
+ {% include 'header2.html' %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+
+        
+     <style>
+        
+.filter-form.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    
+    padding: 15px 0; /* Reduced padding when sticky */
+    animation: slideDown 0.3s ease;
+}
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }function showCitiesDropdown() {
+        var region = document.getElementById('region-dropdown').value;
+        var citiesDropdown = document.getElementById('cities-dropdown');
+        var citiesList = document.getElementById('cities-list');
+        
+        var cities = {
+            'MS': ['Muscat City', 'Qurum', 'Seeb'],
+            'DH': ['Salalah', 'Mirbat', 'Taqah'],
+            'BT': ['Sohar', 'Barka', 'Ibri'],
+            'DA': ['Nizwa', 'Izki', 'Manah'],
+            'SH': ['Sur', 'Ibra', 'Bahla'],
+            'BR': ['Buraimi', 'Mahda'],
+            'ZU': ['Salalah', 'Mirbat'],
+            'DZ': ['Khasab', 'Diba'],
+            'WT': ['Haima', 'Shinas']
+        };
+    
+        citiesList.innerHTML = ''; // Clear previous cities
+    
+        if (region && cities[region]) {
+            cities[region].forEach(function(city) {
+                var cityOption = document.createElement('div');
+                cityOption.textContent = city;
+                cityOption.onclick = function() {
+                    alert('You selected ' + city + '!');
+                    citiesDropdown.style.display = 'none'; // Hide cities dropdown after selection
+                };
+                citiesList.appendChild(cityOption);
+            });
+    
+            citiesDropdown.style.display = 'block'; // Show cities dropdown
+        } else {
+            citiesDropdown.style.display = 'none'; // Hide cities dropdown if no region is selected
+        }
+    }
+    
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+      
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            <!-- banner-section -->
+            <section id="banner-section" class="banner-section centred">
+                <div class="auto-container">
+                    <div class="content-column">
+                        <div class="content-box">
+                            <div class="custom-form">
+                                <form action="{% url 'search_results' %}" method="get" autocomplete="off">
+                                    {% csrf_token %}
+                                    <div class="form-group-row">
+                                        <!-- Search Input -->
+                                         <div class="form-group oval-container">
+    <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon3">
+    <div class="search-autocomplete">
+        <input class="input" type="search"
+       name="keyword"
+       placeholder="Search for {% if request.GET.job_category %}{% for category in categories %}{% if category.id|stringformat:'s' == request.GET.job_category %}{{ category.name }}{% endif %}{% endfor %}{% else %}Everything{% endif %}"
+       value="{{ request.GET.keyword }}">
+        <button type="button" id="clear-search" aria-label="Clear search">×</button>
+        <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
+    </div>
+</div>
+
+<style>
+.search-autocomplete {
+    position: relative;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-autocomplete input {
+    width: 100%;
+    
+}
+
+#clear-search {
+    position: absolute;
+    top: 70%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    display: none; /* hidden initially */
+    padding: 0;
+    line-height: 1;
+}
+
+#clear-search:hover {
+    color: #555;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 640px; /* Increased width */
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    display: none;
+    max-height: 400px; /* Increased height */
+    overflow-y: hidden;
+    padding: 6px 0;
+    transition: all 0.2s ease-in-out;
+    margin-top: 20px;
+  
+}
+
+.autocomplete-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #2d3748;
+    transition: background 0.2s ease, color 0.2s ease;
+    border-radius: 6px;
+    margin: 2px 8px;
+    text-align: left;       /* <-- Force text alignment to the left */
+    display: block;         /* <-- Ensure full width alignment */
+    width: calc(100% - 16px); /* Align with margin, keeping item full width */
+}
+
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #f0f4f8;
+    color: #1a202c;
+}
+
+.suggestion-text strong {
+    font-weight: 600;
+    color: #1a73e8;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const dropdown = document.getElementById('autocomplete-dropdown');
+    const clearBtn = document.getElementById('clear-search');
+
+    const propertySuggestions = [
+        // Real estate suggestions
+        { text: 'Real Estate Villa for Sale', type: 'sell', category: 'villas' },
+        { text: 'Real Estate Villa for Rent', type: 'rent', category: 'villas' },
+        { text: 'Real Estate Apartment for Sale', type: 'sell', category: 'apartment' },
+        { text: 'Real Estate Apartment for Rent', type: 'rent', category: 'apartment' },
+        { text: 'Real Estate Showroom for Sale', type: 'sell', category: 'showrooms' },
+        { text: 'Real Estate Showroom for Rent', type: 'rent', category: 'showrooms' },
+        { text: 'Real Estate Commercial Villa for Sale', type: 'sell', category: 'commercial' },
+        { text: 'Real Estate Commercial Villa for Rent', type: 'rent', category: 'commercial' },
+        { text: 'Real Estate Farm and Chalets for Sale', type: 'sell', category: 'farm' },
+        { text: 'Real Estate Farm and Chalets for Rent', type: 'rent', category: 'farm' },
+        { text: 'Real Estate Land for Sale', type: 'sell', category: 'land' },
+        { text: 'Real Estate Land for Rent', type: 'rent', category: 'land' },
+        { text: 'Real Estate Restaurants and Cafes for Sale', type: 'sell', category: 'cafe' },
+        { text: 'Real Estate Restaurants and Cafes for Rent', type: 'rent', category: 'cafe' },
+        { text: 'Real Estate Clinic for Sale', type: 'sell', category: 'clinic' },
+        { text: 'Real Estate Clinic for Rent', type: 'rent', category: 'clinic' },
+        { text: 'Real Estate Factory for Sale', type: 'sell', category: 'factory' },
+        { text: 'Real Estate Factory for Rent', type: 'rent', category: 'factory' },
+        { text: 'Real Estate Townhouse for Sale', type: 'sell', category: 'townhouse' },
+        { text: 'Real Estate Townhouse for Rent', type: 'rent', category: 'townhouse' },
+        { text: 'Real Estate Full Floor for Sale', type: 'sell', category: 'fullfloors' },
+        { text: 'Real Estate Full Floor for Rent', type: 'rent', category: 'fullfloors' },
+        { text: 'Real Estate Shop for Sale', type: 'sell', category: 'shop' },
+        { text: 'Real Estate Shop for Rent', type: 'rent', category: 'shop' },
+        { text: 'Real Estate Staff Housing for Sale', type: 'sell', category: 'staff' },
+        { text: 'Real Estate Staff Housing for Rent', type: 'rent', category: 'staff' },
+        { text: 'Real Estate Warehouse for Sale', type: 'sell', category: 'warehouse' },
+        { text: 'Real Estate Warehouse for Rent', type: 'rent', category: 'warehouse' },
+        { text: 'Real Estate Whole Building for Sale', type: 'sell', category: 'wholebuilding' },
+        { text: 'Real Estate Whole Building for Rent', type: 'rent', category: 'wholebuilding' },
+        { text: 'Real Estate Complex for Sale', type: 'sell', category: 'complex' },
+        { text: 'Real Estate Complex for Rent', type: 'rent', category: 'complex' },
+        { text: 'Real Estate Office Space for Sale', type: 'sell', category: 'office' },
+        { text: 'Real Estate Office Space for Rent', type: 'rent', category: 'office' },
+        { text: 'Real Estate Hotel for Sale', type: 'sell', category: 'hostel' },
+        { text: 'Real Estate Hotel for Rent', type: 'rent', category: 'hostel' },
+        { text: 'Real Estate Supermarket for Sale', type: 'sell', category: 'supermarket' },
+        { text: 'Real Estate Supermarket for Rent', type: 'rent', category: 'supermarket' },
+        { text: 'Real Estate Foreign Property for Sale', type: 'sell', category: 'foreign' },
+        { text: 'Real Estate Foreign Property for Rent', type: 'rent', category: 'foreign' },
+        { text: 'Real Estate Shared Rooms for Rent', type: 'rent', category: 'shared' },
+        { text: 'Real Estate Hotel Apartments and Suites for Rent', type: 'rent', category: 'suits' },
+        { text: 'Real Estate Office for Sale', type: 'sell', category: 'office' },
+        { text: 'Real Estate Office for Rent', type: 'rent', category: 'office' },
+
+        // Motors suggestions
+        { text: 'Motors Car for Sale', type: 'sell', category: 'car', base: '/car' },
+        { text: 'Motors Car for Rent', type: 'rent', category: 'car', base: '/car' }
+    ];
+
+    let activeSuggestionIndex = -1;
+
+    function toggleClearButton() {
+        clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        dropdown.innerHTML = '';
+        activeSuggestionIndex = -1;
+        toggleClearButton();
+
+        if (query.length > 0) {
+            const filtered = propertySuggestions
+                .filter(item => item.text.toLowerCase().includes(query))
+                .sort((a, b) => a.text.toLowerCase().indexOf(query) - b.text.toLowerCase().indexOf(query));
+
+            if (filtered.length > 0) {
+                dropdown.style.display = 'block';
+
+                filtered.forEach((item, index) => {
+                    const option = document.createElement('div');
+                    option.className = 'autocomplete-item';
+
+                    // Format the text as bold main part + prefix near it
+                    if (item.text.startsWith("Real Estate ")) {
+                        // Remove "Real Estate " prefix
+                        let mainText = item.text.substring(12);
+                        const saleOrRent = mainText.endsWith(" for Sale") ? "for Sale" :
+                                           mainText.endsWith(" for Rent") ? "for Rent" : "";
+
+                        // Extract property part (without sale/rent)
+                        let propertyPart = saleOrRent ? mainText.substring(0, mainText.length - saleOrRent.length - 1) : mainText;
+
+                        // Prefix text
+                        const prefix = `Real Estate ${saleOrRent}`;
+
+                        option.innerHTML = `
+                            <span class="property-bold"><strong>${propertyPart} ${saleOrRent}</strong></span>
+                            <span class="prefix-text" style="margin-left:8px; color:#666; font-size:0.9em;">${prefix}</span>
+                        `;
+                    } else {
+                        // For other entries like motors, highlight normally
+                        option.innerHTML = `<span class="suggestion-text">${highlightMatch(item.text, query)}</span>`;
+                    }
+
+                    option.addEventListener('click', () => selectSuggestion(item));
+                    option.addEventListener('mouseover', () => setActiveSuggestion(index));
+                    dropdown.appendChild(option);
+                });
+
+                if (query.length > 2) {
+                    setTimeout(() => autoFillBestMatch(filtered[0]), 300);
+                }
+            } else {
+                dropdown.style.display = 'none';
+            }
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveSuggestion(Math.min(activeSuggestionIndex + 1, items.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveSuggestion(Math.max(activeSuggestionIndex - 1, -1));
+        } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
+            e.preventDefault();
+            const selectedText = items[activeSuggestionIndex].querySelector('.property-bold strong, .suggestion-text').textContent;
+            // Find suggestion by matching the original full text (ignore the split parts)
+            const selectedItem = propertySuggestions.find(p => p.text.toLowerCase().includes(selectedText.toLowerCase()));
+            if (selectedItem) selectSuggestion(selectedItem);
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        dropdown.style.display = 'none';
+        clearBtn.style.display = 'none';
+        window.location.href = window.location.pathname;
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    function highlightMatch(text, query) {
+        const index = text.toLowerCase().indexOf(query);
+        if (index >= 0) {
+            return text.substring(0, index) +
+                `<strong>${text.substring(index, index + query.length)}</strong>` +
+                text.substring(index + query.length);
+        }
+        return text;
+    }
+
+    function setActiveSuggestion(index) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        items.forEach(item => item.classList.remove('active'));
+
+        activeSuggestionIndex = index;
+        if (index >= 0 && index < items.length) {
+            items[index].classList.add('active');
+            items[index].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function autoFillBestMatch(suggestion) {
+        const currentValue = searchInput.value.toLowerCase();
+        const suggestionStart = suggestion.text.toLowerCase().indexOf(currentValue);
+
+        if (suggestionStart >= 0) {
+            const toFill = suggestion.text.substring(suggestionStart + currentValue.length);
+            if (toFill) {
+                searchInput.value += toFill;
+                searchInput.setSelectionRange(currentValue.length, searchInput.value.length);
+            }
+        }
+    }
+
+    function selectSuggestion(suggestion) {
+        searchInput.value = suggestion.text;
+        dropdown.style.display = 'none';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('listing_type', suggestion.type);
+        if (suggestion.condition) {
+            urlParams.set('condition', suggestion.condition);
+        }
+
+        const basePath = suggestion.base || `/${suggestion.category}`;
+        window.location.href = `${basePath}?${urlParams.toString()}`;
+    }
+
+    toggleClearButton();
+});
+</script>
+
+<script>
+    window.addEventListener('pageshow', function(event) {
+        // Reload if page is restored from cache (back/forward navigation)
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+    </script>
+
+
+
+
+
+
+                                        <style>
+                                            /* Remove default clear (×) button in search inputs */
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+input[type="search"]::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+                                        </style>
+                                
+                                      
+                                
+                                        <!-- Submit Button -->
+                                        <div class="btn-box oval-container">
+                                            <button type="submit" class="theme-btn-one">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                               <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                        const dropdownLists = document.querySelectorAll('.value-list');
+                                    
+                                        dropdownInputs.forEach(input => {
+                                            const dropdownId = input.getAttribute('data-dropdown');
+                                            const dropdown = document.getElementById(dropdownId);
+                                    
+                                            // Toggle dropdown visibility on click
+                                            input.addEventListener('click', (event) => {
+                                                event.stopPropagation(); // Prevent the click from propagating to the document
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open')); // Close other dropdowns
+                                                dropdown.classList.toggle('open');
+                                            });
+                                     // Handle clicks on category items
+                                     dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                                            // Prevent dropdown from closing when clicking inside
+                                            dropdown.addEventListener('mousedown', (event) => {
+                                                event.stopPropagation();
+                                            });
+                       // Handle clicks on region items
+dropdown.querySelectorAll('.main-menu1[data-region]').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document
+        const region = item.getAttribute('data-region');
+        selectRegion(region); // Call the selectRegion function
+
+        // Update the input field with the selected region only
+        input.value = regionName; // Update the input with the selected region
+
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('region', region); // Set the region parameter
+        
+        // Clear the city parameter if it exists
+        url.searchParams.delete('city'); // Remove the city parameter if it exists
+        
+        window.location.href = url; // Redirect to the updated URL
+
+        // Close the dropdown after selection
+        dropdown.classList.remove('open');
+    });
+
+    // Handle clicks on submenu items (cities)
+    item.querySelectorAll('ul li').forEach(subItem => {
+        subItem.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click from propagating to the document
+            const city = subItem.textContent; // Get the city name from the text content
+            const region = item.getAttribute('data-region'); // Get the region from the parent item
+
+            selectCity(city); // Call the selectCity function
+
+            // Update the input field with the selected city and region
+            input.value = city; // Update the input with city and region
+
+            // Create a new URL object based on the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('region', region); // Set the region parameter
+            url.searchParams.set('city', city); // Set the city parameter
+            window.location.href = url; // Redirect to the updated URL
+
+            // Close the dropdown after selection
+            dropdown.classList.remove('open');
+        });
+    });
+});                 
+                                           // Filter dropdown items based on input
+// Filter dropdown items based on input
+input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    const items = dropdown.querySelectorAll('li');
+
+    items.forEach(item => {
+        const text = item.firstChild.textContent.toLowerCase();
+        let matchFound = text.includes(filter);
+
+        // Check submenu items if the main item doesn't match
+        if (!matchFound && item.querySelector('.submenus')) {
+            const subItems = item.querySelectorAll('.submenus ul li');
+            subItems.forEach(subItem => {
+                const subText = subItem.textContent.toLowerCase();
+                if (subText.includes(filter)) {
+                    matchFound = true;
+                }
+            });
+        }
+
+        // Show the main menu item if it or any of its submenu items match
+        if (matchFound) {
+            item.style.display = 'block';
+            // Expand the main menu item if it has submenus
+            if (item.classList.contains('main-menu1') && item.querySelector('.submenus')) {
+                item.classList.add('open'); // Add a class to expand the main menu
+                item.querySelector('.submenus').style.display = 'block'; // Show submenus
+            }
+        } else {
+            item.style.display = 'none';
+            // Hide submenus if the main menu item is not matched
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none';
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        }
+    });
+
+    // If the input is empty, show all main menu items and hide all submenus
+    if (filter === '') {
+        items.forEach(item => {
+            item.style.display = 'block'; // Show all main menu items
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none'; // Hide all submenus
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        });
+    }
+});                       
+                                            // Show submenus on hover
+                                            dropdown.querySelectorAll('.main-menu1').forEach(item => {
+                                                item.addEventListener('mouseenter', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'block';
+                                                    }
+                                                });
+                                
+                                                item.addEventListener('mouseleave', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'none';
+                                                    }
+                                                });
+                                            });
+                                            // Close dropdown when mouse leaves the dropdown container
+                                            dropdown.addEventListener('mouseout', (event) => {
+                                                // Check if the mouse is leaving the dropdown container
+                                                if (!dropdown.contains(event.relatedTarget)) {
+                                                    dropdown.classList.remove('open');
+                                                }
+                                            });
+                                        });
+                                    
+                                        // Close dropdown if clicking outside
+                                        document.addEventListener('click', (event) => {
+                                            if (!event.target.matches('.chosen-value')) {
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            }
+                                        });
+                                    });
+                                    // Handle clicks on category items
+                                    dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                            
+                                   
+                          
+                                </script>
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 6px;
+        border-radius: 52px;
+        border: 1px solid #ccc;
+        width: 36%;
+        margin-top: 5px ;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon5{
+        position: absolute;
+        left: 14px !important;
+        height: 20px !important;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+<style>
+.price-container,
+.main-category-container,
+.location-list-container,
+.condition-container,
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 10px; 
+    margin-left: -30px;
+     z-index: 2;
+    display: none;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.main-category-container {
+    width: 280px;
+}
+.price-container {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    font-size:14px;
+    gap: 5px;
+}
+
+.price-inputs label {
+    font-weight: 500;
+}
+
+.price-inputs input {
+    padding: 5px 15px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+}
+
+.location-list-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    margin-left: -10px;
+    margin-top:56px;
+     z-index: 2;
+     width: 345px;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-container {
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    right: 0; 
+    margin-left: -80px;
+}
+
+.additional-filters-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+    position: sticky;
+    bottom: -12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.additional-filters-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.additional-filters-inputs input,
+.additional-filters-inputs select {
+    padding: 5px;
+    border-radius: 25px;
+    border: 1px solid #aaa9a9;
+    width: 100px;
+    flex: 1;
+}
+
+/* Normal Checkbox Styles for Location Filter */
+.location-checkbox {
+    position: relative;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+.location-checkbox:checked + .location-label {
+    background-color: #e8f4fd;
+    color: #0066cc;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #0066cc;
+    border-color: #0066cc;
+}
+
+/* Chevron for navigation levels */
+.location-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+}
+
+.oval-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.oval-checkbox,
+.oval-radio {
+    position: fixed;   /* 🔥 key fix */
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.oval-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.oval-checkbox:checked + .oval-button,
+.oval-radio:checked + .oval-button {
+    background-color: #E35D20;
+    color: white;
+    border-color: #E35D20;
+}
+
+.oval-button:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    background-color: #d35400;
+}
+
+.dropdown-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icons2 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+    z-index: 2038;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    border: 1px solid #5d5b5b;
+    padding: 10px;
+    border-radius: 20px;
+    width: 1120px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+}
+
+.filter-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width:5px;
+    position:relative;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    margin-bottom: -5px;
+}
+
+.filter-item.active {
+    border-radius: 5px;
+    background-color: #f0f8ff;
+}
+
+.input-value {
+    font-size: 14px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #555555;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+#region_search, #city_search {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+/* List Styles */
+.regions-lists {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.region-item {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.city-list {
+    list-style: none;
+    padding-left: 15px;
+    display: none;
+}
+
+.city-list li {
+    cursor: pointer;
+    color: #333;
+}
+
+#back-to-oman,
+#clear-selected-city {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#clear-selected-city {
+    margin-top: 10px;
+}
+
+#back-to-oman:hover {
+    background: #E35D20;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.loading-indicator {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+.price-label, .year-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Navigation Buttons */
+.location-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.back-button, .clear-button {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.back-button:hover, .clear-button:hover {
+    background-color: #e0e0e0;
+}
+
+.clear-button {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border: none;
+}
+
+/* Search Inputs */
+.search-container input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: -10px;
+    box-sizing: border-box;
+}
+
+/* Lists Container */
+.location-lists {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.location-lists ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.location-option {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+/* Normal checkbox styling */
+.location-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.location-checkbox + .location-label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #E35D20;
+    border-color: #E35D20;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+}
+
+.location-checkbox:checked + .location-label {
+    color: #E35D20;
+    font-weight: 500;
+}
+
+/* Fallback for native checkboxes */
+input[type="checkbox"]:checked {
+    accent-color: #E35D20;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+/* Miscellaneous */
+.loading {
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.empty {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    padding: 10px;
+    text-align: center;
+    color: red;
+}
+
+.location-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.location-lists {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.location-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.location-item {
+  cursor: pointer;
+}
+
+.location-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.hidden-checkbox:checked + .oval-button {
+  background-color: #E35D20;
+  color: white;
+  border-color: #E35D20;
+}
+
+.select-all-container {
+  padding: 5px 15px;
+  margin-bottom: 5px;
+}
+
+.location-list-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.location-item {
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.nested-list {
+  margin-left: 20px;
+  padding-left: 10px;
+  display: none;
+}
+
+.label-item {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 3px 0;
+}
+
+.nested-label {
+  display: block;
+  background-color: #f0f0f0;
+  text-transform: uppercase; 
+  padding: 3px 8px;
+  margin: 5px 0 3px 5px;
+  border-radius: 4px;
+}
+
+#select-all-governates + label {
+  background: none;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+.all {
+    margin-left: 7px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+</style>
+
+<div class="auto-container">
+    <div class="row clearfix">
+        <form action="{% url 'job' %}" method="GET" autocomplete="off">
+            <div class="filter-form">
+                <div class="filter-box">
+<!-- Location Filter Trigger -->
+<div class="filter-item" id="toggle-location-filter">
+  <label for="location" class="mx-3">Location</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" name="location" id="selected-location" class="input-value" style="margin-left:15px;" placeholder="Select Location" readonly>
+</div>
+
+<!-- Location Dropdown -->
+<div id="location-list-container" class="location-list-container" style="display:none;">
+  <!-- Search Box -->
+  <div class="location-search-container">
+    <input type="text" id="location-search" placeholder="Search for governate, district, or city..." class="location-search-input">
+    <i class="fas fa-search location-search-icon"></i>
+  </div>
+  
+  <ul id="location-list">
+    <!-- Governate label with background -->
+    <li class="label-item governate-label">GOVERNORATE</li>
+    <!-- All checkbox without background -->
+    <li class="all">
+      <input type="checkbox" id="select-all-governates">
+      <label for="select-all-governates">All</label>
+    </li>
+
+    {% for governate in governates %}
+    <li class="location-item" data-id="{{ governate.id }}" data-type="governate" data-name="{{ governate.name|lower }}">
+      <div class="location-item-header">
+        <input type="checkbox" name="governate" value="{{ governate.id }}">
+        <label>{{ governate.name }}</label>
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+      </div>
+      <ul class="nested-list"></ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+   <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-location-filter">Clear</button>
+  </div>
+</div>
+
+<style>
+.location-search-container {
+  position: relative;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-search-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.location-search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.district-dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.district-dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Search related styles */
+.search-hidden {
+  display: none !important;
+}
+
+.location-item, .nested-label, .label-item, .all {
+  transition: all 0.3s ease;
+}
+
+.nested-list {
+  transition: all 0.3s ease;
+}
+
+.loading-nested {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.search-highlight {
+  background-color: #fff3cd;
+  font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleLocation = document.getElementById('toggle-location-filter');
+  const locationContainer = document.getElementById('location-list-container');
+  const locationList = document.getElementById('location-list');
+  const selectAllGov = document.getElementById('select-all-governates');
+  const clearBtn = document.getElementById('clear-location-filter');
+  const selectedInput = document.getElementById('selected-location');
+  const locationSearch = document.getElementById('location-search');
+
+  // Store fetched data to avoid duplicate API calls
+  const fetchedDistricts = new Map();
+  const fetchedCities = new Map();
+
+  // Toggle dropdown
+  toggleLocation.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const wasVisible = locationContainer.style.display === 'block';
+    closeAllFilterContainers();
+    locationContainer.style.display = wasVisible ? 'none' : 'block';
+    
+    // Focus on search when dropdown opens
+    if (locationContainer.style.display === 'block') {
+      setTimeout(() => {
+        locationSearch.focus();
+        locationSearch.select();
+      }, 100);
+    }
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#location-list-container') && !e.target.closest('#toggle-location-filter')) {
+      locationContainer.style.display = 'none';
+    }
+  });
+
+  // Search functionality - SIMPLIFIED and WORKING version
+  locationSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    performSearch(searchTerm);
+  });
+
+ 
+  // Main search function
+  async function performSearch(searchTerm) {
+    const allItems = locationList.querySelectorAll('.location-item, .nested-label, .label-item, .all');
+    
+    if (!searchTerm) {
+      // Reset everything when search is cleared
+      allItems.forEach(item => {
+        item.classList.remove('search-hidden');
+        // Reset expanded state for non-user-expanded items
+        if (item.classList.contains('location-item') && !item.classList.contains('user-expanded')) {
+          const nestedList = item.querySelector('.nested-list');
+          const arrow = item.querySelector('.dropdown-arrow, .district-dropdown-arrow');
+          if (nestedList && nestedList.children.length > 0) {
+            nestedList.style.display = 'none';
+            if (arrow) arrow.classList.remove('rotated');
+          }
+        }
+      });
+      return;
+    }
+
+    // First hide everything
+    allItems.forEach(item => {
+      item.classList.add('search-hidden');
+    });
+
+    const governateItems = locationList.querySelectorAll('.location-item[data-type="governate"]');
+
+for (const governateItem of governateItems) {
+  const governateName = governateItem.querySelector('label').textContent.toLowerCase();
+
+  // 🔹 Always load districts first
+  await expandAndLoadGovernate(governateItem, searchTerm);
+
+  // 🔹 Now check district & city matches
+  const hasMatch =
+    governateName.includes(searchTerm) ||
+    await checkDistrictsForMatch(governateItem, searchTerm);
+
+  if (hasMatch) {
+    governateItem.classList.remove('search-hidden');
+  } else {
+    governateItem.classList.add('search-hidden');
+  }
+}
+
+
+    // Show labels if any items are visible
+    const visibleItems = locationList.querySelectorAll('.location-item:not(.search-hidden)');
+    if (visibleItems.length > 0) {
+      document.querySelectorAll('.label-item, .all').forEach(label => {
+        label.classList.remove('search-hidden');
+      });
+    }
+  }
+
+  // Expand and load governate data
+  async function expandAndLoadGovernate(governateItem, searchTerm) {
+    const nestedList = governateItem.querySelector('.nested-list');
+    const arrow = governateItem.querySelector('.dropdown-arrow');
+    
+    // Ensure districts are loaded
+    if (nestedList.children.length === 0) {
+      const governateId = governateItem.dataset.id;
+      await fetchDistricts(governateId, nestedList, searchTerm);
+    }
+    
+    // Expand the governate
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+    if (arrow) arrow.classList.add('rotated');
+    
+    // Apply search to loaded districts
+    if (searchTerm) {
+      const districtItems = nestedList.querySelectorAll('.location-item[data-type="district"]');
+      districtItems.forEach(districtItem => {
+        const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+        if (districtName.includes(searchTerm)) {
+          districtItem.classList.remove('search-hidden');
+        } else {
+          districtItem.classList.add('search-hidden');
+        }
+      });
+    }
+  }
+async function checkDistrictsForMatch(governateItem, searchTerm) {
+  const nestedList = governateItem.querySelector('.nested-list');
+  const districts = nestedList.querySelectorAll('.location-item[data-type="district"]');
+  let hasMatch = false;
+
+  for (const districtItem of districts) {
+    const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+    const districtNested = districtItem.querySelector('.nested-list');
+    const arrow = districtItem.querySelector('.district-dropdown-arrow');
+
+    // Always load cities
+    if (districtNested.children.length === 0) {
+      await fetchCities(districtItem.dataset.id, districtNested);
+    }
+
+    const cityMatched = await checkCitiesForMatch(districtItem, searchTerm);
+
+    if (districtName.includes(searchTerm) || cityMatched) {
+      districtItem.classList.remove('search-hidden');
+
+      // ✅ FORCE EXPAND DISTRICT
+      districtNested.style.display = 'block';
+      districtNested.classList.add('expanded');
+      if (arrow) arrow.classList.add('rotated');
+
+      hasMatch = true;
+    } else {
+      districtItem.classList.add('search-hidden');
+    }
+  }
+
+  return hasMatch;
+}
+async function checkCitiesForMatch(districtItem, searchTerm) {
+  const nestedList = districtItem.querySelector('.nested-list');
+  const cities = nestedList.querySelectorAll('.location-item[data-type="city"]');
+  let hasMatch = false;
+
+  cities.forEach(cityItem => {
+    const cityName = cityItem.querySelector('label').textContent.toLowerCase();
+
+    if (cityName.includes(searchTerm)) {
+      cityItem.classList.remove('search-hidden');
+      hasMatch = true;
+    } else {
+      cityItem.classList.add('search-hidden');
+    }
+  });
+
+  // ✅ FORCE SHOW city container
+  if (hasMatch) {
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+  }
+
+  return hasMatch;
+}
+
+
+  // Enhanced fetchDistricts with caching
+  function fetchDistricts(governateId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedDistricts.has(governateId)) {
+      const districts = fetchedDistricts.get(governateId);
+      renderDistricts(districts, nestedContainer, searchTerm);
+      return Promise.resolve(districts);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading districts...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-districts/?governate_id=${governateId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedDistricts.set(governateId, data.districts);
+      renderDistricts(data.districts, nestedContainer, searchTerm);
+      return data.districts;
+    })
+    .catch(error => {
+      console.error('Error fetching districts:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading districts</div>';
+    });
+  }
+  function renderDistricts(districts, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">WILAYATS(DISTRICTS)</div>
+      ${districts.map(d => `
+        <li class="location-item" data-id="${d.id}" data-type="district" data-name="${d.name.toLowerCase()}">
+          <div class="district-item-header">
+            <input type="checkbox" name="district" value="${d.id}" data-governate="${d.governate_id || ''}">
+            <label>${d.name}</label>
+            <i class="fas fa-chevron-down district-dropdown-arrow"></i>
+          </div>
+          <ul class="nested-list"></ul>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Enhanced fetchCities with caching
+  function fetchCities(districtId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedCities.has(districtId)) {
+      const cities = fetchedCities.get(districtId);
+      renderCities(cities, nestedContainer, searchTerm);
+      return Promise.resolve(cities);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading cities...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-cities/?district_id=${districtId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedCities.set(districtId, data.cities);
+      renderCities(data.cities, nestedContainer, searchTerm);
+      return data.cities;
+    })
+    .catch(error => {
+      console.error('Error fetching cities:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading cities</div>';
+    });
+  }
+
+  function renderCities(cities, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">CITIES</div>
+      ${cities.map(c => `
+        <li class="location-item city-item" data-id="${c.id}" data-type="city" data-name="${c.name.toLowerCase()}">
+          <input type="checkbox" name="city" value="${c.id}" data-district="${c.district_id || ''}">
+          <label>${c.name}</label>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Toggle governate dropdown with user-expanded marker
+  locationList.addEventListener('click', function(e) {
+    const arrow = e.target.closest('.dropdown-arrow');
+    const districtArrow = e.target.closest('.district-dropdown-arrow');
+    
+    if (arrow) {
+      e.stopPropagation();
+      const header = arrow.closest('.location-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        arrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch districts
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="governate"]');
+          if (checkbox) {
+            fetchDistricts(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          arrow.classList.add('rotated');
+        }
+      }
+    }
+    
+    if (districtArrow) {
+      e.stopPropagation();
+      const header = districtArrow.closest('.district-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        districtArrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch cities
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="district"]');
+          if (checkbox) {
+            fetchCities(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          districtArrow.classList.add('rotated');
+        }
+      }
+    }
+  });
+
+  // Handle checkbox changes
+  locationList.addEventListener('change', function(e) {
+    const checkbox = e.target;
+    const li = checkbox.closest('li');
+    if (!li) return;
+
+    if (checkbox.id === 'select-all-governates') {
+      handleSelectAllGovernates(checkbox.checked);
+    } 
+    else if (li.dataset.type === 'governate') {
+      handleGovernateChange(checkbox);
+    }
+    else if (li.dataset.type === 'district') {
+      handleDistrictChange(checkbox);
+    }
+    else if (li.dataset.type === 'city') {
+      updateSelectedLocation();
+      updateURL();
+    }
+
+    updateSelectAllState();
+  });
+
+  // Handle Select All Governates
+  function handleSelectAllGovernates(isChecked) {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    
+    allGovCheckboxes.forEach(cb => {
+      cb.checked = isChecked;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      
+      if (isChecked) {
+        // Expand and load districts for this governate
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.add('rotated');
+        }
+        li.classList.add('user-expanded');
+        fetchDistricts(cb.value, nested);
+      } else {
+        // Clear all nested content and collapse
+        clearNestedContent(nested);
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.remove('rotated');
+        }
+        li.classList.remove('user-expanded');
+      }
+    });
+
+    // If selecting all, also automatically select all districts and cities
+    if (isChecked) {
+      // Wait for districts to load, then select all districts and cities
+      setTimeout(() => {
+        selectAllDistrictsAndCities();
+      }, 500);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual governate change
+  function handleGovernateChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load districts
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchDistricts(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child districts and cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual district change
+  function handleDistrictChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.district-dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load cities
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Select all districts and cities (for "All" functionality)
+  function selectAllDistrictsAndCities() {
+    const districtCheckboxes = locationList.querySelectorAll('input[name="district"]');
+    districtCheckboxes.forEach(cb => {
+      cb.checked = true;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      const arrow = li.querySelector('.district-dropdown-arrow');
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(cb.value, nested);
+    });
+
+    // Wait for cities to load, then select all cities
+    setTimeout(() => {
+      const cityCheckboxes = locationList.querySelectorAll('input[name="city"]');
+      cityCheckboxes.forEach(cb => cb.checked = true);
+      updateSelectedLocation();
+      updateURL();
+    }, 1000);
+  }
+
+  // Clear nested content
+  function clearNestedContent(container) {
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      container.classList.remove('expanded');
+    }
+  }
+
+  // Update Select All state
+  function updateSelectAllState() {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    const checkedGovCheckboxes = locationList.querySelectorAll('input[name="governate"]:checked');
+    
+    selectAllGov.checked = allGovCheckboxes.length > 0 && allGovCheckboxes.length === checkedGovCheckboxes.length;
+    selectAllGov.indeterminate = checkedGovCheckboxes.length > 0 && checkedGovCheckboxes.length < allGovCheckboxes.length;
+  }
+
+  // Clear button
+  clearBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    locationList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.indeterminate = false;
+    });
+    locationList.querySelectorAll('ul.nested-list').forEach(u => { 
+      u.innerHTML = ''; 
+      u.style.display = 'none';
+      u.classList.remove('expanded');
+    });
+    // Reset all arrows and user-expanded markers
+    locationList.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+      arrow.classList.remove('rotated');
+    });
+    locationList.querySelectorAll('.user-expanded').forEach(item => {
+      item.classList.remove('user-expanded');
+    });
+    locationList.querySelectorAll('.search-hidden').forEach(item => {
+      item.classList.remove('search-hidden');
+    });
+    selectedInput.value = "Select Location";
+    locationSearch.value = ''; // Clear search
+    updateURL();
+    locationContainer.style.display = 'none';
+  });
+
+  function updateSelectedLocation() {
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+    
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+    
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+
+    selectedInput.value = text || "Select Location";
+  }
+
+ function updateURL() {
+    // FIXED: Get CURRENT URL parameters to preserve ALL existing filters
+    const currentParams = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
+    
+    // Copy ALL existing parameters except location ones
+    for (const [key, value] of currentParams) {
+        if (!['governate', 'district', 'city'].includes(key)) {
+            params.append(key, value);
+        }
+    }
+    
+    // Get selected governates
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.value);
+    selectedGovs.forEach(gov => params.append('governate', gov));
+    
+    // Get selected districts
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.value);
+    selectedDistricts.forEach(dist => params.append('district', dist));
+    
+    // Get selected cities
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.value);
+    selectedCities.forEach(city => params.append('city', city));
+
+    window.history.replaceState(null, '', '?' + params.toString());
+
+    // Refresh the results - FIXED: Use the proper URL with all parameters
+    const container = document.getElementById('job-list-container');
+    if (container) {
+        container.innerHTML = '<div class="loading">Loading...</div>';
+        fetch(`{% url 'job' %}?${params.toString()}`, { 
+            headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+        })
+        .then(r => r.text())
+        .then(html => { 
+            container.innerHTML = html; 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results</div>';
+        });
+    }
+}
+
+  // Initialize selected location from URL params
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Set governates
+    const govParams = urlParams.getAll('governate');
+    govParams.forEach(govId => {
+      const govCheckbox = locationList.querySelector(`input[name="governate"][value="${govId}"]`);
+      if (govCheckbox) {
+        govCheckbox.checked = true;
+        handleGovernateChange(govCheckbox);
+      }
+    });
+    
+    // Set districts
+    const districtParams = urlParams.getAll('district');
+    districtParams.forEach(distId => {
+      const distCheckbox = locationList.querySelector(`input[name="district"][value="${distId}"]`);
+      if (distCheckbox) {
+        distCheckbox.checked = true;
+        handleDistrictChange(distCheckbox);
+      }
+    });
+    
+    // Set cities
+    const cityParams = urlParams.getAll('city');
+    cityParams.forEach(cityId => {
+      const cityCheckbox = locationList.querySelector(`input[name="city"][value="${cityId}"]`);
+      if (cityCheckbox) {
+        cityCheckbox.checked = true;
+      }
+    });
+
+    updateSelectedLocation();
+    updateSelectAllState();
+  }
+
+  // Close all filter containers (if this function exists in your main code)
+  function closeAllFilterContainers() {
+    // Close other filter containers if needed
+    const otherContainers = document.querySelectorAll('.filter-container');
+    otherContainers.forEach(container => {
+      if (container !== locationContainer) {
+        container.style.display = 'none';
+      }
+    });
+  }
+
+  // Initialize from URL on page load
+  initializeFromURL();
+});
+</script>
+<div class="separators"></div>
+<div class="filter-item" id="toggle-job-type">
+  <label for="job-type">Job Type</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-job-type" class="input-value" placeholder="Select Type" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="job-type-container" id="job-type-container" style="display: none;">
+  <div class="oval-button-group">
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_full_time" value="full-time" class="oval-checkbox">
+      <label for="job_type_full_time" class="oval-button">Full-time</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_part_time" value="part-time" class="oval-checkbox">
+      <label for="job_type_part_time" class="oval-button">Part-time</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_contract" value="contract" class="oval-checkbox">
+      <label for="job_type_contract" class="oval-button">Contract</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_temporary" value="temporary" class="oval-checkbox">
+      <label for="job_type_temporary" class="oval-button">Temporary</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_freelance" value="freelance" class="oval-checkbox">
+      <label for="job_type_freelance" class="oval-button">Freelance</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="job_type" id="job_type_internship" value="internship" class="oval-checkbox">
+      <label for="job_type_internship" class="oval-button">Internship</label>
+    </div>
+  </div>
+  <hr>
+  <button type="button" class="btn-apply" id="clear-job-type-filter">Clear</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Toggle job type dropdown
+    document.getElementById('toggle-job-type').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('job-type-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            container.style.top = `${rect.bottom + window.scrollY}px`;
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox change → update filter
+    document.querySelectorAll('input[name="job_type"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const selected = Array.from(document.querySelectorAll('input[name="job_type"]:checked'))
+                                  .map(cb => cb.value);
+            updateJobTypeFilter(selected);
+        });
+    });
+
+    // Clear button
+    document.getElementById('clear-job-type-filter').addEventListener('click', function() {
+        clearJobTypeFilter();
+    });
+
+    // Initialize from URL
+    initJobTypeFilterFromURL();
+});
+
+function updateJobTypeFilter(selectedValues) {
+    // Update input display
+    const labels = selectedValues.map(val => {
+        const labelEl = document.querySelector(`label[for="job_type_${val.replace('-', '_')}"]`);
+        return labelEl ? labelEl.textContent : val;
+    });
+    document.getElementById('selected-job-type').value = labels.join(', ') || 'Select Type';
+
+    // Update URL params
+    const params = new URLSearchParams(window.location.search);
+    params.delete('job_type');
+    selectedValues.forEach(val => params.append('job_type', val));
+    fetchFilteredJobs(params);
+}
+
+function clearJobTypeFilter() {
+    document.querySelectorAll('input[name="job_type"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-job-type').value = 'Select Type';
+    const params = new URLSearchParams(window.location.search);
+    params.delete('job_type');
+    fetchFilteredJobs(params);
+}
+
+function initJobTypeFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const jobTypes = params.getAll('job_type');
+    if (jobTypes.length) {
+        jobTypes.forEach(val => {
+            const checkbox = document.querySelector(`input[name="job_type"][value="${val}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+        const labels = jobTypes.map(val => {
+            const labelEl = document.querySelector(`label[for="job_type_${val.replace('-', '_')}"]`);
+            return labelEl ? labelEl.textContent : val;
+        });
+        document.getElementById('selected-job-type').value = labels.join(', ');
+    }
+}
+
+function fetchFilteredJobs(params) {
+    const container = document.getElementById('job-list-container');
+    if (!container) return;
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    fetch(`{% url 'job' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(err => {
+        console.error(err);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+function closeAllFilterContainers() {
+    document.getElementById('job-type-container').style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#job-type-container') && !e.target.closest('#toggle-job-type')) {
+        closeAllFilterContainers();
+    }
+});
+</script>
+
+ <!-- Salary Range Filter -->
+<div class="filter-item" id="toggle-salary">
+  <label for="salary-range">Salary Range</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-salary" class="input-value" placeholder="Select Salary Range" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="salary-container" id="salary-container" style="display: none;">
+  <div class="price-inputs">
+  <label>From</label>
+  <input type="number" id="salary_from" placeholder="Min Salary">  <!-- Changed id -->
+  <label>To</label>
+  <input type="number" id="salary_to" placeholder="Max Salary">    <!-- Changed id -->
+</div>
+  <hr>
+  <button type="button" class="btn-apply" id="apply-salary-filter">Apply</button>
+  <button type="button" class="btn-apply" id="clear-salary-filter">Clear</button>
+</div>
+<script>
+document.getElementById('toggle-salary').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const container = document.getElementById('salary-container');
+    const wasVisible = container.style.display === 'block';
+
+    closeAllFilterContainers(); // Make sure this function is globally defined
+
+    if (!wasVisible) {
+        const rect = this.getBoundingClientRect();
+        container.style.top = `${rect.bottom + window.scrollY}px`;
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.display = 'block';
+    }
+});
+document.getElementById('apply-salary-filter').addEventListener('click', function () {
+    const salaryFrom = document.getElementById('salary_from').value;
+    const salaryTo = document.getElementById('salary_to').value;
+
+    const queryParams = new URLSearchParams(window.location.search);
+
+    if (salaryTo && salaryFrom && parseInt(salaryTo) < parseInt(salaryFrom)) {
+        alert('Maximum salary should be greater than minimum salary');
+        return;
+    }
+    
+    if (salaryFrom) {
+        queryParams.set('salary_from', salaryFrom);
+    } else {
+        queryParams.delete('salary_from');
+    }
+
+    if (salaryTo) {
+        queryParams.set('salary_to', salaryTo);
+    } else {
+        queryParams.delete('salary_to');
+    }
+
+    const selectedSalaryText = salaryFrom || salaryTo ? `${salaryFrom || '0'} - ${salaryTo || '∞'}` : "Select Salary Range";
+    document.getElementById('selected-salary').value = selectedSalaryText;
+
+    updateCarFilters();
+
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+    document.getElementById('salary-container').style.display = 'none';
+});
+document.getElementById('clear-salary-filter').addEventListener('click', function () {
+    // Clear the input fields (using correct IDs)
+    document.getElementById('salary_from').value = '';
+    document.getElementById('salary_to').value = '';
+    document.getElementById('selected-salary').value = "Select Salary Range";
+
+    // Update URL parameters
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('salary_from');
+    queryParams.delete('salary_to');
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+
+    // Refresh the results using the correct function
+    updateCarFilters();
+    
+    // Hide the salary container
+    document.getElementById('salary-container').style.display = 'none';
+});
+
+
+function updateCarFilters() {
+    const container = document.getElementById('job-list-container');
+    if (!container) {
+        console.error('Car list container not found');
+        return;
+    }
+    
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    const params = new URLSearchParams(window.location.search);
+
+    // Get all filter values
+    const salaryFrom = document.getElementById('salary_from').value;
+    const salaryTo = document.getElementById('salary_to').value;
+    // Add other filters as needed...
+
+    if (salaryFrom) params.set('salary_from', salaryFrom);
+    if (salaryTo) params.set('salary_to', salaryTo);
+
+    fetch(`{% url 'job' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        history.pushState(null, '', `?${params.toString()}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+    });
+}
+// Update the page load handler to use correct IDs
+window.addEventListener('load', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const salaryFrom = urlParams.get('salary_from') || '';
+    const salaryTo = urlParams.get('salary_to') || '';
+
+    // Use the correct IDs here too
+    document.getElementById('salary_from').value = salaryFrom;
+    document.getElementById('salary_to').value = salaryTo;
+
+    if (salaryFrom || salaryTo) {
+        document.getElementById('selected-salary').value = `${salaryFrom || '0'} - ${salaryTo || '∞'}`;
+    }
+});
+</script>
+
+<div class="filter-item" id="toggle-experience">
+  <label for="experience">Experience</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-experience" class="input-value" placeholder="Select Experience" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="experience-container" id="experience-container" style="display: none;">
+  <div class="oval-button-group">
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_none" value="none" class="oval-checkbox">
+      <label for="exp_none" class="oval-button">No Experience Required</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_newbie" value="newbie" class="oval-checkbox">
+      <label for="exp_newbie" class="oval-button">Newbie</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_1_2" value="1-2" class="oval-checkbox">
+      <label for="exp_1_2" class="oval-button">1-2 Years</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_3_5" value="3-5" class="oval-checkbox">
+      <label for="exp_3_5" class="oval-button">3-5 Years</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_6_10" value="6-10" class="oval-checkbox">
+      <label for="exp_6_10" class="oval-button">6-10 Years</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_11_15" value="11-15" class="oval-checkbox">
+      <label for="exp_11_15" class="oval-button">11-15 Years</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="checkbox" name="experience" id="exp_15plus" value="15+" class="oval-checkbox">
+      <label for="exp_15plus" class="oval-button">15+ Years</label>
+    </div>
+  </div>
+  <hr>
+  <button type="button" class="btn-apply" id="clear-experience-filter">Clear</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Toggle experience dropdown
+    document.getElementById('toggle-experience').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('experience-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            container.style.top = `${rect.bottom + window.scrollY}px`;
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox change → update filter
+    document.querySelectorAll('input[name="experience"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const selected = Array.from(document.querySelectorAll('input[name="experience"]:checked'))
+                                  .map(cb => cb.value);
+            updateExperienceFilter(selected);
+        });
+    });
+
+    // Clear button
+    document.getElementById('clear-experience-filter').addEventListener('click', function() {
+        clearExperienceFilter();
+    });
+
+    // Initialize from URL
+    initExperienceFilterFromURL();
+});
+
+function updateExperienceFilter(selectedValues) {
+    // Update input display
+    const labels = selectedValues.map(val => {
+        const labelEl = document.querySelector(`label[for="exp_${val.replace('+','plus').replace('-','_')}"]`);
+        return labelEl ? labelEl.textContent : val;
+    });
+    document.getElementById('selected-experience').value = labels.join(', ') || 'Select Experience';
+
+    // Update URL params
+    const params = new URLSearchParams(window.location.search);
+    params.delete('experience');
+    selectedValues.forEach(val => params.append('experience', val));
+    fetchFilteredJobs(params);
+}
+
+function clearExperienceFilter() {
+    document.querySelectorAll('input[name="experience"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-experience').value = 'Select Experience';
+    const params = new URLSearchParams(window.location.search);
+    params.delete('experience');
+    fetchFilteredJobs(params);
+}
+
+function initExperienceFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const expValues = params.getAll('experience');
+    if (expValues.length) {
+        expValues.forEach(val => {
+            const checkbox = document.querySelector(`input[name="experience"][value="${val}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+        const labels = expValues.map(val => {
+            const labelEl = document.querySelector(`label[for="exp_${val.replace('+','plus').replace('-','_')}"]`);
+            return labelEl ? labelEl.textContent : val;
+        });
+        document.getElementById('selected-experience').value = labels.join(', ');
+    }
+}
+
+function fetchFilteredJobs(params) {
+    const container = document.getElementById('job-list-container');
+    if (!container) return;
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    fetch(`{% url 'job' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(err => {
+        console.error(err);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+function closeAllFilterContainers() {
+    document.getElementById('experience-container').style.display = 'none';
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#experience-container') && !e.target.closest('#toggle-experience')) {
+        closeAllFilterContainers();
+    }
+});
+</script>
+
+<div class="filter-item" id="toggle-additional-filters">
+    <label for="additional_filters">Additional Filters</label>
+    <i class="fas fa-chevron-down dropdown-icons2"></i>
+    <input type="text" id="selected-additional-filters" class="input-value" placeholder="Select Filters" readonly>
+</div>
+
+<div class="additional-filters-container" id="additional-filters-container" style="display: none;">
+    <div class="additional-filters-inputs">
+        <!-- Number of Vacancies -->
+        <label>Number of Vacancies</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="number_of_vacancies" value="1" id="vacancy_1" class="oval-checkbox">
+            <label for="vacancy_1" class="oval-button">1</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="2" id="vacancy_2" class="oval-checkbox">
+            <label for="vacancy_2" class="oval-button">2</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="3" id="vacancy_3" class="oval-checkbox">
+            <label for="vacancy_3" class="oval-button">3</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="4" id="vacancy_4" class="oval-checkbox">
+            <label for="vacancy_4" class="oval-button">4</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="5" id="vacancy_5" class="oval-checkbox">
+            <label for="vacancy_5" class="oval-button">5</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="6" id="vacancy_6" class="oval-checkbox">
+            <label for="vacancy_6" class="oval-button">6</label>
+
+            <input type="checkbox" name="number_of_vacancies" value="6+" id="vacancy_6_plus" class="oval-checkbox">
+            <label for="vacancy_6_plus" class="oval-button">6+</label>
+        </div>
+
+        <!-- Qualifications -->
+        <label>Qualifications</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="qualifications" value="noschool" id="qualifications_noschool" class="oval-checkbox">
+            <label for="qualifications_noschool" class="oval-button">No Formal Education</label>
+
+            <input type="checkbox" name="qualifications" value="basic" id="qualifications_basic" class="oval-checkbox">
+            <label for="qualifications_basic" class="oval-button">Basic Education (Grades 1–10)</label>
+
+            <input type="checkbox" name="qualifications" value="secondary" id="qualifications_secondary" class="oval-checkbox">
+            <label for="qualifications_secondary" class="oval-button">General Secondary (Grades 11–12)</label>
+
+            <input type="checkbox" name="qualifications" value="vocational" id="qualifications_vocational" class="oval-checkbox">
+            <label for="qualifications_vocational" class="oval-button">Vocational / Technical Certificate</label>
+
+            <input type="checkbox" name="qualifications" value="diploma" id="qualifications_diploma" class="oval-checkbox">
+            <label for="qualifications_diploma" class="oval-button">Diploma </label>
+
+            <input type="checkbox" name="qualifications" value="bachelor" id="qualifications_bachelor" class="oval-checkbox">
+            <label for="qualifications_bachelor" class="oval-button">Bachelor’s Degree</label>
+
+            <input type="checkbox" name="qualifications" value="master" id="qualifications_master" class="oval-checkbox">
+            <label for="qualifications_master" class="oval-button">Master’s Degree</label>
+
+            <input type="checkbox" name="qualifications" value="phd" id="qualifications_phd" class="oval-checkbox">
+            <label for="qualifications_phd" class="oval-button">Doctorate (PhD)</label>
+        </div>
+
+        <!-- Gender -->
+        <label>Gender</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="gender" value="any" id="gender_any" class="oval-checkbox">
+            <label for="gender_any" class="oval-button">Any</label>
+
+            <input type="checkbox" name="gender" value="male" id="gender_male" class="oval-checkbox">
+            <label for="gender_male" class="oval-button">Male</label>
+
+            <input type="checkbox" name="gender" value="female" id="gender_female" class="oval-checkbox">
+            <label for="gender_female" class="oval-button">Female</label>
+        </div>
+
+        <!-- Working Days -->
+        <label>Working Days</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="working_days" value="2" id="working_days_2" class="oval-checkbox">
+            <label for="working_days_2" class="oval-button">2 days / week</label>
+
+            <input type="checkbox" name="working_days" value="3" id="working_days_3" class="oval-checkbox">
+            <label for="working_days_3" class="oval-button">3 days / week</label>
+
+            <input type="checkbox" name="working_days" value="4" id="working_days_4" class="oval-checkbox">
+            <label for="working_days_4" class="oval-button">4 days / week</label>
+
+            <input type="checkbox" name="working_days" value="5" id="working_days_5" class="oval-checkbox">
+            <label for="working_days_5" class="oval-button">5 days / week</label>
+
+            <input type="checkbox" name="working_days" value="6" id="working_days_6" class="oval-checkbox">
+            <label for="working_days_6" class="oval-button">6 days / week</label>
+
+            <input type="checkbox" name="working_days" value="7" id="working_days_7" class="oval-checkbox">
+            <label for="working_days_7" class="oval-button">7 days / week</label>
+        </div>
+
+        <!-- Working Hours -->
+        <label>Working Hours</label>
+        <div class="oval-button-group">
+            <input type="checkbox" name="working_hours" value="fixed" id="working_hours_fixed" class="oval-checkbox">
+            <label for="working_hours_fixed" class="oval-button">Fixed Working Hours</label>
+
+            <input type="checkbox" name="working_hours" value="shift" id="working_hours_shift" class="oval-checkbox">
+            <label for="working_hours_shift" class="oval-button">Shift</label>
+
+            <input type="checkbox" name="working_hours" value="hourly" id="working_hours_hourly" class="oval-checkbox">
+            <label for="working_hours_hourly" class="oval-button">Hourly</label>
+        </div>
+    </div>
+   
+    <div class="additional-filters-footer mt-3">
+        <button type="button" class="btn-apply mx-2" id="clear-additional-filters">Clear</button>
+        <!-- <button type="button" class="btn-apply" id="apply-additional-filters">Apply</button> -->
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+   
+    // Toggle additional filters container
+    document.getElementById('toggle-additional-filters')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('additional-filters-container');
+        const wasVisible = container.style.display === 'block';
+        
+        closeAllFilterContainers();
+        
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            container.style.top = `${rect.bottom + window.scrollY}px`;
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Toggle-able radio buttons for additional filters
+    document.querySelectorAll('.additional-filters-inputs .oval-radio').forEach(radio => {
+        radio.dataset.wasChecked = 'false';
+        
+        radio.addEventListener('click', function(e) {
+            const groupRadios = document.querySelectorAll(`input[name="${this.name}"]`);
+            
+            if (this.checked && this.dataset.wasChecked === 'true') {
+                groupRadios.forEach(r => {
+                    r.checked = false;
+                    r.dataset.wasChecked = 'false';
+                });
+            } else {
+                groupRadios.forEach(r => {
+                    r.checked = (r === this);
+                    r.dataset.wasChecked = (r === this).toString();
+                });
+            }
+            
+            updateSelectedFiltersDisplay();
+            updatejobFilters();
+        });
+    });
+
+    // Checkbox behavior for rental period and subtypes
+    document.querySelectorAll('.additional-filters-inputs .oval-checkbox, #subtype-options-container .oval-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectedFiltersDisplay();
+            updatejobFilters();
+        });
+    });
+
+    // Update selected filters display
+    function updateSelectedFiltersDisplay() {
+        const selectedFilters = [];
+        
+        // Number of Vacancies
+        const number_of_vacancies = Array.from(document.querySelectorAll('input[name="number_of_vacancies"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent);
+        if (number_of_vacancies.length > 0) {
+            selectedFilters.push(`number_of_vacancies: ${number_of_vacancies.join(', ')}`);
+        }
+
+        // Qualifications
+        const qualifications = Array.from(document.querySelectorAll('input[name="qualifications"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent);
+        if (qualifications.length > 0) {
+            selectedFilters.push(`Qualifications: ${qualifications.join(', ')}`);
+        }
+
+        // Gender
+        const genders = Array.from(document.querySelectorAll('input[name="gender"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent);
+        if (genders.length > 0) {
+            selectedFilters.push(`Gender: ${genders.join(', ')}`);
+        }
+
+        // Working Days
+        const workingDays = Array.from(document.querySelectorAll('input[name="working_days"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent);
+        if (workingDays.length > 0) {
+            selectedFilters.push(`Working Days: ${workingDays.join(', ')}`);
+        }
+
+        // Working Hours
+        const workingHours = Array.from(document.querySelectorAll('input[name="working_hours"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent);
+        if (workingHours.length > 0) {
+            selectedFilters.push(`Working Hours: ${workingHours.join(', ')}`);
+        }
+
+        // Update display
+        const displayInput = document.getElementById('selected-additional-filters');
+        if (selectedFilters.length > 0) {
+            displayInput.value = selectedFilters.join(' | ');
+            document.getElementById('toggle-additional-filters').classList.add('active');
+        } else {
+            displayInput.value = '';
+            document.getElementById('toggle-additional-filters').classList.remove('active');
+        }
+    }
+
+    // Main filter update function
+    function updatejobFilters() {
+        const container = document.getElementById('job-list-container');
+        if (!container) {
+            console.error('Heavy Vehicle list container not found');
+            return;
+        }
+        
+        container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+        
+        const params = new URLSearchParams(window.location.search);
+        
+        
+        // Number of number_of_vacancies
+        const number_of_vacancies = Array.from(document.querySelectorAll('input[name="number_of_vacancies"]:checked'))
+            .map(cb => cb.value);
+        if (number_of_vacancies.length > 0) {
+            params.set('number_of_vacancies', number_of_vacancies.join(','));
+        } else {
+            params.delete('number_of_vacancies');
+        }
+
+        // Qualifications
+        const qualifications = Array.from(document.querySelectorAll('input[name="qualifications"]:checked'))
+            .map(cb => cb.value);
+        if (qualifications.length > 0) {
+            params.set('qualifications', qualifications.join(','));
+        } else {
+            params.delete('qualifications');
+        }
+
+        // Gender
+        const genders = Array.from(document.querySelectorAll('input[name="gender"]:checked'))
+            .map(cb => cb.value);
+        if (genders.length > 0) {
+            params.set('gender', genders.join(','));
+        } else {
+            params.delete('gender');
+        }
+
+        // Working Days
+        const workingDays = Array.from(document.querySelectorAll('input[name="working_days"]:checked'))
+            .map(cb => cb.value);
+        if (workingDays.length > 0) {
+            params.set('working_days', workingDays.join(','));
+        } else {
+            params.delete('working_days');
+        }
+
+        // Working Hours
+        const workingHours = Array.from(document.querySelectorAll('input[name="working_hours"]:checked'))
+            .map(cb => cb.value);
+        if (workingHours.length > 0) {
+            params.set('working_hours', workingHours.join(','));
+        } else {
+            params.delete('working_hours');
+        }
+    
+        fetch(`{% url 'job' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.text();
+        })
+        .then(html => {
+            container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+        });
+    }
+
+    // Initialize from URL
+    function initializeFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Payment Method
+        const paymentMethod = urlParams.get('payment_method');
+        if (paymentMethod) {
+            const radio = document.querySelector(`input[name="payment_method"][value="${paymentMethod}"]`);
+            if (radio) {
+                radio.checked = true;
+                radio.dataset.wasChecked = 'true';
+            }
+        }
+        
+        // Rental Period
+        const rentalPeriod = urlParams.get('rental_period');
+        if (rentalPeriod) {
+            rentalPeriod.split(',').forEach(value => {
+                const checkbox = document.querySelector(`input[name="rental_period"][value="${value}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        
+        // Subtype
+        const subType = urlParams.get('sub_type');
+        if (subType) {
+            const mainType = urlParams.get('main_type');
+            if (mainType && subtypeOptions[mainType]) {
+                setupSubtypeFilter(mainType);
+                
+                subType.split(',').forEach(value => {
+                    const checkbox = document.querySelector(`input[name="sub_type"][value="${value}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+        }
+        
+        updateSelectedFiltersDisplay();
+    }
+
+    // Setup subtype filter based on main type
+    function setupSubtypeFilter(mainType) {
+        const container = document.getElementById('subtype-filter-container');
+        const optionsContainer = document.getElementById('subtype-options-container');
+        
+        if (!subtypeOptions[mainType] || subtypeOptions[mainType].length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        
+        // Clear existing options
+        optionsContainer.innerHTML = '';
+        
+        // Add new options
+        subtypeOptions[mainType].forEach(subtype => {
+            const id = `sub_type_${subtype.toLowerCase().replace(/ /g, '_')}`;
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'sub_type';
+            checkbox.id = id;
+            checkbox.value = subtype;
+            checkbox.className = 'oval-checkbox';
+            
+            const label = document.createElement('label');
+            label.htmlFor = id;
+            label.className = 'oval-button';
+            label.textContent = subtype;
+            
+            optionsContainer.appendChild(checkbox);
+            optionsContainer.appendChild(label);
+            
+            // Add event listener
+            checkbox.addEventListener('change', function() {
+                updateSelectedFiltersDisplay();
+                updatejobFilters();
+            });
+        });
+        
+        container.style.display = 'block';
+    }
+
+    // Apply button
+    document.getElementById('apply-additional-filters')?.addEventListener('click', function() {
+        document.getElementById('additional-filters-container').style.display = 'none';
+        updatejobFilters();
+    });
+
+    // Clear button
+    document.getElementById('clear-additional-filters')?.addEventListener('click', function() {
+        // Clear all radio buttons
+        document.querySelectorAll('.additional-filters-inputs input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+            radio.dataset.wasChecked = 'false';
+        });
+        
+        // Clear all checkboxes (including subtypes)
+        document.querySelectorAll('.additional-filters-inputs input[type="checkbox"], #subtype-options-container input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Update URL
+        const params = new URLSearchParams(window.location.search);
+        params.delete('number_of_vacancies');
+        params.delete('qualifications');
+        params.delete('gender');
+        params.delete('working_days');
+        params.delete('working_hours');
+        window.history.replaceState(null, '', `?${params.toString()}`);
+
+        window.history.replaceState(null, '', `?${params.toString()}`);
+        
+        updateSelectedFiltersDisplay();
+        updatejobFilters();
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#additional-filters-container') && 
+            !e.target.closest('#toggle-additional-filters')) {
+            document.getElementById('additional-filters-container').style.display = 'none';
+        }
+    });
+
+    
+function closeAllFilterContainers() {
+    document.querySelectorAll('.filter-container').forEach(container => {
+        container.style.display = 'none';
+    });
+}
+
+document.addEventListener('click', function (e) {
+    if (!e.target.closest('.filter-item') && !e.target.closest('.filter-container')) {
+        closeAllFilterContainers();
+    }
+});
+
+    // Watch for main_type changes to show/hide subtype filter
+    function watchForMainTypeChanges() {
+        // Watch URL changes for main_type parameter
+        function checkURLForMainType() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mainType = urlParams.get('main_type');
+            if (mainType && subtypeOptions[mainType]) {
+                setupSubtypeFilter(mainType);
+            } else {
+                document.getElementById('subtype-filter-container').style.display = 'none';
+                // Clear any selected subtypes from URL
+                const params = new URLSearchParams(window.location.search);
+                params.delete('sub_type');
+                window.history.replaceState(null, '', `?${params.toString()}`);
+            }
+        }
+        
+        // Check on initial load
+        checkURLForMainType();
+        
+        // Also watch for popstate events (back/forward navigation)
+        window.addEventListener('popstate', function() {
+            checkURLForMainType();
+        });
+        
+        // If you have a main type dropdown/selector, add event listener here
+        // Example:
+        // document.querySelector('select[name="main_type"]')?.addEventListener('change', function() {
+        //     // Handle main type change
+        // });
+    }
+
+    // Initialize
+    initializeFromURL();
+    watchForMainTypeChanges();
+});
+</script>
+
+<script>
+function closeAllFilterContainers() {
+    document.getElementById('location-list-container').style.display = 'none';
+    document.getElementById('job-type-container').style.display = 'none';
+    document.getElementById('salary-container').style.display = 'none';
+    document.getElementById('experience-container').style.display = 'none';
+    document.getElementById('additional-filters-container').style.display = 'none';
+}
+
+// Event listeners for each filter toggle
+document.addEventListener('DOMContentLoaded', function() {
+    // Location filter
+    document.getElementById('toggle-location-filter')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeAllFilterContainers();
+        document.getElementById('location-list-container').style.display = 'block';
+    });
+
+
+    // Product type filter
+    document.getElementById('toggle-job-type')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeAllFilterContainers();
+        document.getElementById('job-type-container').style.display = 'block';
+    });
+
+    // Condition filter
+    document.getElementById('toggle-experience')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeAllFilterContainers();
+        document.getElementById('experience-container').style.display = 'block';
+    });
+
+    // Salary filter
+    document.getElementById('toggle-salary')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeAllFilterContainers();
+        document.getElementById('salary-container').style.display = 'block';
+    });
+
+    // Additional filters
+    document.getElementById('toggle-additional-filters')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeAllFilterContainers();
+        document.getElementById('additional-filters-container').style.display = 'block';
+    });
+
+    // Close all containers when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.filter-item') && 
+            !e.target.closest('#location-list-container') && 
+            !e.target.closest('#salary-container') && 
+            !e.target.closest('#job-type-container') && 
+            !e.target.closest('#experience-container') && 
+            !e.target.closest('#additional-filters-container')) {
+            closeAllFilterContainers();
+        }
+    });
+
+    // Prevent containers from closing when clicking inside them
+    document.getElementById('location-list-container')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('job-type-container')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('salary-container')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('experience-container')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('additional-filters-container')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+</script>
+ 
+                </div>
+            </div>
+        </form>
+      
+    </div>
+</div>
+<div class="list-item feature-style2-three pd-0" id="job-list-container" >
+        {% include 'Job/job_list_partial.html' %}
+</div>
+
+ 
+ <!-- Add some CSS to handle the filled state -->
+ <style>
+ .job-listing-container{
+    margin-top:-100px;
+    
+ }
+ #job-list-container{
+    margin-left:-10px;
+ }
+     .icon-22 {
+         transition: color 0.3s ease; /* For smooth transition */
+     }
+     
+     .icon-22.filled {
+     color: red;  /* Change color when the icon is filled */
+     font-weight: bold;  /* Make the icon bold */
+ }
+ 
+ </style> 
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        // salary Range
+        const salaryFromInput = document.querySelector('#salary_from');
+        const salaryToInput = document.querySelector('#salary_to');
+        const salaryFrom = new URLSearchParams(window.location.search).get('salary_from');
+        const salaryTo = new URLSearchParams(window.location.search).get('salary_to');
+
+        if (salaryFromInput) salaryFromInput.value = salaryFrom || '';
+        if (salaryToInput) salaryToInput.value = salaryTo || '';
+
+        const salaryField = document.querySelector('#selected-salary');
+        if (salaryField) {
+            if (salaryFrom && salaryTo) {
+                salaryField.value = `${salaryFrom} - ${salaryTo}`;
+            } else if (salaryFrom) {
+                salaryField.value = `From ${salaryFrom}`;
+            } else if (salaryTo) {
+                salaryField.value = `Up to ${salaryTo}`;
+            } else {
+                salaryField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = new URLSearchParams(window.location.search).get('year_from');
+        const yearTo = new URLSearchParams(window.location.search).get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = new URLSearchParams(window.location.search).get('kilometers_from');
+        const kmTo = new URLSearchParams(window.location.search).get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters
+        const governateField = document.querySelector('#selected-governate');
+        const districtField = document.querySelector('#selected-district');
+        const cityField = document.querySelector('#selected-city');
+
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        if (governateField) governateField.value = governates.join(', ') || '';
+        if (districtField) districtField.value = districts.join(', ') || '';
+        if (cityField) cityField.value = cities.join(', ') || '';
+
+        // 🔁 Additional Filters Display
+const additionalFiltersField = document.querySelector('#selected-additional-filters');
+if (additionalFiltersField) {
+    const selectedFilters = [];
+
+    // ✅ Delivery
+    const provide = params.get('provide');
+    if (provide) {
+        selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+    }
+
+    // ✅ Usage
+    const usage = params.getAll('usage');
+    if (usage.length > 0) {
+        selectedFilters.push(`Usage: ${usage.join(', ')}`);
+    }
+
+    // ✅ Service Type (map values to labels)
+    const service_type = params.getAll('service_type');
+    if (service_type.length > 0) {
+        const accLabels = service_type.map(a => {
+            switch (a) {
+                case 'box': return 'Original Box';
+                case 'charger': return 'Charger';
+                case 'headset': return 'Headset';
+                default: return a;
+            }
+        });
+        selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+    }
+
+    // ✅ Listing type, age, ads_posted, condition
+    const multiKeys = {
+        number_of_vacancies: 'Number Of Vacancies',
+        qualifications: 'Ads Posted',
+        gender: 'Gender',
+        working_days:'Working Days',
+        working_hours:'Working Hours'
+    };
+    Object.entries(multiKeys).forEach(([key, label]) => {
+        const values = params.getAll(key).flatMap(v => v.split(','));
+        if (values.length > 0) {
+            selectedFilters.push(`${label}: ${values.join(', ')}`);
+        }
+    });
+
+    // Update field
+    additionalFiltersField.value = selectedFilters.join(' | ');
+
+    // Toggle active class
+    const toggleEl = document.getElementById('toggle-additional-filters');
+    if (toggleEl) {
+        toggleEl.classList.toggle('active', selectedFilters.length > 0);
+    }
+}
+
+        // Other Filters
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            salaryFrom && salaryTo ? `salary: ${salaryFrom} - ${salaryTo}` : 
+                salaryFrom ? `salary from ${salaryFrom}` : 
+                salaryTo ? `salary to ${salaryTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+    }
+
+    // Unified function to handle filter removal
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        // Handle different parameter types
+        if (['job_type'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-job-type`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+        else if (['experience'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-experience`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+        else if (['job_category'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-job-category`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+        else if (['category'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-category`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+        
+        // Handle different parameter types
+        else if (['number_of_vacancies','qualifications','gender','working_hours','working_days'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            /// Update the display field if it exists
+const displayField = document.querySelector(`#selected-additional-filters`);
+if (displayField) {
+    const allValues = ['number_of_vacancies','qualifications','gender','working_hours','working_days']
+        .flatMap(k => params.getAll(k).flatMap(v => v.split(',')));
+
+    displayField.value = allValues.join(', ') || '';
+}
+
+        } 
+       
+else if (['governate', 'district', 'city'].includes(key)) {
+    // Remove the value from its parameter
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v && v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Handle hierarchy clearing
+    if (key === 'governate') {
+        // Clear districts and cities if governate removed
+        params.delete('district');
+        params.delete('city');
+        document.querySelectorAll(`input[name="district"], input[name="city"]`).forEach(cb => cb.checked = false);
+    } else if (key === 'district') {
+        // Clear cities if district removed
+        params.delete('city');
+        document.querySelectorAll(`input[name="city"]`).forEach(cb => cb.checked = false);
+    }
+
+    // ✅ Collect selected labels instead of IDs
+    const selectedLabels = [];
+    ['governate', 'district', 'city'].forEach(type => {
+        document.querySelectorAll(`input[name="${type}"]:checked`).forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`);
+            if (label) {
+                selectedLabels.push(label.innerText.trim());
+            } else {
+                // fallback if label not found
+                selectedLabels.push(cb.value);
+            }
+        });
+    });
+
+    // Update the display field with human-readable names
+    const displayField = document.querySelector('#selected-location');
+    if (displayField) {
+        displayField.value = selectedLabels.length > 0 ? selectedLabels.join(', ') : '';
+    }
+}
+
+        else if (key === 'salary_range') {
+    const [from, to] = value.split('-');
+    params.delete('salary_from');
+    params.delete('salary_to');
+    const fromInput = document.querySelector('#salary_from');
+    const toInput = document.querySelector('#salary_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-salary');
+    if (displayField) displayField.value = '';
+}
+        else if (key === 'sort') {
+            // Special case for sort
+            params.delete('sort');
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    // Function to update content via AJAX
+    function updateContent(params) {
+        fetch(`{% url 'job' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById('job-list-container');
+            if (container) container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+            updateFilterDisplay(); // Update filter display after content loads
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+// Clear all filters
+document.body.addEventListener('click', function(e) {
+    if (e.target.matches('#clear-all-filters')) {
+        e.preventDefault();
+
+        // Clear all checkboxes and radios
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear all input fields
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+            if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                input.value = '';
+            }
+        });
+
+        // Clear all hidden/selected fields
+        const filterFields = [
+            '#selected-salary', '#selected-year', '#selected-kilometer',
+            '#selected-governate', '#selected-district', '#selected-city',
+            '#selected-all-filters', '#selected-additional-filters',
+            '#selected-listing-type', '#selected-category', '#selected-age', 
+            '#selected-subcategory','#selected-product-type'
+        ];
+        filterFields.forEach(id => {
+            const el = document.querySelector(id);
+            if (el) el.value = '';
+        });
+
+        // ✅ Preserve "listing_type"
+        const url = new URL(window.location.href);
+        const listingType = url.searchParams.get('listing_type');
+
+        // Clear all params first
+        url.search = '';
+
+        // Restore only listing_type
+        if (listingType) {
+            url.searchParams.set('listing_type', listingType);
+        }
+
+        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const container = document.querySelector('#job-list-container');
+                if (container) container.innerHTML = html;
+                history.pushState(null, '', url.toString());
+                updateFilterDisplay();
+            })
+            .catch(err => console.error('Error:', err));
+    }
+});
+
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script> 
+        <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+{% include 'footer.html' %}

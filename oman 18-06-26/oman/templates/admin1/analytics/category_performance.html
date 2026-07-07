@@ -1,0 +1,171 @@
+{% extends 'admin1/base.html' %}
+{% load static %}
+
+{% block title %}Category Performance{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">📊 Category Performance</h1>
+            <a href="?export=1&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                <i class="fas fa-download me-2"></i> Export as CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-auto">
+                            <label class="form-label">Date From</label>
+                            <input type="date" name="date_from" class="form-control" value="{{ date_from|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label">Date To</label>
+                            <input type="date" name="date_to" class="form-control" value="{{ date_to|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-auto align-self-end">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="?clear=1" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Category Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoryChart" style="height: 400px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Category Details</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Category</th>
+                                    <th class="text-center">Total</th>
+                                    <th class="text-center">Approved</th>
+                                    <th class="text-center">Pending</th>
+                                    <th class="text-center">Rejected</th>
+                                    <th class="text-center">Sold Out</th>
+                                    <th class="text-end">Avg Price</th>
+                                    <th class="text-end">Total Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in category_data %}
+                                <tr>
+                                    <td><strong>{{ cat.name }}</strong></td>
+                                    <td class="text-center">{{ cat.total_listings }}</td>
+                                    <td class="text-center">{{ cat.approved }}</td>
+                                    <td class="text-center">{{ cat.pending }}</td>
+                                    <td class="text-center">{{ cat.rejected }}</td>
+                                    <td class="text-center">{{ cat.soldout }}</td>
+                                    <td class="text-end">{{ cat.avg_price_formatted }}</td>
+                                    <td class="text-end">{{ cat.total_price_formatted }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">No category data available.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        const labels = [{% for cat in category_data %}'{{ cat.name }}',{% endfor %}];
+        const totalData = [{% for cat in category_data %}{{ cat.total_listings }},{% endfor %}];
+        const approvedData = [{% for cat in category_data %}{{ cat.approved }},{% endfor %}];
+        const pendingData = [{% for cat in category_data %}{{ cat.pending }},{% endfor %}];
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Listings',
+                        data: totalData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1,
+                        stack: 'stack0',
+                    },
+                    {
+                        label: 'Approved',
+                        data: approvedData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1,
+                        stack: 'stack1',
+                    },
+                    {
+                        label: 'Pending',
+                        data: pendingData,
+                        backgroundColor: 'rgba(255, 206, 86, 0.5)',
+                        borderColor: 'rgb(255, 206, 86)',
+                        borderWidth: 1,
+                        stack: 'stack1',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Category Performance Overview'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Listings'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

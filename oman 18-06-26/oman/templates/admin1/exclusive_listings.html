@@ -1,0 +1,1185 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<style>
+    /* ========== TEAL COLOR SYSTEM (#15818E) ========== */
+    :root {
+        --primary-teal: #15818E;
+        --primary-teal-dark: #0e6a75;
+        --primary-teal-light: #1a9aaa;
+        --primary-teal-soft: #e6f4f5;
+        --primary-teal-bg: #f0f8f9;
+        --gray-50: #f8f9fa;
+        --gray-100: #f1f3f5;
+        --gray-200: #e9ecef;
+        --gray-600: #6c757d;
+        --gray-700: #495057;
+        --gray-800: #343a40;
+        --gray-900: #212529;
+        --white: #ffffff;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fb 0%, #eef2f6 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        min-height: 100vh;
+    }
+
+    .container-fluid {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 20px 24px !important;
+    }
+
+    /* Modern Header with Teal Theme */
+    .exclusive-header {
+        background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-teal-dark) 100%);
+        margin-bottom: 28px;
+        padding: 28px 32px;
+        border-radius: 24px;
+        color: white;
+        box-shadow: 0 12px 25px -10px rgba(21, 129, 142, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .exclusive-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .header-icon-teal {
+        width: 56px;
+        height: 56px;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(8px);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .header-subtitle {
+        opacity: 0.88;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .stat-badge-teal {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(8px);
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 500;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Sub-Admin Alert */
+    .subadmin-teal {
+        background: linear-gradient(135deg, var(--primary-teal-soft), #f9fef9);
+        border-radius: 20px;
+        padding: 14px 24px;
+        border-left: 5px solid var(--primary-teal);
+        margin-bottom: 28px;
+    }
+
+    .alert-icon-teal {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-teal-soft);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-teal);
+        font-size: 18px;
+    }
+
+    /* Stats Grid */
+    .stats-grid-teal {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card-teal {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+        border: 1px solid var(--gray-200);
+    }
+
+    .stat-card-teal:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 28px -12px rgba(21, 129, 142, 0.2);
+        border-color: var(--primary-teal-light);
+    }
+
+    .stat-icon-teal {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .stat-icon-teal.purple { background: #e6f4f5; color: var(--primary-teal); }
+    .stat-icon-teal.teal { background: #e6f4f5; color: var(--primary-teal); }
+    .stat-icon-teal.amber { background: #fef3c7; color: #f59e0b; }
+    .stat-icon-teal.blue { background: #e0f2fe; color: #0ea5e9; }
+
+    .stat-info-teal {
+        flex: 1;
+    }
+
+    .stat-label-teal {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value-teal {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    /* Premium Card */
+    .premium-card-teal {
+        background: white;
+        border-radius: 28px;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border: 1px solid var(--gray-200);
+    }
+
+    .card-header-teal {
+        padding: 20px 28px;
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .queue-badge-teal {
+        background: linear-gradient(135deg, var(--primary-teal), var(--primary-teal-light));
+        color: white;
+        padding: 6px 18px;
+        border-radius: 40px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .btn-refresh-teal {
+        background: white;
+        border: 1px solid var(--gray-200);
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-weight: 500;
+        transition: all 0.2s;
+        color: var(--gray-700);
+    }
+
+    .btn-refresh-teal:hover {
+        background: var(--primary-teal-soft);
+        border-color: var(--primary-teal);
+        color: var(--primary-teal);
+    }
+
+    .card-body-teal {
+        padding: 24px 28px;
+    }
+
+    /* Bulk Actions Bar */
+    .bulk-bar-teal {
+        background: var(--primary-teal-bg);
+        padding: 16px 20px;
+        border-radius: 20px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(21,129,142,0.15);
+    }
+
+    .btn-bulk-teal {
+        padding: 8px 22px;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 13px;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .btn-bulk-approve-teal {
+        background: var(--success);
+        color: white;
+    }
+    .btn-bulk-approve-teal:hover:not(:disabled) { background: #059669; transform: scale(0.98); }
+
+    .btn-bulk-reject-teal {
+        background: var(--danger);
+        color: white;
+    }
+    .btn-bulk-reject-teal:hover:not(:disabled) { background: #dc2626; }
+
+    .btn-bulk-convert-teal {
+        background: var(--gray-600);
+        color: white;
+    }
+    .btn-bulk-convert-teal:hover:not(:disabled) { background: var(--gray-700); }
+
+    .btn-bulk-teal:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .selected-badge-teal {
+        background: white;
+        padding: 6px 18px;
+        border-radius: 40px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--primary-teal);
+        border: 1px solid var(--gray-200);
+    }
+
+    /* Modern Table */
+    .table-teal-wrapper {
+        overflow-x: auto;
+        border-radius: 20px;
+    }
+
+    .table-teal {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-teal thead th {
+        padding: 16px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--gray-600);
+        background: var(--gray-50);
+        border-bottom: 2px solid var(--gray-200);
+    }
+
+    .table-teal tbody tr {
+        border-bottom: 1px solid var(--gray-100);
+        transition: background 0.2s;
+    }
+
+    .table-teal tbody tr:hover {
+        background: var(--primary-teal-bg);
+    }
+
+    .table-teal td {
+        padding: 18px 14px;
+        vertical-align: middle;
+    }
+
+    /* Checkbox Teal */
+    .checkbox-teal {
+        position: relative;
+        display: inline-block;
+    }
+
+    .checkbox-teal input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .checkbox-teal label {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 2px solid var(--gray-300);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .checkbox-teal input:checked + label {
+        background: var(--primary-teal);
+        border-color: var(--primary-teal);
+    }
+
+    .checkbox-teal input:checked + label::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 11px;
+        color: white;
+        position: absolute;
+        left: 3px;
+        top: 2px;
+    }
+
+    /* ID Badge */
+    .id-badge-teal {
+        background: var(--primary-teal-soft);
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary-teal);
+    }
+
+    /* Type Badge */
+    .type-badge-teal {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 40px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .type-badge-teal.type-land { background: #d1fae5; color: #065f46; }
+    .type-badge-teal.type-villa { background: #fed7aa; color: #9a3412; }
+    .type-badge-teal.type-apartment { background: #dbeafe; color: #1e40af; }
+    .type-badge-teal.type-commercial { background: #fce7f3; color: #9d174d; }
+
+    /* Property Info */
+    .property-title-teal {
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 4px;
+    }
+
+    .property-meta-teal {
+        font-size: 11px;
+        color: var(--gray-500);
+    }
+
+    .property-meta-teal i {
+        margin-right: 4px;
+        color: var(--primary-teal);
+    }
+
+    /* Price */
+    .price-value-teal {
+        font-weight: 800;
+        font-size: 16px;
+        color: var(--gray-800);
+    }
+
+    .currency-teal {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--gray-500);
+    }
+
+    /* Owner Info */
+    .owner-name-teal {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--gray-700);
+        margin-bottom: 2px;
+    }
+
+    .owner-name-teal i, .owner-email-teal i {
+        margin-right: 6px;
+        font-size: 11px;
+        color: var(--primary-teal);
+    }
+
+    .owner-email-teal {
+        font-size: 11px;
+        color: var(--gray-500);
+    }
+
+    /* Date Info */
+    .date-info-teal {
+        font-size: 13px;
+        color: var(--gray-700);
+    }
+
+    .date-info-teal .time-teal {
+        font-size: 11px;
+        color: var(--gray-500);
+    }
+
+    /* Action Buttons */
+    .action-buttons-teal {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn-teal {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .view-btn-teal {
+        background: var(--primary-teal-soft);
+        color: var(--primary-teal);
+    }
+    .view-btn-teal:hover {
+        background: var(--primary-teal);
+        color: white;
+    }
+
+    .approve-btn-teal {
+        background: #d1fae5;
+        color: var(--success);
+    }
+    .approve-btn-teal:hover {
+        background: var(--success);
+        color: white;
+    }
+
+    .reject-btn-teal {
+        background: #fee2e2;
+        color: var(--danger);
+    }
+    .reject-btn-teal:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    .convert-btn-teal {
+        background: #e5e7eb;
+        color: var(--gray-600);
+    }
+    .convert-btn-teal:hover {
+        background: var(--gray-600);
+        color: white;
+    }
+
+    /* Pagination */
+    .pagination-list-teal {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .pagination-list-teal li a,
+    .pagination-list-teal li span {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--primary-teal);
+        font-weight: 500;
+        font-size: 13px;
+        transition: all 0.2s;
+        background: white;
+        border: 1px solid var(--gray-200);
+    }
+
+    .pagination-list-teal li a:hover {
+        background: var(--primary-teal);
+        color: white;
+        border-color: var(--primary-teal);
+    }
+
+    .pagination-list-teal li.active span {
+        background: var(--primary-teal);
+        color: white;
+        border-color: var(--primary-teal);
+    }
+
+    .pagination-info-teal {
+        font-size: 13px;
+        color: var(--gray-500);
+    }
+
+    /* Empty State */
+    .empty-state-teal {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-icon-teal {
+        font-size: 72px;
+        color: var(--gray-300);
+        margin-bottom: 20px;
+    }
+
+    .empty-state-teal h4 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--gray-800);
+    }
+
+    .empty-state-teal p {
+        color: var(--gray-500);
+        margin-bottom: 24px;
+    }
+
+    .btn-empty-teal {
+        background: linear-gradient(135deg, var(--primary-teal), var(--primary-teal-dark));
+        color: white;
+        border: none;
+        padding: 10px 28px;
+        border-radius: 40px;
+        font-weight: 500;
+    }
+
+    /* Modal */
+    .modal-teal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-teal.show {
+        display: flex;
+    }
+
+    .modal-overlay-teal {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-container-teal {
+        position: relative;
+        background: white;
+        border-radius: 28px;
+        width: 90%;
+        max-width: 440px;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        overflow: hidden;
+    }
+
+    .modal-header-teal {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+    }
+
+    .modal-header-teal h5 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--gray-800);
+    }
+
+    .modal-close-teal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--gray-500);
+    }
+
+    .modal-body-teal {
+        padding: 24px;
+    }
+
+    .modal-footer-teal {
+        padding: 16px 24px;
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background: var(--gray-50);
+    }
+
+    .btn-cancel-teal {
+        padding: 10px 24px;
+        border-radius: 40px;
+        border: 1px solid var(--gray-200);
+        background: white;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .btn-confirm-teal {
+        padding: 10px 24px;
+        border-radius: 40px;
+        border: none;
+        background: var(--primary-teal);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Toast */
+    .toast-container-teal {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1100;
+    }
+
+    .toast-teal {
+        background: white;
+        border-radius: 14px;
+        padding: 12px 22px;
+        margin-top: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideIn 0.3s ease;
+        border-left: 4px solid var(--primary-teal);
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-teal.success { border-left-color: var(--success); }
+    .toast-teal.error { border-left-color: var(--danger); }
+
+    /* Loading */
+    .loading-overlay-teal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .spinner-teal {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-top-color: var(--primary-teal);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .stats-grid-teal {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid-teal {
+            grid-template-columns: 1fr;
+        }
+        .exclusive-header {
+            padding: 20px;
+        }
+        .table-teal thead {
+            display: none;
+        }
+        .table-teal tbody tr {
+            display: block;
+            margin-bottom: 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            padding: 12px;
+        }
+        .table-teal td {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .table-teal td:before {
+            content: attr(data-label);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 mt-0 pt-0">
+    <!-- Modern Header with Teal Theme -->
+    <div class="exclusive-header">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon-teal">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div>
+                        <h1 class="h3 mb-1 fw-bold">Exclusive Listings</h1>
+                        <p class="header-subtitle mb-0">Manage "Sell It For Me" premium service requests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-3">
+                <div class="stat-badge-teal">
+                    <i class="fas fa-clock me-2"></i>
+                    <span>Pending: {{ total_count|default:"0" }}</span>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-Admin Alert -->
+    {% if is_subadmin %}
+    <div class="subadmin-teal">
+        <div class="d-flex align-items-center gap-3">
+            <div class="alert-icon-teal"><i class="fas fa-user-shield"></i></div>
+            <div class="flex-grow-1">
+                <strong>Sub-Admin Access</strong> — You can approve, reject, or convert exclusive requests.
+            </div>
+            <button type="button" class="alert-close" data-bs-dismiss="alert" style="background:none; border:none; font-size:22px; cursor:pointer;">&times;</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats Row -->
+    <div class="stats-grid-teal">
+       
+    </div>
+
+    <!-- Main Card -->
+    <div class="premium-card-teal">
+        <div class="card-header-teal">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="queue-badge-teal">
+                        <i class="fas fa-fire me-1"></i> Exclusive Queue
+                    </div>
+                    <h5 class="mb-0 fw-semibold">Pending Requests</h5>
+                </div>
+                <button class="btn-refresh-teal" id="refreshBtn">
+                    <i class="fas fa-arrows-rotate me-2"></i> Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-body-teal">
+            {% if exclusive_listings %}
+            <!-- Bulk Actions Bar -->
+            <div class="bulk-bar-teal">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn-bulk-teal btn-bulk-approve-teal" id="bulkApproveExclusive" disabled>
+                            <i class="fas fa-check-circle me-2"></i> Approve
+                        </button>
+                        <button class="btn-bulk-teal btn-bulk-reject-teal" id="bulkRejectExclusive" disabled>
+                            <i class="fas fa-times-circle me-2"></i> Reject
+                        </button>
+                        <!-- <button class="btn-bulk-teal btn-bulk-convert-teal" id="bulkConvertNormal" disabled>
+                            <i class="fas fa-exchange-alt me-2"></i> Convert to Normal
+                        </button> -->
+                    </div>
+                    <div class="selected-badge-teal" id="selectedCount">
+                        <i class="fas fa-check-square me-1"></i> <span>0 selected</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modern Table -->
+            <div class="table-teal-wrapper">
+                <table class="table-teal">
+                    <thead>
+                        <tr>
+                            <th class="col-checkbox">
+                                <div class="checkbox-teal">
+                                    <input type="checkbox" id="selectAll">
+                                    <label for="selectAll"></label>
+                                </div>
+                            </th>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Property Details</th>
+                            <th>Price</th>
+                            <th>Owner</th>
+                            <th>Request Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in exclusive_listings %}
+                        <tr class="listing-row" data-type="{{ item.type }}" data-id="{{ item.id }}">
+                            <td class="col-checkbox">
+                                <div class="checkbox-teal">
+                                    <input type="checkbox" class="item-checkbox" id="item_{{ item.id }}" value="{{ item.id }}">
+                                    <label for="item_{{ item.id }}"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="id-badge-teal">#{{ item.id }}</span>
+                            </td>
+                            <td>
+                                <span class="type-badge-teal type-{{ item.type|lower }}">
+                                    <i class="fas fa-building me-1"></i> {{ item.display_type }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="property-info-teal">
+                                    <div class="property-title-teal">{{ item.title|truncatechars:50 }}</div>
+                                    <div class="property-meta-teal">
+                                        <i class="fas fa-tag"></i> Listing ID: {{ item.id }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="price-value-teal">{{ item.price }} <span class="currency-teal">OMR</span></div>
+                            </td>
+                            <td>
+                                <div class="owner-info-teal">
+                                    <div class="owner-name-teal">
+                                        <i class="fas fa-user-circle"></i> {{ item.user.username }}
+                                    </div>
+                                    <div class="owner-email-teal">
+                                        <i class="fas fa-envelope"></i> {{ item.user.email|default:"No email" }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="date-info-teal">
+                                    <div>{{ item.created_at|date:"Y-m-d" }}</div>
+                                    <div class="time-teal">{{ item.created_at|date:"H:i" }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="action-buttons-teal">
+                                    <a href="{% url 'property_detail_view' item.type item.id %}" class="action-btn-teal view-btn-teal" target="_blank" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="action-btn-teal approve-btn-teal approve-exclusive" 
+                                            data-id="{{ item.id }}" 
+                                            data-type="{{ item.type }}"
+                                            title="Approve as Exclusive">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="action-btn-teal reject-btn-teal reject-exclusive" 
+                                            data-id="{{ item.id }}" 
+                                            data-type="{{ item.type }}"
+                                            title="Reject Request">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <!-- <button class="action-btn-teal convert-btn-teal convert-normal" 
+                                            data-id="{{ item.id }}" 
+                                            data-type="{{ item.type }}"
+                                            title="Convert to Normal">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </button> -->
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if exclusive_listings.has_other_pages %}
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div class="pagination-info-teal">
+                        Showing page {{ exclusive_listings.number }} of {{ exclusive_listings.paginator.num_pages }}
+                    </div>
+                    <ul class="pagination-list-teal">
+                        {% if exclusive_listings.has_previous %}
+                        <li>
+                            <a href="?page={{ exclusive_listings.previous_page_number }}">
+                                <i class="fas fa-chevron-left"></i> Prev
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in exclusive_listings.paginator.page_range %}
+                            {% if exclusive_listings.number == num %}
+                            <li class="active"><span>{{ num }}</span></li>
+                            {% elif num > exclusive_listings.number|add:'-3' and num < exclusive_listings.number|add:'3' %}
+                            <li><a href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if exclusive_listings.has_next %}
+                        <li>
+                            <a href="?page={{ exclusive_listings.next_page_number }}">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- Empty State -->
+            <div class="empty-state-teal">
+                <div class="empty-icon-teal">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h4>No Exclusive Requests</h4>
+                <p>There are no pending exclusive listing requests at this time.</p>
+                <button class="btn-empty-teal" onclick="location.reload()">
+                    <i class="fas fa-arrows-rotate me-2"></i> Refresh
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-teal" id="confirmModal">
+    <div class="modal-overlay-teal"></div>
+    <div class="modal-container-teal">
+        <div class="modal-header-teal">
+            <h5 id="confirmModalTitle">Confirm Action</h5>
+            <button class="modal-close-teal" data-bs-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body-teal" id="confirmModalBody">
+            Are you sure you want to perform this action?
+        </div>
+        <div class="modal-footer-teal">
+            <button class="btn-cancel-teal" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn-confirm-teal" id="confirmModalBtn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container-teal" id="toastContainer"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Select all checkbox
+    $('#selectAll').change(function() {
+        $('.item-checkbox').prop('checked', $(this).prop('checked'));
+        updateSelectedCount();
+    });
+    
+    $('.item-checkbox').change(function() {
+        updateSelectedCount();
+    });
+    
+    function updateSelectedCount() {
+        var count = $('.item-checkbox:checked').length;
+        $('#selectedCount span').text(count + ' selected');
+        $('#bulkApproveExclusive, #bulkRejectExclusive, #bulkConvertNormal').prop('disabled', count === 0);
+    }
+    
+    function showConfirm(title, message, onConfirm) {
+        $('#confirmModalTitle').text(title);
+        $('#confirmModalBody').html(message);
+        $('#confirmModalBtn').off('click').on('click', function() {
+            $('#confirmModal').removeClass('show');
+            onConfirm();
+        });
+        $('#confirmModal').addClass('show');
+    }
+    
+    $('.modal-close-teal, .btn-cancel-teal, .modal-overlay-teal').click(function() {
+        $('#confirmModal').removeClass('show');
+    });
+    
+    $('#bulkApproveExclusive').click(function() {
+        var selected = [];
+        $('.item-checkbox:checked').each(function() {
+            var row = $(this).closest('tr');
+            selected.push({ id: row.data('id'), type: row.data('type') });
+        });
+        if (selected.length === 0) return;
+        showConfirm('Approve Exclusive', '<p>Approve <strong>' + selected.length + '</strong> exclusive request(s)? Owners will receive email notifications.</p>', function() {
+            processBulkAction('approve_exclusive', selected);
+        });
+    });
+    
+    $('#bulkRejectExclusive').click(function() {
+        var selected = [];
+        $('.item-checkbox:checked').each(function() {
+            var row = $(this).closest('tr');
+            selected.push({ id: row.data('id'), type: row.data('type') });
+        });
+        if (selected.length === 0) return;
+        showConfirm('Reject Exclusive', '<p>Reject <strong>' + selected.length + '</strong> exclusive request(s)?</p>', function() {
+            processBulkAction('reject_exclusive', selected);
+        });
+    });
+    
+    $('#bulkConvertNormal').click(function() {
+        var selected = [];
+        $('.item-checkbox:checked').each(function() {
+            var row = $(this).closest('tr');
+            selected.push({ id: row.data('id'), type: row.data('type') });
+        });
+        if (selected.length === 0) return;
+        showConfirm('Convert to Normal', '<p>Convert <strong>' + selected.length + '</strong> request(s) to normal pending listings?</p>', function() {
+            processBulkAction('convert_to_normal', selected);
+        });
+    });
+    
+    $('.approve-exclusive').click(function() {
+        var id = $(this).data('id');
+        var type = $(this).data('type');
+        var title = $(this).closest('tr').find('.property-title-teal').text();
+        showConfirm('Approve Listing', '<p>Approve listing: <strong>' + title + '</strong></p><p style="color:#10b981;"></p>', function() {
+            processSingleAction('approve_exclusive', type, id);
+        });
+    });
+    
+    $('.reject-exclusive').click(function() {
+        var id = $(this).data('id');
+        var type = $(this).data('type');
+        var title = $(this).closest('tr').find('.property-title-teal').text();
+        showConfirm('Reject Listing', '<p>Reject listing: <strong>' + title + '</strong></p>', function() {
+            processSingleAction('reject_exclusive', type, id);
+        });
+    });
+    
+    $('.convert-normal').click(function() {
+        var id = $(this).data('id');
+        var type = $(this).data('type');
+        var title = $(this).closest('tr').find('.property-title-teal').text();
+        showConfirm('Convert to Normal', '<p>Convert listing to normal: <strong>' + title + '</strong></p>', function() {
+            processSingleAction('convert_to_normal', type, id);
+        });
+    });
+    
+    function processSingleAction(action, type, id) {
+        showLoading(true);
+        $.ajax({
+            url: window.location.href,
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            data: {
+                bulk_action: action,
+                property_type: type,
+                selected_items: id,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                showLoading(false);
+                if (response.success) {
+                    showToast('success', response.message);
+                    setTimeout(function() { location.reload(); }, 1500);
+                } else {
+                    showToast('error', response.message);
+                }
+            },
+            error: function() {
+                showLoading(false);
+                showToast('error', 'An error occurred');
+            }
+        });
+    }
+    
+    function processBulkAction(action, selected) {
+        var byType = {};
+        selected.forEach(function(item) {
+            if (!byType[item.type]) byType[item.type] = [];
+            byType[item.type].push(item.id);
+        });
+        
+        var promises = [];
+        for (var type in byType) {
+            promises.push($.ajax({
+                url: window.location.href,
+                method: 'POST',
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                data: {
+                    bulk_action: action,
+                    property_type: type,
+                    selected_items: byType[type].join(','),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+            }));
+        }
+        
+        showLoading(true);
+        Promise.all(promises).then(function(responses) {
+            showLoading(false);
+            var totalAffected = 0;
+            responses.forEach(function(r) { 
+                if (r.success) {
+                    var match = r.message.match(/\d+/);
+                    if (match) totalAffected += parseInt(match[0]);
+                }
+            });
+            showToast('success', totalAffected + ' item(s) processed');
+            setTimeout(function() { location.reload(); }, 1500);
+        }).catch(function() {
+            showLoading(false);
+            showToast('error', 'An error occurred');
+        });
+    }
+    
+    function showLoading(show) {
+        if (show) {
+            $('body').append('<div class="loading-overlay-teal"><div class="spinner-teal"></div></div>');
+        } else {
+            $('.loading-overlay-teal').remove();
+        }
+    }
+    
+    function showToast(type, message) {
+        var icon = type === 'success' ? '✓' : '✗';
+        var toast = $('<div class="toast-teal ' + type + '">' + icon + ' ' + message + '</div>');
+        $('#toastContainer').append(toast);
+        setTimeout(function() { toast.fadeOut(300, function() { $(this).remove(); }); }, 3000);
+    }
+    
+    $('#refreshBtn').click(function() { location.reload(); });
+});
+</script>
+
+{% include 'admin1/footeradmin.html' %}

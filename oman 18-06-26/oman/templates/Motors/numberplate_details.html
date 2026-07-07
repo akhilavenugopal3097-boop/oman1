@@ -1,0 +1,3762 @@
+{% load static %}
+{% load automobile_filters %}
+{% load dict_filters %}
+{% load humanize %}
+ {% include 'header2.html' %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    /* ============================================================
+   NUMBER PLATE DETAILS – FULL MOBILE RESPONSIVE
+   ============================================================ */
+
+/* --- Tablet & Small Laptops (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+    .property-details-container {
+        width: 100% !important;
+        padding: 0 16px !important;
+        margin-left: 0 !important;
+        gap: 20px;
+    }
+
+    .property-info-column {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .advertisement-column {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .user-profile {
+        width: 100% !important;
+        max-width: 400px;
+        margin-left: 0 !important;
+        margin-top: 20px;
+    }
+
+    .vertical-ad {
+        width: 100% !important;
+        max-width: 400px;
+        margin-left: 0 !important;
+        margin-top: 20px;
+    }
+
+    .inner-box {
+        margin-left: 0 !important;
+        justify-content: center;
+    }
+
+    .numberplate-box {
+        margin-left: 0 !important;
+        margin-top: 10px !important;
+    }
+
+    .plate {
+        width: 320px !important;
+        height: 80px !important;
+    }
+    .motorcycle-plate {
+        width: 200px !important;
+        height: 80px !important;
+    }
+
+    .columns-container {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+
+    .info-table {
+        width: 100% !important;
+    }
+
+    .product-description {
+        max-width: 100% !important;
+    }
+
+    .bottom-line,
+    .line {
+        width: 100% !important;
+    }
+
+    .property-price-container {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .actions-column {
+        margin-right: 0 !important;
+        flex-wrap: wrap;
+    }
+    .property-actions {
+        margin-right: 0 !important;
+    }
+
+    .nearby-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+}
+
+/* --- Mobile (max-width: 768px) --- */
+@media (max-width: 768px) {
+    /* ---- Layout containers ---- */
+    .property-details-container {
+        flex-direction: column !important;
+        width: 100% !important;
+        padding: 0 12px !important;
+        margin-left: 0 !important;
+        gap: 16px;
+    }
+
+    .property-info-column {
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .advertisement-column {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        align-items: stretch;
+    }
+
+    .user-profile {
+        width: 100% !important;
+        max-width: 100%;
+        margin-left: 0 !important;
+        margin-top: 16px;
+        padding: 16px !important;
+    }
+
+    .vertical-ad {
+        width: 100% !important;
+        max-width: 100%;
+        margin-left: 0 !important;
+        margin-top: 16px;
+        height: auto !important;
+        min-height: 160px;
+        border-width: 3px !important;
+    }
+    .vertical-ad img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* ---- Plate card ---- */
+    .inner-box {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 10px;
+        margin-left: 0 !important;
+    }
+
+    .numberplate-box {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        width: 100%;
+        align-items: center;
+    }
+
+    /* Car plate */
+    .plate {
+        width: 260px !important;
+        height: 66px !important;
+        padding: 0 14px !important;
+        border-width: 3px !important;
+        border-radius: 8px !important;
+    }
+    .plate .number {
+        font-size: 28px !important;
+    }
+    .plate .number[data-length="5"] {
+        font-size: 22px !important;
+    }
+    .letters .arabic {
+        font-size: 20px !important;
+        letter-spacing: 8px !important;
+    }
+    .letters .english {
+        font-size: 17px !important;
+        letter-spacing: 4px !important;
+        margin-left: 4px;
+    }
+    .plate .country {
+        font-size: 20px !important;
+    }
+    .plate::before {
+        left: 32% !important;
+    }
+    .plate::after {
+        right: 28% !important;
+    }
+    .plate .country::before {
+        left: -8px !important;
+    }
+
+    /* Motorcycle plate */
+    .motorcycle-plate {
+        width: 170px !important;
+        height: 66px !important;
+        border-width: 3px !important;
+        border-radius: 8px !important;
+    }
+    .arabic-section .arabic-letters {
+        font-size: 22px !important;
+        letter-spacing: 8px !important;
+    }
+    .arabic-section .english-letters {
+        font-size: 18px !important;
+        letter-spacing: 4px !important;
+        margin-left: 4px;
+    }
+    .number-section .region {
+        font-size: 18px !important;
+    }
+    .number-section .number {
+        font-size: 20px !important;
+    }
+    .number-section .number[data-length="5"] {
+        font-size: 16px !important;
+    }
+
+    /* Base shadow */
+    .base {
+        width: 80px !important;
+        height: 8px !important;
+    }
+
+    /* ---- Price & Actions ---- */
+    .property-price-container {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px;
+    }
+    .price-column {
+        min-width: 100% !important;
+    }
+    .property-price {
+        font-size: 22px !important;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+    .actions-column {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-right: 0 !important;
+        width: 100%;
+    }
+    .property-actions {
+        padding: 4px 12px !important;
+        font-size: 14px !important;
+        margin-right: 0 !important;
+    }
+
+    /* ---- Details Tables (two columns -> single) ---- */
+    .columns-container {
+        flex-direction: column !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    .column {
+        width: 100% !important;
+        padding: 6px 0 !important;
+        border-right: none !important;
+    }
+    .left-column {
+        border-right: none !important;
+        border-bottom: 1px solid #ccc !important;
+    }
+    .info-table {
+        width: 100% !important;
+    }
+    .info-table td {
+        padding: 4px 6px !important;
+        font-size: 14px !important;
+    }
+
+    /* ---- Description ---- */
+    .product-description {
+        max-width: 100% !important;
+        padding: 0 4px !important;
+    }
+    .product-description span {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* ---- Nearby Locations ---- */
+    .nearby-section {
+        width: 100% !important;
+        padding: 0 4px !important;
+    }
+    .nearby-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+        gap: 10px !important;
+    }
+    .nearby-item {
+        padding: 8px !important;
+    }
+    .nearbyimg {
+        height: 40px !important;
+        width: 40px !important;
+    }
+
+    /* ---- Map ---- */
+    .content-four .contact-map iframe {
+        width: 100% !important;
+        height: 250px !important;
+    }
+
+    /* ---- User Profile (sidebar) ---- */
+    .contact-actions {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .contact-actions button {
+        font-size: 14px !important;
+        padding: 8px !important;
+    }
+
+    /* ---- Report Section ---- */
+    .product-report-container {
+        padding: 12px 8px !important;
+        margin: 10px 0 !important;
+    }
+    .product-report-row {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+    .report-btn {
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+    }
+
+    /* ---- Report Modal ---- */
+    .modal-container {
+        padding: 0 10px !important;
+    }
+    .modal-content {
+        border-radius: 8px !important;
+    }
+    .reason-item {
+        flex: 1 1 45% !important;
+        min-width: 80px !important;
+        font-size: 13px !important;
+        padding: 8px 10px !important;
+    }
+    .modal-title {
+        font-size: 1.1rem !important;
+    }
+
+    /* ---- Breadcrumb ---- */
+    .breadcrumb {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .breadcrumb li {
+        font-size: 13px !important;
+    }
+
+    /* ---- General Spacing ---- */
+    .property-title {
+        font-size: 18px !important;
+        margin-top: 12px !important;
+    }
+    .details-location {
+        font-size: 13px !important;
+    }
+    .line,
+    .bottom-line {
+        width: 100% !important;
+    }
+
+    /* ---- Phone Popup ---- */
+    .phone-popup .popup-card {
+        width: 90% !important;
+        max-width: 360px !important;
+        padding: 16px !important;
+        margin: 20px auto !important;
+    }
+
+    /* ---- Chat Popup ---- */
+    .chat-popup-container {
+        width: 95% !important;
+        max-width: 400px !important;
+        height: 80% !important;
+        max-height: 600px !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        border-radius: 12px !important;
+    }
+    .chat-popup-header {
+        padding: 10px 12px !important;
+        flex-wrap: wrap !important;
+    }
+    .chat-popup-username {
+        font-size: 14px !important;
+    }
+    .chat-popup-messages {
+        max-height: 250px !important;
+    }
+    .chat-popup-input textarea {
+        font-size: 14px !important;
+        padding: 8px 10px !important;
+    }
+
+    /* ---- Contact Popup ---- */
+    .contact-popup-inner {
+        width: 92% !important;
+        max-width: 380px !important;
+        padding: 16px !important;
+    }
+}
+
+/* ---- Extra Small (max-width: 480px) ---- */
+@media (max-width: 480px) {
+    .plate {
+        width: 200px !important;
+        height: 54px !important;
+        padding: 0 8px !important;
+        border-width: 2px !important;
+    }
+    .plate .number {
+        font-size: 20px !important;
+    }
+    .plate .number[data-length="5"] {
+        font-size: 16px !important;
+    }
+    .letters .arabic {
+        font-size: 16px !important;
+        letter-spacing: 5px !important;
+    }
+    .letters .english {
+        font-size: 14px !important;
+        letter-spacing: 3px !important;
+    }
+    .plate .country {
+        font-size: 16px !important;
+    }
+    .plate::before {
+        left: 28% !important;
+    }
+    .plate::after {
+        right: 24% !important;
+    }
+    .plate .country::before {
+        left: -6px !important;
+    }
+
+    .motorcycle-plate {
+        width: 140px !important;
+        height: 54px !important;
+        border-width: 2px !important;
+    }
+    .arabic-section .arabic-letters {
+        font-size: 18px !important;
+        letter-spacing: 5px !important;
+    }
+    .arabic-section .english-letters {
+        font-size: 15px !important;
+        letter-spacing: 3px !important;
+    }
+    .number-section .region {
+        font-size: 15px !important;
+    }
+    .number-section .number {
+        font-size: 16px !important;
+    }
+    .number-section .number[data-length="5"] {
+        font-size: 13px !important;
+    }
+
+    .base {
+        width: 60px !important;
+        height: 6px !important;
+    }
+
+    .property-price {
+        font-size: 20px !important;
+    }
+    .actions-column {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+    }
+    .property-actions {
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    .contact-actions {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+    .contact-actions button {
+        font-size: 12px !important;
+        padding: 6px !important;
+    }
+
+    .reason-item {
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+
+    .chat-popup-container {
+        width: 98% !important;
+        right: 1% !important;
+        bottom: 5px !important;
+        height: 85% !important;
+        max-height: 500px !important;
+    }
+    .chat-popup-messages {
+        max-height: 180px !important;
+    }
+
+    .nearby-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .profile-header {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    .profile-avatar {
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
+    }
+}
+
+/* ---- Landscape Orientation Fix ---- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .gallery-container {
+        flex-direction: row !important;
+        height: 90vh !important;
+    }
+    .gallery-section {
+        height: 100% !important;
+        width: 60% !important;
+    }
+    .contact-section {
+        width: 40% !important;
+        max-height: 100% !important;
+        border-top: none !important;
+        border-left: 1px solid #eee !important;
+    }
+    .chat-popup-container {
+        height: 90vh !important;
+        max-height: 90vh !important;
+        bottom: 5px !important;
+    }
+    .plate {
+        width: 220px !important;
+        height: 60px !important;
+    }
+    .motorcycle-plate {
+        width: 150px !important;
+        height: 60px !important;
+    }
+}
+    </style>
+
+        
+     <style>
+        
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 240px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+        /* Banner Section */
+        #banner-section {
+            background-size: cover;
+            background-position: center;
+            height:250px;
+            position: relative;
+            transition: background-image 1s ease-in-out;
+        }
+    
+        #banner-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask-composite: destination-in;
+        mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        mask-composite: intersect;
+        z-index: 1;
+        opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+        pointer-events: none; /* Ensure the mask does not block interactions */
+    }
+    
+        #banner-section .content-column {
+            position: relative;
+            z-index: 2;
+        }
+    
+        #banner-section .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            position: relative;
+            margin-top: 35px;
+            background:#E6F0F9;
+            color: #fff;
+            height: 133px; /* Adjust as needed for the container's content */
+            font-family: 'FontStyle1', Arial, sans-serif;
+            font-size:14px;
+        }
+        
+        /* Image Container */
+        .image-container {
+            position: relative;
+            width: 300px;
+            text-align: center; /* Center the image inside the container */
+            margin-top: -280px;
+            z-index: 1;
+            margin-left:-20px;
+        
+        }
+        
+        .image-container .image {
+            width: 300px;
+            height: 414px; /* Maintain aspect ratio */
+          
+            
+        }
+        
+        /* Content Section */
+        .content-section {
+            text-align:left;
+        }
+        
+        .content-section h2 {
+            {% comment %} font-size: 2rem; {% endcomment %}
+            margin-top: 10px;
+            color:black;
+            font-family: 'FontStyle6', Arial, sans-serif;
+            margin-left:-40px;
+            
+        }
+        
+        .content-section p {
+            {% comment %} font-size: 1rem; {% endcomment %}
+            line-height: 1.1;
+            color: black;
+            margin-left:-40px;
+            font-size:12px;
+            font-family: 'FontStyle6', Arial, sans-serif;
+            word-wrap: break-word; /* Ensure text breaks appropriately */
+        }
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            height: auto; /* Adjust height to fit content */
+            padding: 20px;
+            margin-top: 10px;
+        }
+    
+        /* Image Section */
+        .image-container {
+            margin-top: -150px; /* Adjust margin for smaller screens */
+            right: 0;
+            transform: none; /* Remove transform for better alignment */
+            width: 60%; /* Reduce image size */
+            margin: 0 auto; /* Center the image */
+        }
+    
+        /* Content Section */
+        .content-section {
+            margin: 0 auto; /* Center the content section */
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center; /* Center-align text for mobile */
+        }
+    
+        .content-section h2 {
+            font-size: 1.5rem; /* Adjust heading size */
+            text-align: center; /* Center heading */
+        }
+    
+        .content-section p {
+            font-size: 0.9rem; /* Adjust font size for readability */
+            text-align: center; /* Center-align paragraph text */
+            margin-left: 0; /* Remove unnecessary margin */
+            max-width: 100%; /* Use full width */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Further adjustments for very small screens */
+        .image-container {
+            margin-top: -100px;
+            width: 80%; /* Reduce image size further */
+        }
+    
+        .content-section h2 {
+            font-size: 1.2rem;
+        }
+    
+        .content-section p {
+            font-size: 0.8rem;
+        }
+    }
+    .about-paragraph{
+        color:black;
+    }
+    .input{
+        margin-top:3px;
+    }
+   
+    
+    </style>
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+        
+            
+              <section class="dual-ad-loop-box">
+                <style>
+                    .dual-ad-loop-box {
+                        width: 100%;
+                        padding: 15px 0;
+                        box-sizing: border-box;
+                        display: flex;
+                        justify-content: center;
+                        margin: 0 auto;
+                    }
+            
+                    .dual-ad-loop-box .swiper-container {
+                        width: 100%;
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        height: 250px;
+                        padding: 0; /* Further reduced padding */
+                    }
+            
+                    .dual-ad-loop-box .swiper-wrapper {
+                        align-items: center;
+                    }
+            
+                    .dual-ad-loop-box .swiper-slide {
+                        width: calc(50% - 3px) !important; /* Reduced gap to just 3px */
+                        height: 230px;
+                        transition: all 0.4s ease;
+                        opacity: 1;
+                    }
+            
+                    .dual-ad-loop-box .swiper-slide:not(.swiper-slide-visible) {
+                        opacity: 0;
+                        pointer-events: none;
+                    }
+            
+                    .dual-ad-loop-box .ad-box {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                        border: 1px solid #eee;
+                        background: white;
+                        transition: all 0.3s ease;
+                    }
+            
+                    .dual-ad-loop-box .ad-box:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    }
+            
+                    .dual-ad-loop-box .ad-box img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+            
+                    @media (max-width: 768px) {
+                        .dual-ad-loop-box .swiper-container {
+                            height: 220px;
+                            padding: 0 5px; /* Minimal padding on mobile */
+                        }
+            
+                        .dual-ad-loop-box .swiper-slide {
+                            height: 200px;
+                            width: calc(50% - 2px) !important; /* Nearly touching on mobile */
+                        }
+                    }
+                </style>
+            
+                <div class="swiper-container">
+    <div class="swiper-wrapper">
+        {% for advertisement in advertisement %}
+        {% if advertisement.is_active and advertisement.category == 'motors' %}
+        <div class="swiper-slide">
+            <div class="ad-box">
+                <a href="{{ advertisement.url|default:'#' }}" 
+                   target="_blank" 
+                   {% if not advertisement.url %}onclick="return false;" style="cursor:default;"{% endif %}>
+                    <img src="{{ advertisement.image.url }}" alt="{{ advertisement.get_category_display }} Advertisement">
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="swiper-slide">
+            <div class="ad-box">
+                <p>No Motors advertisements available</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Add Swiper navigation if needed -->
+    {% if advertisement.filter.is_active and category == 'motors'|length > 1 %}
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    {% endif %}
+</div>
+            
+                <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const swiper = new Swiper('.dual-ad-loop-box .swiper-container', {
+                            slidesPerView: 2,
+                            spaceBetween: 6, /* Very small gap - 6px */
+                            loop: true,
+                            autoplay: {
+                                delay: 3000,
+                                disableOnInteraction: false,
+                            },
+                            breakpoints: {
+                                320: {
+                                    spaceBetween: 3 /* Almost touching on mobile */
+                                },
+                                768: {
+                                    spaceBetween: 6 
+                                }
+                            },
+                            on: {
+                                init: function () {
+                                    updateVisibleSlides(this);
+                                },
+                                slideChange: function () {
+                                    updateVisibleSlides(this);
+                                }
+                            }
+                        });
+            
+                        function updateVisibleSlides(swiperInstance) {
+                            const slides = swiperInstance.slides;
+                            slides.forEach(slide => {
+                                slide.classList.remove('swiper-slide-visible');
+                            });
+            
+                            const visibleIndices = [swiperInstance.activeIndex, swiperInstance.activeIndex + 1];
+                            visibleIndices.forEach(index => {
+                                const slide = slides[index % slides.length];
+                                if (slide) {
+                                    slide.classList.add('swiper-slide-visible');
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </section>
+
+            <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+           
+
+
+
+
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                  <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+                  <li><a href="{% url 'index2' %}">Motors</a></li>
+                   {% if numberplate.listing_type == "rent" %}
+                    <li><a href="{% url 'numberplate' %}?listing_type=rent">Number Plate</a></li>
+                  {% else %}
+                       <li><a href="{% url 'numberplate' %}?listing_type=sell">Number Plate</a></li>
+                  {% endif %}
+                  <li aria-current="page">{{ numberplate.number }} </li>
+                </ol>
+              </nav>
+              <style>
+                .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #1ba5ea;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color: #1ba5ea;
+        }
+              </style>
+            
+        <!-- 3D Number Plate Section -->
+<div class="inner-box">
+    <!-- 3D Number Plate on Left Side -->
+    {% if numberplate.plate_type == 'motorcycle' %}
+        <!-- Motorcycle Plate (with numberplate-box wrapper) -->
+        <div class="numberplate-box">
+            <div class="motorcycle-plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                <div class="motorcycle-section arabic-section">
+                    <div class="arabic-letters">{{ numberplate.letter_arabic }}</div>
+                    <div class="english-letters">{{ numberplate.letter_english }}</div>
+                </div>
+                <div class="motorcycle-section number-section">
+                    <div class="region">عُمان</div>
+                    <div class="number">{{ numberplate.number }}</div>
+                </div>
+            </div>
+            <div class="base"></div>
+        </div>
+    {% else %}
+        <!-- Car Plate with 3D Design -->
+        <div class="numberplate-box">
+            <div class="plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                <div class="number">{{ numberplate.number }}</div>
+                <div class="letters">
+                    <span class="arabic">{{ numberplate.letter_arabic }}</span>
+                    <span class="english">{{ numberplate.letter_english }}</span>
+                </div>
+                <div class="country">عُمان</div>
+            </div>
+            <div class="base"></div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Plate-style fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Tajawal:wght@700;800&display=swap');
+
+/* Main Container */
+.inner-box {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Number Plate Box */
+.numberplate-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 70px;
+    margin-top: 30px;
+}
+
+/* ============================= */
+/* 3D CAR PLATE STYLES */
+/* ============================= */
+.plate {
+    display: flex;
+    align-items: center;
+    background: #FFD700;
+    border: 4px solid #000;
+    border-radius: 12px;
+    padding: 0 30px;
+    width: 450px;
+    height: 100px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    animation: floating 2s infinite alternate ease-in-out;
+    position: relative;
+    font-weight: bold;
+}
+
+/* Commercial Car Plate (Red) */
+.plate.commercial {
+    background: #DC3545;
+    color: white;
+}
+
+.plate.commercial::before,
+.plate.commercial .country::before {
+    background: white;
+}
+
+.plate.commercial .number,
+.plate.commercial .arabic,
+.plate.commercial .english,
+.plate.commercial .country {
+    color: white;
+}
+
+/* Floating Animation */
+@keyframes floating {
+    from { transform: translateY(0); }
+    to { transform: translateY(12px); }
+}
+
+/* Plate Sections */
+.plate .number,
+.plate .letters,
+.plate .country {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* Number */
+.plate .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* Auto size for longer numbers */
+.plate .number[data-length="5"] {
+    font-size: 40px;
+    letter-spacing: 1px;
+}
+
+/* Letters container */
+.letters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Arabic letters */
+.letters .arabic {
+     font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    direction: rtl;
+    letter-spacing: 16px;
+    line-height: 1;
+}
+
+/* English letters */
+.letters .english {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    letter-spacing: 8px;
+    line-height: 1;
+    margin-left: 8px;
+}
+
+/* Country */
+.plate .country {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    position: relative;
+}
+
+/* Vertical line before country */
+.plate .country::before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 20%;
+    height: 60%;
+    width: 2px;
+    background-color: #000;
+}
+
+/* Vertical line between number and letters */
+.plate::before {
+    content: '';
+    position: absolute;
+    left: calc(35.33% + 15px);
+    top: 20%;
+    height: 60%;
+    width: 2px;
+    background-color: #000;
+}
+
+/* Base */
+.base {
+    width: 120px;
+    height: 12px;
+    background: #ddd;
+    border-radius: 50%;
+    margin-top: 10px;
+    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================= */
+/* MOTORCYCLE PLATE STYLES */
+/* ============================= */
+.motorcycle-plate {
+    display: flex;
+    width: 300px;   /* half of car plate width (450px / 2) */
+    height: 100px;  /* same height as car plate */
+    border: 4px solid #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    animation: floating 2s infinite alternate ease-in-out;
+}
+
+/* Private Motorcycle Plate */
+.motorcycle-plate.private {
+    background-color: #FFD700;
+}
+
+/* Commercial Motorcycle Plate */
+.motorcycle-plate.commercial {
+    background-color: #DC3545;
+    color: white;
+}
+
+.motorcycle-plate.commercial .arabic-letters,
+.motorcycle-plate.commercial .english-letters,
+.motorcycle-plate.commercial .region,
+.motorcycle-plate.commercial .number {
+    color: white;
+}
+
+.motorcycle-plate.commercial .motorcycle-section {
+    border-left: 2px solid white;
+}
+
+.motorcycle-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 2px solid #000;
+    padding: 8px;
+}
+
+.motorcycle-section:first-child {
+    border-left: none;
+}
+
+/* Arabic letters */
+.arabic-section .arabic-letters {
+     font-family: 'Roboto Condensed', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    direction: rtl;
+    line-height: 1;
+    letter-spacing: 16px;
+}
+
+/* English letters */
+.arabic-section .english-letters {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 33px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-top: 3px;
+    letter-spacing: 8px;
+    margin-left: 8px;
+}
+
+/* Region */
+.number-section .region {
+   font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Number */
+.number-section .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Auto size for 5-digit numbers */
+.number-section .number[data-length="5"] {
+    font-size: 26px;
+    letter-spacing: 1px;
+}
+
+    </style>
+
+<style>
+    /* Contact Popup Styles */
+    .contact-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .contact-popup-inner {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .contact-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+    }
+    
+    .contact-popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .contact-popup-close {
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    
+    .contact-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        color: #333;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    
+    
+    
+    .contact-option i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+    
+
+  /* Two Column Layout */
+  .property-details-container {
+    display: flex;
+    gap: 20px;
+   width: 1300px; /* Adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .property-info-column {
+    flex: 1;
+    /* Existing styles remain the same */
+  }
+  
+  .advertisement-column {
+    width: 200px;
+    margin-left: 200px;
+    margin-top: -15px;
+  }
+  
+  .vertical-ad {
+    position: relative;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: #f5f5f5;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 5px solid gray;
+    margin-left:-280px;
+    width:300px;
+    margin-top:20px;
+  
+  }
+  /* User Profile Styles */
+  .user-profile {
+    background: white;
+    border-radius: 2px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    padding: 20px;
+    margin-left:-280px;
+    margin-top:20px;
+   
+    width:300px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .default-avatar {
+    color: #999;
+    font-size: 24px;
+  }
+
+  .profile-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+  }
+
+  .rating {
+   
+    font-size: 14px;
+  }
+
+  
+
+  .profile-details {
+    margin: 15px 0;
+   
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .detail-item i {
+    margin-right: 8px;
+    color: #4CAF50;
+  }
+
+  .contact-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .contact-actions button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-call {
+   background-color: #fff3f3;
+   text-decoration: none;
+   color: #1A73E8;
+  }
+.btn-whatsapp{
+    background-color: #e9f7ef;
+    color: #128C7E;
+}
+
+  .btn-chat {
+    background-color: #f0f6ff;
+    color: #063e71;
+   
+    text-decoration: none;
+  }
+
+  .btn-save {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .contact-actions button i {
+    margin-right: 5px;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .ad-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+  }
+  
+  /* Adjust existing styles to account for the new layout */
+  .line {
+    width: 100%; /* Now takes full width of its column */
+  }
+  
+  .columns-container {
+    width: 100%; /* Adjust width to fit column */
+  }
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1; /* Takes available space */
+  min-width: 200px /* Prevents overflow */
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.property-price span{
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px; /* Space between action buttons */
+  flex-shrink: 0; /* Prevents shrinking */
+  margin-right: -190px;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  
+}
+
+.property-actions a {
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+.icon-buttons{
+    font-family: 'FontStyle6', Arial, sans-serif;
+}
+</style>
+
+            </div>
+            <style>
+/* ===== BASE STYLES ===== */
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.property-actions a {
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+.property-details-container {
+  display: flex;
+  gap: 20px;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.property-info-column {
+  flex: 1;
+}
+
+.advertisement-column {
+  width: 300px;
+}
+
+/* ===== DESCRIPTION SECTION ===== */
+.product-description {
+  margin-top: 20px;
+  max-width: 800px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  
+}
+.product-description span {
+    font-size: 15px;  
+    line-height: 1.4; 
+    color: #333;     
+    margin: 0 0 8px 0; 
+  }
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #000;
+}
+
+.read-more-btn {
+  /* Your button styling */
+  display: none; /* Initial state - JS will override if needed */
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+
+/* ===== FEATURES SECTION ===== */
+.features-container {
+  margin: 30px 0 40px 0;
+  padding-top: 20px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+ 
+}
+
+.features-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.features-list {
+  columns: 2;
+  column-gap: 40px;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  list-style: none;
+}
+
+.features-list li {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  padding-left: 20px;
+  position: relative;
+}
+
+.features-list li:before {
+  content: "•";
+  color: #EB362D;
+  position: absolute;
+  left: 0;
+}
+
+/* ===== NEARBY LOCATIONS ===== */
+.nearby-section {
+  margin: 50px 0 30px 0;
+  clear: both;
+}
+
+.nearby-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  
+}
+
+.nearby-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 30px;
+  padding: 0;
+  list-style: none;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.nearby-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nearbyimg {
+  height: 60px;
+  width: 60px;
+  margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .property-details-container {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 15px;
+  }
+  
+  .advertisement-column {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .features-list {
+    columns: 1;
+  }
+  
+  .nearby-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+
+</style>
+
+<style>
+    
+   .columns-container {
+    display: flex;
+    margin-top: -20px;
+    margin-left:-20px;
+    width:900px;
+    margin-bottom:20px;
+}
+
+.column {
+    flex: 1;
+    padding: 10px;
+}
+
+.left-column {
+    border-right: 1px solid #ccc; /* Separator line */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+    
+}
+
+.right-column {
+    /* No border needed */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.info-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.info-table td {
+    padding: 5px 10px;
+    vertical-align: top;
+    
+    border: none; /* Ensures no borders */
+}
+
+.details-location{
+    margin-top:-10px;
+    font-size:14px;
+   
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+.details-location span{
+    
+    font-size:14px;
+}
+     .property-title {
+    font-size: 20px;
+    margin-top:20px;
+    
+     margin-bottom:20px;
+    font-weight: 300;
+   
+  }
+    .line{
+        width:750px;
+        margin-top:20px;
+    }
+    .details-icons{
+        font-size:14px;
+        padding-bottom:15px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+    }
+    .details-icons span{
+        padding-right:18px;
+    }
+    .property-price-row {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  
+}
+.property-actions{
+    display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.property-actions a{
+    text-decoration:none;
+    color:black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+
+}
+.bottom-line{
+    width: 800px;
+    color: #333;
+}
+</style>  
+<div class="property-details-container mt-3" style="margin-top: 20px;margin-left:200px;">
+  <!-- Main Property Details Column -->
+  <div class="property-info-column">
+    <div class="property-info">
+      <!-- Price and actions section -->
+      <div class="property-price-container">
+        <div class="price-column">
+          <h2 class="property-price">
+            {{ numberplate.price|floatformat:0|intcomma }}<span>OMR</span>
+            {% if numberplate.listing_type == "rent" and numberplate.rental_period %}
+              - {{ numberplate.rental_period|capfirst }}
+            {% endif %}
+          </h2>
+        </div>
+        <div class="actions-column">
+          <!-- Favorite and Share buttons -->
+          <div class="property-actions">
+                 {% if user.is_authenticated %}
+    <a href="#"
+       class="favorite-link icon-button"
+       data-product-id="{{ numberplate.id }}"
+       data-product-type="numberplate"
+       data-is-authenticated="true"
+       title="{% if numberplate in user.favorites.all %}Remove from{% else %}Add to{% endif %} Favorites"
+       style="padding-right:10px;"
+       onclick="handleFavoriteClick(event, this)">  <!-- CRITICAL: Add this onclick handler -->
+
+       <i class="{% if numberplate in user.favorites.all %}fas fa-heart filled{% else %}far fa-heart{% endif %}"
+          id="favorite-icon-{{ numberplate.id }}"
+          data-favorite="{% if numberplate in user.favorites.all %}true{% else %}false{% endif %}">
+       </i>
+
+       <span class="fav-font">Favorite</span>
+    </a>
+{% else %}
+    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+       class="icon-button"
+       title="Add to Favorites"
+       style="padding-right:10px;"
+       onclick="event.stopPropagation();">
+
+       <i class="far fa-heart"></i>
+       <span class="fav-font">Favorite</span>
+    </a>
+{% endif %}
+
+<style>
+.filled {
+    color: #EB362D;
+}
+</style>
+
+<script>
+// ---------------- CSRF TOKEN ----------------
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// ---------------- CLICK HANDLER ----------------
+function handleFavoriteClick(event, button) {
+    event.preventDefault(); // Prevent jump to top
+    event.stopPropagation(); // Stop event bubbling
+
+    const isAuthenticated = button.dataset.isAuthenticated === "true";
+
+    if (!isAuthenticated) {
+        const encodedUrl = encodeURIComponent(window.location.href);
+        window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+        return;
+    }
+
+    toggleFavorite(button);
+}
+
+// ---------------- TOGGLE FAVORITE ----------------
+function toggleFavorite(button) {
+    const icon = button.querySelector("i");
+    const text = button.querySelector("span");
+
+    const productId = button.dataset.productId;
+    const productType = button.dataset.productType;
+
+    const isFav = icon.dataset.favorite === "true";
+    const action = isFav ? "remove" : "add";
+    
+    // Store original state for revert
+    const originalState = isFav;
+
+    // UI toggle (optimistic update)
+    if (isFav) {
+        icon.classList.remove("fas", "filled");
+        icon.classList.add("far");
+        icon.dataset.favorite = "false";
+        text.textContent = "Favorite";
+    } else {
+        icon.classList.remove("far");
+        icon.classList.add("fas", "filled");
+        icon.dataset.favorite = "true";
+        text.textContent = "Favorite";
+    }
+
+    // Save state
+    localStorage.setItem(`favorite_${productType}_${productId}`, (!isFav).toString());
+
+    // AJAX
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/json"
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'error') {
+            throw new Error(data.message);
+        }
+        console.log('Favorite updated successfully');
+    })
+    .catch(error => {
+        console.log("Server error: reverting UI", error);
+        
+        // Revert UI on failure
+        if (originalState) {
+            icon.classList.add("fas", "filled");
+            icon.classList.remove("far");
+            icon.dataset.favorite = "true";
+        } else {
+            icon.classList.add("far");
+            icon.classList.remove("fas", "filled");
+            icon.dataset.favorite = "false";
+        }
+        text.textContent = "Favorite";
+        
+        // Revert localStorage
+        localStorage.setItem(`favorite_${productType}_${productId}`, originalState.toString());
+    });
+}
+
+// ---------------- AUTO LOAD STATE ----------------
+document.addEventListener("DOMContentLoaded", function () {
+    // FIXED: Changed from .favorite-btn to .favorite-link
+    document.querySelectorAll(".favorite-link").forEach(button => {
+        const icon = button.querySelector("i");
+        const text = button.querySelector("span");
+
+        const productId = button.dataset.productId;
+        const productType = button.dataset.productType;
+
+        // Get from localStorage, but respect server state if no localStorage
+        const localFav = localStorage.getItem(`favorite_${productType}_${productId}`);
+        const serverFav = icon.dataset.favorite === "true";
+        
+        // Use localStorage if it exists, otherwise use server state
+        const isFav = localFav !== null ? localFav === "true" : serverFav;
+
+        if (isFav) {
+            icon.classList.remove("far");
+            icon.classList.add("fas", "filled");
+            icon.dataset.favorite = "true";
+        } else {
+            icon.classList.remove("fas", "filled");
+            icon.classList.add("far");
+            icon.dataset.favorite = "false";
+        }
+        text.textContent = "Favorite";
+        
+        // Sync localStorage with final state
+        localStorage.setItem(`favorite_${productType}_${productId}`, isFav.toString());
+    });
+});
+</script>
+
+          </div>
+          <div class="property-actions" style="margin-right:280px;">
+            <a href="#" onclick="shareProperty('{{ request.build_absolute_uri }}'); return false;" title="Share" class="icon-button">
+              <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:16px;" alt="icon"><span class="fav-font"> Share</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+     <p>{{numberplate.number}}</p>
+      
+      <!-- Location -->
+      <!-- <div class="details-location">
+        <span class="location"><i class="fas fa-map-marker-alt"></i> {{ numberplate.city|clean_city_name|truncatechars:25 }}, {{ numberplate.city.district.name }}, {{numberplate.city.district.governate.name }}</span>
+      </div> -->
+    </div>
+    <hr class="bottom-line">
+   <style>
+    .details{
+        margin-top: 30px;
+    }
+   </style>
+    <!-- Property details tables -->
+    <div class="details">
+      <h2 class="property-title">{{ numberplate.number }}</h2>
+      <div class="columns-container">
+        <div class="column left-column">
+          <table class="info-table">
+            <tr>
+              <td>Plate Type</td>
+              <td class="tr1">{{ numberplate.usage_type|title }}</td>
+            </tr>
+            <tr>
+              <td>Purpose</td>
+              <td class="tr1">{{numberplate.get_listing_type_display}}</td>
+            </tr>
+            
+          </table>
+        </div>
+        <div class="column right-column">
+          <table class="info-table">
+            <tr>
+              <td>Plate Use</td>
+              <td class="tr1">{{ numberplate.plate_type|title }}</td>
+            </tr>
+            <tr>
+              <td>Posted</td>
+              <td class="tr1">{{ numberplate.created_at|display_registered_time }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  <div class="product-description">
+  <span id="descriptionText" class="clamped">
+    {{ numberplate.description|capfirst }}
+  </span>
+  <button id="readMoreBtn" class="read-more-btn" style="display: none;">Read More</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const desc = document.getElementById('descriptionText');
+  const readMoreBtn = document.getElementById('readMoreBtn');
+  
+  // Check if text is clamped (overflowing)
+  function checkTextOverflow() {
+    // Only hide the button if text is clamped AND we're not in expanded state
+    if (desc.classList.contains('clamped')) {
+      const isOverflowing = desc.scrollHeight > desc.clientHeight;
+      readMoreBtn.style.display = isOverflowing ? 'block' : 'none';
+    }
+    // If text is expanded (not clamped), we always show the "Show Less" button
+  }
+  
+  // Initial check
+  checkTextOverflow();
+  
+  // Check on resize
+  window.addEventListener('resize', checkTextOverflow);
+  document.fonts?.ready?.then(checkTextOverflow);
+  
+  // Read More/Less Toggle
+  readMoreBtn.addEventListener('click', function() {
+    desc.classList.toggle('clamped');
+    this.textContent = desc.classList.contains('clamped') ? 'Read More' : 'Show Less';
+    
+    // Always show the button when expanded ("Show Less" state)
+    if (!desc.classList.contains('clamped')) {
+      readMoreBtn.style.display = 'block';
+    } else {
+      // When collapsed, check if we still need the button
+      checkTextOverflow();
+    }
+  });
+});
+
+// Your other functions...
+function shareProperty(url) {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      url: url
+    }).catch(console.error);
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      alert("Link copied to clipboard!");
+    });
+  }
+}
+</script>
+    
+    <!-- Features Section -->
+    <!-- <div class="features-container">
+      <div class="features-title">Features</div> -->
+      <!-- <ul class="features-list">  -->
+        <!-- <li>{{ numberplate.name|capfirst }} </li> -->
+        <!-- <li>{{ numberplate.body_type }} </li> -->
+        <!-- <li>{{ numberplate.engine_capacity|floatformat}} <b>CC</b></li> -->
+        <!-- <li>{{ numberplate.condition|capfirst }}</li> -->
+        <!-- Add more features as needed -->
+      <!-- </ul>
+    </div> -->
+    <!-- <hr class="bottom-line"> -->
+    <!-- Nearby Locations Section -->
+    {% if numberplate.nearby_location.all %}
+    <div class="nearby-section">
+      <h3 class="nearby-title">Nearby Locations</h3>
+      <ul class="nearby-list">
+        {% for location in numberplate.nearby_location.all %}
+        <li class="nearby-item">
+          <div>
+            {% if "school" in location.name|lower %}
+              <img src="{% static '\assets\images\school.png' %}" alt="School" class="nearbyimg">
+            {% elif "mall" in location.name|lower %}
+              <img src="{% static '\assets\images\mall.png' %}" alt="Mall" class="nearbyimg">
+            {% elif "super market" in location.name|lower %}
+              <img src="{% static '\assets\images\shopping-cart.png' %}" alt="Mall" class="nearbyimg">
+            {% elif "hospital" in location.name|lower or "clinic" in location.name|lower %}
+              <img src="{% static '\assets\images\hospital.png' %}" alt="Hospital" class="nearbyimg">
+            {% elif "park" in location.name|lower %}
+              <img src="{% static '\assets\images\park.png' %}" alt="Park" class="nearbyimg">
+            {% elif "restaurant" in location.name|lower or "cafe" in location.name|lower %}
+              <img src="{% static '\assets\images\cafe.png' %}" alt="Restaurant" class="nearbyimg">
+            {% elif "airport" in location.name|lower %}
+              <img src="{% static '\assets\images\airport.png' %}" alt="Airport" class="nearbyimg">
+            {% elif "metro" in location.name|lower or "station" in location.name|lower %}
+              <img src="{% static '\assets\images\metro.png' %}" alt="Station" class="nearbyimg">
+            {% else %}
+              <img src="/static/images/location-icon.png" alt="Location" class="nearbyimg">
+            {% endif %}
+          </div>
+          <span>{{ location.name }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <hr class="bottom-line">
+   <!-- Map Section -->
+
+<div class="content-four single-box">
+  <div class="text">
+    <h3 class="nearby-title">Location</h3>
+    {% if location_display %}
+      <p style="margin-top: 5px; color: #666; font-size: 14px;">
+        <i class="fas fa-map-marker-alt"></i> {{ location_display }}
+      </p>
+    {% endif %}
+  </div>
+  
+  <div class="contact-map" style="position: relative; width: 100%; margin: 0 auto;">
+    {% if numberplate %}
+      <!-- Always use coordinates for precision -->
+      <iframe
+        src="{{ map_url }}"
+        allowfullscreen=""
+        loading="lazy"
+        style="width: 90%; height: 400px; border: none; border-radius: 8px;"
+        title="Location map for {{ location_name }}">
+      </iframe>
+      
+      <!-- Map Buttons -->
+      <!-- Map Buttons -->
+      <div class="map-buttons" style="position: absolute; margin-top: -460px; margin-left: 680px;"> 
+        <a 
+          href="{{ directions_url }}" 
+          target="_blank"
+          class="btn border">
+          <img src="{% static '/assets/images/icons/traffic-sign.png' %}" style="height:24px;" alt="Get Directions">
+        </a>
+        
+        <button 
+          onclick="shareLocation()"
+          class="btn border">
+          <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:24px;" alt="Share Location">
+        </button>
+      </div>
+      
+      <script>
+        function shareLocation() {
+          const lat = "{{ latitude }}";
+          const lng = "{{ longitude }}";
+          const locationName = "{{ location_name|escapejs }}";
+          const url = `https://www.google.com/maps?q=${lat},${lng}`;
+          
+          if (navigator.share) {
+            navigator.share({
+              title: locationName || 'Property Location',
+              text: `Check out this location: ${locationName}`,
+              url: url
+            }).catch(err => {
+              console.log('Error sharing:', err);
+              copyToClipboard(url);
+            });
+          } else {
+            copyToClipboard(url);
+          }
+        }
+        
+        function copyToClipboard(url) {
+          navigator.clipboard.writeText(url).then(() => {
+            showNotification('Location link copied to clipboard!', 'success');
+          }).catch(err => {
+            console.log('Failed to copy:', err);
+            prompt('Copy this link:', url);
+          });
+        }
+        
+        function showNotification(message, type) {
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            color: white;
+            border-radius: 5px;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+          `;
+          notification.textContent = message;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+              document.body.removeChild(notification);
+            }, 300);
+          }, 3000);
+        }
+        
+        // Add CSS animations if not already present
+        if (!document.getElementById('location-styles')) {
+          const style = document.createElement('style');
+          style.id = 'location-styles';
+          style.textContent = `
+            @keyframes slideIn {
+              from { transform: translateX(100%); opacity: 0; }
+              to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+              from { transform: translateX(0); opacity: 1; }
+              to { transform: translateX(100%); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      </script>
+      
+      <!-- Debug Info (remove in production) -->
+      {% if debug %}
+        <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 12px; color: #666;">
+          <p><strong>📍 Location Debug Info:</strong></p>
+          <p>Latitude: {{ latitude }}</p>
+          <p>Longitude: {{ longitude }}</p>
+          <p>numberplate has coordinates: {% if numberplate.latitude %}Yes ({{ numberplate.latitude }}, {{ numberplate.longitude }}){% else %}No{% endif %}</p>
+          <p>City: {{ numberplate.city.name }} ({% if numberplate.city.latitude %}Has coordinates: {{ numberplate.city.latitude }}, {{ numberplate.city.longitude }}{% else %}No coordinates{% endif %})</p>
+          <p>Full Address: {{ full_address }}</p>
+          <p>Location in Oman: ✅ Yes</p>
+        </div>
+      {% endif %}
+      
+    {% else %}
+      <p style="text-align: center; padding: 40px 20px; color: #666;">Location data is not available for this numberplate.</p>
+    {% endif %}
+  </div>
+</div>
+
+        
+    
+<div class="product-report-container">
+  <!-- Product Info and Report Button Row -->
+  <div class="product-report-row">
+    <div class="product-id-box">
+      <span class="product-id-label">Post ID:</span>
+      <span class="product-id-value">#{{numberplate.id}}</span>
+    </div>
+    <div class="report-trigger">
+      <span class="report-btn">
+        <img src="{% static 'assets/images/icons/flag (1).svg' %}" alt="Report Icon">
+        <strong>Report this Listing</strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- Report Listing Modal -->
+  <div class="report-modal" id="reportModal">
+    <div class="modal-container">
+      <div class="modal-content">
+        <form method="post" class="report-form">
+          {% csrf_token %}
+          <input type="hidden" name="report_submit" value="1">
+          <input type="hidden" name="reason" id="reasonInput" required>
+
+          <div class="modal-header">
+            <h3 class="modal-title">
+              <i class="bi bi-flag-fill"></i> Report This Listing
+            </h3>
+            <button type="button" class="close-btn" aria-label="Close">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group reasons-group">
+              <label class="form-label">Select a Reason <span class="required">*</span></label>
+              <div class="reason-list">
+                <div class="reason-item" data-value="abuse">Report Abuse</div>
+                <div class="reason-item" data-value="sold">Listing Sold</div>
+                <div class="reason-item" data-value="duplicate">Duplicate Listing</div>
+                <div class="reason-item" data-value="inappropriate">Inappropriate Content</div>
+                <div class="reason-item" data-value="wrong_category">Wrong Category</div>
+                <div class="reason-item" data-value="incorrect_pictures">Incorrect Pictures</div>
+                <div class="reason-item" data-value="incorrect_pricing">Incorrect Pricing</div>
+                <div class="reason-item" data-value="fraud">Suspected Fraud</div>
+                <div class="reason-item" data-value="other">Other Reason</div>
+              </div>
+              <div class="error-message" id="reasonError">Please select a reason.</div>
+            </div>
+
+            <div class="form-group description-group">
+              <label for="description" class="form-label">Additional Details</label>
+              <textarea name="description" id="description" rows="4" placeholder="Please provide any helpful information..."></textarea>
+              <div class="form-hint">Optional, but helps us review better</div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="submit-btn">
+              <i class="bi bi-send-fill"></i> Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Main Container */
+.product-report-container {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 15px 20px;
+  margin-left: -2px;
+}
+
+/* Product and Report Row */
+.product-report-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.product-id-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.product-id-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.product-id-value {
+  font-weight: 600;
+  color: #212529;
+}
+
+.report-trigger {
+  margin-left: auto;
+}
+
+.report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc3545;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: #fff;
+  border: 1px solid #dc3545;
+}
+
+.report-btn:hover {
+  background-color: #f8d7da;
+}
+
+.report-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Modal Backdrop */
+.report-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.modal-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Modal Header */
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.modal-title i {
+  color: #dc3545;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #777;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Modal Body */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Form Elements */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.required {
+  color: #dc3545;
+}
+
+/* Horizontal Reason List */
+.reason-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reason-item {
+  flex: 1 1 30%; /* Three items per row */
+  min-width: 120px;
+  text-align: center;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.reason-item:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+.reason-item.selected {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+/* Description */
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.form-hint {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 5px;
+}
+
+/* Error Message */
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+}
+
+.cancel-btn, .submit-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background-color: #e2e2e2;
+}
+
+.submit-btn {
+  background-color: #dc3545;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.submit-btn:hover {
+  background-color: #c82333;
+}
+
+/* Responsive for small screens */
+@media (max-width: 768px) {
+  .reason-item {
+    flex: 1 1 45%; /* Two items per row */
+  }
+}
+
+@media (max-width: 576px) {
+  .reason-item {
+    flex: 1 1 100%; /* One item per row */
+    min-width: 100%;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Select the report button and modal
+  const reportBtn = document.querySelector('.report-btn');
+  const modal = document.getElementById('reportModal');
+  const closeBtn = modal.querySelector('.close-btn');
+  const cancelBtn = modal.querySelector('.cancel-btn');
+  const reasonItems = modal.querySelectorAll('.reason-item');
+  const reasonInput = modal.querySelector('#reasonInput');
+  const reasonError = modal.querySelector('#reasonError');
+  const form = modal.querySelector('.report-form');
+
+  // Open modal when clicking the report button
+  reportBtn.addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  // Close modal function
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  // Close modal when clicking the close button
+  closeBtn.addEventListener('click', closeModal);
+
+  // Close modal when clicking the cancel button
+  cancelBtn.addEventListener('click', closeModal);
+
+  // Close modal when clicking outside the modal content
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Handle reason item selection
+  reasonItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Remove selection from all items
+      reasonItems.forEach(i => i.classList.remove('selected'));
+      // Add selection to clicked item
+      item.classList.add('selected');
+      // Set hidden input value
+      reasonInput.value = item.getAttribute('data-value');
+      // Hide error message
+      reasonError.style.display = 'none';
+    });
+  });
+
+  // Validate form on submit
+  form.addEventListener('submit', function (e) {
+    if (!reasonInput.value) {
+      e.preventDefault();
+      reasonError.style.display = 'block';
+    }
+  });
+});
+</script>
+
+</div>
+    </div>
+  </div>
+  
+  <!-- Right Sidebar Column -->
+  <div class="advertisement-column">
+    <!-- User Profile -->
+    <div class="user-profile">
+   
+  <div class="profile-header">
+  <a href="{% url 'user_listings' numberplate.user.id %}" class="text-decoration-none text-dark d-flex align-items-center">
+    <div class="profile-avatar me-2">
+      {% if numberplate.user.image %}
+        <img src="{{ numberplate.user.image.url }}" alt="{{ numberplate.user.username }}" class="avatar-image">
+      {% else %}
+        <div class="default-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h4>{{ numberplate.user.username|capfirst }}</h4>
+      
+    </div>
+  </a>
+</div>
+  
+  <hr>
+  <div class="contact-actions">
+  <!-- WhatsApp Button -->
+ {% if request.user.is_authenticated %}
+    <button 
+        onclick="event.stopPropagation(); window.location.href='https://wa.me/{{ numberplate.data.user.whatsapp }}'" 
+        class="btn-whatsapp">
+        <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp
+    </button>
+{% else %}
+    <button 
+        class="btn-whatsapp"
+        onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+        <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp
+    </button>
+{% endif %}
+
+
+  <!-- Call Button -->
+  {% if request.user.is_authenticated %} 
+    <button 
+        onclick="event.stopPropagation(); showPhonePopup('{{ numberplate.user.phone }}')" 
+        class="btn-call"
+        data-is-authenticated="true">
+        <img src="{% static 'assets/images/phoneicon.png' %}" 
+             alt="Call"
+             style="width: 23px; height: 23px; margin-top: -3px;">
+        Call
+    </button>
+{% else %} 
+    <button 
+        class="btn-call"
+        onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+        <img src="{% static 'assets/images/phoneicon.png' %}" 
+             alt="Call"
+             style="width: 23px; height: 23px; margin-top: -3px;">
+        Call
+    </button>
+{% endif %}
+
+  <!-- Chat Button -->
+ {% if request.user.is_authenticated %}
+<button 
+    class="btn-chat"
+    data-is-authenticated="true"
+    onclick="event.stopPropagation(); openChatPopup(
+        '{{ numberplate.user.id }}',
+        '{{ numberplate.id }}',
+        'numberplate',
+        '{{ numberplate.title|escapejs }}',
+        '{{ numberplate.user.username|escapejs }}',
+        '{{ numberplate.images.first.image.url|default_if_none:""|escapejs }}'
+    );">
+    <img src="{% static 'assets/images/chaticon.png' %}" 
+         alt="Chat"
+         style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+    Chat
+</button>
+{% else %}
+<button 
+    class="btn-chat"
+    data-is-authenticated="false"
+    onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+    <img src="{% static 'assets/images/chaticon.png' %}" 
+         alt="Chat"
+         style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+    Chat
+</button>
+{% endif %}
+
+
+
+
+  <!-- Contact Button -->
+ {% if request.user.is_authenticated %}
+<button
+class="btn-save"
+data-is-authenticated="true"
+onclick="event.stopPropagation(); showContactPopup('{{ numberplate.id }}', '{{ numberplate.user.id }}', '{{ numberplate.user.whatsapp|default:"" }}', '{{ numberplate.user.phone|default:"" }}', 'true')"> <i class="fas fa-id-card mb-1"></i> Contact </button>
+{% else %} 
+<button 
+    class="btn-save"
+    onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'"> 
+    <i class="fas fa-id-card mb-1"></i> Contact 
+</button>
+{% endif %}
+
+<div id="contactPopup" class="contact-popup" style="display: none;">
+    <div class="contact-popup-inner">
+        <div class="contact-popup-header">
+            <h3 class="contact-popup-title">Contact Options</h3>
+            <button class="contact-popup-close" style="font-size: 28px;" onclick="hideContactPopup()">&times;</button>
+        </div>
+        <div id="contactOptions" class="contact-options" style="text-decoration: none;">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ensures no underlines appear */
+    .contact-option, 
+    .contact-option:hover, 
+    .contact-option:focus {
+        text-decoration: none !important;
+    }
+</style>
+
+
+  </div>
+
+
+    </div>
+    
+    <!-- Advertisement -->
+    <div class="vertical-ad">
+      <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement" class="ad-image">
+    </div>
+  </div>
+</div>
+<script>
+function showContactPopup(adId, userId, whatsapp, phone, isAuthenticated) {
+    const popup = document.getElementById('contactPopup');
+    const options = document.getElementById('contactOptions');
+    if (!popup || !options) return;
+
+    options.innerHTML = '';
+
+    if (phone) {
+        const smsMessage = `Hi, I'm interested in your listing (ID: ${adId})`;
+        options.innerHTML += `
+            <a href="sms:${phone}?body=${encodeURIComponent(smsMessage)}" class="contact-option sms-option">
+                <i class="fas fa-sms"></i> SMS
+            </a>`;
+    }
+
+    options.innerHTML += `
+        <a href="mailto:?subject=Regarding Listing ${encodeURIComponent(adId)}" class="contact-option email-option">
+            <i class="fas fa-envelope"></i> Email
+        </a>`;
+
+    popup.style.display = 'flex';
+}
+
+function hideContactPopup() {
+    document.getElementById('contactPopup').style.display = 'none';
+}
+
+// Close when clicking outside popup
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('contactPopup')) {
+        hideContactPopup();
+    }
+});
+</script>
+
+
+            <script>
+                const bannerSection = document.getElementById('banner-section');
+                const images = [
+                    "{% static 'assets/images/banner/1-01.png' %}",
+                    "{% static 'assets/images/banner/1-02.png' %}",
+                    "{% static 'assets/images/banner/1-03.png' %}",
+                    "{% static 'assets/images/banner/1-04.png' %}",
+                ];
+                let currentIndex = 0;
+            
+                function changeBackground() {
+                    bannerSection.style.backgroundImage = `url(${images[currentIndex]})`; // Corrected line
+                    currentIndex = (currentIndex + 1) % images.length; // Loop through the images
+                }
+            
+                // Change background every 4 seconds
+                setInterval(changeBackground, 4000);
+            
+                // Initialize with the first image
+                changeBackground();
+            </script>
+
+
+        
+            <!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+<!-- Update your chat popup HTML structure -->
+<div id="chatPopup" class="chat-popup-container" style="display: none;">
+    <div class="chat-popup-header">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+            <!-- User avatar -->
+            <div class="chat-popup-avatar" id="chatPopupAvatar"></div>
+            
+            <!-- User and product info -->
+            <div style="flex: 1; min-width: 0;">
+                <div class="chat-popup-username" id="chatPopupUsername"></div>
+                <!-- Product info will be inserted here -->
+                <div id="chatPopupProductInfo" style="display: flex; align-items: center; gap: 6px; margin-top: 2px;"></div>
+            </div>
+        </div>
+        <button onclick="closeChatPopup()" class="chat-popup-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- General Tips -->
+    <div class="chat-popup-tips">
+        <strong>General Tips</strong>
+        <ul>
+            <li>Only meet in public places</li>
+            <li>Never pay or transfer money in advance</li>
+            <li>Inspect the product before you buy it</li>
+        </ul>
+    </div>
+    
+    <div class="chat-popup-messages" id="chatPopupMessages">
+        <!-- Messages will be loaded here -->
+    </div>
+    
+    <div class="chat-popup-input">
+        <textarea id="chatPopupInput" placeholder="Type your message..."></textarea>
+        <button onclick="sendPopupMessage()" id="chatPopupSendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+
+<script>
+// Store current chat data
+let currentChatData = null;
+let chatPollingInterval = null;
+
+// Function to open chat popup
+function openChatPopup(userId, productId, productType, productTitle, username, productImage) {
+    console.log('Opening chat popup with data:', {
+        userId, productId, productType, productTitle, username, productImage
+    });
+    
+    // Store chat data
+    currentChatData = {
+        userId: userId,
+        productId: productId,
+        productType: productType,
+        productTitle: productTitle,
+        username: username,
+        productImage: productImage
+    };
+    
+    // Update popup header - User info
+    const avatarElement = document.getElementById('chatPopupAvatar');
+    const usernameElement = document.getElementById('chatPopupUsername');
+    const productInfoElement = document.getElementById('chatPopupProductInfo');
+    
+    if (avatarElement) {
+        avatarElement.textContent = username ? username.charAt(0).toUpperCase() : 'U';
+    }
+    
+    if (usernameElement) {
+        usernameElement.textContent = username || 'Seller';
+    }
+    
+    // Update popup header - Product info
+    if (productInfoElement) {
+        let productImageHtml = '';
+        if (productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined') {
+            productImageHtml = `
+                <img src="${productImage}" 
+                     alt="${productTitle}" 
+                     style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            `;
+        }
+        
+        productInfoElement.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                    ${productImageHtml}
+                    <div style="display: ${productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined' ? 'none' : 'flex'}; 
+                         align-items: center; justify-content: center; width: 24px; height: 18px; 
+                         background: rgba(255,255,255,0.1); border-radius: 3px;">
+                        <i class="fas fa-${getProductIcon(productType)}" style="font-size: 10px;"></i>
+                    </div>
+                    <span style="font-size: 12px; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
+                          title="${productTitle}">
+                        ${productTitle.length > 20 ? productTitle.substring(0, 20) + '...' : productTitle}
+                    </span>
+                </div>
+                <span style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 3px;">
+                    ${productType.toUpperCase()}
+                </span>
+            </div>
+        `;
+    }
+    
+    // Show popup
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'flex';
+    }
+    
+    // Load existing messages
+    loadChatMessages();
+    
+    // Start polling for new messages
+    startChatPolling();
+    
+    // Focus on input
+    setTimeout(() => {
+        const inputElement = document.getElementById('chatPopupInput');
+        if (inputElement) {
+            inputElement.focus();
+        }
+    }, 100);
+}
+
+// Helper function to get product icon
+function getProductIcon(productType) {
+    const iconMap = {
+        'car': 'car',
+        'land': 'map-marker-alt',
+        'apartment': 'building',
+        'electronics': 'mobile-alt',
+        'furniture': 'couch',
+        'motorcycle': 'motorcycle',
+        'scooter': 'motorcycle',
+        'boat': 'ship',
+        'computer': 'laptop',
+        'camera': 'camera',
+        'jewelry': 'gem',
+        'clothing': 'tshirt',
+        'pet': 'paw',
+        'business': 'briefcase',
+        'service': 'concierge-bell'
+    };
+    return iconMap[productType] || 'tag';
+}
+
+// Function to close chat popup
+function closeChatPopup() {
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'none';
+    }
+    
+    // Stop polling
+    stopChatPolling();
+    
+    // Clear current chat data
+    currentChatData = null;
+    
+    // Clear messages
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+    }
+    
+    // Clear input
+    const inputElement = document.getElementById('chatPopupInput');
+    if (inputElement) {
+        inputElement.value = '';
+        inputElement.style.height = 'auto';
+    }
+}
+
+// Function to load chat messages
+function loadChatMessages() {
+    if (!currentChatData) {
+        console.error('No current chat data');
+        return;
+    }
+    
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) {
+        console.error('Messages container not found');
+        return;
+    }
+    
+    messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Loading messages...</div>';
+    
+    // First check if chat exists
+    fetch(`/chat/${currentChatData.userId}/check-chat-exists/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.exists) {
+                // Load existing messages
+                return fetch(`/chat/${currentChatData.userId}/get-messages/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`);
+            } else {
+                // Show initial message for new chat
+                showInitialMessage();
+                // Automatically create the first message
+                createInitialChat();
+                throw new Error('new_chat');
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayMessages(data.messages);
+        })
+        .catch(error => {
+            if (error.message === 'new_chat') {
+                // This is expected for new chats
+                return;
+            }
+            console.error('Error loading messages:', error);
+            messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Error loading messages</div>';
+        });
+}
+
+// Function to create initial chat message
+function createInitialChat() {
+    if (!currentChatData) return;
+    
+    // Send initial interest message
+    const initialMessage = `I'm interested in your Product`;
+    
+    const formData = new FormData();
+    formData.append('message', initialMessage);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    }
+    
+    // Send initial message silently
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Initial message sent:', data);
+    })
+    .catch(error => {
+        console.error('Error sending initial message:', error);
+    });
+}
+
+// Function to show initial message
+function showInitialMessage() {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    // Show initial message
+    const initialMessage = document.createElement('div');
+    initialMessage.className = 'chat-popup-message received';
+    initialMessage.innerHTML = `
+        <div>Hello! Thanks for your interest in my product.</div>
+        <div class="message-time">Now</div>
+    `;
+    messagesContainer.appendChild(initialMessage);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to display messages
+function displayMessages(messages) {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    if (messages && messages.length > 0) {
+        // Sort messages by timestamp (oldest first)
+        messages.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+        
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-popup-message ${message.is_sent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div>${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+        });
+    } else {
+        // If no messages, show initial message
+        showInitialMessage();
+    }
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to send message
+function sendPopupMessage() {
+    if (!currentChatData) {
+        console.log('No active chat');
+        return;
+    }
+    
+    const inputElement = document.getElementById('chatPopupInput');
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    
+    if (!inputElement || !sendBtn) return;
+    
+    const message = inputElement.value.trim();
+    if (!message) {
+        // Just return without alert
+        return;
+    }
+    
+    // Disable send button
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    // Create message element immediately for better UX
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-popup-message sent';
+        messageDiv.innerHTML = `
+            <div>${message}</div>
+            <div class="message-time">Sending...</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Clear input
+    inputElement.value = '';
+    inputElement.style.height = 'auto';
+    
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    } else {
+        console.error('CSRF token not found');
+        // Show error in message instead of alert
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Security error. Please refresh the page.</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        return;
+    }
+    
+    // Send message to server
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update message with success timestamp
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0');
+        
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div>${data.message || message}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+        }
+        
+        // Scroll to show new message
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        
+        // Update message to show error
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Failed to send: ${message}</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+    })
+    .finally(() => {
+        // Re-enable send button
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+    });
+}
+
+// Function to start polling for new messages
+function startChatPolling() {
+    // Clear any existing interval
+    stopChatPolling();
+    
+    if (!currentChatData) return;
+    
+    // Poll every 3 seconds for new messages
+    chatPollingInterval = setInterval(() => {
+        if (!currentChatData) {
+            stopChatPolling();
+            return;
+        }
+        
+        fetch(`/chat/${currentChatData.userId}/check-new/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.has_new && data.count > 0) {
+                    // Reload messages if new ones arrived
+                    loadChatMessages();
+                }
+            })
+            .catch(error => {
+                console.error('Polling error:', error);
+            });
+    }, 3000);
+}
+
+// Function to stop polling
+function stopChatPolling() {
+    if (chatPollingInterval) {
+        clearInterval(chatPollingInterval);
+        chatPollingInterval = null;
+    }
+}
+
+// Function to handle Enter key in textarea
+function handleChatInputKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        
+        const inputElement = event.target;
+        const message = inputElement.value.trim();
+        
+        if (message) {
+            sendPopupMessage();
+        } else {
+            // Just clear the input on Enter
+            inputElement.value = '';
+            inputElement.style.height = 'auto';
+        }
+    }
+}
+
+// Function to auto-resize textarea
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+}
+
+// Initialize chat popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up textarea event listeners
+    const textarea = document.getElementById('chatPopupInput');
+    if (textarea) {
+        textarea.addEventListener('keydown', handleChatInputKeydown);
+        textarea.addEventListener('input', function() {
+            autoResizeTextarea(this);
+        });
+    }
+    
+    // Set up send button - FIXED VERSION
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    if (sendBtn) {
+        // Remove any existing onclick handlers
+        sendBtn.onclick = null;
+        
+        // Add new event listener
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const inputElement = document.getElementById('chatPopupInput');
+            if (!inputElement) return;
+            
+            const message = inputElement.value.trim();
+            if (!message) {
+                // Clear input and return without alert
+                inputElement.value = '';
+                inputElement.style.height = 'auto';
+                return;
+            }
+            
+            // Call sendPopupMessage function
+            sendPopupMessage();
+        });
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+        const popup = document.getElementById('chatPopup');
+        if (popup && popup.style.display === 'flex') {
+            const isClickInsidePopup = popup.contains(e.target);
+            const isChatButton = e.target.closest('[onclick*="openChatPopup"]') || 
+                                 e.target.closest('.chat-button') ||
+                                 e.target.closest('a[href*="chat"]');
+            
+            if (!isClickInsidePopup && !isChatButton) {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('chatPopup');
+            if (popup && popup.style.display === 'flex') {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Debug: Log all chat buttons for testing
+    const chatButtons = document.querySelectorAll('[onclick*="openChatPopup"]');
+    console.log(`Found ${chatButtons.length} chat buttons on page`);
+    
+    // Add click handler to all chat buttons (backup)
+    chatButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Prevent default if it's an anchor tag
+            if (this.tagName === 'A' && this.getAttribute('href') === 'javascript:void(0);') {
+                e.preventDefault();
+            }
+        });
+    });
+});
+
+// Global function to be called from onclick attribute
+window.openChatPopup = openChatPopup;
+window.closeChatPopup = closeChatPopup;
+window.sendPopupMessage = sendPopupMessage;
+</script>
+{% include 'footer.html' %}
+
+
+
+
+
+

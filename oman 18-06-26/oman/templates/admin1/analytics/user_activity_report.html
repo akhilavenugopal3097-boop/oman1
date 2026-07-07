@@ -1,0 +1,111 @@
+{% extends 'admin1/base.html' %}
+{% load static %}
+
+{% block title %}User Activity Report{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">👥 User Activity Report</h1>
+            <a href="?export=1&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                <i class="fas fa-download me-2"></i> Export as CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-auto">
+                            <label class="form-label">Date From</label>
+                            <input type="date" name="date_from" class="form-control" value="{{ date_from|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label">Date To</label>
+                            <input type="date" name="date_to" class="form-control" value="{{ date_to|date:'Y-m-d' }}">
+                        </div>
+                        <div class="col-auto align-self-end">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="?clear=1" class="btn btn-outline-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm bg-info text-white">
+                <div class="card-body">
+                    <h6 class="text-uppercase">Total Users</h6>
+                    <h2 class="mb-0">{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">User Activity Details</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>User</th>
+                                    <th>Joined</th>
+                                    <th>Last Login</th>
+                                    <th class="text-center">Listings</th>
+                                    <th class="text-center">Favorites</th>
+                                    <th class="text-center">Reports</th>
+                                    <th class="text-center">Chats</th>
+                                    <th class="text-center">Job Seeker</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in user_activity %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'user_activity_detail' item.user.id %}" class="text-decoration-none">
+                                            <strong>{{ item.user.username }}</strong>
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">{{ item.user.email }}</small>
+                                    </td>
+                                    <td>{{ item.date_joined|date:"Y-m-d" }}</td>
+                                    <td>{{ item.last_login|date:"Y-m-d H:i"|default:"Never" }}</td>
+                                    <td class="text-center">{{ item.listing_count }}</td>
+                                    <td class="text-center">{{ item.favorite_count }}</td>
+                                    <td class="text-center">{{ item.report_count }}</td>
+                                    <td class="text-center">{{ item.chat_count }}</td>
+                                    <td class="text-center">
+                                        {% if item.is_job_seeker %}
+                                            <span class="badge {% if item.job_seeker_completed %}bg-success{% else %}bg-warning{% endif %}">
+                                                {% if item.job_seeker_completed %}Completed{% else %}Incomplete{% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">No user activity found for this period.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,591 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- CKEditor CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.css">
+<script type="importmap">
+    {
+        "imports": {
+            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.1.1/ckeditor5.js",
+            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.1.1/"
+        }
+    }
+</script>
+
+<style>
+   .toolbar {
+        background: #15818E;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        color: white;
+    }
+    
+    /* CKEditor custom styling */
+    .ck-editor__editable {
+        min-height: 400px;
+        max-height: 500px;
+    }
+    
+    .ck-content {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+    }
+    
+    .version-badge {
+        background: #15818E;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+    
+    .policy-content-view {
+        white-space: pre-wrap;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+    }
+    
+    .modal-xl {
+        max-width: 90%;
+        width: 1200px;
+    }
+    
+    .modal-body {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Privacy Policy Management</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search policies..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addPolicyModal">
+                Add Privacy Policy
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Privacy Policy Management</h3>
+                            
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="table-responsive">
+                                <table id="policyTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th>Title</th>
+                                            <th>Version</th>
+                                            <th>Status</th>
+                                            <th>Last Updated</th>
+                                            <th width="150px">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for policy in policies %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {{ policy.title }}
+                                                {% if policy.is_active %}
+                                                    <span class="version-badge ms-2">Current</span>
+                                                {% endif %}
+                                            </td>
+                                            <td><span class="badge bg-info">{{ policy.version }}</span></td>
+                                            <td>
+                                                <span class="badge {% if policy.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {% if policy.is_active %}Active{% else %}Inactive{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>{{ policy.updated_at|date:"Y-m-d H:i" }}</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-primary btn-sm view-btn" 
+                                                            data-policy-title="{{ policy.title }}"
+                                                            data-policy-version="{{ policy.version }}"
+                                                            data-policy-content="{{ policy.content|escapejs }}"
+                                                            data-policy-effective="{{ policy.effective_date|date:'Y-m-d' }}"
+                                                            data-policy-created="{{ policy.created_at|date:'Y-m-d H:i' }}"
+                                                            data-policy-updated="{{ policy.updated_at|date:'Y-m-d H:i' }}"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#viewPolicyModal"
+                                                            title="View">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    
+                                                    <button class="btn btn-warning btn-sm edit-btn" 
+                                                            data-edit-url="{% url 'edit_privacy_policy' policy.id %}" 
+                                                            data-policy-title="{{ policy.title }}" 
+                                                            data-policy-content="{{ policy.content|escapejs }}"
+                                                            data-policy-version="{{ policy.version }}"
+                                                            data-policy-effective="{{ policy.effective_date|date:'Y-m-d' }}"
+                                                            data-policy-status="{{ policy.is_active|lower }}"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#editPolicyModal"
+                                                            title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    
+                                                    <form method="POST" action="{% url 'toggle_privacy_policy_status' policy.id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm {% if policy.is_active %}btn-secondary{% else %}btn-success{% endif %}" 
+                                                                title="{% if policy.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                                            <i class="fas {% if policy.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                            data-delete-url="{% url 'delete_privacy_policy' policy.id %}" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#deletePolicyModal"
+                                                            title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">No privacy policies found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Policy Modal -->
+<div class="modal fade" id="addPolicyModal" tabindex="-1" aria-labelledby="addPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="addPolicyForm" method="POST" action="{% url 'add_privacy_policy' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPolicyModalLabel">Add New Privacy Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="policyTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="policyTitle" name="title" required value="Privacy Policy">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="policyVersion" class="form-label">Version</label>
+                            <input type="text" class="form-control" id="policyVersion" name="version" required placeholder="e.g., 1.0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="policyEffectiveDate" class="form-label">Effective Date</label>
+                            <input type="date" class="form-control" id="policyEffectiveDate" name="effective_date" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="policyContent" class="form-label">Content</label>
+                        <textarea id="policyContent" name="content" style="display: none;"></textarea>
+                        <div id="addEditorContainer"></div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Use the toolbar above to format your privacy policy.
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="policyIsActive" name="is_active">
+                            <label class="form-check-label" for="policyIsActive">
+                                Set as Active (This will deactivate all other policies)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Policy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Policy Modal -->
+<div class="modal fade" id="editPolicyModal" tabindex="-1" aria-labelledby="editPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="editPolicyForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPolicyModalLabel">Edit Privacy Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editPolicyTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editPolicyTitle" name="title" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="editPolicyVersion" class="form-label">Version</label>
+                            <input type="text" class="form-control" id="editPolicyVersion" name="version" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="editPolicyEffectiveDate" class="form-label">Effective Date</label>
+                            <input type="date" class="form-control" id="editPolicyEffectiveDate" name="effective_date" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPolicyContent" class="form-label">Content</label>
+                        <textarea id="editPolicyContent" name="content" style="display: none;"></textarea>
+                        <div id="editEditorContainer"></div>
+                        <small class="text-muted">Use the toolbar above to format your privacy policy.</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editPolicyIsActive" name="is_active">
+                            <label class="form-check-label" for="editPolicyIsActive">
+                                Set as Active (This will deactivate all other policies)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update Policy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Policy Modal -->
+<div class="modal fade" id="viewPolicyModal" tabindex="-1" aria-labelledby="viewPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewPolicyModalLabel">Privacy Policy Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Title:</strong>
+                        <p id="viewPolicyTitle" class="mt-1"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Version:</strong>
+                        <p id="viewPolicyVersion" class="mt-1"></p>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Effective Date:</strong>
+                        <p id="viewPolicyEffective" class="mt-1"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Created At:</strong>
+                        <p id="viewPolicyCreated" class="mt-1"></p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Last Updated:</strong>
+                        <p id="viewPolicyUpdated" class="mt-1"></p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <strong>Content:</strong>
+                    <div id="viewPolicyContent" class="policy-content-view mt-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deletePolicyModal" tabindex="-1" aria-labelledby="deletePolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deletePolicyForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePolicyModalLabel">Delete Privacy Policy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this privacy policy?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script type="module">
+    import {
+        ClassicEditor,
+        Essentials,
+        Bold,
+        Italic,
+        Underline,
+        Strikethrough,
+        Paragraph,
+        Heading,
+        List,
+        Link,
+        BlockQuote,
+        Alignment,
+        Font,
+        Highlight,
+        Table,
+        Image,
+        ImageUpload,
+        MediaEmbed,
+        Autoformat,
+        RemoveFormat,
+        SpecialCharacters
+    } from 'ckeditor5';
+
+    let addEditor = null;
+    let editEditor = null;
+
+    // Function to destroy editor
+    async function destroyEditor(editor) {
+        if (editor) {
+            try {
+                await editor.destroy();
+            } catch (error) {
+                console.error('Error destroying editor:', error);
+            }
+        }
+        return null;
+    }
+
+    // Initialize Add Editor
+    async function initAddEditor(initialContent = '') {
+        if (addEditor) {
+            addEditor = await destroyEditor(addEditor);
+        }
+        
+        const container = document.getElementById('addEditorContainer');
+        if (container) {
+            container.innerHTML = '<div id="addEditorTarget"></div>';
+            const target = document.getElementById('addEditorTarget');
+            
+            try {
+                addEditor = await ClassicEditor.create(target, {
+                    plugins: [Essentials, Bold, Italic, Underline, Strikethrough, Paragraph, Heading, List, Link, BlockQuote, Alignment, Font, Highlight, Table, Image, ImageUpload, MediaEmbed, Autoformat, RemoveFormat, SpecialCharacters],
+                    toolbar: {
+                        items: ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|', 'bulletedList', 'numberedList', '|', 'alignment', '|', 'link', 'blockQuote', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'highlight', '|', 'insertTable', '|', 'mediaEmbed', '|', 'undo', 'redo', 'removeFormat'],
+                        shouldGroupWhenFull: true
+                    },
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                        ]
+                    },
+                    initialData: initialContent,
+                    placeholder: 'Enter your privacy policy content here...'
+                });
+            } catch (error) {
+                console.error('Error initializing add editor:', error);
+            }
+        }
+    }
+
+    // Initialize Edit Editor
+    async function initEditEditor(initialContent = '') {
+        if (editEditor) {
+            editEditor = await destroyEditor(editEditor);
+        }
+        
+        const container = document.getElementById('editEditorContainer');
+        if (container) {
+            container.innerHTML = '<div id="editEditorTarget"></div>';
+            const target = document.getElementById('editEditorTarget');
+            
+            try {
+                editEditor = await ClassicEditor.create(target, {
+                    plugins: [Essentials, Bold, Italic, Underline, Strikethrough, Paragraph, Heading, List, Link, BlockQuote, Alignment, Font, Highlight, Table, Image, ImageUpload, MediaEmbed, Autoformat, RemoveFormat, SpecialCharacters],
+                    toolbar: {
+                        items: ['heading', '|', 'bold', 'italic', 'underline', 'strikethrough', '|', 'bulletedList', 'numberedList', '|', 'alignment', '|', 'link', 'blockQuote', '|', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|', 'highlight', '|', 'insertTable', '|', 'mediaEmbed', '|', 'undo', 'redo', 'removeFormat'],
+                        shouldGroupWhenFull: true
+                    },
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                        ]
+                    },
+                    initialData: initialContent,
+                    placeholder: 'Enter your privacy policy content here...'
+                });
+            } catch (error) {
+                console.error('Error initializing edit editor:', error);
+            }
+        }
+    }
+
+    // Handle Add Modal
+    document.getElementById('addPolicyModal').addEventListener('shown.bs.modal', async function() {
+        await initAddEditor('');
+    });
+
+    document.getElementById('addPolicyModal').addEventListener('hidden.bs.modal', async function() {
+        if (addEditor) {
+            addEditor = await destroyEditor(addEditor);
+        }
+    });
+
+    // Handle Edit Modal
+    document.getElementById('editPolicyModal').addEventListener('shown.bs.modal', async function() {
+        const content = this.dataset.content || '';
+        await initEditEditor(content);
+    });
+
+    document.getElementById('editPolicyModal').addEventListener('hidden.bs.modal', async function() {
+        if (editEditor) {
+            editEditor = await destroyEditor(editEditor);
+        }
+        delete document.getElementById('editPolicyModal').dataset.content;
+    });
+
+    // Handle form submissions
+    document.getElementById('addPolicyForm').addEventListener('submit', function(e) {
+        if (addEditor) {
+            const hiddenTextarea = document.getElementById('policyContent');
+            hiddenTextarea.value = addEditor.getData();
+        }
+    });
+
+    document.getElementById('editPolicyForm').addEventListener('submit', function(e) {
+        if (editEditor) {
+            const hiddenTextarea = document.getElementById('editPolicyContent');
+            hiddenTextarea.value = editEditor.getData();
+        }
+    });
+
+    // Helper function to decode Unicode
+    function decodeUnicodeEscapes(str) {
+        if (!str) return '';
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        let decoded = textarea.value;
+        decoded = decoded.replace(/\\u([0-9A-Fa-f]{4})/g, function(match, grp) {
+            return String.fromCharCode(parseInt(grp, 16));
+        });
+        return decoded;
+    }
+
+    // Handle Edit Button Click
+    const editButtons = document.querySelectorAll('.edit-btn');
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            let content = this.getAttribute('data-policy-content');
+            if (content) {
+                content = decodeUnicodeEscapes(content);
+            }
+            const modal = document.getElementById('editPolicyModal');
+            modal.dataset.content = content;
+            
+            document.getElementById('editPolicyTitle').value = this.getAttribute('data-policy-title');
+            document.getElementById('editPolicyVersion').value = this.getAttribute('data-policy-version');
+            document.getElementById('editPolicyEffectiveDate').value = this.getAttribute('data-policy-effective');
+            document.getElementById('editPolicyIsActive').checked = this.getAttribute('data-policy-status') === 'true';
+            document.getElementById('editPolicyForm').action = this.getAttribute('data-edit-url');
+        });
+    });
+
+    // Handle View Modal
+    const viewButtons = document.querySelectorAll('.view-btn');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            document.getElementById('viewPolicyTitle').innerHTML = this.getAttribute('data-policy-title');
+            document.getElementById('viewPolicyVersion').innerHTML = this.getAttribute('data-policy-version');
+            document.getElementById('viewPolicyEffective').innerHTML = this.getAttribute('data-policy-effective');
+            document.getElementById('viewPolicyCreated').innerHTML = this.getAttribute('data-policy-created');
+            document.getElementById('viewPolicyUpdated').innerHTML = this.getAttribute('data-policy-updated');
+            
+            let content = this.getAttribute('data-policy-content');
+            if (content) {
+                content = decodeUnicodeEscapes(content);
+            }
+            document.getElementById('viewPolicyContent').innerHTML = `<div class="ck-content">${content}</div>`;
+        });
+    });
+
+    // Handle Delete Modal
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const deleteForm = document.getElementById('deletePolicyForm');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            deleteForm.action = this.getAttribute('data-delete-url');
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.querySelector('input[name="search"]');
+    const tableRows = document.querySelectorAll('#policyTable tbody tr');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            tableRows.forEach(row => {
+                if (row.querySelector('td[colspan]')) return;
+                const title = row.cells[0]?.textContent.toLowerCase() || '';
+                const version = row.cells[1]?.textContent.toLowerCase() || '';
+                const status = row.cells[2]?.textContent.toLowerCase() || '';
+                row.style.display = (title.includes(searchTerm) || version.includes(searchTerm) || status.includes(searchTerm)) ? '' : 'none';
+            });
+        });
+    }
+
+    // Auto-set effective date
+    const effectiveDateInput = document.getElementById('policyEffectiveDate');
+    if (effectiveDateInput && !effectiveDateInput.value) {
+        effectiveDateInput.value = new Date().toISOString().split('T')[0];
+    }
+</script>

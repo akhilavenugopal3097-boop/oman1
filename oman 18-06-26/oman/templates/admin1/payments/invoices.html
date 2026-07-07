@@ -1,0 +1,262 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Invoice Generation{% endblock %}
+{% block page_title %}Invoice Management{% endblock %}
+
+{% block content %}
+<!-- Header Actions -->
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <button class="px-4 py-2 text-white rounded-lg transition-colors btn-gradient">
+            <i class="fas fa-plus mr-2"></i>Generate New Invoice
+        </button>
+    </div>
+    <div class="flex gap-3">
+        <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+            <option>All Status</option>
+            <option>Paid</option>
+            <option>Pending</option>
+            <option>Overdue</option>
+        </select>
+        <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+            <option>This Month</option>
+            <option>Last Month</option>
+            <option>This Quarter</option>
+        </select>
+    </div>
+</div>
+
+<!-- Invoice Summary -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-check-circle text-xl" style="color: #F9AD1F;"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500">Paid Invoices</p>
+                <p class="text-xl font-bold text-gray-800">
+                    <span class="currency-symbol">OMR</span> 1,399.98
+                </p>
+                <p class="text-xs mt-1" style="color: #F9AD1F;">↑ 12% from last month</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #EB362D20;">
+                <i class="fas fa-clock text-xl" style="color: #EB362D;"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500">Pending Invoices</p>
+                <p class="text-xl font-bold text-gray-800">
+                    <span class="currency-symbol">OMR</span> 1,299.99
+                </p>
+                <p class="text-xs mt-1" style="color: #EB362D;">3 invoices awaiting payment</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-exclamation-circle text-xl" style="color: #EB362D;"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500">Overdue</p>
+                <p class="text-xl font-bold text-gray-800">
+                    <span class="currency-symbol">OMR</span> 299.99
+                </p>
+                <p class="text-xs mt-1" style="color: #EB362D;">2 invoices overdue</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <button class="p-4 rounded-xl text-center transition-colors" style="background: #F9AD1F10; hover:background: #F9AD1F20;">
+        <i class="fas fa-file-pdf text-2xl mb-2" style="color: #F9AD1F;"></i>
+        <p class="text-sm font-medium" style="color: #F9AD1F;">Bulk PDF Export</p>
+    </button>
+    <button class="p-4 rounded-xl text-center transition-colors" style="background: #EB362D10; hover:background: #EB362D20;">
+        <i class="fas fa-envelope text-2xl mb-2" style="color: #EB362D;"></i>
+        <p class="text-sm font-medium" style="color: #EB362D;">Send Reminders</p>
+    </button>
+    <button class="p-4 rounded-xl text-center transition-colors" style="background: #F9AD1F10; hover:background: #F9AD1F20;">
+        <i class="fas fa-chart-pie text-2xl mb-2" style="color: #F9AD1F;"></i>
+        <p class="text-sm font-medium" style="color: #F9AD1F;">Invoice Report</p>
+    </button>
+    <button class="p-4 rounded-xl text-center transition-colors" style="background: linear-gradient(60deg, #F9AD1F10, #EB362D10); hover:background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+        <i class="fas fa-cog text-2xl mb-2 gradient-text"></i>
+        <p class="text-sm font-medium gradient-text">Settings</p>
+    </button>
+</div>
+
+<!-- Invoices Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-semibold" style="color: #F9AD1F;">Recent Invoices</h3>
+        <div class="flex gap-2">
+            <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                <i class="fas fa-download mr-1" style="color: #F9AD1F;"></i>Export
+            </button>
+            <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                <i class="fas fa-print mr-1" style="color: #EB362D;"></i>Print
+            </button>
+        </div>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Invoice #</th>
+                    <th class="px-6 py-3">Client</th>
+                    <th class="px-6 py-3">Amount</th>
+                    <th class="px-6 py-3">Issue Date</th>
+                    <th class="px-6 py-3">Due Date</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for invoice in invoices %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono font-medium" style="color: #F9AD1F;">{{ invoice.number }}</td>
+                    <td class="px-6 py-4">{{ invoice.user }}</td>
+                    <td class="px-6 py-4 font-semibold">
+                        <span class="currency-symbol">OMR</span> {{ invoice.amount }}
+                    </td>
+                    <td class="px-6 py-4">{{ invoice.date }}</td>
+                    <td class="px-6 py-4">{{ invoice.due_date }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 text-xs rounded-full font-medium
+                            {% if invoice.status == 'paid' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                            {% elif invoice.status == 'pending' %}" style="background: #EB362D20; color: #EB362D;"
+                            {% else %}" style="background: #dc262620; color: #dc2626;"
+                            {% endif %}>{{ invoice.status }}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button class="mr-2 hover:opacity-80 transition-opacity" title="View" style="color: #F9AD1F;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="mr-2 hover:opacity-80 transition-opacity" title="Download PDF" style="color: #EB362D;">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                        <button class="hover:opacity-80 transition-opacity" title="Send Email" style="color: #F9AD1F;">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Additional Sections -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Upcoming Due Dates -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4" style="color: #F9AD1F;">Upcoming Due Dates</h3>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">INV-2024-002</p>
+                    <p class="text-xs text-gray-500">XYZ Ltd</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold"><span class="currency-symbol">OMR</span> 1,299.99</p>
+                    <p class="text-xs" style="color: #EB362D;">Due in 5 days</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">INV-2024-005</p>
+                    <p class="text-xs text-gray-500">Tech Solutions</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold"><span class="currency-symbol">OMR</span> 499.99</p>
+                    <p class="text-xs" style="color: #F9AD1F;">Due in 12 days</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">INV-2024-006</p>
+                    <p class="text-xs text-gray-500">Global Corp</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold"><span class="currency-symbol">OMR</span> 899.99</p>
+                    <p class="text-xs" style="color: #10b981;">Due in 18 days</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Statistics -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 gradient-text">Monthly Statistics</h3>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Payment Rate</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">78%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 78%; background: linear-gradient(90deg, #F9AD1F, #EB362D);"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">On-time Payment</span>
+                    <span class="font-semibold" style="color: #EB362D;">65%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 65%; background: #EB362D;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Avg. Payment Time</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">12 days</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 45%; background: #F9AD1F;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="mt-8 bg-white rounded-xl shadow-sm p-6">
+    <h3 class="text-lg font-semibold mb-4" style="color: #F9AD1F;">Recent Invoice Activity</h3>
+    <div class="space-y-3">
+        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-check text-sm" style="color: #F9AD1F;"></i>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="text-sm"><span class="font-medium">INV-2024-001</span> was paid by ABC Corp</p>
+                <p class="text-xs text-gray-500">2 hours ago</p>
+            </div>
+        </div>
+        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: #EB362D20;">
+                <i class="fas fa-envelope text-sm" style="color: #EB362D;"></i>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="text-sm"><span class="font-medium">INV-2024-003</span> reminder sent to Startup Inc</p>
+                <p class="text-xs text-gray-500">5 hours ago</p>
+            </div>
+        </div>
+        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-file-pdf text-sm" style="color: #F9AD1F;"></i>
+            </div>
+            <div class="ml-3 flex-1">
+                <p class="text-sm"><span class="font-medium">INV-2024-004</span> PDF downloaded</p>
+                <p class="text-xs text-gray-500">yesterday</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

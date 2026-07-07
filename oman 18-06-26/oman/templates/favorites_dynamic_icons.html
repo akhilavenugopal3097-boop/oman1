@@ -1,0 +1,678 @@
+{% load dict_filters %}
+{% load static %}
+{% load humanize %}
+
+
+{# ----------------- ICONS SECTION (comes under title) ----------------- #}
+
+{% if product.model_name == 'car' %}
+    <span><img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.year }}</span>
+    <span><img src="{% static 'assets/images/icons/regional-specs.svg' %}"> {{ product.get_regional_spec_display }}</span>
+    <span><img src="{% static 'assets/images/icons/Fuel.svg' %}"> {{ product.get_fuel_type_display }}</span>
+
+{% elif product.model_name == 'motorcycle' %}
+    <span><img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.year }}</span>
+    <span><img src="{% static 'assets/images/icons/motorcycle.svg' %}"> {{ product.body_type }}</span>
+    <span><img src="{% static 'assets/images/icons/car-engine.svg' %}"> {{ product.engine_capacity }} cc</span>
+
+{% elif product.model_name == 'scooter' %}
+    <span><img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.year }}</span>
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+    <span><img src="{% static 'assets/images/icons/car-engine.svg' %}"> {{ product.engine_capacity }} cc</span>
+
+{% elif product.model_name == 'heavyvehicle' %}
+    <span><img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.year }}</span>
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+    <span><img src="{% static 'assets/images/icons/subtype.svg' %}"> {{ product.sub_type }}</span>
+
+{% elif product.model_name == 'quadbikes' %}
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+
+{% elif product.model_name == 'helmetclothes' %}
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+    <span><img src="{% static 'assets/images/icons/user.svg' %}"> {{ product.lister_type }}</span>
+
+{% elif product.model_name == 'accessoriesparts' %}
+
+<span><img src="{% static 'assets/images/icons/payment.svg'%}"alt="Area"> {{ product.payment_method|title }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+{% elif product.model_name == 'tiresandcaps' %}
+    <span><img src="{% static 'assets/images/icons/size.svg' %}"> {{ product.size }} Inches</span>
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+    {% elif product.model_name == 'junkcars' %}
+    <span><img src="{% static 'assets/images/icons/size.svg' %}"> {{ product.size }} Inches</span>
+    <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span>
+
+    {% elif product.model_name == 'boat' %}
+     <span><img src="{% static 'assets/images/icons/lister.svg'%}">  {{ product.lister_type|title }}</span>
+                                    <span><img src="{% static 'assets/images/icons/condition.svg'%}"> {{ product.condition|title }}</span>
+
+                                    {% elif product.model_name == 'numberplate' %}
+      <span><img src="{% static 'assets/images/icons/user.svg'%}" style="margin-top:-3px;" alt="Bedrooms">  {{ product.seller_name|title }}</span>
+
+
+    {% elif product.model_name == 'driving' %}
+    <span><img src="{% static 'assets/images/icons/lister.svg'%}"> {{ product.trainer_gender|title}}</span>
+    <span><img src="{% static 'assets/images/icons/condition.svg'%}"> {{ product.body_type|title }}</span>
+
+
+        {% elif product.model_name == 'land' %}
+    <span><img src="{% static 'assets/images/icons/size.svg'%}"> {{ product.plot_area|floatformat:0 }} Sqm</span>
+    <span><img src="{% static 'assets/images/icons/house.svg'%}"> {{ product.get_zoned_for_display }}</span>
+
+{% elif product.model_name == 'showrooms' %}
+    <span><img src="{% static 'assets/images/icons/size.svg'%}"> {{ product.plot_area|floatformat:0 }} Sqm</span>
+   
+
+{% elif product.model_name == 'apartment' %}
+    <span><img src="{% static 'assets/images/icons/bed_space.svg'%}">  {{ product.bedrooms }}{% if product.bedrooms|floatformat:0|add:0 %}{% if product.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg'%}"> {{ product.bathrooms }}{% if product.bathrooms|floatformat:0|add:0 %}{% if product.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg'%}"> {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+    {% elif product.model_name == 'clinic' %}
+    <span><img src="{% static 'assets/images/icons/apartment.svg'%}">  {{ product.get_property_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg'%}"> {{ product.plot_area | floatformat:0  }} Sqm </span>
+
+      {% elif product.model_name == 'villa' %}
+    <span><img src="{% static 'assets/images/icons/bed_space.svg'%}">  {{ product.bedrooms }}{% if villa.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg'%}"> {{ product.bathrooms }}{% if villa.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.png'%}"> {{ product.surface_area|floatformat:0 }} Sqm</span>
+
+
+    {% elif product.model_name == 'factory' %}
+    <span><img src="{% static 'assets/images/icons/size.svg'%}">  {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+
+     {% elif product.model_name == 'townhouse' %}
+     <span><img src="{% static 'assets/images/icons/bed_space.svg'%}" alt="Bedrooms">  {{ product.bedrooms }}{% if product.bedrooms|floatformat:0|add:0 %}{% if product.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+                                    <span><img src="{% static 'assets/images/icons/bath.svg'%}" alt="Bathrooms"> {{ product.bathrooms }}{% if product.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}{% endif %}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area"> {{ product.plot_area |floatformat:0 }} Sqm</span>
+    
+   
+{% elif product.model_name == 'fullfloors' %}
+     <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area">  {{ product.plot_area | floatformat:0  }} Sqm</span>
+
+
+     {% elif product.model_name == 'shop' %}
+     <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area">  {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+       {% elif product.model_name == 'staff' %}
+     <span><img src="{% static 'assets/images/icons/bed_space.svg'%}" alt="Bedrooms" >  {{ product.bedrooms }}{% if product.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+                                    <span><img src="{% static 'assets/images/icons/floor.svg'%}" alt="Bathrooms"> {{ product.get_floors_display }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area"> {{ product.plot_area |floatformat:0 }} Sqm</span>
+
+
+                                     {% elif product.model_name == 'farm' %}
+      <span><img src="{% static 'assets/images/icons/bed_space.svg'%}" alt="Bedrooms">  {{ product.bedrooms }}{% if product.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+                                    <span><img src="{% static 'assets/images/icons/bath.svg'%}" alt="Bathrooms"> {{ product.bathrooms }}{% if product.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}</span>
+                                    
+                                    <span><img src="{% static 'assets/images/icons/size.png'%}" alt="Area"> {{ product.surface_area|floatformat:0 }} Sqm</span>
+
+ {% elif product.model_name == 'warehouse' %}
+       <span><img src="{% static 'assets/images/icons/condition.svg'%}" alt="Bedrooms"> {{product.property|format_property }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area">  {{ product.plot_area | floatformat:0  }} Sqm</span>
+
+
+                                    {% elif product.model_name == 'cafe' %}
+       
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area">  {{ product.plot_area | floatformat:0  }} Sqm</span>
+
+                                     {% elif product.model_name == 'commercial' %}
+       
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area">  {{ product.plot_area | floatformat:0  }} Sqm</span>
+
+    {% elif product.model_name == 'wholebuilding' %}
+       <span><img src="{% static 'assets/images/icons/floor.svg'%}" alt="Bathrooms"> {{ product.get_floors_display }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area"> {{ product.plot_area| floatformat:0 }} Sqm</span>
+                                    <span><img src="{% static 'assets/images/icons/size.png'%}" alt="Area"> {{ product.surface_area| floatformat:0 }} Sqm</span>
+
+                                     {% elif product.model_name == 'complex' %}
+        <span><img src="{% static 'assets/images/icons/floor.svg'%}" alt="Bathrooms"> {{ product.get_floors_display }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area"> {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+     {% elif product.model_name == 'office' %}
+        <span><img src="{% static 'assets/images/icons/floor.svg'%}" alt="Bathrooms"> {{ product.get_floors_display }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area"> {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+    {% elif product.model_name == 'hostel' %}
+         <span><img src="{% static 'assets/images/icons/bed_space.svg'%}" alt="Bedrooms">  {{ product.bedrooms }}{% if product.bedrooms|floatformat:0|add:0 %} Beds{% endif %}</span>
+                                    <span><img src="{% static 'assets/images/icons/floor.svg'%}" alt="Bathrooms"> {{ product.get_floors_display }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}" alt="Area" > {{ product.plot_area |floatformat:0 }} Sqm</span>
+
+                                    {% elif product.model_name == 'supermarket' %}
+         <span><img src="{% static 'assets/images/icons/condition.svg'%}" alt="Bedrooms"> {{product.property|format_property }}</span>
+                                    <span><img src="{% static 'assets/images/icons/size.svg'%}"  alt="Area"> {{ product.plot_area| floatformat:0 }} Sqm</span>
+
+                                         {% elif product.model_name == 'foreign' %}
+         <span><img src="{% static 'assets/images/icons/earth.svg'%}" alt="Country"> {{ product.country|get_country_name|capfirst }}</span>
+                                    <span><img src="{% static 'assets/images/icons/condition.svg'%}" alt="Bedrooms"> {{ product.estate_type }}</span>
+
+                                       {% elif product.model_name == 'shared' %}
+        <span><img src="{% static 'assets/images/icons/condition.svg'%}"  alt="Bedrooms"> {{product.furnished|format_furnished }}</span>
+
+         {% elif product.model_name == 'suits' %}
+        <span><img src="{% static 'assets/images/icons/condition.svg'%}"  alt="Bedrooms"> {{product.furnished|format_furnished }}</span>
+
+
+         {% elif product.model_name == 'electronics' %}
+        <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}">
+                                        {% if product.warranty|lower == 'yes' %}
+                                            Warranty Available
+                                        {% else %}
+                                            No Warranty
+                                        {% endif %}
+                                    </span>
+
+                                    {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg'%}"> {{ product.age|format_age:'electronics' }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% elif product.model_name == 'computer' %}
+       
+
+                                    {% if product.year %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.year|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.storage_capacity %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/storage.svg' %}"> {{ product.storage_capacity|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show operating system for computers #}
+                                    {% if product.operating_system %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.operating_system|format_operating_system }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show processor info for computers #}
+                                    {% if product.processor_brand and product.processor_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}"> {{ product.processor_brand }} {{ product.processor_type|title }}
+                                    </span>
+                                    {% elif product.processor_brand %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}"> {{ product.processor_brand|title }}
+                                    </span>
+                                    {% elif product.processor_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}"> {{ product.processor_type|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show component type for computer components #}
+                                    {% if product.component_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}"> {{ product.get_component_type_display|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show accessory type for accessories #}
+                                    {% if product.accessory_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}"> {{ product.get_accessory_type_display|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show peripheral brand for peripherals #}
+                                    {% if product.peripheral_brand %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.peripheral_brand|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {# Show screen size for monitors/peripherals #}
+                                    {% if product.screen_size %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/size.svg' %}"> {{ product.screen_size|title }} inches
+                                    </span>
+                                    {% endif %}
+
+                                     {% elif product.model_name == 'business' %}
+                                     <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|capfirst }}</span>
+                                    <span><img src="{% static 'assets/images/icons/usage.svg'%}" alt="Area"> {{ product.usage|format_usage:'business' }} </span>
+
+
+                                    {% elif product.model_name == 'homeappliance' %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition|capfirst }}
+                                    </span>
+                                    
+                                    {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.age|format_age:'homeappliance' }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Area"> {{ product.usage|format_usage:'homeappliance' }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% elif product.model_name == 'sports' %}
+                                     {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                  
+                                     {% elif product.model_name == 'clothing' %}
+                                     <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|capfirst }}</span>
+                                    <span><img src="{% static 'assets/images/icons/time.svg'%}"> {{ product.age|format_age:'clothing' }}</span>
+                                    
+
+
+                                     {% elif product.model_name == 'camera' %}
+                                     <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|capfirst }}</span>
+                                    <span><img src="{% static 'assets/images/icons/time.svg'%}"> {{ product.age|format_age:'camera' }}</span>
+                                    
+
+                                     {% elif product.model_name == 'jewelry' %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition|capfirst }}
+                                    </span>
+                                    
+                                    
+                                    
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Area"> {{ product.usage|format_usage:'jewelry' }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% elif product.model_name == 'pet' %}
+
+                                     {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+
+
+
+                                    {% elif product.model_name == 'musical' %}
+
+                                    {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+                                   {% elif product.model_name == 'gaming' %}
+
+                                    {% if gaming.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ gaming.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+                                        {% elif product.model_name == 'babyitem' %}
+                                        {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+                                    
+                                         {% elif product.model_name == 'toys' %}
+                                          {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+
+                                     {% elif product.model_name == 'ticket' %}
+                                    {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+                                     {% elif product.model_name == 'collectible' %}
+                                      {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.provide == "yes" %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}"> Delivery Available
+                                    </span>
+                                    {% else %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}"> Delivery Unavailable
+                                    </span>
+                                    {% endif %}
+
+                                      {% elif product.model_name == 'book' %}
+                                      {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age|format_age }}
+                                    </span>
+                                    {% endif %}
+
+                                    
+
+                                    {% if product.condition %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ product.condition|title|format_condition }} 
+                                    </span>
+                                    {% endif %}
+
+                                    {% elif product.model_name == 'music' %}
+                                    {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age|format_age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ product.usage|title|format_usage }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.condition %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ product.condition|title|format_condition }} 
+                                    </span>
+                                    {% endif %}
+
+                                     {% elif product.model_name == 'dvd' %}
+                                      {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age|format_age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ product.usage|title|format_usage }}
+                                    </span>
+                                    {% endif %}
+
+                                   
+
+
+
+
+                                      {% elif product.model_name == 'furniture' %}
+
+                                      {% if product.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ product.age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if product.listing_type %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.listing_type|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/listing.svg' %}"> {{ product.usage|title }}
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if product.created_at %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/time.svg' %}"> {{ product.created_at|timesince }} ago
+                                    </span>
+                                    {% endif %}
+
+
+                                     {% elif product.model_name == 'mobiles' %}
+                                      <span><img src="{% static 'assets/images/icons/calendar.svg'%}">  {{ product.year }}</span>
+                                    <span><img src="{% static 'assets/images/icons/mobstorage.svg'%}"> {{ product.storage_capacity }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+                                    {% elif product.model_name == 'tablets' %}
+                                    <span><img src="{% static 'assets/images/icons/screensize.svg'%}">  {{ product.screen_size }} Inch</span>
+                                    <!-- <span><img src="{% static 'assets/images/icons/mobstorage.svg'%}"> {{ product.storage_capacity }}</span> -->
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+                                    {% elif product.model_name == 'smartwatch' %}
+                                    <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.listing_type|title }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+                                    {% elif product.model_name == 'headset' %}
+                                    <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|format_condition }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+                                    {% elif product.model_name == 'cover' %}
+                                     <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|format_condition }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+                                    {% elif product.model_name == 'accessory' %}
+                                    <span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.condition|format_condition|title }}</span>
+      
+        <span>
+    <img src="{% static 'assets/images/icons/delivery.svg' %}">
+    {% if product.provide|lower == "yes" %}
+        Delivery Available
+    {% else %}
+        Delivery Unavailable
+    {% endif %}
+</span>
+
+
+
+{% elif product.model_name == 'autoservices' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'consultancy' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'domestic' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'events' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'freelancer' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'health' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'homemaintenance' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'movers' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'restoration' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'webservice' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'otherservices' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+    {% elif product.model_name == 'tutor' %}
+    <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ product.created_at|timesince }} ago</span>
+   
+
+
+{% elif product.model_name == 'mobilesim' %}
+<span><img src="{% static 'assets/images/icons/condition.svg'%}">  {{ product.operator|format_condition|title }}</span>
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}">
+                                        {% if product.provide|lower == "yes" %}
+                                            Delivery Available
+                                        {% else %}
+                                            Delivery Unavailable
+                                        {% endif %}
+                                    </span>
+
+
+                                    
+
+
+
+
+{% else %}
+    <!-- <span><img src="{% static 'assets/images/icons/condition.svg' %}"> {{ product.condition }}</span> -->
+{% endif %}
+
+

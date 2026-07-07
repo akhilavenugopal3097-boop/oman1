@@ -1,0 +1,462 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+   .toolbar {
+        background: #15818E;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        color: white;
+   }
+   .category-filter {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+   }
+   .category-filter .btn-group {
+        flex-wrap: wrap;
+        gap: 5px;
+   }
+   .category-filter .btn {
+        margin: 2px;
+        border-radius: 20px !important;
+        padding: 5px 15px;
+   }
+   .category-filter .btn.active {
+        background-color: #15818E;
+        color: white;
+        border-color: #15818E;
+   }
+   .badge-category {
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-block;
+   }
+   /* Category specific badge colors */
+   .badge-home { background-color: #217399; }
+   .badge-motors { background-color: #dc3545; }
+   .badge-real_estate { background-color: #28a745; }
+   .badge-job { background-color: #ffc107; color: #000; }
+   .badge-other_classified { background-color: #17a2b8; }
+   .badge-mobiles { background-color: #6610f2; }
+   .badge-services { background-color: #fd7e14; }
+   
+   .category-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+   }
+   .stat-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        min-width: 150px;
+        text-align: center;
+        border-left: 4px solid #15818E;
+   }
+   .stat-card .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #15818E;
+   }
+   .stat-card .stat-label {
+        color: #6c757d;
+        font-size: 14px;
+   }
+</style>
+
+<!-- Toolbar -->
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Banner Management</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" id="searchInput" name="search" placeholder="Search banners..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addBannerModal">
+                Add Banner
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5"> Banners</h3>
+                            
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                           
+
+                            <!-- Category Filter Buttons -->
+                            <!-- <div class="category-filter text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-outline-secondary active" data-category="all" onclick="filterByCategory('all')" style="color: #000;">
+                                        All Categories
+                                    </button>
+                                    {% for cat_value, cat_label in categories %}
+                                    <button type="button" class="btn btn-outline-secondary" data-category="{{ cat_value }}" onclick="filterByCategory('{{ cat_value }}')">
+                                        {{ cat_label }}
+                                    </button>
+                                    {% endfor %}
+                                </div>
+                            </div> -->
+
+                            <!-- Banners Table -->
+                            <div class="table-responsive">
+                                <table id="bannersTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th>Banner Image</th>
+                                            <th>Category</th>
+                                            <th>Banner ID</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for banner in banners %}
+                                        <tr data-category="{{ banner.category }}" class="banner-row">
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if banner.image %}
+                                                <img src="{{ banner.image.url }}" alt="Banner {{ banner.id }}" width="150" height="80" style="object-fit: cover; border-radius: 5px;">
+                                                {% else %}
+                                                <span class="text-muted">No image</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge-category badge-{{ banner.category }}">
+                                                    {{ banner.get_category_display }}
+                                                </span>
+                                            </td>
+                                            <td>Banner #{{ banner.id }}</td>
+                                            <td>
+                                                <span class="badge {% if banner.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {% if banner.is_active %}Active{% else %}Inactive{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>{{ banner.created_at|date:"Y-m-d H:i" }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                        data-edit-url="{% url 'edit_banner' banner.id %}" 
+                                                        data-banner-id="{{ banner.id }}"
+                                                        data-banner-category="{{ banner.category }}"
+                                                        data-banner-status="{{ banner.is_active }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editBannerModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                
+                                                <form method="POST" action="{% url 'toggle_banner_status' banner.id %}" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm {% if banner.is_active %}btn-warning{% else %}btn-success{% endif %}" 
+                                                            title="{% if banner.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                                        <i class="fas {% if banner.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                                                    </button>
+                                                </form>
+                                                
+                                                <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                        data-delete-url="{% url 'delete_banner' banner.id %}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteBannerModal">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="7" class="text-center">No banners found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Banner Modal -->
+<div class="modal fade" id="addBannerModal" tabindex="-1" aria-labelledby="addBannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addBannerForm" method="POST" action="{% url 'add_banner' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="redirect_to" value="banner_list">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBannerModalLabel">Add New Banner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="bannerCategory" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-select" id="bannerCategory" name="category" required>
+                            <option value="">Select Category</option>
+                            {% for cat_value, cat_label in categories %}
+                            <option value="{{ cat_value }}">
+                                {{ cat_label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bannerImage" class="form-label">Banner Image <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="bannerImage" name="image" accept="image/*" required>
+                        <small class="text-muted">Recommended size: 1920x600 pixels</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="bannerIsActive" name="is_active" checked>
+                            <label class="form-check-label" for="bannerIsActive">
+                                Active (Display banner on site)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Upload Banner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Banner Modal -->
+<div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="editBannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editBannerForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBannerModalLabel">Edit Banner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editBannerCategory" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-select" id="editBannerCategory" name="category" required>
+                            <option value="">Select Category</option>
+                            {% for cat_value, cat_label in categories %}
+                            <option value="{{ cat_value }}">{{ cat_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBannerImage" class="form-label">Banner Image</label>
+                        <input type="file" class="form-control" id="editBannerImage" name="image" accept="image/*">
+                        <small class="text-muted">Leave empty to keep current image. Recommended size: 1920x600 pixels</small>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editBannerIsActive" name="is_active">
+                            <label class="form-check-label" for="editBannerIsActive">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteBannerModal" tabindex="-1" aria-labelledby="deleteBannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteBannerForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBannerModalLabel">Delete Banner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this banner?</p>
+                    <p class="text-danger"><small>This action cannot be undone and will permanently remove the banner image.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteBannerForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.action = deleteUrl;
+            });
+        });
+
+        // Handle edit modal
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editBannerForm');
+        const editCategorySelect = document.getElementById('editBannerCategory');
+        const editStatusCheckbox = document.getElementById('editBannerIsActive');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const category = button.getAttribute('data-banner-category');
+                const isActive = button.getAttribute('data-banner-status') === 'True';
+
+                editForm.action = editUrl;
+                editCategorySelect.value = category;
+                editStatusCheckbox.checked = isActive;
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('#bannersTable tbody tr.banner-row');
+        
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    const rowText = row.textContent.toLowerCase();
+                    const currentCategory = row.getAttribute('data-category');
+                    const activeFilter = document.querySelector('.category-filter .btn.active')?.getAttribute('data-category') || 'all';
+                    
+                    // Check if matches search AND category filter
+                    const matchesSearch = rowText.includes(searchTerm);
+                    const matchesCategory = activeFilter === 'all' || currentCategory === activeFilter;
+                    
+                    if (matchesSearch && matchesCategory) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide "No results" message
+                updateNoResultsMessage();
+            });
+        }
+
+        // Image preview
+        const imageInput = document.getElementById('bannerImage');
+        const editImageInput = document.getElementById('editBannerImage');
+        
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    console.log('Banner image selected:', this.files[0].name);
+                }
+            });
+        }
+
+        if (editImageInput) {
+            editImageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    console.log('New banner image selected:', this.files[0].name);
+                }
+            });
+        }
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
+    // Filter by category function
+    function filterByCategory(category) {
+        // Update active button state
+        document.querySelectorAll('.category-filter .btn').forEach(btn => {
+            if (btn.getAttribute('data-category') === category) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        
+        // Filter table rows
+        const rows = document.querySelectorAll('#bannersTable tbody tr.banner-row');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        rows.forEach(row => {
+            const rowCategory = row.getAttribute('data-category');
+            const rowText = row.textContent.toLowerCase();
+            
+            const matchesCategory = category === 'all' || rowCategory === category;
+            const matchesSearch = rowText.includes(searchTerm);
+            
+            if (matchesCategory && matchesSearch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        updateNoResultsMessage();
+    }
+    
+    // Update "No results" message
+    function updateNoResultsMessage() {
+        const tbody = document.querySelector('#bannersTable tbody');
+        const visibleRows = document.querySelectorAll('#bannersTable tbody tr.banner-row:not([style*="display: none"])');
+        const existingEmptyRow = tbody.querySelector('tr.empty-row');
+        
+        // Remove existing empty row if any
+        if (existingEmptyRow) {
+            existingEmptyRow.remove();
+        }
+        
+        // Add empty row if no visible results
+        if (visibleRows.length === 0) {
+            const newEmptyRow = document.createElement('tr');
+            newEmptyRow.className = 'empty-row';
+            newEmptyRow.innerHTML = '<td colspan="7" class="text-center">No banners match your filters.</td>';
+            tbody.appendChild(newEmptyRow);
+        }
+    }
+</script>

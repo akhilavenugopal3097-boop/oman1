@@ -1,0 +1,47 @@
+<div class="tabs">
+    <div class="tab active" onclick="showTab(event,'image')">Krookie Image</div>
+    <div class="tab" onclick="showTab(event,'coordinates')">Add Coordinates</div>
+</div>
+
+<!-- IMAGE UPLOAD -->
+<div id="image-section">
+    <input type="file" id="imageUpload" name="image" accept="image/*" hidden>
+    
+    <div class="upload-box" id="uploadBox">
+        <p id="uploadText">Drop image here or click to upload</p>
+    </div>
+    
+    {% if table_data %}
+    <table id="data-table" class="ocr-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Northing</th>
+                <th>Easting</th>
+            </tr>
+        </thead>
+        <tbody id="data-body">
+            {% for northing, easting in table_data %}
+            <tr data-northing="{{ northing }}" data-easting="{{ easting }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ northing }}</td>
+                <td>{{ easting }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<!-- COORDINATES MANUAL INPUT -->
+<div id="coordinate-form" style="display:none;">
+    <div class="input-box">
+        <label>Northing (UTM)</label>
+        <input type="number" id="northing" placeholder="Eg: 2623450">
+    </div>
+    <div class="input-box">
+        <label>Easting (UTM)</label>
+        <input type="number" id="easting" placeholder="Eg: 610250">
+    </div>
+    <button type="button" id="convert-btn" onclick="convertAndLocate()">Locate on Map</button>
+</div>

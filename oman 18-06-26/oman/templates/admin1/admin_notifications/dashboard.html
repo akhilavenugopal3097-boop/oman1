@@ -1,0 +1,100 @@
+{% extends 'admin1/admin_notifications/base.html' %}
+{% load static %}
+
+{% block title %}Notifications Dashboard{% endblock %}
+
+{% block page_title %}
+<h1 class="h3 mb-0 text-gray-800">Notifications Dashboard</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <p class="text-muted">Manage all your notification systems from one place</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Push Notifications Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-bell fa-4x mb-3" style="color: #4e73df;"></i>
+                        <h5 class="card-title">Push Notifications</h5>
+                        <p class="card-text text-muted">Send instant push notifications to your users</p>
+                        <a href="/notifications_dashboard/push/" class="btn btn-primary mt-3">
+                            Manage Push Notifications
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Templates Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-envelope fa-4x mb-3" style="color: #1cc88a;"></i>
+                        <h5 class="card-title">Email Templates</h5>
+                        <p class="card-text text-muted">Create and manage email notification templates</p>
+                        <a href="/notifications_dashboard/email-templates/" class="btn btn-success mt-3">
+                            Manage Email Templates
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SMS Templates Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-sms fa-4x mb-3" style="color: #f6c23e;"></i>
+                        <h5 class="card-title">SMS Templates</h5>
+                        <p class="card-text text-muted">Manage SMS notification templates</p>
+                        <a href="/notifications_dashboard/sms-templates/" class="btn btn-warning mt-3">
+                            Manage SMS Templates
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement Broadcast Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-bullhorn fa-4x mb-3" style="color: #e74a3b;"></i>
+                        <h5 class="card-title">Announcement Broadcast</h5>
+                        <p class="card-text text-muted">Send broadcast announcements to all users</p>
+                        <a href="/notifications_dashboard/broadcast/" class="btn btn-danger mt-3">
+                            Create Broadcast
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Automated Alerts Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-robot fa-4x mb-3" style="color: #36b9cc;"></i>
+                        <h5 class="card-title">Automated Alerts</h5>
+                        <p class="card-text text-muted">Configure system automated alerts</p>
+                        <a href="/notifications_dashboard/alerts/" class="btn btn-info mt-3">
+                            Configure Alerts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

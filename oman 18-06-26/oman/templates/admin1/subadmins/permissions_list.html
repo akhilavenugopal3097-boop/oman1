@@ -1,0 +1,1228 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .badge-info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #ef4444;
+    }
+
+    .badge-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .badge-orange {
+        background: #ffedd5;
+        color: #ea580c;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert .close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert .close:hover {
+        opacity: 1;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(21, 129, 142, 0.1), 0 10px 10px -5px rgba(21, 129, 142, 0.05);
+        border-color: #15818E;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon-primary { background: #e0f2f4; color: #15818E; }
+    .stat-icon-success { background: #d1fae5; color: #059669; }
+    .stat-icon-info { background: #e0f2f4; color: #15818E; }
+    .stat-icon-warning { background: #fef3c7; color: #d97706; }
+    .stat-icon-danger { background: #fee2e2; color: #ef4444; }
+    .stat-icon-purple { background: #ede9fe; color: #7c3aed; }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    /* Search and Add Bar */
+    .action-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-wrapper {
+        flex: 1;
+        max-width: 400px;
+        position: relative;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .btn-add {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-add:hover {
+        background: #0e5f68;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+        background: white;
+        border-radius: 20px;
+        padding: 0.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-tab:hover {
+        background: #f1f5f9;
+        color: #15818E;
+    }
+
+    .filter-tab.active {
+        background: #15818E;
+        color: white;
+    }
+
+    .filter-tab.active i {
+        color: white;
+    }
+
+    /* Table Card */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .table-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-header h5 i {
+        color: #15818E;
+    }
+
+    .table-container {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 300px;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .table-responsive {
+        width: 100%;
+        height: 100%;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    .table th {
+        text-align: left;
+        padding: 1rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table td {
+        padding: 1rem 1rem;
+        font-size: 0.875rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* Section Badge with category colors */
+    .section-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .section-badge.properties,
+    .section-badge.ads_approval_properties {
+        background: linear-gradient(135deg, #15818E20, #1a9aa820);
+        color: #15818E;
+    }
+
+    .section-badge.vehicles,
+    .section-badge.ads_approval_vehicles {
+        background: linear-gradient(135deg, #F9AD1F20, #EB362D20);
+        color: #F9AD1F;
+    }
+
+    .section-badge.electronics,
+    .section-badge.ads_approval_electronics {
+        background: linear-gradient(135deg, #4f46e520, #6366f120);
+        color: #4f46e5;
+    }
+
+    .section-badge.classifieds,
+    .section-badge.ads_approval_classifieds {
+        background: linear-gradient(135deg, #10b98120, #34d39920);
+        color: #10b981;
+    }
+
+    .section-badge.services,
+    .section-badge.ads_approval_services {
+        background: linear-gradient(135deg, #f59e0b20, #fbbf2420);
+        color: #f59e0b;
+    }
+
+    .section-badge.location {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .section-badge.amenities {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .section-badge.motors {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .section-badge.content {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .section-badge.companies {
+        background: #cffafe;
+        color: #0891b2;
+    }
+
+    .section-badge.jobs {
+        background: #fce7f3;
+        color: #db2777;
+    }
+
+    /* Permission Badges */
+    .permission-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        max-width: 300px;
+    }
+
+    .perm-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
+
+    .perm-badge i {
+        font-size: 0.625rem;
+    }
+
+    .perm-badge.view {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .perm-badge.edit {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .perm-badge.create {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .perm-badge.approve {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .perm-badge.delete {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* Description text */
+    .description-text {
+        color: #64748b;
+        font-size: 0.875rem;
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .description-text i {
+        color: #15818E;
+        margin-right: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-start;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+        text-decoration: none;
+    }
+
+    .btn-icon:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+
+    .btn-icon.edit:hover {
+        background: #e0f2f4;
+        border-color: #15818E;
+        color: #15818E;
+    }
+
+    .btn-icon.delete:hover {
+        background: #fee2e2;
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state .btn-add-small {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .empty-state .btn-add-small:hover {
+        background: #0e5f68;
+    }
+
+    /* No results message */
+    .no-results {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .no-results i {
+        font-size: 2.5rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-results h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-results p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .clear-search {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .clear-search:hover {
+        background: #e2e8f0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-wrapper {
+            max-width: none;
+        }
+        
+        .filter-tabs {
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+        
+        .table-card {
+            min-height: 350px;
+        }
+        
+        .table-container {
+            min-height: 250px;
+        }
+        
+        .table {
+            min-width: 800px;
+        }
+        
+        .permission-group {
+            max-width: 200px;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-key"></i>
+                Permission Management
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary" id="totalPermissionsBadge">
+                    <i class="fas fa-lock"></i>
+                    Total: {{ permissions|length }} permission{{ permissions|length|pluralize }}
+                </span>
+                <span class="badge badge-purple">
+                    <i class="fas fa-check-double"></i>
+                    Ads Approval: {{ ads_approval_count|default:"0" }}
+                </span>
+                <span class="badge badge-info" id="visiblePermissionsBadge" style="display: none;">
+                    <i class="fas fa-eye"></i>
+                    <span id="visibleCount">0</span> visible
+                </span>
+            </div>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-primary">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ permissions|length }}</div>
+                    <div class="stat-label">Total Permissions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-success">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ unique_sections }}</div>
+                    <div class="stat-label">Sections</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-info">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ total_actions }}</div>
+                    <div class="stat-label">Total Actions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon stat-icon-purple">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-value">{{ used_in_subadmins }}</div>
+                    <div class="stat-label">Used by Sub-Admins</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs - Show Ads Approval Categories -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all" onclick="filterByCategory('all')">
+                <i class="fas fa-list"></i> All Permissions
+            </button>
+            <button class="filter-tab" data-filter="ads_approval_properties" onclick="filterByCategory('ads_approval_properties')">
+                <i class="fas fa-building"></i> Properties Approval
+            </button>
+            <button class="filter-tab" data-filter="ads_approval_vehicles" onclick="filterByCategory('ads_approval_vehicles')">
+                <i class="fas fa-car"></i> Vehicles Approval
+            </button>
+            <button class="filter-tab" data-filter="ads_approval_electronics" onclick="filterByCategory('ads_approval_electronics')">
+                <i class="fas fa-mobile-alt"></i> Electronics Approval
+            </button>
+            <button class="filter-tab" data-filter="ads_approval_classifieds" onclick="filterByCategory('ads_approval_classifieds')">
+                <i class="fas fa-tags"></i> Classifieds Approval
+            </button>
+            <button class="filter-tab" data-filter="ads_approval_services" onclick="filterByCategory('ads_approval_services')">
+                <i class="fas fa-concierge-bell"></i> Services Approval
+            </button>
+            <button class="filter-tab" data-filter="other" onclick="filterByCategory('other')">
+                <i class="fas fa-ellipsis-h"></i> Other Permissions
+            </button>
+        </div>
+
+        <!-- Search and Add Bar -->
+        <div class="action-bar">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by section, name or description..." onkeyup="searchAndFilter()">
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="{% url 'subadmin_list' %}" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Sub-Admins
+                </a>
+                <a href="{% url 'subadmin_permission_create' %}" class="btn-add">
+                    <i class="fas fa-plus-circle"></i>
+                    Add New Permission
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5>
+                    <i class="fas fa-list"></i>
+                    All Permissions
+                </h5>
+                <span class="badge badge-primary">Last updated: {% now "F j, Y" %}</span>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table id="permissionTable" class="table">
+                        <thead>
+                            <tr>
+                                <th width="60px">#</th>
+                                <th>Section</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Permissions</th>
+                                <th width="120px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {% for perm in permissions %}
+                            <tr class="data-row" 
+                                data-section="{{ perm.section }}"
+                                data-search="{{ perm.get_section_display|lower }} {{ perm.name|lower }} {{ perm.description|default:''|lower }}">
+                                <td>
+                                    <span class="badge badge-primary" style="background: #e0f2f4; color: #15818E;">{{ forloop.counter }}</span>
+                                </td>
+                                <td>
+                                    {% with section=perm.section %}
+                                        {% if section == 'ads_approval_properties' %}
+                                            <span class="section-badge ads_approval_properties">
+                                                <i class="fas fa-building"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section == 'ads_approval_vehicles' %}
+                                            <span class="section-badge ads_approval_vehicles">
+                                                <i class="fas fa-car"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section == 'ads_approval_electronics' %}
+                                            <span class="section-badge ads_approval_electronics">
+                                                <i class="fas fa-mobile-alt"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section == 'ads_approval_classifieds' %}
+                                            <span class="section-badge ads_approval_classifieds">
+                                                <i class="fas fa-tags"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section == 'ads_approval_services' %}
+                                            <span class="section-badge ads_approval_services">
+                                                <i class="fas fa-concierge-bell"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section in 'governates,districts,cities' %}
+                                            <span class="section-badge location">
+                                                <i class="fas fa-map-marker-alt"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section == 'amenities' %}
+                                            <span class="section-badge amenities">
+                                                <i class="fas fa-couch"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section in 'interior_options,exterior_options,technology_options' %}
+                                            <span class="section-badge motors">
+                                                <i class="fas fa-cog"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section in 'faq,blog,banner' %}
+                                            <span class="section-badge content">
+                                                <i class="fas fa-file-alt"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section in 'companies,company_approval' %}
+                                            <span class="section-badge companies">
+                                                <i class="fas fa-building"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% elif section in 'job_posts,job_categories' %}
+                                            <span class="section-badge jobs">
+                                                <i class="fas fa-briefcase"></i> {{ perm.get_section_display }}
+                                            </span>
+                                        {% else %}
+                                            <span class="section-badge location">{{ perm.get_section_display }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>
+                                    <span style="font-weight: 500;">{{ perm.name }}</span>
+                                </td>
+                                <td>
+                                    <div class="description-text" title="{{ perm.description|default:'' }}">
+                                        <i class="fas fa-info-circle"></i>
+                                        {% if perm.description %}
+                                            {{ perm.description|truncatechars:50 }}
+                                        {% else %}
+                                            <span style="color: #94a3b8;">No description</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="permission-group">
+                                        {% if perm.can_view %}
+                                            <span class="perm-badge view" title="Can view">
+                                                <i class="fas fa-eye"></i>
+                                                View
+                                            </span>
+                                        {% endif %}
+                                        {% if perm.can_edit %}
+                                            <span class="perm-badge edit" title="Can edit">
+                                                <i class="fas fa-edit"></i>
+                                                Edit
+                                            </span>
+                                        {% endif %}
+                                        {% if perm.can_create %}
+                                            <span class="perm-badge create" title="Can create">
+                                                <i class="fas fa-plus"></i>
+                                                Create
+                                            </span>
+                                        {% endif %}
+                                        {% if perm.can_approve %}
+                                            <span class="perm-badge approve" title="Can approve">
+                                                <i class="fas fa-check"></i>
+                                                Approve
+                                            </span>
+                                        {% endif %}
+                                        {% if perm.can_delete %}
+                                            <span class="perm-badge delete" title="Can delete">
+                                                <i class="fas fa-trash"></i>
+                                                Delete
+                                            </span>
+                                        {% endif %}
+                                        {% if not perm.can_view and not perm.can_edit and not perm.can_create and not perm.can_approve and not perm.can_delete %}
+                                            <span style="color: #94a3b8; font-size: 0.7rem; font-style: italic;">No permissions set</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{% url 'subadmin_permission_edit' perm.id %}" class="btn-icon edit" title="Edit Permission">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-state-container">
+                                <td colspan="6" style="padding: 0; border: none;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-key"></i>
+                                        <p>No permissions found. Click "Add New Permission" to create one.</p>
+                                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                            <a href="{% url 'subadmin_permission_create' %}" class="btn-add-small">
+                                                <i class="fas fa-plus-circle"></i>
+                                                Add Permission
+                                            </a>
+                                            <a href="{% url 'subadmin_list' %}" class="btn-add-small" style="background: #f1f5f9; color: #475569;">
+                                                <i class="fas fa-users"></i>
+                                                View Sub-Admins
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Search results info -->
+            <div id="searchInfo" style="margin-top: 1rem; padding: 0.5rem; display: none;">
+                <div class="badge badge-info" style="background: #e0f2f4; color: #15818E;">
+                    <i class="fas fa-search"></i>
+                    Found <span id="resultsCount">0</span> result<span id="resultsPlural"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Section -->
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: space-between;">
+            <div class="badge badge-primary">
+                <i class="fas fa-eye"></i>
+                View: {{ view_count }}
+            </div>
+            <div class="badge badge-warning">
+                <i class="fas fa-edit"></i>
+                Edit: {{ edit_count }}
+            </div>
+            <div class="badge badge-success">
+                <i class="fas fa-plus"></i>
+                Create: {{ create_count }}
+            </div>
+            <div class="badge badge-primary">
+                <i class="fas fa-check"></i>
+                Approve: {{ approve_count }}
+            </div>
+            <div class="badge badge-danger">
+                <i class="fas fa-trash"></i>
+                Delete: {{ delete_count }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    let currentFilter = 'all';
+    
+    // Filter by category
+    function filterByCategory(category) {
+        currentFilter = category;
+        
+        // Update active tab styling
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.getAttribute('data-filter') === category) {
+                tab.classList.add('active');
+            }
+        });
+        
+        // Apply filter
+        applyFilterAndSearch();
+    }
+    
+    // Search and filter combined
+    function searchAndFilter() {
+        applyFilterAndSearch();
+    }
+    
+    // Apply both filter and search
+    function applyFilterAndSearch() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const tbody = document.getElementById('tableBody');
+        const rows = tbody.getElementsByClassName('data-row');
+        
+        let visibleCount = 0;
+        
+        // Filter data rows
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const section = row.getAttribute('data-section') || '';
+            const searchData = row.getAttribute('data-search') || '';
+            
+            let showByFilter = true;
+            
+            // Apply category filter
+            if (currentFilter === 'all') {
+                showByFilter = true;
+            } else if (currentFilter === 'other') {
+                // Show non-ads-approval sections
+                showByFilter = !section.startsWith('ads_approval');
+            } else {
+                // Show specific ads approval category
+                showByFilter = section === currentFilter;
+            }
+            
+            // Apply search filter
+            const showBySearch = searchData.toUpperCase().indexOf(filter) > -1;
+            
+            if (showByFilter && showBySearch) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Handle search info display
+        const searchInfo = document.getElementById('searchInfo');
+        const visiblePermissionsBadge = document.getElementById('visiblePermissionsBadge');
+        const visibleCountSpan = document.getElementById('visibleCount');
+        const resultsPlural = document.getElementById('resultsPlural');
+        
+        if (filter.trim() !== '' || currentFilter !== 'all') {
+            searchInfo.style.display = 'block';
+            document.getElementById('resultsCount').textContent = visibleCount;
+            resultsPlural.textContent = visibleCount === 1 ? '' : 's';
+            
+            if (visibleCount > 0) {
+                visiblePermissionsBadge.style.display = 'inline-flex';
+                visibleCountSpan.textContent = visibleCount;
+            } else {
+                visiblePermissionsBadge.style.display = 'none';
+            }
+            
+            // Show no results message if needed
+            if (visibleCount === 0 && rows.length > 0) {
+                let noResultsRow = document.getElementById('noResultsRow');
+                if (!noResultsRow) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'noResultsRow';
+                    noResultsRow.innerHTML = `
+                        <td colspan="6" style="padding: 0; border: none;">
+                            <div class="no-results">
+                                <i class="fas fa-search"></i>
+                                <h6>No matching permissions</h6>
+                                <p>No permissions found matching your criteria.</p>
+                                <button class="clear-search" onclick="clearAllFilters()">
+                                    <i class="fas fa-times"></i>
+                                    Clear All Filters
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            } else {
+                const noResultsRow = document.getElementById('noResultsRow');
+                if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            }
+        } else {
+            searchInfo.style.display = 'none';
+            visiblePermissionsBadge.style.display = 'none';
+            
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (noResultsRow) {
+                noResultsRow.remove();
+            }
+        }
+    }
+    
+    // Clear all filters
+    function clearAllFilters() {
+        document.getElementById('searchInput').value = '';
+        filterByCategory('all');
+    }
+    
+    // Auto-dismiss messages
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.alert').forEach(alert => {
+            setTimeout(() => {
+                alert.style.transition = 'opacity 0.3s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+</script>

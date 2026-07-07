@@ -1,0 +1,212 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Boosted Ads Pricing{% endblock %}
+{% block page_title %}Boosted Ads Management{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <p class="text-gray-600">Configure pricing tiers for boosted listings and advertisements</p>
+    </div>
+    <button class="px-4 py-2 text-white rounded-lg transition-colors btn-gradient">
+        <i class="fas fa-plus mr-2"></i>Add Pricing Tier
+    </button>
+</div>
+
+<!-- Performance Overview -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Active Boosts</p>
+                <p class="text-2xl font-bold text-gray-800">127</p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-chart-line" style="color: #F9AD1F;"></i>
+            </div>
+        </div>
+        <p class="text-sm mt-2" style="color: #F9AD1F;">↑ 23 vs last week</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Revenue from Boosts</p>
+                <p class="text-2xl font-bold text-gray-800">
+                    <span class="currency-symbol">OMR</span> 2,847
+                </p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #EB362D20;">
+                <i class="fas fa-money-bill-wave" style="color: #EB362D;"></i>
+            </div>
+        </div>
+        <p class="text-sm mt-2" style="color: #F9AD1F;">↑ 15.3% this month</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Avg. Impressions</p>
+                <p class="text-2xl font-bold text-gray-800">8,432</p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-eye gradient-text"></i>
+            </div>
+        </div>
+        <p class="text-gray-600 text-sm mt-2">Per boost campaign</p>
+    </div>
+</div>
+
+<!-- Pricing Tiers -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {% for tier in pricing_tiers %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden {% if tier.name == 'Popular Boost' %}ring-2" style="ring-color: #F9AD1F;{% endif %}">
+        {% if tier.name == 'Popular Boost' %}
+        <div class="text-white text-xs font-bold text-center py-1" style="background: linear-gradient(60deg, #F9AD1F, #EB362D);">
+            MOST POPULAR
+        </div>
+        {% endif %}
+        <div class="p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-2">{{ tier.name }}</h3>
+            <div class="mb-4">
+                <span class="text-3xl font-bold" style="color: #F9AD1F;">
+                    <span class="currency-symbol">OMR</span> {{ tier.price }}
+                </span>
+                <span class="text-gray-500 text-sm">/{{ tier.duration }}</span>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-check-circle mr-2" style="color: #F9AD1F;"></i>
+                    <span class="text-gray-600">{{ tier.impressions }} impressions</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-check-circle mr-2" style="color: #EB362D;"></i>
+                    <span class="text-gray-600">Premium placement</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-check-circle mr-2" style="color: #F9AD1F;"></i>
+                    <span class="text-gray-600">Analytics included</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-check-circle mr-2" style="color: #EB362D;"></i>
+                    <span class="text-gray-600">Priority support</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <span class="px-2 py-1 text-xs rounded-full 
+                    {% if tier.status == 'active' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                    {% else %}" style="background: #9CA3AF20; color: #6B7280;"
+                    {% endif %}>{{ tier.status }}</span>
+                <div class="flex gap-2">
+                    <button class="p-2 rounded-lg transition-colors" title="Edit" style="color: #F9AD1F; hover:background: #F9AD1F20;">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="p-2 rounded-lg transition-colors" title="Duplicate" style="color: #EB362D; hover:background: #EB362D20;">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Additional Features -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Performance Chart -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4" style="color: #F9AD1F;">Boost Performance</h3>
+        <div class="h-48 flex items-center justify-center bg-gray-50 rounded-lg">
+            <p class="text-gray-400">Performance chart will be displayed here</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 gradient-text">Quick Insights</h3>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Most Popular Tier</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">Popular Boost</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 75%; background: linear-gradient(90deg, #F9AD1F, #EB362D);"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Conversion Rate</span>
+                    <span class="font-semibold" style="color: #EB362D;">12.5%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 45%; background: #EB362D;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Avg. CTR</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">3.8%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 60%; background: #F9AD1F;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Boost Campaigns -->
+<div class="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-semibold" style="color: #F9AD1F;">Recent Boost Campaigns</h3>
+        <button class="text-sm font-medium hover:underline" style="color: #EB362D;">View All →</button>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Campaign</th>
+                    <th class="px-6 py-3">Tier</th>
+                    <th class="px-6 py-3">Investment</th>
+                    <th class="px-6 py-3">Impressions</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">ROI</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">Summer Sale 2024</td>
+                    <td class="px-6 py-4">Premium Boost</td>
+                    <td class="px-6 py-4 font-semibold"><span class="currency-symbol">OMR</span> 99.99</td>
+                    <td class="px-6 py-4">24,567</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full" style="background: #F9AD1F20; color: #F9AD1F;">active</span>
+                    </td>
+                    <td class="px-6 py-4" style="color: #10b981;">+156%</td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">Product Launch</td>
+                    <td class="px-6 py-4">Popular Boost</td>
+                    <td class="px-6 py-4 font-semibold"><span class="currency-symbol">OMR</span> 49.99</td>
+                    <td class="px-6 py-4">12,345</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full" style="background: #F9AD1F20; color: #F9AD1F;">active</span>
+                    </td>
+                    <td class="px-6 py-4" style="color: #10b981;">+89%</td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">Weekend Special</td>
+                    <td class="px-6 py-4">Starter Boost</td>
+                    <td class="px-6 py-4 font-semibold"><span class="currency-symbol">OMR</span> 19.99</td>
+                    <td class="px-6 py-4">3,456</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full" style="background: #EB362D20; color: #EB362D;">ended</span>
+                    </td>
+                    <td class="px-6 py-4" style="color: #10b981;">+45%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

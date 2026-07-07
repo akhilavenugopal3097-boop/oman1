@@ -1,0 +1,236 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+   .toolbar {
+         background: #15818E;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+    }
+</style>
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Districts</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addDistrictModal">
+                Add District
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Districts</h3>
+                            <div class="table-responsive">
+                                <table id="districtTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th>Name</th>
+                                            <th>Latitude</th>
+                                            <th>Longitude</th>
+                                            <th>Governate</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for district in districts %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ district.name }}</td>
+                                            <td>{{ district.latitude }}</td>
+                                            <td>{{ district.longitude }}</td>
+                                            <td>{{ district.governate.name }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                        data-edit-url="{% url 'edit_district' district.id %}" 
+                                                        data-district-name="{{ district.name }}" 
+                                                        data-district-latitude="{{ district.latitude }}"
+                                                        data-district-longitude="{{ district.longitude }}"
+                                                        data-district-governate="{{ district.governate.id }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editDistrictModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                        data-delete-url="{% url 'delete_district' district.id %}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteDistrictModal">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add District Modal -->
+<div class="modal fade" id="addDistrictModal" tabindex="-1" aria-labelledby="addDistrictModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addDistrictForm" method="POST" action="{% url 'add_district' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDistrictModalLabel">Add District</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="districtName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="districtName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="districtLatitude" class="form-label">Latitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="districtLatitude" name="latitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="districtLongitude" class="form-label">Longitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="districtLongitude" name="longitude" required>
+                    </div>
+                    <!-- In your add/edit modal templates -->
+<div class="mb-3">
+    <label for="districtGovernate" class="form-label">Governate</label>
+    <select class="form-control" id="districtGovernate" name="governate" required>
+        <option value="">Select Governate</option>
+        {% for governate in governates %}
+        <option value="{{ governate.id }}" {% if edit_mode and district.governate.id == governate.id %}selected{% endif %}>
+            {{ governate.name }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit District Modal -->
+<div class="modal fade" id="editDistrictModal" tabindex="-1" aria-labelledby="editDistrictModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editDistrictForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDistrictModalLabel">Edit District</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editDistrictName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editDistrictName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDistrictLatitude" class="form-label">Latitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="editDistrictLatitude" name="latitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDistrictLongitude" class="form-label">Longitude</label>
+                        <input type="number" step="0.000001" class="form-control" id="editDistrictLongitude" name="longitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDistrictGovernate" class="form-label">Governate</label>
+                        <select class="form-control" id="editDistrictGovernate" name="governate" required>
+                            {% for governate in governates %}
+                            <option value="{{ governate.id }}">{{ governate.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteDistrictModal" tabindex="-1" aria-labelledby="deleteDistrictModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteDistrictForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteDistrictModalLabel">Delete District</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this district?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteDistrictForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.action = deleteUrl;
+            });
+        });
+
+        // Handle edit modal
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editDistrictForm');
+        const editDistrictNameInput = document.getElementById('editDistrictName');
+        const editDistrictLatitudeInput = document.getElementById('editDistrictLatitude');
+        const editDistrictLongitudeInput = document.getElementById('editDistrictLongitude');
+        const editDistrictGovernateInput = document.getElementById('editDistrictGovernate');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const districtName = button.getAttribute('data-district-name');
+                const districtLatitude = button.getAttribute('data-district-latitude');
+                const districtLongitude = button.getAttribute('data-district-longitude');
+                const districtGovernate = button.getAttribute('data-district-governate');
+                
+                editForm.action = editUrl;
+                editDistrictNameInput.value = districtName;
+                editDistrictLatitudeInput.value = districtLatitude;
+                editDistrictLongitudeInput.value = districtLongitude;
+                editDistrictGovernateInput.value = districtGovernate;
+            });
+        });
+    });
+</script>

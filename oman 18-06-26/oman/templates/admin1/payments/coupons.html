@@ -1,0 +1,252 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Coupon Codes{% endblock %}
+{% block page_title %}Coupon Management{% endblock %}
+
+{% block content %}
+<!-- Header Actions -->
+<div class="flex justify-between items-center mb-6">
+    <div class="flex gap-4">
+        <button class="px-4 py-2 text-white rounded-lg transition-colors btn-gradient">
+            <i class="fas fa-plus mr-2"></i>Generate Coupon
+        </button>
+        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <i class="fas fa-upload mr-2" style="color: #F9AD1F;"></i>Bulk Import
+        </button>
+    </div>
+    <div class="flex items-center">
+        <div class="relative">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            <input type="text" placeholder="Search coupons..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+        </div>
+    </div>
+</div>
+
+<!-- Coupon Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Active Coupons</p>
+                <p class="text-2xl font-bold text-gray-800">4</p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-tag" style="color: #F9AD1F;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Total Usage</p>
+                <p class="text-2xl font-bold text-gray-800">88</p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #EB362D20;">
+                <i class="fas fa-users" style="color: #EB362D;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Revenue Impact</p>
+                <p class="text-2xl font-bold text-gray-800">
+                    -<span class="currency-symbol">OMR</span> 342.50
+                </p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-chart-line" style="color: #EB362D;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Conversion Rate</p>
+                <p class="text-2xl font-bold text-gray-800">+12.4%</p>
+            </div>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #F9AD1F20;">
+                <i class="fas fa-percent" style="color: #F9AD1F;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Coupons Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Code</th>
+                    <th class="px-6 py-3">Discount</th>
+                    <th class="px-6 py-3">Type</th>
+                    <th class="px-6 py-3">Valid Period</th>
+                    <th class="px-6 py-3">Usage</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for coupon in coupons %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <span class="font-mono font-bold" style="color: #F9AD1F;">{{ coupon.code }}</span>
+                    </td>
+                    <td class="px-6 py-4 font-semibold">
+                        {% if 'OMR' in coupon.discount or '$' in coupon.discount %}
+                            <span class="currency-symbol">OMR</span> {{ coupon.discount|cut:'$'|cut:'OMR' }}
+                        {% else %}
+                            {{ coupon.discount }}
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full
+                            {% if coupon.type == 'percentage' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                            {% elif coupon.type == 'fixed' %}" style="background: #EB362D20; color: #EB362D;"
+                            {% else %}" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20); color: #EB362D;"
+                            {% endif %}>{{ coupon.type }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        {{ coupon.valid_from }} - {{ coupon.valid_to }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <span class="font-semibold">{{ coupon.usage }}</span>
+                            <span class="text-gray-500 text-sm">/{{ coupon.max_usage }}</span>
+                            <div class="ml-2 w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full" style="width: {% widthratio coupon.usage coupon.max_usage 100 %}%; background: linear-gradient(90deg, #F9AD1F, #EB362D);"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {% if coupon.valid_to >= '2024-01-01' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                            {% else %}" style="background: #EB362D20; color: #EB362D;"
+                            {% endif %}>
+                            {% if coupon.valid_to >= '2024-01-01' %}Active{% else %}Expired{% endif %}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <button class="mr-2 hover:opacity-80 transition-opacity" title="Edit" style="color: #F9AD1F;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="hover:opacity-80 transition-opacity" title="Delete" style="color: #EB362D;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Additional Features -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Active Campaigns -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4" style="color: #F9AD1F;">Active Campaigns</h3>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">Welcome10</p>
+                    <p class="text-xs text-gray-500">45 uses remaining</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full" style="background: #F9AD1F20; color: #F9AD1F;">10% OFF</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">SAVE20</p>
+                    <p class="text-xs text-gray-500">38 uses remaining</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full" style="background: #EB362D20; color: #EB362D;">20% OFF</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                    <p class="font-medium">FLAT5</p>
+                    <p class="text-xs text-gray-500">17 uses remaining</p>
+                </div>
+                <span class="text-xs px-2 py-1 rounded-full" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20); color: #EB362D;"><span class="currency-symbol">OMR</span>5 OFF</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 gradient-text">Coupon Performance</h3>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Redemption Rate</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">73%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 73%; background: linear-gradient(90deg, #F9AD1F, #EB362D);"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Avg. Order Value</span>
+                    <span class="font-semibold" style="color: #EB362D;"><span class="currency-symbol">OMR</span> 89.50</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 65%; background: #EB362D;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-600">Customer Retention</span>
+                    <span class="font-semibold" style="color: #F9AD1F;">+24%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full" style="width: 82%; background: #F9AD1F;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Coupon Usage -->
+<div class="mt-8 bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-semibold" style="color: #F9AD1F;">Recent Coupon Usage</h3>
+        <button class="text-sm font-medium hover:underline" style="color: #EB362D;">View All →</button>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Order ID</th>
+                    <th class="px-6 py-3">Customer</th>
+                    <th class="px-6 py-3">Coupon</th>
+                    <th class="px-6 py-3">Discount</th>
+                    <th class="px-6 py-3">Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono">#ORD-001</td>
+                    <td class="px-6 py-4">John Smith</td>
+                    <td class="px-6 py-4"><span style="color: #F9AD1F;">WELCOME10</span></td>
+                    <td class="px-6 py-4"><span class="currency-symbol">OMR</span> 5.00</td>
+                    <td class="px-6 py-4 text-sm">2024-01-15</td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono">#ORD-002</td>
+                    <td class="px-6 py-4">Sarah Johnson</td>
+                    <td class="px-6 py-4"><span style="color: #EB362D;">SAVE20</span></td>
+                    <td class="px-6 py-4"><span class="currency-symbol">OMR</span> 12.50</td>
+                    <td class="px-6 py-4 text-sm">2024-01-14</td>
+                </tr>
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono">#ORD-003</td>
+                    <td class="px-6 py-4">Mike Wilson</td>
+                    <td class="px-6 py-4"><span style="color: #F9AD1F;">FLAT5</span></td>
+                    <td class="px-6 py-4"><span class="currency-symbol">OMR</span> 5.00</td>
+                    <td class="px-6 py-4 text-sm">2024-01-14</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

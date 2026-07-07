@@ -1,0 +1,594 @@
+{% load static %}
+{% include 'header.html' %}
+
+    <title>{{ job_post.title }} | CareerConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========== MODERN, NEAT DESIGN (unchanged functionality) ========== */
+        :root {
+            --primary: #e95d1c;
+            --primary-dark: #d35400;
+            --primary-light: #ff7e47;
+            --primary-soft: #fff0e8;
+            --secondary: #1a1d24;
+            --accent: #3a86ff;
+            --light: #f8f9fa;
+            --dark: #12151a;
+            --gray: #5a6874;
+            --gray-light: #eef2f6;
+            --border-radius: 24px;
+            --card-radius: 28px;
+            --box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* background: linear-gradient(145deg, #f9fafc 0%, #f1f5f9 100%); */
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            color: var(--secondary);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 45px -15px rgba(0, 0, 0, 0.12);
+        }
+
+        .job-header {
+            padding: 2rem 2.5rem 1.5rem;
+            background: white;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .job-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1e2a3a 0%, var(--primary-dark) 80%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin: 1rem 0 1.2rem;
+        }
+
+        .company-logo {
+            width: 64px;
+            height: 64px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--gray-light);
+            padding: 10px;
+        }
+
+        .company-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .company-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {
+            background: var(--gray-light);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            transition: var(--transition);
+        }
+
+        .meta-item i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .meta-item:hover {
+            background: var(--primary-soft);
+            transform: translateY(-2px);
+            color: var(--primary-dark);
+        }
+
+        .job-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            padding: 2.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .job-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 1.75rem;
+            }
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .section-title i {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            min-width: 130px;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label i {
+            color: var(--primary);
+            width: 1.2rem;
+        }
+
+        .detail-value {
+            color: var(--gray);
+            flex: 1;
+        }
+
+        .detail-value a {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+            border-bottom: 1px dotted transparent;
+        }
+
+        .detail-value a:hover {
+            border-bottom-color: var(--primary);
+        }
+
+        .job-description {
+            grid-column: 1 / -1;
+            background: var(--gray-light);
+            padding: 1.8rem 2rem;
+            border-radius: 24px;
+            border-left: 5px solid var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .job-description p {
+            color: var(--secondary);
+            line-height: 1.65;
+            font-size: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 2.5rem 2rem;
+            background: white;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .btn {
+            padding: 0.85rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .btn-secondary {
+            background: var(--gray-light);
+            color: var(--secondary);
+            border: 1px solid transparent;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(105deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 5px 12px rgba(233, 93, 28, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(233, 93, 28, 0.35);
+        }
+
+        /* Floating back button - fixed to be above header */
+        .floating-back {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 9999;      /* Ensures it's above any header */
+            pointer-events: auto;
+        }
+
+        .floating-back .btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 30px;
+            padding: 0;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--gray-light);
+            color: var(--secondary);
+        }
+
+        .floating-back .btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .floating-apply {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: none;
+        }
+
+        .floating-apply .btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 40px;
+            padding: 0;
+            justify-content: center;
+            background: var(--primary);
+            box-shadow: 0 8px 20px rgba(233, 93, 28, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            .job-header {
+                padding: 1.5rem;
+            }
+            .job-content {
+                padding: 1.5rem;
+            }
+            .job-title {
+                font-size: 1.8rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+                padding: 1.5rem;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .floating-back {
+                top: 1rem;
+                left: 1rem;
+            }
+            .floating-apply {
+                display: block;
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            .action-buttons .btn-primary {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .job-title {
+                font-size: 1.5rem;
+            }
+            .meta-item {
+                font-size: 0.75rem;
+                padding: 0.4rem 1rem;
+            }
+            .detail-label {
+                min-width: 100%;
+                margin-bottom: 0.2rem;
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .job-card {
+            animation: fadeUp 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating back button - with fixed positioning and robust click handler -->
+<div class="floating-back">
+    <button class="btn btn-secondary" id="backButtonFloating" title="Back to listings">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+</div>
+
+<div class="floating-apply">
+    <a href="mailto:{{ job_post.contact_email }}?subject=Application for {{ job_post.title }} position" class="btn btn-primary" title="Apply Now">
+        <i class="fas fa-paper-plane"></i>
+    </a>
+</div>
+
+<div class="container">
+    <div class="job-card">
+        <div class="job-header">
+            <h1 class="job-title">{{ job_post.title }}</h1>
+            
+            <div class="company-info">
+                <div class="company-logo">
+                    <img src="{{ job_post.company.logo.url }}" alt="{{ job_post.company_name }} logo">
+                </div>
+                <div>
+                    <p class="company-name">{{ job_post.company_name }}</p>
+                </div>
+            </div>
+            
+            <div class="job-meta">
+                <span class="meta-item">
+                    <i class="fas fa-briefcase"></i>
+                    {{ job_post.job_type|title }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ job_post.company.city }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-calendar-day"></i>
+                    Posted: {{ job_post.posted_on|date:"M d, Y" }}
+                </span>
+                {% if job_post.application_deadline %}
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    Apply by: {{ job_post.application_deadline|date:"M d, Y" }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="job-content">
+            <div>
+                <div class="detail-section">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Position Details</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-tag"></i> Job Category</div>
+                            <div class="detail-value">{{ job_post.job_category.name }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-chart-line"></i> Experience Required</div>
+                            <div class="detail-value">{{ job_post.experience_required }} years</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-money-bill-wave"></i> Salary Range</div>
+                            <div class="detail-value">{{ job_post.salary_range }} OMR</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-clock"></i> Working Hours</div>
+                            <div class="detail-value">{{ job_post.get_working_hours_display }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-calendar-alt"></i> Working Days</div>
+                            <div class="detail-value">{{ job_post.get_working_days_display }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="detail-section">
+                    <h3 class="section-title"><i class="fas fa-user-tie"></i> Requirements</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-graduation-cap"></i> Qualifications</div>
+                            <div class="detail-value">{{ job_post.qualifications }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-tools"></i> Skills Required</div>
+                            <div class="detail-value">{{ job_post.skills_required }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-venus-mars"></i> Gender</div>
+                            <div class="detail-value">{{ job_post.get_gender_display }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-globe"></i> Nationality</div>
+                            <div class="detail-value">{{ job_post.get_nationality_display }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label"><i class="fas fa-envelope"></i> Contact Email</div>
+                            <div class="detail-value">
+                                <a href="mailto:{{ job_post.contact_email }}">{{ job_post.contact_email }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="job-description">
+                <h3 class="section-title"><i class="fas fa-align-left"></i> Job Description</h3>
+                <p>{{ job_post.description }}</p>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" id="backButtonAction">
+                <i class="fas fa-arrow-left"></i> Back to Listings
+            </button>
+            <!-- <a href="mailto:{{ job_post.contact_email }}?subject=Application for {{ job_post.title }} position" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Apply Now
+            </a> -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Robust back button handler (works even with empty history) ---
+        function goBackSafely() {
+            if (document.referrer && window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback: redirect to jobs listing page (adjust path as needed)
+                // If you have a specific URL for job listings, change '/jobs/' accordingly.
+                window.location.href = '/jobs/';
+            }
+        }
+
+        // Attach to floating back button
+        const floatingBackBtn = document.getElementById('backButtonFloating');
+        if (floatingBackBtn) {
+            floatingBackBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                goBackSafely();
+            });
+        }
+
+        // Attach to the action button inside .action-buttons
+        const actionBackBtn = document.getElementById('backButtonAction');
+        if (actionBackBtn) {
+            actionBackBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                goBackSafely();
+            });
+        }
+
+        // --- Original scroll and animation logic (preserved) ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.detail-item').forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(item);
+        });
+
+        const floatingBtns = document.querySelectorAll('.floating-back .btn, .floating-apply .btn');
+        floatingBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'translateY(-4px) scale(1.1)';
+                btn.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+                btn.style.boxShadow = '';
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

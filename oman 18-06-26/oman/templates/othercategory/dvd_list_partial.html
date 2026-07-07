@@ -1,0 +1,2660 @@
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load static %}
+{% load humanize %}
+<style>
+    .filter-container{
+        border: 1px solid black;
+    }
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #333;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background-color: #f0f0f0;
+    border-radius: 50rem; 
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+}
+
+.filter-badge:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-badge .remove-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.filter-badge .remove-filter:hover {
+    color: #fff;
+   
+}
+
+/* For the active/highlighted state */
+.filter-badge.active {
+    background-color: #e0f7fa;
+    border-color: #b2ebf2;
+    color: #006064;
+}
+
+/* Clear filters link style */
+.clear-filters-link {
+    color: #d32f2f;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    transition: color 0.2s;
+}
+
+.clear-filters-link:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.property-count {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+.clear-filters-link {
+    color: #e01919;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    margin-right: 20px;
+}
+
+.clear-filters-link:hover {
+    color: #c01010;
+    text-decoration: none;
+}
+/* Sorting Dropdown Styles */
+.sort-dropdown {
+    min-width: 180px;
+}
+
+.sort-dropdown select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-dropdown select:hover {
+    border-color: #aaa;
+}
+
+.sort-dropdown select:focus {
+    outline: none;
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+</style>
+<nav aria-label="Breadcrumb" style="margin-left: -50px;margin-bottom: 30px;">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <!-- Breadcrumb Trail -->
+        <ol class="breadcrumb mb-0">
+            <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+            <li><a href="{% url 'index5' %}">Other Categories</a></li>
+            <li><a href="{% url 'dvd' %}">DVDs & Movies</a></li> 
+        </ol>
+<style>
+                .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        color:#15818E;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color:#15818E;
+        }
+              </style>
+       <!-- Section Heading -->
+<div class="d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+        <h5 class="mb-0">
+           DVDs & Movies in Other Categories
+        </h5>
+        <span class="property-count"> {{ total_count }} Ads</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        {% if request.GET and request.GET %}
+            <a href="{% url request.resolver_match.url_name %}"
+               id="clear-all-filters"
+               class="clear-filters-link">
+                Clear Filters
+            </a>
+        {% endif %}
+        
+       <div class="custom-sort-dropdown">
+        <div class="sort-trigger" onclick="toggleSortDropdown()">
+            <svg class="sort-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 9l4-4 4 4"></path>
+    <path d="M16 15l-4 4-4-4"></path> 
+</svg>
+            <span class="sort-text">Sort:{% if current_sort == '-id' %}Latest{% elif current_sort == 'oldest' %}Oldest{% elif current_sort == 'price_asc' %}Price: Low to High{% elif current_sort == 'price_desc' %}Price: High to Low{% else %}Latest{% endif %}</span>
+            
+        </div>
+        <div class="sort-dropdown-menu">
+            <div class="sort-option {% if current_sort == '-id' %}active{% endif %}" onclick="updateSort('-id')">Latest</div>
+            <div class="sort-option {% if current_sort == 'oldest' %}active{% endif %}" onclick="updateSort('oldest')">Oldest</div>
+            <div class="sort-option {% if current_sort == 'price_asc' %}active{% endif %}" onclick="updateSort('price_asc')">Price: Low to High</div>
+            <div class="sort-option {% if current_sort == 'price_desc' %}active{% endif %}" onclick="updateSort('price_desc')">Price: High to Low</div>
+        </div>
+    </div>
+
+
+<script>
+// Toggle dropdown visibility
+function toggleSortDropdown() {
+    const dropdown = document.querySelector('.sort-dropdown-menu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.custom-sort-dropdown')) {
+        document.querySelector('.sort-dropdown-menu').style.display = 'none';
+    }
+});
+
+// Update sort parameter with AJAX
+function updateSort(value) {
+    const newUrl = updateQueryStringParameter(window.location.href, 'sort', value);
+
+    // Update browser URL without reload
+    window.history.pushState({}, '', newUrl);
+
+    // AJAX fetch new sorted content
+    fetch(newUrl, {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Replace listing content
+        document.querySelector('#dvd-list-container').innerHTML = data;
+    })
+    .catch(err => console.error("AJAX Sort Error:", err));
+}
+
+// Helper function to update URL parameters
+function updateQueryStringParameter(uri, key, value) {
+    const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    const separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    return uri + separator + key + "=" + value;
+}
+</script>
+
+<style>
+    .custom-sort-dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 1;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        margin-right: -20px;
+    }
+    
+    .sort-trigger {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-trigger:hover {
+        border-color: #E35D20;
+    }
+    
+    .sort-text {
+        margin-right: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .sort-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .sort-dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 180px;
+        margin-top: 5px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 100;
+    }
+    
+    .custom-sort-dropdown:hover .sort-icon {
+        transform: rotate(180deg);
+    }
+    
+    .sort-option {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .sort-option:hover {
+        background-color: #f8f8f8;
+        color: #E35D20;
+    }
+    
+    .sort-option.active {
+        color: #E35D20;
+        background-color: #f8f8f8;
+        font-weight: 500;
+    }
+    
+    .vertical-divider {
+        display: inline-block;
+        height: 20px;
+        width: 1px;
+        background-color: #ddd;
+        margin: 0 10px;
+    }
+</style>
+    </div>
+</div>
+        <style>
+            h5 {
+                font-size: 1.25rem;
+                margin: 0.5rem 0;
+                color: #333;
+                font-weight: 600;
+                margin-left: 13px;
+            }
+            
+        </style>
+
+{% if request.GET %}
+<div id="filters-container" class="mt-2">
+    <div class="filter-scroll-wrapper" style="max-height: 7.8rem;width: 1115px; overflow-y: auto; scrollbar-width: thin;
+        {% for key, values in request.GET.lists %}
+            {% if key != 'page'  %}
+                {% for value in values %}
+                    {% if value and value != 'null' and value != 'None' %}
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        padding:10px;
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    ">
+     <div class="d-flex flex-wrap gap-2">
+    {% for key, values in request.GET.lists %}
+        {% if key != 'page'  %}
+        
+           {% if key == 'governate' %}
+    {% for governate_id in values %}
+        {% if governate_id and governate_id != 'null' and governate_id != 'None' %}
+            {% for gov_obj in selected_governate_objs %}
+                {% if gov_obj.id|stringformat:"s" == governate_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ gov_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="governate"
+                           data-value="{{ governate_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% elif key == 'district' %}
+    {% for district_id in values %}
+        {% if district_id and district_id != 'null' and district_id != 'None' %}
+            {% for dist_obj in selected_district_objs %}
+                {% if dist_obj.id|stringformat:"s" == district_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ dist_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="district"
+                           data-value="{{ district_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+           {% elif key == 'city' %}
+                {% for city_id in values %}
+                    {% if city_id and city_id != 'null' and city_id != 'None' %}
+                        {% for city_obj in selected_city_objs %}
+                            {% if city_obj.id|stringformat:"s" == city_id %}
+                                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                    {{ city_obj.name }}
+                                    <a href="#"
+                                       class="remove-filter"
+                                       data-key="city"
+                                       data-value="{{ city_id }}">
+                                       ×
+                                    </a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% elif key == 'sort' %}
+                {% for value in values %}
+                    {% if value == 'price_desc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            High to Low
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_desc">
+                               ×
+                            </a>
+                        </span>
+
+                    {% elif value == 'price_asc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Low to High
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_asc">
+                               ×
+                            </a>
+                        </span>
+                    {% elif value == '-id' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Latest
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="-id">
+                               ×
+                            </a>
+                        </span>
+                    {% else %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            {{ value|title }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="{{ value }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            
+            {% elif key == 'price_from' or key == 'price_to' %}
+                {% if request.GET.price_from and request.GET.price_to %}
+                    {% if key == 'price_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price: {{ request.GET.price_from }} - {{ request.GET.price_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_range"
+                               data-value="{{ request.GET.price_from }}-{{ request.GET.price_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'price_from' and request.GET.price_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price from {{ request.GET.price_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_from"
+                               data-value="{{ request.GET.price_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'price_to' and request.GET.price_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price to {{ request.GET.price_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_to"
+                               data-value="{{ request.GET.price_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'year_from' or key == 'year_to' %}
+                {% if request.GET.year_from and request.GET.year_to %}
+                    {% if key == 'year_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year: {{ request.GET.year_from }} - {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_range"
+                               data-value="{{ request.GET.year_from }}-{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'year_from' and request.GET.year_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year from {{ request.GET.year_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_from"
+                               data-value="{{ request.GET.year_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'year_to' and request.GET.year_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year to {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_to"
+                               data-value="{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'kilometers_from' or key == 'kilometers_to' %}
+                {% if request.GET.kilometers_from and request.GET.kilometers_to %}
+                    {% if key == 'kilometers_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM: {{ request.GET.kilometers_from }} - {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometer_range"
+                               data-value="{{ request.GET.kilometers_from }}-{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'kilometers_from' and request.GET.kilometers_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM from {{ request.GET.kilometers_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_from"
+                               data-value="{{ request.GET.kilometers_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'kilometers_to' and request.GET.kilometers_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM to {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_to"
+                               data-value="{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+        {% for key, values in request.GET.lists %}
+    {% if key == 'make' %}
+        {% for make_value in values %}
+            {% if make_value and make_value != 'null' and make_value != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                    {{ make_value }}  {# <-- raw string, no title/capfirst/filter #}
+                    <a href="#"
+                       class="remove-filter"
+                       data-key="make"
+                       data-value="{{ make_value }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+                {% elif key == 'category' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_category:"dvd"}}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'ads_posted' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                    {% if v == 'today' %}
+                        Today
+                    {% elif v == '3days' %}
+                        Last 3 Days
+                    {% elif v == '1wk' %}
+                        Last 1 Week
+                    {% elif v == '2wks' %}
+                        Last 2 Weeks
+                    {% elif v == '1m' %}
+                        Last 1 Month
+                    {% elif v == '6m' %}
+                        Last 6 Months
+                    {% else %}
+                        {{ v }}
+                    {% endif %}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+   {% elif key == 'listing_type' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_listing_type:"dvd" }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'age' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_age:"dvd"}}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'usage' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_usage:"dvd"}}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+   {% elif key == 'subcategory' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_subcategory:"dvd"}}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+  
+            {% elif key == 'condition' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v }}
+                                  <a href="?{% param_replace request usage=value %}"
+                   class="remove-filter"
+                   data-key="{{ key }}"
+                   data-value="{{ value }}">
+                   ×
+                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                
+            {% elif key == 'service_type' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v|format_service_type:'babyitem' }}
+                                <a href="#"
+   class="remove-filter"
+   data-key="{{ key }}"
+   data-value="{{ v }}">
+   ×
+</a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+                {% elif key == 'make' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v }}
+                                <a href="#"
+   class="remove-filter"
+   data-key="{{ key }}"
+   data-value="{{ v }}">
+   ×
+</a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                               {{ v|title }}
+                                <a href="#"
+                                   class="remove-filter"
+                                   data-key="{{ key }}"
+                                   data-value="{{ v }}">
+                                   ×
+                                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+    </div>
+    
+</div>
+{% endif %}
+
+    </div>
+</nav>
+<style>
+ 
+            </style>
+<style>
+   
+    
+    
+    /* Added styles for consistent spacing and lighter fonts */
+    .feature-block-one {
+        margin-bottom: 25px;
+    }
+    .lower-content {
+    padding: 15px;
+    font-size: 16px;
+    margin-left: 120px;
+}
+
+.lower-content h4 {
+ 
+    {% comment %} margin-bottom: 8px; {% endcomment %}
+    font-size: 16px; /* Slightly larger for price */
+    color: #1976d2;
+}
+
+.lower-content p,
+.lower-content h6,
+.lower-content .details-icons span {
+    font-size: 16px;
+    
+}
+.
+
+
+/* Add these styles to your existing CSS */
+.image-box {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-box:hover .btn {
+    opacity: 1;
+}
+
+.btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(16, 15, 15, 0.8);
+    border: none;
+    border-radius: 30%;
+    padding:2px 8px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn.backward {
+    left: 10px;
+}
+
+.btn.forward {
+    right: 230px;
+}
+
+.btn span {
+    font-size: 18px;
+    color: white;
+}
+
+/* Ensure the slider container is positioned relative */
+.slider {
+    position: relative;
+}
+
+</style>
+<style>
+    .image-box {
+        position: relative;
+    }
+
+    .dots-container {
+        display: flex !important; /* Force display */
+        justify-content: center;
+        position: absolute;
+        bottom: 10px;
+        margin-left:170px;
+        transform: translateX(-50%);
+        z-index: 10;
+        gap: 5px;
+    }
+    
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent by default */
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .dot.active {
+        background-color: white; /* More visible when active */
+    }
+    
+    /* Add this new style for image counter */
+    .image-counter {
+        position: absolute;
+        bottom: 10px;
+        font-family: 'FontStyle1', Arial, sans-serif;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        z-index: 10;
+    }
+    .listings-container{
+        width:1125px;
+        margin-left:-58px;
+    }
+    
+</style>
+<!-- Listings Section -->
+<div class="listings-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column - Products (8 columns on large screens) -->
+            <div class="col-lg-9 col-md-12">
+                {% if show_related %}
+                <div class="related-box mb-4">
+    <div class="related-inner">
+        <div class="icon-circle">
+            <span>!</span>
+        </div>
+        <p class="related-text">
+            <strong>No Results Found</strong><br>
+            We couldn't find any items matching your search.<br></p>
+            
+    </div>
+</div>
+<h5 class="mt-2">Recommended Listings</h5>
+                {% endif %}
+
+                <!-- Products Grid -->
+                {% if show_related %}
+                    <!-- Show Related DVDs -->
+                    {% for dvd in related_dvds %}
+                    <div class="feature-block-one" style="cursor: pointer; width: 799px;" onclick="window.open('{% url 'dvd_details' dvd.id %}', '_blank')">
+                        <div class="inner-box">
+                            <div class="image-box">
+                                <figure class="image">
+                                    <div class="slider" data-current-index="0">
+                                        <a href="{% url 'dvd_details' dvd.id %}" target="_new">
+                                            <img
+                                                class="slide-image"
+                                                src="{{ dvd.images.first.image.url }}"
+                                                alt="{{ dvd.name }}"
+                                                data-images='{{ dvd.images_json|safe }}'
+                                            />
+                                        </a>
+                                        {% if dvd.videos.all %}
+                                        <div class="video-icon" style="position: absolute; top: 215px; left:60px; background: rgba(0,0,0,0.6); border-radius: 40%; width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-video" style="color: white; font-size: 12px;"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="dots-container"></div>
+                                        <div class="image-counter mx-2">
+                                            <i class="fas fa-image"></i> 1 / {{ dvd.images.count }}
+                                        </div>
+                                        <div class="btn backward" style="display: none;">
+                                            <span class="material-icons-outlined"><</span>
+                                        </div>
+                                        <div class="btn forward">
+                                            <span class="material-icons-outlined">></span>
+                                        </div>
+                                    </div>
+                                </figure>
+                                {% if dvd.is_boosted %}
+        <div class="boost-icon" title="Boosted listing">
+            <i class="fas fa-rocket"></i>   <!-- or use 🚀 -->
+        </div>
+        {% endif %}
+        <style>
+            .slider {
+    position: relative;
+}
+
+.boost-icon {
+    position: absolute;
+    top: 10px;
+    right: 230px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ff9800;
+    border-radius: 10%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 5;
+}
+            </style>
+                            </div>
+                            <div class="lower-content" style="margin-top: -10px;">
+                                <h3 style="position: relative; margin: 0;">
+                                    <a href="{% url 'dvd_details' dvd.id %}" style="text-decoration: none; white-space: nowrap;" target="_new">
+                                       <span style="color: #EB362D; font-size: 1em;">{{ dvd.price|floatformat:0|intcomma }}</span>
+                                        <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                                        {% if dvd.listing_type == "rent" and dvd.rental_period %}
+                                            <span style="color: #EB362D; font-size: 0.85em;"> - {{ dvd.rental_period|capfirst }}</span>
+                                        {% endif %}
+                                    </a>
+                                     
+                                </h3>
+                                 <button class="favorite-btn" 
+        style="position: absolute; right: -325px; top: -15px;"
+        data-product-id="{{ dvd.id }}" 
+        data-product-type="dvd" 
+        data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+        onclick="event.stopPropagation(); handleFavoriteClick(this);">
+    <i id="favorite-icon-{{ dvd.id }}" 
+       class="far fa-heart {% if dvd.id in user_favorites %}filled{% endif %}" 
+       data-favorite="{% if dvd.id in user_favorites %}true{% else %}false{% endif %}"
+       style="{% if dvd.id in user_favorites %}color: #d32f2f;{% endif %}"></i>
+</button>
+<script>
+    function handleFavoriteClick(button) {
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        // Get the FULL current URL including query parameters
+        const currentFullUrl = window.location.href;
+        
+        // Encode the full URL for the next parameter
+        const encodedUrl = encodeURIComponent(currentFullUrl);
+        
+        // Redirect to login with the full return URL
+        window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+        return;
+    }
+    
+    // User is authenticated, proceed with favorite toggle
+    toggleFavorite(button);
+}
+</script>
+                     <style>
+/* Favorite button styles */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;   /* No background */
+    border: none;              /* No border */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    background: #e0e0e0; /* Grey on hover */
+    border-radius: 6px;  /* optional, keeps box shape smooth */
+}
+
+.favorite-btn i {
+    font-size: 18px;
+    color: #d32f2f; /* default heart color = red */
+    transition: all 0.3s ease;
+}
+
+.favorite-btn i.filled {
+    color: #d32f2f; /* still red when favorited */
+}
+
+/* Ensure the favorite button doesn't interfere with image navigation */
+.image-box {
+    position: relative;
+}
+
+</style>
+                                <div class="cat" style="margin-top:5px;margin-right:-50px;">
+                                    {% if dvd.subcategory %}
+                                        {{ dvd.subcategory|format_subcategory|capfirst }}
+                                    {% else %}
+                                        {{ dvd.condition|capfirst }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="details-icons">
+                                    {% if dvd.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ dvd.age|format_age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if dvd.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ dvd.usage|title|format_usage }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if dvd.condition %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ dvd.condition|title|format_condition }} 
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <p style="white-space: nowrap;margin-top:10px;color:black;">
+                                    {{ dvd.category|format_category|title }}
+                                </p>
+
+                                <div style="white-space: nowrap; margin-left: -2px;margin-top:-10px;margin-bottom:5px;">
+                                    <img src="{% static 'assets/images/icons/location.svg' %}" alt="Location" class="location-icons" style="vertical-align: middle;">
+                                    <span>{{ dvd.city|clean_city_name|truncatechars:25 }},{{ dvd.city.district.name }},{{ dvd.city.district.governate.name }}</span>
+                                </div>
+
+                                <div class="lower-box">
+                                    <div class="details-row" style="margin-top: 10px;">
+                                        <div class="action-buttons">
+                                            <!-- WhatsApp Button -->
+                                            <li>
+                                                {% if dvd.user.whatsapp %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <a href="https://wa.me/{{ dvd.user.whatsapp }}"
+                                                           target="_blank"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </li>
+
+                                            <!-- Phone Button -->
+                                            <li>
+                                                {% if dvd.user.phone %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <a href="#"
+                onclick="event.stopPropagation(); showPhonePopup('{{ dvd.user.phone }}'); return false;"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fff3f3;font-size:16px; padding: 8px 12px; margin-left:5px;border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                            onclick="event.stopPropagation();"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fcd9db;font-size:16px;margin-left:3px; padding: 8px 12px; border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="badge-style"
+                                                        style="width:90px;background-color: #fcd9db;font-size:16px;margin-left:-16px; padding: 8px 12px; border-radius: 10px; color: #1A73E8;">
+                                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                            alt="Call"
+                                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                        Call
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+
+                                            <!-- Chat Button -->
+                                            <li>
+    {% if request.user.is_authenticated %}
+        <!-- Logged in: Go to chat - Modified to open popup -->
+        <a href="javascript:void(0);"
+           onclick="openChatPopup('{{ dvd.user.id }}', '{{ dvd.id }}', 'dvd', '{{ dvd.title|escapejs }}', '{{ dvd.user.username|escapejs }}', '{% if dvd.images.first %}{{ dvd.images.first.image.url }}{% endif %}'); event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px; cursor: pointer;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% else %}
+        <!-- Not logged in: redirect to login preserving full URL -->
+        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+           onclick="event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% endif %}
+</li>
+
+                                            <!-- Contact Popup Button -->
+                                            <li>
+                                                {% if request.user.is_authenticated %}
+                                                    <a href="#"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;"
+                                                       onclick="showContactPopup('{{ dvd.id }}', '{{ dvd.user.id }}', '{{ dvd.user.whatsapp|default:'' }}', '{{ dvd.user.phone|default:'' }}', 'true'); event.stopPropagation();">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                       onclick="event.stopPropagation();"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% endif %}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Clear Filters Button for Related Products -->
+                    <div class="text-center mt-4">
+                        <a href="{% url request.resolver_match.url_name %}" class="btn btn-clear-filters" style="background-color: #E35D20; color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none;">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Clear All Filters
+                        </a>
+                    </div>
+
+                {% else %}
+                    <!-- Show Regular Results -->
+                    {% for dvd in page_obj %}
+                    <div class="feature-block-one" style="cursor: pointer; width: 799px;" onclick="window.open('{% url 'dvd_details' dvd.id %}', '_blank')">
+                        <div class="inner-box">
+                            <div class="image-box">
+                                <figure class="image">
+                                    <div class="slider" data-current-index="0">
+                                        <a href="{% url 'dvd_details' dvd.id %}" target="_new">
+                                            <img
+                                                class="slide-image"
+                                                src="{{ dvd.images.first.image.url }}"
+                                                alt="{{ dvd.name }}"
+                                                data-images='{{ dvd.images_json|safe }}'
+                                            />
+                                        </a>
+                                        {% if dvd.videos.all %}
+                                        <div class="video-icon" style="position: absolute; top: 215px; left:60px; background: rgba(0,0,0,0.6); border-radius: 40%; width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-video" style="color: white; font-size: 12px;"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="dots-container"></div>
+                                        <div class="image-counter mx-2">
+                                            <i class="fas fa-image"></i> 1 / {{ dvd.images.count }}
+                                        </div>
+                                        <div class="btn backward" style="display: none;">
+                                            <span class="material-icons-outlined"><</span>
+                                        </div>
+                                        <div class="btn forward">
+                                            <span class="material-icons-outlined">></span>
+                                        </div>
+                                    </div>
+                                </figure>
+                                {% if dvd.is_boosted %}
+        <div class="boost-icon" title="Boosted listing">
+            <i class="fas fa-rocket"></i>   <!-- or use 🚀 -->
+        </div>
+        {% endif %}
+        <style>
+            .slider {
+    position: relative;
+}
+
+.boost-icon {
+    position: absolute;
+    top: 10px;
+    right: 230px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ff9800;
+    border-radius: 10%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 5;
+}
+            </style>
+                            </div>
+                            <div class="lower-content" style="margin-top: -10px;">
+                                <h3 style="position: relative; margin: 0;">
+                                    <a href="{% url 'dvd_details' dvd.id %}" style="text-decoration: none; white-space: nowrap;" target="_new">
+                                       <span style="color: #EB362D; font-size: 1em;">{{ dvd.price|floatformat:0|intcomma }}</span>
+                                        <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                                        {% if dvd.listing_type == "rent" and dvd.rental_period %}
+                                            <span style="color: #EB362D; font-size: 0.85em;"> - {{ dvd.rental_period|capfirst }}</span>
+                                        {% endif %}
+                                    </a>
+                                    
+                                </h3>
+                                 <button class="favorite-btn" 
+        style="position: absolute; right: -325px; top: -15px;"
+        data-product-id="{{ dvd.id }}" 
+        data-product-type="dvd" 
+        data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+        onclick="event.stopPropagation(); handleFavoriteClick(this);">
+    <i id="favorite-icon-{{ dvd.id }}" 
+       class="far fa-heart {% if dvd.id in user_favorites %}filled{% endif %}" 
+       data-favorite="{% if dvd.id in user_favorites %}true{% else %}false{% endif %}"
+       style="{% if dvd.id in user_favorites %}color: #d32f2f;{% endif %}"></i>
+</button>
+<script>
+    function handleFavoriteClick(button) {
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        // Get the FULL current URL including query parameters
+        const currentFullUrl = window.location.href;
+        
+        // Encode the full URL for the next parameter
+        const encodedUrl = encodeURIComponent(currentFullUrl);
+        
+        // Redirect to login with the full return URL
+        window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+        return;
+    }
+    
+    // User is authenticated, proceed with favorite toggle
+    toggleFavorite(button);
+}
+</script>
+                     <style>
+/* Favorite button styles */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;   /* No background */
+    border: none;              /* No border */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.favorite-btn:hover {
+    background: #e0e0e0; /* Grey on hover */
+    border-radius: 6px;  /* optional, keeps box shape smooth */
+}
+
+.favorite-btn i {
+    font-size: 18px;
+    color: #d32f2f; /* default heart color = red */
+    transition: all 0.3s ease;
+}
+
+.favorite-btn i.filled {
+    color: #d32f2f; /* still red when favorited */
+}
+
+/* Ensure the favorite button doesn't interfere with image navigation */
+.image-box {
+    position: relative;
+}
+
+</style>
+                                <div class="cat" style="margin-top:5px;margin-right:-50px;">
+                                    {% if dvd.subcategory %}
+                                        {{ dvd.subcategory|format_subcategory|capfirst }}
+                                    {% else %}
+                                        {{ dvd.condition|capfirst }}
+                                    {% endif %}
+                                </div>
+
+                                <div class="details-icons">
+                                    {% if dvd.age %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/calendar.svg' %}"> {{ dvd.age|format_age }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if dvd.usage %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ dvd.usage|title|format_usage }}
+                                    </span>
+                                    {% endif %}
+
+                                    {% if dvd.condition %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;"> {{ dvd.condition|title|format_condition }} 
+                                    </span>
+                                    {% endif %}
+                                </div>
+
+                                <p style="white-space: nowrap;margin-top:10px;color:black;">
+                                    {{ dvd.category|format_category|title }}
+                                </p>
+
+                                <div style="white-space: nowrap; margin-left: -2px;margin-top:-10px;margin-bottom:5px;">
+                                    <img src="{% static 'assets/images/icons/location.svg' %}" alt="Location" class="location-icons" style="vertical-align: middle;">
+                                    <span>{{ dvd.city|clean_city_name|truncatechars:25 }},{{ dvd.city.district.name }},{{ dvd.city.district.governate.name }}</span>
+                                </div>
+
+                                <div class="lower-box">
+                                    <div class="details-row" style="margin-top: 10px;">
+                                        <div class="action-buttons">
+                                            <!-- WhatsApp Button -->
+                                            <li>
+                                                {% if dvd.user.whatsapp %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <a href="https://wa.me/{{ dvd.user.whatsapp }}"
+                                                           target="_blank"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </li>
+
+                                            <!-- Phone Button -->
+                                            <li>
+                                                {% if dvd.user.phone %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <a href="#"
+                onclick="event.stopPropagation(); showPhonePopup('{{ dvd.user.phone }}'); return false;"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fff3f3;font-size:16px; padding: 8px 12px; margin-left:5px;border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                            onclick="event.stopPropagation();"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fcd9db;font-size:16px;margin-left:3px; padding: 8px 12px; border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="badge-style"
+                                                        style="width:90px;background-color: #fcd9db;font-size:16px;margin-left:-16px; padding: 8px 12px; border-radius: 10px; color: #1A73E8;">
+                                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                            alt="Call"
+                                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                        Call
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+
+                                            <!-- Chat Button -->
+                                            <li>
+    {% if request.user.is_authenticated %}
+        <!-- Logged in: Go to chat - Modified to open popup -->
+        <a href="javascript:void(0);"
+           onclick="openChatPopup('{{ dvd.user.id }}', '{{ dvd.id }}', 'dvd', '{{ dvd.title|escapejs }}', '{{ dvd.user.username|escapejs }}', '{% if dvd.images.first %}{{ dvd.images.first.image.url }}{% endif %}'); event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px; cursor: pointer;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% else %}
+        <!-- Not logged in: redirect to login preserving full URL -->
+        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+           onclick="event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% endif %}
+</li>
+
+                                            <!-- Contact Popup Button -->
+                                            <li>
+                                                {% if request.user.is_authenticated %}
+                                                    <a href="#"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;"
+                                                       onclick="showContactPopup('{{ dvd.id }}', '{{ dvd.user.id }}', '{{ dvd.user.whatsapp|default:'' }}', '{{ dvd.user.phone|default:'' }}', 'true'); event.stopPropagation();">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                       onclick="event.stopPropagation();"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% endif %}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Pagination for Regular Results -->
+                    {% if page_obj.paginator.count > 0 and page_obj.has_other_pages %}
+                    <div class="container">  
+                        <ul class="page">
+                            {% if page_obj.has_previous %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">
+                                        <span class="material-icons">chevron_left</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_left</span>
+                                </li>
+                            {% endif %}
+
+                            {% if page_obj.number > 3 %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">1</a>
+                                </li>
+                                {% if page_obj.number > 4 %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                                    <li class="page__numbers {% if num == page_obj.number %}active{% endif %}">
+                                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
+                                {% if page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+                                </li>
+                            {% endif %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">
+                                        <span class="material-icons">chevron_right</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_right</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Contact Popup -->
+                <div id="contactPopup" class="contact-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+                    <div style="background-color: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;">Email / SMS Contact</h3>
+                            <button onclick="hideContactPopup()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                        </div>
+                        <div id="contactOptions" style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Content added by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Categories and Vertical Image -->
+            <div class="col-lg-3 col-md-12">
+                <div class="ad-column mb-3">
+                    <div class="ad-categories"> 
+                        <h4 class="category-title">Other Categories</h4> 
+                        <ul class="subcategory-list" id="subcategoryList">
+                            <li><a href="{% url 'dvd' %}"><b>DVDs & Movies</b></a></li>
+                            <li><a href="{% url 'electronics' %}">Electronics</a></li>
+                            <li><a href="{% url 'computer' %}">Computers & Networking</a></li>
+                            <li><a href="{% url 'business' %}">Business & Industrial</a></li>
+                            <li><a href="{% url 'homeappliance' %}">Home Appliances</a></li>
+                            <li><a href="{% url 'sports' %}">Sports Equipment</a></li>
+                            <!-- Hidden extra categories -->
+                            <div class="extra-motors" style="display:none;">
+                                <li><a href="{% url 'clothing' %}">Clothing & Accessories</a></li>
+                                <li><a href="{% url 'camera' %}">Cameras & Imaging</a></li>
+                                <li><a href="{% url 'jewelry' %}">Jewelry & Watches</a></li>
+                                <li><a href="{% url 'pet' %}">Pets</a></li>
+                                <li><a href="{% url 'musical' %}">Musical Instruments</a></li>
+                                <li><a href="{% url 'gaming' %}">Gaming</a></li>
+                                <li><a href="{% url 'babyitem' %}">Baby Items</a></li>
+                                <li><a href="{% url 'toys' %}">Toys</a></li>
+                                <li><a href="{% url 'ticket' %}">Tickets & Vouchers</a></li>
+                                <li><a href="{% url 'collectible' %}">Collectibles</a></li>
+                                <li><a href="{% url 'book' %}">Books</a></li>
+                                <li><a href="{% url 'music' %}">Music</a></li>
+                                <li><a href="{% url 'lostfound' %}">Lost/Found</a></li>
+                                <li><a href="{% url 'furniture' %}">Furniture, Home & Garden</a></li>
+                            </div>
+
+                            <!-- View More Button -->
+                            <li class="view-more">
+                                <a href="javascript:void(0)" onclick="toggleMotors(this)">View More</a>
+                            </li>
+                        </ul>
+                    </div> 
+
+                    <div class="vertical-ad"> 
+                        <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement"> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<script>
+function handleFavoriteClick(button) {
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        // Get the FULL current URL including query parameters
+        const currentFullUrl = window.location.href;
+        
+        // Encode the full URL for the next parameter
+        const encodedUrl = encodeURIComponent(currentFullUrl);
+        
+        // Redirect to login with the full return URL
+        window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+        return;
+    }
+    
+    // User is authenticated, proceed with favorite toggle
+    toggleFavorite(button);
+}
+
+function toggleMotors(btn) {
+    const extra = document.querySelector('.extra-motors');
+
+    if (extra.style.display === "none" || extra.style.display === "") {
+        // Show extra items
+        extra.style.display = "block";
+        btn.textContent = "View Less";
+    } else {
+        // Hide extra items
+        extra.style.display = "none";
+        btn.textContent = "View More";
+    }
+}
+</script>
+
+<style>
+    .location-icons {
+        width: 16px;
+        height: 16px;
+    }
+
+    .ad-categories { 
+        margin-bottom: 15px; 
+        margin-top:-15px;
+        width:280px;
+        padding-left: 10px; 
+        background-color: #efefefff; 
+        border-radius:20px;
+    } 
+    
+    .category-title { 
+        font-size: 1rem; 
+        font-weight: 600;
+        padding-top:20px;
+        margin-bottom: 8px; 
+        color: #222; 
+    } 
+    
+    .subcategory-list { 
+        list-style: none;
+        padding-left: 30px;
+        margin: 0; 
+    } 
+    
+    .subcategory-list li { 
+        margin-bottom: 6px;
+    }
+    
+    .subcategory-list a {
+        text-decoration: none;
+        color: #444;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        cursor: pointer; 
+    } 
+    
+    .subcategory-list .view-more{
+        text-decoration: none;
+        color: #444;
+        font-size: 0.9rem;
+        padding-bottom:15px;
+        transition: color 0.2s;
+        cursor: pointer; 
+    } 
+    
+    .subcategory-list a:hover {
+        color: #E35D20;
+    } 
+    
+    .subcategory-list a.active {
+        font-weight: 600; 
+        color: #E35D20; 
+    }
+    
+    .vertical-ad {
+        width:280px;
+        height: 500px; 
+        border-radius: 25px;
+        border:5px solid gray;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .vertical-ad img {
+        width: 280px;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-btn:hover {
+        background: #e0e0e0;
+        border-radius: 6px;
+    }
+
+    .favorite-btn i {
+        font-size: 18px;
+        color: #d32f2f;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-btn i.filled {
+        color: #d32f2f;
+    }
+
+    .image-box {
+        position: relative;
+    }
+
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize all sliders
+    function initializeSliders() {
+        document.querySelectorAll('.feature-block-one').forEach(block => {
+            const slider = block.querySelector('.slider');
+            const imgElement = slider.querySelector('img');
+            const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+            const backwardBtn = block.querySelector('.backward');
+            const forwardBtn = block.querySelector('.forward');
+            const imageCounter = block.querySelector('.image-counter');
+            const dotsContainer = slider.querySelector('.dots-container');
+            
+            if (images.length > 0) {
+                // Set initial image
+                imgElement.src = images[0];
+                slider.setAttribute('data-current-index', 0);
+                
+                // Update image counter
+                if (imageCounter) {
+                    imageCounter.innerHTML = `<i class="fas fa-image"></i> 1/${images.length}`;
+                }
+                
+                // Initialize dots
+                updateDots(slider, 0);
+                
+                // MODIFIED: For loop functionality, show both buttons if multiple images
+                if (images.length <= 1) {
+                    if (backwardBtn) backwardBtn.style.display = 'none';
+                    if (forwardBtn) forwardBtn.style.display = 'none';
+                } else {
+                    // Show both buttons for loop functionality
+                    if (backwardBtn) backwardBtn.style.display = 'block';
+                    if (forwardBtn) forwardBtn.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    // Update dots function
+    function updateDots(slider, currentIndex) {
+        const dotsContainer = slider.querySelector('.dots-container');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        
+        // Clear and recreate dots
+        dotsContainer.innerHTML = '';
+        images.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = `dot ${index === currentIndex ? 'active' : ''}`;
+            dot.onclick = (e) => {
+                e.stopPropagation();
+                const block = slider.closest('.feature-block-one');
+                updateSlider(block, index);
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // MODIFIED: Update slider function - remove button hiding for loop
+    function updateSlider(block, newIndex) {
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        const backwardBtn = block.querySelector('.backward');
+        const forwardBtn = block.querySelector('.forward');
+        const imageCounter = block.querySelector('.image-counter');
+        
+        if (images.length === 0) return;
+        
+        imgElement.src = images[newIndex];
+        slider.setAttribute('data-current-index', newIndex);
+        
+        // Update image counter
+        if (imageCounter) {
+            imageCounter.innerHTML = `<i class="fas fa-image"></i> ${newIndex + 1}/${images.length}`;
+        }
+        
+        // MODIFIED: Remove button hiding logic for loop functionality
+        // if (images.length > 1) {
+        //     if (backwardBtn) backwardBtn.style.display = newIndex === 0 ? 'none' : 'block';
+        //     if (forwardBtn) forwardBtn.style.display = newIndex === images.length - 1 ? 'none' : 'block';
+        // }
+        
+        // Update dots
+        updateDots(slider, newIndex);
+    }
+
+    // Navigation function - Already has loop with modulo operator
+    function navigateSlide(button, direction) {
+        event.stopPropagation();
+        
+        const block = button.closest('.feature-block-one');
+        const slider = block.querySelector('.slider');
+        let currentIndex = parseInt(slider.getAttribute('data-current-index')) || 0;
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        
+        if (images.length === 0) return;
+        
+        // This creates the loop effect
+        let newIndex = (currentIndex + direction + images.length) % images.length;
+        updateSlider(block, newIndex);
+    }
+
+    // Add event listeners to navigation buttons
+    document.querySelectorAll('.backward, .forward').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const direction = this.classList.contains('backward') ? -1 : 1;
+            navigateSlide(this, direction);
+        });
+    });
+
+    // MODIFIED: Hover effects for buttons - always show both for loop
+    document.querySelectorAll('.image-box').forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            const slider = this.querySelector('.slider');
+            const imgElement = slider.querySelector('img');
+            const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+            
+            if (images.length > 1) {
+                const backwardBtn = this.querySelector('.backward');
+                const forwardBtn = this.querySelector('.forward');
+                
+                // MODIFIED: Always show both buttons on hover for loop functionality
+                if (backwardBtn) backwardBtn.style.display = 'block';
+                if (forwardBtn) forwardBtn.style.display = 'block';
+            }
+        });
+        
+        box.addEventListener('mouseleave', function() {
+            const backwardBtn = this.querySelector('.backward');
+            const forwardBtn = this.querySelector('.forward');
+            
+            if (backwardBtn) backwardBtn.style.display = 'none';
+            if (forwardBtn) forwardBtn.style.display = 'none';
+        });
+    });
+
+    // Initialize sliders on page load
+    initializeSliders();
+});
+</script>
+<script>
+    function showContactPopup(dvdId, userId, email, phone, isAuthenticated) {
+      event.preventDefault();
+      event.stopPropagation();
+    
+      const popup = document.getElementById('contactPopup');
+      const optionsContainer = document.getElementById('contactOptions');
+    
+      // Clear previous options
+      optionsContainer.innerHTML = '';
+    
+      // Add SMS option if available
+      if (phone) {
+        const smsOption = document.createElement('a');
+        smsOption.href = `sms:${phone.trim().replace(/\s/g, '')}?body=Hello,%20I'm%20interested%20in%20your%20dvd%20listing%20(ID:%20${dvdId})`;
+        smsOption.style.backgroundColor = '#f5f5f5';
+        smsOption.style.padding = '10px';
+        smsOption.style.borderRadius = '4px';
+        smsOption.style.display = 'flex';
+        smsOption.style.alignItems = 'center';
+        smsOption.style.gap = '10px';
+        smsOption.style.textDecoration = 'none';
+        smsOption.style.color = 'inherit';
+        smsOption.innerHTML = `<i class="fas fa-sms" ></i> SMS`;
+        smsOption.onclick = function () {
+          window.location.href = this.href;
+          hideContactPopup();
+          return false;
+        };
+        optionsContainer.appendChild(smsOption);
+      }
+    
+      // Add Email option if available
+      if (email) {
+        const emailOption = document.createElement('a');
+        emailOption.href = `mailto:${email}?subject=dvd%20Inquiry&body=Hello,%20I'm%20interested%20in%20your%20dvd%20listing%20(ID:%20${dvdId})`;
+        emailOption.style.backgroundColor = '#f5f5f5';
+        emailOption.style.padding = '10px';
+        emailOption.style.borderRadius = '4px';
+        emailOption.style.display = 'flex';
+        emailOption.style.alignItems = 'center';
+        emailOption.style.gap = '10px';
+        emailOption.style.textDecoration = 'none';
+        emailOption.style.color = 'inherit';
+        emailOption.innerHTML = `<i class="fas fa-envelope"></i> Email`;
+        emailOption.onclick = function () {
+          hideContactPopup();
+        };
+        optionsContainer.appendChild(emailOption);
+      }
+    
+      // Show the popup
+      popup.style.display = 'flex';
+    }
+    
+    function hideContactPopup() {
+      document.getElementById('contactPopup').style.display = 'none';
+    }
+    
+    // Close popup when clicking outside
+    document.getElementById('contactPopup').addEventListener('click', function (e) {
+      if (e.target === this) {
+        hideContactPopup();
+      }
+    });
+    </script>
+
+
+
+
+<!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+<!-- Update your chat popup HTML structure -->
+<div id="chatPopup" class="chat-popup-container" style="display: none;">
+    <div class="chat-popup-header">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+            <!-- User avatar -->
+            <div class="chat-popup-avatar" id="chatPopupAvatar"></div>
+            
+            <!-- User and product info -->
+            <div style="flex: 1; min-width: 0;">
+                <div class="chat-popup-username" id="chatPopupUsername"></div>
+                <!-- Product info will be inserted here -->
+                <div id="chatPopupProductInfo" style="display: flex; align-items: center; gap: 6px; margin-top: 2px;"></div>
+            </div>
+        </div>
+        <button onclick="closeChatPopup()" class="chat-popup-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- General Tips -->
+    <div class="chat-popup-tips">
+        <strong>General Tips</strong>
+        <ul>
+            <li>Only meet in public places</li>
+            <li>Never pay or transfer money in advance</li>
+            <li>Inspect the product before you buy it</li>
+        </ul>
+    </div>
+    
+    <div class="chat-popup-messages" id="chatPopupMessages">
+        <!-- Messages will be loaded here -->
+    </div>
+    
+    <div class="chat-popup-input">
+        <textarea id="chatPopupInput" placeholder="Type your message..."></textarea>
+        <button onclick="sendPopupMessage()" id="chatPopupSendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+
+<script>
+// Store current chat data
+let currentChatData = null;
+let chatPollingInterval = null;
+
+// Function to open chat popup
+function openChatPopup(userId, productId, productType, productTitle, username, productImage) {
+    console.log('Opening chat popup with data:', {
+        userId, productId, productType, productTitle, username, productImage
+    });
+    
+    // Store chat data
+    currentChatData = {
+        userId: userId,
+        productId: productId,
+        productType: productType,
+        productTitle: productTitle,
+        username: username,
+        productImage: productImage
+    };
+    
+    // Update popup header - User info
+    const avatarElement = document.getElementById('chatPopupAvatar');
+    const usernameElement = document.getElementById('chatPopupUsername');
+    const productInfoElement = document.getElementById('chatPopupProductInfo');
+    
+    if (avatarElement) {
+        avatarElement.textContent = username ? username.charAt(0).toUpperCase() : 'U';
+    }
+    
+    if (usernameElement) {
+        usernameElement.textContent = username || 'Seller';
+    }
+    
+    // Update popup header - Product info
+    if (productInfoElement) {
+        let productImageHtml = '';
+        if (productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined') {
+            productImageHtml = `
+                <img src="${productImage}" 
+                     alt="${productTitle}" 
+                     style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            `;
+        }
+        
+        productInfoElement.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                    ${productImageHtml}
+                    <div style="display: ${productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined' ? 'none' : 'flex'}; 
+                         align-items: center; justify-content: center; width: 24px; height: 18px; 
+                         background: rgba(255,255,255,0.1); border-radius: 3px;">
+                        <i class="fas fa-${getProductIcon(productType)}" style="font-size: 10px;"></i>
+                    </div>
+                    <span style="font-size: 12px; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
+                          title="${productTitle}">
+                        ${productTitle.length > 20 ? productTitle.substring(0, 20) + '...' : productTitle}
+                    </span>
+                </div>
+                <span style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 3px;">
+                    ${productType.toUpperCase()}
+                </span>
+            </div>
+        `;
+    }
+    
+    // Show popup
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'flex';
+    }
+    
+    // Load existing messages
+    loadChatMessages();
+    
+    // Start polling for new messages
+    startChatPolling();
+    
+    // Focus on input
+    setTimeout(() => {
+        const inputElement = document.getElementById('chatPopupInput');
+        if (inputElement) {
+            inputElement.focus();
+        }
+    }, 100);
+}
+
+// Helper function to get product icon
+function getProductIcon(productType) {
+    const iconMap = {
+        'car': 'car',
+        'land': 'map-marker-alt',
+        'apartment': 'building',
+        'electronics': 'mobile-alt',
+        'furniture': 'couch',
+        'motorcycle': 'motorcycle',
+        'scooter': 'motorcycle',
+        'boat': 'ship',
+        'computer': 'laptop',
+        'camera': 'camera',
+        'jewelry': 'gem',
+        'clothing': 'tshirt',
+        'pet': 'paw',
+        'business': 'briefcase',
+        'service': 'concierge-bell'
+    };
+    return iconMap[productType] || 'tag';
+}
+
+// Function to close chat popup
+function closeChatPopup() {
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'none';
+    }
+    
+    // Stop polling
+    stopChatPolling();
+    
+    // Clear current chat data
+    currentChatData = null;
+    
+    // Clear messages
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+    }
+    
+    // Clear input
+    const inputElement = document.getElementById('chatPopupInput');
+    if (inputElement) {
+        inputElement.value = '';
+        inputElement.style.height = 'auto';
+    }
+}
+
+// Function to load chat messages
+function loadChatMessages() {
+    if (!currentChatData) {
+        console.error('No current chat data');
+        return;
+    }
+    
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) {
+        console.error('Messages container not found');
+        return;
+    }
+    
+    messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Loading messages...</div>';
+    
+    // First check if chat exists
+    fetch(`/chat/${currentChatData.userId}/check-chat-exists/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.exists) {
+                // Load existing messages
+                return fetch(`/chat/${currentChatData.userId}/get-messages/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`);
+            } else {
+                // Show initial message for new chat
+                showInitialMessage();
+                // Automatically create the first message
+                createInitialChat();
+                throw new Error('new_chat');
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayMessages(data.messages);
+        })
+        .catch(error => {
+            if (error.message === 'new_chat') {
+                // This is expected for new chats
+                return;
+            }
+            console.error('Error loading messages:', error);
+            messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Error loading messages</div>';
+        });
+}
+
+// Function to create initial chat message
+function createInitialChat() {
+    if (!currentChatData) return;
+    
+    // Send initial interest message
+    const initialMessage = `I'm interested in your Product`;
+    
+    const formData = new FormData();
+    formData.append('message', initialMessage);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    }
+    
+    // Send initial message silently
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Initial message sent:', data);
+    })
+    .catch(error => {
+        console.error('Error sending initial message:', error);
+    });
+}
+
+// Function to show initial message
+function showInitialMessage() {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    // Show initial message
+    const initialMessage = document.createElement('div');
+    initialMessage.className = 'chat-popup-message received';
+    initialMessage.innerHTML = `
+        <div>Hello! Thanks for your interest in my product.</div>
+        <div class="message-time">Now</div>
+    `;
+    messagesContainer.appendChild(initialMessage);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to display messages
+function displayMessages(messages) {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    if (messages && messages.length > 0) {
+        // Sort messages by timestamp (oldest first)
+        messages.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+        
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-popup-message ${message.is_sent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div>${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+        });
+    } else {
+        // If no messages, show initial message
+        showInitialMessage();
+    }
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to send message
+function sendPopupMessage() {
+    if (!currentChatData) {
+        console.log('No active chat');
+        return;
+    }
+    
+    const inputElement = document.getElementById('chatPopupInput');
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    
+    if (!inputElement || !sendBtn) return;
+    
+    const message = inputElement.value.trim();
+    if (!message) {
+        // Just return without alert
+        return;
+    }
+    
+    // Disable send button
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    // Create message element immediately for better UX
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-popup-message sent';
+        messageDiv.innerHTML = `
+            <div>${message}</div>
+            <div class="message-time">Sending...</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Clear input
+    inputElement.value = '';
+    inputElement.style.height = 'auto';
+    
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    } else {
+        console.error('CSRF token not found');
+        // Show error in message instead of alert
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Security error. Please refresh the page.</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        return;
+    }
+    
+    // Send message to server
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update message with success timestamp
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0');
+        
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div>${data.message || message}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+        }
+        
+        // Scroll to show new message
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        
+        // Update message to show error
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Failed to send: ${message}</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+    })
+    .finally(() => {
+        // Re-enable send button
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+    });
+}
+
+// Function to start polling for new messages
+function startChatPolling() {
+    // Clear any existing interval
+    stopChatPolling();
+    
+    if (!currentChatData) return;
+    
+    // Poll every 3 seconds for new messages
+    chatPollingInterval = setInterval(() => {
+        if (!currentChatData) {
+            stopChatPolling();
+            return;
+        }
+        
+        fetch(`/chat/${currentChatData.userId}/check-new/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.has_new && data.count > 0) {
+                    // Reload messages if new ones arrived
+                    loadChatMessages();
+                }
+            })
+            .catch(error => {
+                console.error('Polling error:', error);
+            });
+    }, 3000);
+}
+
+// Function to stop polling
+function stopChatPolling() {
+    if (chatPollingInterval) {
+        clearInterval(chatPollingInterval);
+        chatPollingInterval = null;
+    }
+}
+
+// Function to handle Enter key in textarea
+function handleChatInputKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        
+        const inputElement = event.target;
+        const message = inputElement.value.trim();
+        
+        if (message) {
+            sendPopupMessage();
+        } else {
+            // Just clear the input on Enter
+            inputElement.value = '';
+            inputElement.style.height = 'auto';
+        }
+    }
+}
+
+// Function to auto-resize textarea
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+}
+
+// Initialize chat popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up textarea event listeners
+    const textarea = document.getElementById('chatPopupInput');
+    if (textarea) {
+        textarea.addEventListener('keydown', handleChatInputKeydown);
+        textarea.addEventListener('input', function() {
+            autoResizeTextarea(this);
+        });
+    }
+    
+    // Set up send button - FIXED VERSION
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    if (sendBtn) {
+        // Remove any existing onclick handlers
+        sendBtn.onclick = null;
+        
+        // Add new event listener
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const inputElement = document.getElementById('chatPopupInput');
+            if (!inputElement) return;
+            
+            const message = inputElement.value.trim();
+            if (!message) {
+                // Clear input and return without alert
+                inputElement.value = '';
+                inputElement.style.height = 'auto';
+                return;
+            }
+            
+            // Call sendPopupMessage function
+            sendPopupMessage();
+        });
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+        const popup = document.getElementById('chatPopup');
+        if (popup && popup.style.display === 'flex') {
+            const isClickInsidePopup = popup.contains(e.target);
+            const isChatButton = e.target.closest('[onclick*="openChatPopup"]') || 
+                                 e.target.closest('.chat-button') ||
+                                 e.target.closest('a[href*="chat"]');
+            
+            if (!isClickInsidePopup && !isChatButton) {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('chatPopup');
+            if (popup && popup.style.display === 'flex') {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Debug: Log all chat buttons for testing
+    const chatButtons = document.querySelectorAll('[onclick*="openChatPopup"]');
+    console.log(`Found ${chatButtons.length} chat buttons on page`);
+    
+    // Add click handler to all chat buttons (backup)
+    chatButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Prevent default if it's an anchor tag
+            if (this.tagName === 'A' && this.getAttribute('href') === 'javascript:void(0);') {
+                e.preventDefault();
+            }
+        });
+    });
+});
+
+// Global function to be called from onclick attribute
+window.openChatPopup = openChatPopup;
+window.closeChatPopup = closeChatPopup;
+window.sendPopupMessage = sendPopupMessage;
+</script>      
+<script>
+let currentPhoneNumber = '';
+
+/* ================================
+   SHOW POPUP
+================================ */
+function showPhonePopup(phone, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    currentPhoneNumber = phone;
+
+    const popup = document.getElementById('phonePopup');
+    const display = document.getElementById('phoneNumberDisplay');
+
+    display.innerText = formatPhoneNumber(phone);
+    popup.style.display = 'flex';
+}
+
+/* ================================
+   HIDE POPUP
+================================ */
+function hidePhonePopup() {
+    document.getElementById('phonePopup').style.display = 'none';
+    currentPhoneNumber = '';
+}
+
+/* ================================
+   COPY NUMBER
+================================ */
+function copyPhoneNumber() {
+    if (!currentPhoneNumber) return;
+
+    navigator.clipboard.writeText(currentPhoneNumber).then(() => {
+        alert('Phone number copied');
+    });
+}
+
+/* ================================
+   FORMAT NUMBER
+================================ */
+function formatPhoneNumber(phone) {
+    phone = phone.replace(/\s/g, '');
+
+    if (phone.length === 8) return phone.replace(/(\d{4})(\d{4})/, '$1 $2');
+    if (phone.length === 9) return phone.replace(/(\d{4})(\d{5})/, '$1 $2');
+    if (phone.length === 10) return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2 $3');
+
+    return phone;
+}
+
+/* ================================
+   ESC CLOSE (SAFE)
+================================ */
+document.addEventListener('keydown', function (e) {
+    const popup = document.getElementById('phonePopup');
+    if (e.key === 'Escape' && popup.style.display === 'flex') {
+        hidePhonePopup();
+    }
+});
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />

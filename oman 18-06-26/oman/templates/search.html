@@ -1,0 +1,201 @@
+{% load static %}
+<!-- banner-section -->
+            <section id="banner-section" class="banner-section centred">
+                <div class="auto-container">
+                    <div class="content-column">
+                        <div class="content-box">
+                            <div class="custom-form">
+                               <form action="{% url 'search_results' %}" method="get">
+                                    {% csrf_token %}
+                                    <div class="form-group-row">
+                                        <!-- Search Input -->
+                                        <div class="form-group oval-container">
+                                            <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon5">
+                                             <input class="input" type="search"
+               name="keyword"
+               placeholder="Search for Everything"
+               value="{{ request.GET.keyword }}">
+                                        </div>
+                                
+                                        <!-- Submit Button -->
+                                        <div class="btn-box oval-container">
+                                            <button type="submit" class="theme-btn-one">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                        const dropdownLists = document.querySelectorAll('.value-list');
+                                    
+                                        dropdownInputs.forEach(input => {
+                                            const dropdownId = input.getAttribute('data-dropdown');
+                                            const dropdown = document.getElementById(dropdownId);
+                                    
+                                            // Toggle dropdown visibility on click
+                                            input.addEventListener('click', (event) => {
+                                                event.stopPropagation(); // Prevent the click from propagating to the document
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open')); // Close other dropdowns
+                                                dropdown.classList.toggle('open');
+                                            });
+                                     // Handle clicks on category items
+                                     dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                                            // Prevent dropdown from closing when clicking inside
+                                            dropdown.addEventListener('mousedown', (event) => {
+                                                event.stopPropagation();
+                                            });
+                       // Handle clicks on region items
+dropdown.querySelectorAll('.main-menu1[data-region]').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document
+        const region = item.getAttribute('data-region');
+        selectRegion(region); // Call the selectRegion function
+
+        // Update the input field with the selected region only
+        input.value = regionName; // Update the input with the selected region
+
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('region', region); // Set the region parameter
+        
+        // Clear the city parameter if it exists
+        url.searchParams.delete('city'); // Remove the city parameter if it exists
+        
+        window.location.href = url; // Redirect to the updated URL
+
+        // Close the dropdown after selection
+        dropdown.classList.remove('open');
+    });
+
+    // Handle clicks on submenu items (cities)
+    item.querySelectorAll('ul li').forEach(subItem => {
+        subItem.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click from propagating to the document
+            const city = subItem.textContent; // Get the city name from the text content
+            const region = item.getAttribute('data-region'); // Get the region from the parent item
+
+            selectCity(city); // Call the selectCity function
+
+            // Update the input field with the selected city and region
+            input.value = `${city}`; // Update the input with city and region
+
+            // Create a new URL object based on the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('region', region); // Set the region parameter
+            url.searchParams.set('city', city); // Set the city parameter
+            window.location.href = url; // Redirect to the updated URL
+
+            // Close the dropdown after selection
+            dropdown.classList.remove('open');
+        });
+    });
+});                 
+                                           // Filter dropdown items based on input
+// Filter dropdown items based on input
+input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    const items = dropdown.querySelectorAll('li');
+
+    items.forEach(item => {
+        const text = item.firstChild.textContent.toLowerCase();
+        let matchFound = text.includes(filter);
+
+        // Check submenu items if the main item doesn't match
+        if (!matchFound && item.querySelector('.submenus')) {
+            const subItems = item.querySelectorAll('.submenus ul li');
+            subItems.forEach(subItem => {
+                const subText = subItem.textContent.toLowerCase();
+                if (subText.includes(filter)) {
+                    matchFound = true;
+                }
+            });
+        }
+
+        // Show the main menu item if it or any of its submenu items match
+        if (matchFound) {
+            item.style.display = 'block';
+            // Expand the main menu item if it has submenus
+            if (item.classList.contains('main-menu1') && item.querySelector('.submenus')) {
+                item.classList.add('open'); // Add a class to expand the main menu
+                item.querySelector('.submenus').style.display = 'block'; // Show submenus
+            }
+        } else {
+            item.style.display = 'none';
+            // Hide submenus if the main menu item is not matched
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none';
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        }
+    });
+
+    // If the input is empty, show all main menu items and hide all submenus
+    if (filter === '') {
+        items.forEach(item => {
+            item.style.display = 'block'; // Show all main menu items
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none'; // Hide all submenus
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        });
+    }
+});                       
+                                            // Show submenus on hover
+                                            dropdown.querySelectorAll('.main-menu1').forEach(item => {
+                                                item.addEventListener('mouseenter', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'block';
+                                                    }
+                                                });
+                                
+                                                item.addEventListener('mouseleave', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'none';
+                                                    }
+                                                });
+                                            });
+                                            // Close dropdown when mouse leaves the dropdown container
+                                            dropdown.addEventListener('mouseout', (event) => {
+                                                // Check if the mouse is leaving the dropdown container
+                                                if (!dropdown.contains(event.relatedTarget)) {
+                                                    dropdown.classList.remove('open');
+                                                }
+                                            });
+                                        });
+                                    
+                                        // Close dropdown if clicking outside
+                                        document.addEventListener('click', (event) => {
+                                            if (!event.target.matches('.chosen-value')) {
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            }
+                                        });
+                                    });
+                                    // Handle clicks on category items
+                                    dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                            
+                                    // Example function to select a region
+                                    function selectRegions(region) {
+                                        console.log(`Region selected: ${region}`);
+                                        // Additional logic for selecting a region
+                                    }
+                                    
+                                    // Example function to select a city
+                                    function selectCitys(city) {
+                                        console.log(`City selected: ${city}`);
+                                        // Additional logic for selecting a city
+                                    }
+                                </script>

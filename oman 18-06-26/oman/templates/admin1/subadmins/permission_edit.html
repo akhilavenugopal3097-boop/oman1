@@ -1,0 +1,1369 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 for better alerts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        color: #15818E !important;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .badge-warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .badge-danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .badge-purple {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .badge-orange {
+        background: #ffedd5;
+        color: #ea580c;
+    }
+
+    /* Messages */
+    .messages {
+        margin-bottom: 2rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        border: 1px solid #f59e0b;
+        color: #92400e;
+    }
+
+    .alert-info {
+        background: #e0f2f4;
+        border: 1px solid #15818E;
+        color: #0f5c66;
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert .close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .alert .close:hover {
+        opacity: 1;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .form-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-header h5 i {
+        color: #15818E;
+    }
+
+    .btn-back {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: #e2e8f0;
+        transform: translateY(-1px);
+    }
+
+    /* Form Groups */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group label i {
+        color: #15818E;
+        margin-right: 0.375rem;
+    }
+
+    .form-group .required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .form-control:hover:not(:focus) {
+        border-color: #cbd5e1;
+    }
+
+    .form-control[readonly] {
+        background-color: #f8fafc;
+        color: #64748b;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-text {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .form-text i {
+        color: #15818E;
+        font-size: 0.75rem;
+    }
+
+    /* Section Badge Display */
+    .section-badge-large {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+    }
+
+    .section-badge-large.properties,
+    .section-badge-large.ads_approval_properties {
+        background: linear-gradient(135deg, #15818E15, #1a9aa815);
+        color: #15818E;
+        border-left: 4px solid #15818E;
+    }
+
+    .section-badge-large.vehicles,
+    .section-badge-large.ads_approval_vehicles {
+        background: linear-gradient(135deg, #F9AD1F15, #EB362D15);
+        color: #F9AD1F;
+        border-left: 4px solid #F9AD1F;
+    }
+
+    .section-badge-large.electronics,
+    .section-badge-large.ads_approval_electronics {
+        background: linear-gradient(135deg, #4f46e515, #6366f115);
+        color: #4f46e5;
+        border-left: 4px solid #4f46e5;
+    }
+
+    .section-badge-large.classifieds,
+    .section-badge-large.ads_approval_classifieds {
+        background: linear-gradient(135deg, #10b98115, #34d39915);
+        color: #10b981;
+        border-left: 4px solid #10b981;
+    }
+
+    .section-badge-large.services,
+    .section-badge-large.ads_approval_services {
+        background: linear-gradient(135deg, #f59e0b15, #fbbf2415);
+        color: #f59e0b;
+        border-left: 4px solid #f59e0b;
+    }
+
+    .section-badge-large i {
+        font-size: 1.25rem;
+    }
+
+    /* Separator */
+    .separator {
+        border-top: 1px dashed #e2e8f0;
+        margin: 2rem 0;
+    }
+
+    /* Permission Cards Grid */
+    .permissions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .permission-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 2px solid #f1f5f9;
+        transition: all 0.3s;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .permission-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(21, 129, 142, 0.15);
+    }
+
+    .permission-card.border-primary {
+        border-color: #15818E;
+        background: #f0f9fa;
+    }
+
+    .permission-card.border-primary .permission-badge {
+        background: #15818E;
+        color: white;
+    }
+
+    .permission-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #15818E;
+        transform: scaleX(0);
+        transition: transform 0.3s;
+    }
+
+    .permission-card.border-primary::before {
+        transform: scaleX(1);
+    }
+
+    /* Toggle Switch */
+    .toggle-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e2e8f0;
+        transition: .3s;
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 24px;
+        width: 24px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    input:checked + .toggle-slider {
+        background-color: #15818E;
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(30px);
+    }
+
+    .permission-card h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .permission-card p {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0 0 1rem 0;
+    }
+
+    .permission-badge {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .permission-badge.info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .permission-badge.success {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .permission-badge.warning {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .permission-badge.danger {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-quick {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-quick:hover {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+    }
+
+    .btn-quick.primary {
+        background: #e0f2f4;
+        border-color: #15818E;
+        color: #15818E;
+    }
+
+    /* Selected count */
+    .selected-count {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #15818E;
+        color: white;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: auto;
+    }
+
+    /* Info Alert for Approval Permissions */
+    .info-alert {
+        background: linear-gradient(135deg, #15818E10, #1a9aa810);
+        border-left: 4px solid #15818E;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .info-alert i {
+        font-size: 1.5rem;
+        color: #15818E;
+    }
+
+    .info-alert-content h6 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #15818E;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-alert-content p {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* Danger Zone Card */
+    .danger-zone {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid #fee2e2;
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.05);
+    }
+
+    .danger-header {
+        background: #dc2626;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .danger-header i {
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .danger-header h5 {
+        color: white;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .danger-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .danger-info h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .danger-info p {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    .btn-danger {
+        background: #dc2626;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+    }
+
+    /* Submit Button */
+    .form-actions {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-submit {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+        background: #0e5f68;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+
+    /* Loading spinner */
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        
+        .permissions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .quick-actions {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .danger-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .btn-danger {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-submit, .btn-cancel {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .selected-count {
+            margin-left: 0;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-key"></i>
+                Edit Permission
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-info-circle"></i>
+                    Editing: {{ perm.name }}
+                </span>
+                {% with section=perm.section %}
+                    {% if section == 'ads_approval_properties' %}
+                    <span class="badge badge-info">
+                        <i class="fas fa-building"></i>
+                        Properties Approval
+                    </span>
+                    {% elif section == 'ads_approval_vehicles' %}
+                    <span class="badge badge-warning">
+                        <i class="fas fa-car"></i>
+                        Vehicles Approval
+                    </span>
+                    {% elif section == 'ads_approval_electronics' %}
+                    <span class="badge badge-purple">
+                        <i class="fas fa-mobile-alt"></i>
+                        Electronics Approval
+                    </span>
+                    {% elif section == 'ads_approval_classifieds' %}
+                    <span class="badge badge-success">
+                        <i class="fas fa-tags"></i>
+                        Classifieds Approval
+                    </span>
+                    {% elif section == 'ads_approval_services' %}
+                    <span class="badge badge-orange">
+                        <i class="fas fa-concierge-bell"></i>
+                        Services Approval
+                    </span>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <!-- Display Django Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                {{ message }}
+                <button type="button" class="close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Main Form Card -->
+        <div class="form-card">
+            <div class="form-header">
+                <h5>
+                    <i class="fas fa-lock"></i>
+                    Permission Information
+                </h5>
+                <a href="{% url 'subadmin_permissions_list' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Permissions
+                </a>
+            </div>
+
+            <form method="POST" id="permissionForm">
+                {% csrf_token %}
+                
+                <!-- Basic Information -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-tag"></i>
+                            Permission Name
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ perm.name }}" required placeholder="e.g., Manage Real Estate">
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            A descriptive name for this permission
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-folder"></i>
+                            Section
+                        </label>
+                        <input type="text" class="form-control" value="{{ perm.get_section_display }}" readonly>
+                        <input type="hidden" name="section" value="{{ perm.section }}">
+                        <div class="form-text">
+                            <i class="fas fa-lock"></i>
+                            Section cannot be changed after creation
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Badge Display -->
+                {% with section=perm.section %}
+                    {% if section == 'ads_approval_properties' %}
+                    <div class="section-badge-large properties">
+                        <i class="fas fa-building"></i>
+                        <span>Properties Approval Permission - Allows approving/rejecting property listings including Land, Villa, Commercial, Farm, Apartment, Factory, Complex, Clinic, Hostel, Office, Shop, Cafe, Staff, Warehouse, Townhouse, Fullfloors, Showrooms, Wholebuilding, Supermarket, Foreign, Shared, Suits</span>
+                    </div>
+                    {% elif section == 'ads_approval_vehicles' %}
+                    <div class="section-badge-large vehicles">
+                        <i class="fas fa-car"></i>
+                        <span>Vehicles Approval Permission - Allows approving/rejecting vehicle listings including Automobile, Motorcycle, Scooter, HelmetClothes, Quadbikes, HeavyVehicle, Boat, AutoAccessoryPart, NumberPlate, Part, SportsCar, TiresAndCaps, JunkCar, CarRepairMaintenance, DrivingTraining</span>
+                    </div>
+                    {% elif section == 'ads_approval_electronics' %}
+                    <div class="section-badge-large electronics">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Electronics & Mobile Approval Permission - Allows approving/rejecting electronics listings including Mobile, Tablet, SmartWatch, Headset, Cover, Accessory, MobileSIM, Computer, Sound, ComputerListing, ElectronicsListing</span>
+                    </div>
+                    {% elif section == 'ads_approval_classifieds' %}
+                    <div class="section-badge-large classifieds">
+                        <i class="fas fa-tags"></i>
+                        <span>Classifieds & Listings Approval Permission - Allows approving/rejecting classified listings including Fashion, Toys, Food, Fitness, Pet, Book, Appliance, Business, Education, Service, BusinessIndustrialListing, PetListing, SportsListing, MusicalListing, GamingListing, TicketVoucherListing, CollectibleListing, BooksListing, MusicListing, DVDsMoviesListing, FurnitureHomeGardenListing, BabyItemsListing, ToysListing, LostFoundListing, CameraListing, JewelryListing, HomeApplianceListing, ClothingAccessoriesListing</span>
+                    </div>
+                    {% elif section == 'ads_approval_services' %}
+                    <div class="section-badge-large services">
+                        <i class="fas fa-concierge-bell"></i>
+                        <span>Services Approval Permission - Allows approving/rejecting service listings including AutoServiceListing, ConsultancyServiceListing, DomesticServiceListing, EventEntertainmentServiceListing, HealthWellbeingServiceListing, HomeMaintenanceServiceListing, MoversServiceListing, RestorationServiceListing, TutorsServiceListing, WebComputerServiceListing, FreelancersServiceListing, OtherServiceListing</span>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ perm.description|default:'' }}</textarea>
+                    <div class="form-text">
+                        <i class="fas fa-info-circle"></i>
+                        Optional description of what this permission allows
+                    </div>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Info Alert for Approval Permissions -->
+                {% with section=perm.section %}
+                    {% if section|slice:":13" == 'ads_approval' %}
+                    <div class="info-alert">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="info-alert-content">
+                            <h6>Approval Permission Note</h6>
+                            <p>For ads approval permissions, it's recommended to enable the "Approve" capability. This allows sub-admins to approve or reject pending listings.</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <span class="selected-count" id="selectedCount">0 selected</span>
+                    <button type="button" class="btn-quick" onclick="selectAll()">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button type="button" class="btn-quick" onclick="selectViewOnly()">
+                        <i class="fas fa-eye"></i> View Only
+                    </button>
+                    <button type="button" class="btn-quick primary" onclick="selectApprovalRecommended()">
+                        <i class="fas fa-check-circle"></i> Approval Recommended
+                    </button>
+                    <button type="button" class="btn-quick" onclick="deselectAll()">
+                        <i class="fas fa-times"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Permission Capabilities -->
+                <h5 style="font-size: 1.125rem; font-weight: 600; color: #0f172a; margin-bottom: 1.5rem;">
+                    <i class="fas fa-shield-alt" style="color: #15818E; margin-right: 0.5rem;"></i>
+                    Permission Capabilities
+                </h5>
+
+                <div class="permissions-grid">
+                    <!-- View Permission -->
+                    <div class="permission-card" id="card_view" onclick="togglePermission('can_view')">
+                        <div class="toggle-wrapper" onclick="event.stopPropagation()">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="can_view" name="can_view" 
+                                       {% if perm.can_view %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <h4>View</h4>
+                        <p>Can view items in this section</p>
+                        <span class="permission-badge info">Read Only</span>
+                    </div>
+
+                    <!-- Create Permission -->
+                    <div class="permission-card" id="card_create" onclick="togglePermission('can_create')">
+                        <div class="toggle-wrapper" onclick="event.stopPropagation()">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="can_create" name="can_create" 
+                                       {% if perm.can_create %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <h4>Create</h4>
+                        <p>Can create new items</p>
+                        <span class="permission-badge success">Add</span>
+                    </div>
+
+                    <!-- Edit Permission -->
+                    <div class="permission-card" id="card_edit" onclick="togglePermission('can_edit')">
+                        <div class="toggle-wrapper" onclick="event.stopPropagation()">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="can_edit" name="can_edit" 
+                                       {% if perm.can_edit %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <h4>Edit</h4>
+                        <p>Can edit existing items</p>
+                        <span class="permission-badge warning">Modify</span>
+                    </div>
+
+                    <!-- Approve Permission -->
+                    <div class="permission-card" id="card_approve" onclick="togglePermission('can_approve')">
+                        <div class="toggle-wrapper" onclick="event.stopPropagation()">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="can_approve" name="can_approve" 
+                                       {% if perm.can_approve %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <h4>Approve</h4>
+                        <p>Can approve/reject items</p>
+                        <span class="permission-badge info">Review</span>
+                    </div>
+
+                    <!-- Delete Permission -->
+                    <div class="permission-card" id="card_delete" onclick="togglePermission('can_delete')">
+                        <div class="toggle-wrapper" onclick="event.stopPropagation()">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="can_delete" name="can_delete" 
+                                       {% if perm.can_delete %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <h4>Delete</h4>
+                        <p>Can delete items</p>
+                        <span class="permission-badge danger">Remove</span>
+                    </div>
+                </div>
+
+                <div class="separator"></div>
+
+                <!-- Metadata -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-calendar-plus"></i>
+                            Created At
+                        </label>
+                        <input type="text" class="form-control" value="{{ perm.created_at|date:'Y-m-d H:i:s' }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-calendar-check"></i>
+                            Last Updated
+                        </label>
+                        <input type="text" class="form-control" value="{{ perm.updated_at|date:'Y-m-d H:i:s' }}" readonly>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-save"></i>
+                        Update Permission
+                    </button>
+                    <a href="{% url 'subadmin_permissions_list' %}" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <div class="danger-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h5>Danger Zone</h5>
+            </div>
+            <div class="danger-content">
+                <div class="danger-info">
+                    <h4>Delete this Permission</h4>
+                    <p>Once deleted, sub-admins will lose access to this section. This action cannot be undone.</p>
+                </div>
+                <button type="button" class="btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i>
+                    Delete Permission
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #f59e0b; margin-bottom: 1.5rem;"></i>
+                    <h4 style="font-size: 1.25rem; font-weight: 600; color: #0f172a; margin-bottom: 1rem;">Are you sure?</h4>
+                    <p style="color: #64748b; margin-bottom: 1rem;">
+                        You are about to delete the permission <strong>"{{ perm.name }}"</strong> for section 
+                        <strong>"{{ perm.get_section_display }}"</strong>.
+                    </p>
+                    <p style="color: #dc2626; font-weight: 600; margin-bottom: 1rem;">This action cannot be undone!</p>
+                    
+                    <div class="alert alert-warning" style="background: #fff7e6; border: 1px solid #fcd34d; color: #92400e; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                        Sub-admins with this permission will lose access to this section.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="{% url 'subadmin_permission_delete' perm.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-modal btn-modal-danger">
+                        <i class="fas fa-trash"></i>
+                        Yes, Delete Permission
+                    </button>
+                </form>
+                <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('permissionForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const section = '{{ perm.section }}';
+    
+    // Initialize toggle switches styling and selected count
+    function updateCardStyles() {
+        document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+            const card = checkbox.closest('.permission-card');
+            
+            // Update border based on checked state
+            if (checkbox.checked) {
+                card.classList.add('border-primary');
+            } else {
+                card.classList.remove('border-primary');
+            }
+        });
+        updateSelectedCount();
+    }
+    
+    // Update selected count
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('.toggle-switch input:checked');
+        const count = checkboxes.length;
+        const countElement = document.getElementById('selectedCount');
+        countElement.textContent = count + ' selected';
+        
+        if (count === 0) {
+            countElement.style.background = '#dc2626';
+        } else {
+            countElement.style.background = '#15818E';
+        }
+    }
+    
+    // Add change event to all checkboxes
+    document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const card = this.closest('.permission-card');
+            
+            if (this.checked) {
+                card.classList.add('border-primary');
+            } else {
+                card.classList.remove('border-primary');
+            }
+            updateSelectedCount();
+        });
+    });
+    
+    // Initialize styles
+    updateCardStyles();
+    
+    // Toggle permission function (called from card click)
+    window.togglePermission = function(checkboxId) {
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            // Trigger change event manually
+            const event = new Event('change', { bubbles: true });
+            checkbox.dispatchEvent(event);
+        }
+    };
+    
+    // Quick selection functions
+    window.selectAll = function() {
+        document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+            checkbox.checked = true;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    };
+    
+    window.selectViewOnly = function() {
+        document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+            checkbox.checked = (checkbox.id === 'can_view');
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    };
+    
+    // Recommended for approval permissions
+    window.selectApprovalRecommended = function() {
+        if (section && section.startsWith('ads_approval')) {
+            document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+                if (checkbox.id === 'can_view' || checkbox.id === 'can_approve') {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Recommended Settings Applied',
+                text: 'View and Approve capabilities have been enabled.',
+                confirmButtonColor: '#15818E',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            // For non-approval permissions, just select view only
+            selectViewOnly();
+            Swal.fire({
+                icon: 'info',
+                title: 'View Only Applied',
+                text: 'View only capabilities have been enabled.',
+                confirmButtonColor: '#15818E',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    };
+    
+    window.deselectAll = function() {
+        document.querySelectorAll('.toggle-switch input').forEach(function(checkbox) {
+            checkbox.checked = false;
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    };
+    
+    // Form submission with validation
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Check if at least one capability is selected
+        const checkboxes = document.querySelectorAll('.toggle-switch input:checked');
+        
+        if (checkboxes.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Capabilities Selected',
+                text: 'Please select at least one permission capability.',
+                confirmButtonColor: '#15818E',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        
+        // Special validation for approval permissions
+        if (section && section.startsWith('ads_approval')) {
+            const approveCheckbox = document.getElementById('can_approve');
+            if (!approveCheckbox.checked) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Approval Capability Missing',
+                    text: 'This is an ads approval permission. Do you want to proceed without the "Approve" capability?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#15818E',
+                    cancelButtonColor: '#dc2626',
+                    confirmButtonText: 'Yes, proceed',
+                    cancelButtonText: 'No, add it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        submitForm();
+                    } else {
+                        // Focus on approve checkbox
+                        const approveCard = document.getElementById('card_approve');
+                        if (approveCard) {
+                            approveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            approveCard.style.backgroundColor = '#fff7e6';
+                            setTimeout(() => {
+                                approveCard.style.backgroundColor = '';
+                            }, 1000);
+                        }
+                    }
+                });
+                return;
+            }
+        }
+        
+        submitForm();
+    });
+    
+    function submitForm() {
+        // Show loading state
+        Swal.fire({
+            title: 'Updating Permission',
+            text: 'Please wait...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        submitBtn.innerHTML = '<span class="spinner"></span> Updating...';
+        submitBtn.disabled = true;
+        form.submit();
+    }
+    
+    // Auto-dismiss messages after 5 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.3s';
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 5000);
+    });
+});
+
+// Delete confirmation modal handling
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function() {
+            // Any modal initialization if needed
+        });
+    }
+});
+</script>
+
+<!-- Bootstrap JS for modal (if not already included in footer) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+{% include 'admin1/footeradmin.html' %}

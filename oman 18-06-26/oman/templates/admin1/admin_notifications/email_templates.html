@@ -1,0 +1,294 @@
+{% extends 'admin1/admin_notifications/base.html' %}
+{% load static %}
+
+{% block title %}Email Templates{% endblock %}
+
+{% block page_title %}Email Templates{% endblock %}
+{% block page_icon %}envelope{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Email Templates</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary" style="background: linear-gradient(60deg, #F9AD1F, #EB362D) !important; padding: 0.6rem 1.2rem;">
+                    <i class="fas fa-envelope me-2"></i>Create and manage email notification templates
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates Table Card -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-template me-2" style="color: #15818E;"></i>
+                        <span style="font-weight: 600;">All Email Templates</span>
+                    </div>
+                    <button type="button" class="btn btn-primary" disabled>
+                        <i class="fas fa-plus me-2"></i>Create New Template
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Template Name</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Last Updated</th>
+                                    <th class="pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; background: rgba(28, 200, 138, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-hand-peace" style="color: #1cc88a;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">Welcome Email</h6>
+                                                <small class="text-muted">ID: TEMP_001</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">Welcome to {{ site_name }}!</span>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-tag me-1" style="font-size: 0.7rem;"></i>Onboarding
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Active</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="far fa-calendar-alt me-2" style="color: #15818E;"></i>
+                                            <span>2024-01-15</span>
+                                        </div>
+                                        <small class="text-muted d-block">
+                                            <i class="far fa-clock me-1"></i>2 days ago
+                                        </small>
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="action-icons">
+                                            <a href="#" class="edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="preview" title="Preview">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="copy" title="Duplicate">
+                                                <i class="fas fa-copy"></i>
+                                            </a>
+                                            <a href="#" class="delete" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; background: rgba(54, 185, 204, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-key" style="color: #36b9cc;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">Password Reset</h6>
+                                                <small class="text-muted">ID: TEMP_002</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">Reset Your Password</span>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-tag me-1" style="font-size: 0.7rem;"></i>Security
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Active</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="far fa-calendar-alt me-2" style="color: #15818E;"></i>
+                                            <span>2024-01-10</span>
+                                        </div>
+                                        <small class="text-muted d-block">
+                                            <i class="far fa-clock me-1"></i>1 week ago
+                                        </small>
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="action-icons">
+                                            <a href="#" class="edit"><i class="fas fa-edit"></i></a>
+                                            <a href="#" class="preview"><i class="fas fa-eye"></i></a>
+                                            <a href="#" class="copy"><i class="fas fa-copy"></i></a>
+                                            <a href="#" class="delete"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; background: rgba(28, 200, 138, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-shopping-cart" style="color: #1cc88a;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">Order Confirmation</h6>
+                                                <small class="text-muted">ID: TEMP_003</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">Your Order #{{ order_id }} Confirmed</span>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-tag me-1" style="font-size: 0.7rem;"></i>Transactional
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Active</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="far fa-calendar-alt me-2" style="color: #15818E;"></i>
+                                            <span>2024-01-05</span>
+                                        </div>
+                                        <small class="text-muted d-block">
+                                            <i class="far fa-clock me-1"></i>2 weeks ago
+                                        </small>
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="action-icons">
+                                            <a href="#" class="edit"><i class="fas fa-edit"></i></a>
+                                            <a href="#" class="preview"><i class="fas fa-eye"></i></a>
+                                            <a href="#" class="copy"><i class="fas fa-copy"></i></a>
+                                            <a href="#" class="delete"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; background: rgba(246, 194, 62, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-file-invoice" style="color: #f6c23e;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">Payment Receipt</h6>
+                                                <small class="text-muted">ID: TEMP_004</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">Payment Receipt for Order #{{ order_id }}</span>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-tag me-1" style="font-size: 0.7rem;"></i>Finance
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">Draft</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="far fa-calendar-alt me-2" style="color: #15818E;"></i>
+                                            <span>2023-12-28</span>
+                                        </div>
+                                        <small class="text-muted d-block">
+                                            <i class="far fa-clock me-1"></i>3 weeks ago
+                                        </small>
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="action-icons">
+                                            <a href="#" class="edit"><i class="fas fa-edit"></i></a>
+                                            <a href="#" class="preview"><i class="fas fa-eye"></i></a>
+                                            <a href="#" class="copy"><i class="fas fa-copy"></i></a>
+                                            <a href="#" class="delete"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div style="width: 40px; height: 40px; background: rgba(108, 117, 125, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-newspaper" style="color: #6c757d;"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="fw-semibold mb-1">Newsletter</h6>
+                                                <small class="text-muted">ID: TEMP_005</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-medium">Monthly Newsletter - {{ month }}</span>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-tag me-1" style="font-size: 0.7rem;"></i>Marketing
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="far fa-calendar-alt me-2" style="color: #15818E;"></i>
+                                            <span>2023-12-20</span>
+                                        </div>
+                                        <small class="text-muted d-block">
+                                            <i class="far fa-clock me-1"></i>1 month ago
+                                        </small>
+                                    </td>
+                                    <td class="pe-4">
+                                        <div class="action-icons">
+                                            <a href="#" class="edit"><i class="fas fa-edit"></i></a>
+                                            <a href="#" class="preview"><i class="fas fa-eye"></i></a>
+                                            <a href="#" class="copy"><i class="fas fa-copy"></i></a>
+                                            <a href="#" class="delete"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3">
+                    <div class="text-muted small">
+                        <i class="fas fa-info-circle me-1" style="color: #15818E;"></i>
+                        Showing 5 of 12 templates
+                    </div>
+                    <nav aria-label="Table navigation">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" style="border-radius: 8px; border: 1px solid #dee2e6;">Previous</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="#" style="background: #15818E; border-color: #15818E; border-radius: 8px;">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" style="border-radius: 8px; border: 1px solid #dee2e6;">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" style="border-radius: 8px; border: 1px solid #dee2e6;">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" style="border-radius: 8px; border: 1px solid #dee2e6;">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+
+{% endblock %}

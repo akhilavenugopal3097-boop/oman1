@@ -1,0 +1,3719 @@
+{% load static %}
+{% load automobile_filters %}
+{% load dict_filters %}
+{% load humanize %}
+ {% include 'header2.html' %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 240px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+        /* Banner Section */
+        #banner-section {
+            background-size: cover;
+            background-position: center;
+            height:250px;
+            position: relative;
+            transition: background-image 1s ease-in-out;
+        }
+    
+        #banner-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        -webkit-mask-composite: destination-in;
+        mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+        mask-composite: intersect;
+        z-index: 1;
+        opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+        pointer-events: none; /* Ensure the mask does not block interactions */
+    }
+    
+        #banner-section .content-column {
+            position: relative;
+            z-index: 2;
+        }
+    
+        #banner-section .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            position: relative;
+            margin-top: 35px;
+            background:#E6F0F9;
+            color: #fff;
+            height: 133px; /* Adjust as needed for the container's content */
+            font-family: 'FontStyle1', Arial, sans-serif;
+            font-size:14px;
+        }
+        
+        /* Image Container */
+        .image-container {
+            position: relative;
+            width: 300px;
+            text-align: center; /* Center the image inside the container */
+            margin-top: -280px;
+            z-index: 1;
+            margin-left:-20px;
+        
+        }
+        
+        .image-container .image {
+            width: 300px;
+            height: 414px; /* Maintain aspect ratio */
+          
+            
+        }
+        
+        /* Content Section */
+        .content-section {
+            text-align:left;
+        }
+        
+        .content-section h2 {
+            {% comment %} font-size: 2rem; {% endcomment %}
+            margin-top: 10px;
+            color:black;
+            font-family: 'FontStyle6', Arial, sans-serif;
+            margin-left:-40px;
+            
+        }
+        
+        .content-section p {
+            {% comment %} font-size: 1rem; {% endcomment %}
+            line-height: 1.1;
+            color: black;
+            margin-left:-40px;
+            font-size:12px;
+            font-family: 'FontStyle6', Arial, sans-serif;
+            word-wrap: break-word; /* Ensure text breaks appropriately */
+        }
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        /* Exclusive Offers Section */
+        #exclusive-offers {
+            height: auto; /* Adjust height to fit content */
+            padding: 20px;
+            margin-top: 10px;
+        }
+    
+        /* Image Section */
+        .image-container {
+            margin-top: -150px; /* Adjust margin for smaller screens */
+            right: 0;
+            transform: none; /* Remove transform for better alignment */
+            width: 60%; /* Reduce image size */
+            margin: 0 auto; /* Center the image */
+        }
+    
+        /* Content Section */
+        .content-section {
+            margin: 0 auto; /* Center the content section */
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center; /* Center-align text for mobile */
+        }
+    
+        .content-section h2 {
+            font-size: 1.5rem; /* Adjust heading size */
+            text-align: center; /* Center heading */
+        }
+    
+        .content-section p {
+            font-size: 0.9rem; /* Adjust font size for readability */
+            text-align: center; /* Center-align paragraph text */
+            margin-left: 0; /* Remove unnecessary margin */
+            max-width: 100%; /* Use full width */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Further adjustments for very small screens */
+        .image-container {
+            margin-top: -100px;
+            width: 80%; /* Reduce image size further */
+        }
+    
+        .content-section h2 {
+            font-size: 1.2rem;
+        }
+    
+        .content-section p {
+            font-size: 0.8rem;
+        }
+    }
+    .about-paragraph{
+        color:black;
+    }
+    .input{
+        margin-top:3px;
+    }
+   
+    
+    </style>
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+        
+            
+            <section class="dual-ad-loop-box">
+    
+ <style>
+        .dual-ad-loop-box {
+            width: 100%;
+            padding: 15px 0;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .dual-ad-loop-box .swiper-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 250px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .dual-ad-loop-box .swiper-wrapper {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .dual-ad-loop-box .swiper-slide {
+            width: calc(50% - 3px) !important;
+            height: 230px;
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+        }
+
+        .dual-ad-loop-box .ad-box {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .dual-ad-loop-box .ad-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dual-ad-loop-box .ad-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 768px) {
+            .dual-ad-loop-box .swiper-container {
+                height: 220px;
+                padding: 0 5px;
+            }
+
+            .dual-ad-loop-box .swiper-slide {
+                height: 200px;
+                width: calc(50% - 2px) !important;
+            }
+        }
+    </style>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper" id="ad-swiper-wrapper">
+            {% for advertisement in advertisement %}
+            <div class="swiper-slide">
+                <div class="ad-box">
+                    <a href="{{ advertisement.url }}" target="_blank" {% if not advertisement.url %}onclick="return false;"{% endif %}>
+                        <img src="{{ advertisement.image.url }}" alt="Advertisement">
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        let swiperInstance;
+
+        function initializeSwiper() {
+            if (swiperInstance) swiperInstance.destroy(true, true); // Properly destroy the swiper including clones
+
+            swiperInstance = new Swiper('.dual-ad-loop-box .swiper-container', {
+                slidesPerView: 2,
+                spaceBetween: 6,
+                loop: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                breakpoints: {
+                    320: {
+                        spaceBetween: 3
+                    },
+                    768: {
+                        spaceBetween: 6
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeSwiper();
+        });
+
+        // Function to update advertisements and reinitialize Swiper
+        function applyFilter(newAdsHTML) {
+            const swiperWrapper = document.getElementById('ad-swiper-wrapper');
+
+            if (swiperInstance) {
+                swiperInstance.destroy(true, true); // Destroy swiper and remove loop clones
+            }
+
+            // Replace slides (newAdsHTML should be new <div class="swiper-slide">...</div> blocks)
+            swiperWrapper.innerHTML = newAdsHTML;
+
+            // Re-initialize Swiper after DOM update
+            initializeSwiper();
+        }
+    </script>
+    </section>
+            <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+           
+
+
+
+
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                   <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+            <li><a href="{% url 'index5' %}">Other Categories</a></li>
+            <li><a href="{% url 'ticket' %}">Ticket Vouchers</a></li> 
+      
+                </ol>
+              </nav>
+              <style>
+                .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color: #15818E;
+        }
+              </style>
+         
+    <!-- Image Gallery Section (keep this part the same) -->
+<div class="image-section">
+    <div class="main-image-container">
+      {% if ticket.images.all %}
+        <img id="main-image" src="{{ ticket.images.first.image.url }}" alt="ticket Image" class="main-image" onclick="openModal(0)">
+      {% else %}
+        <img src="path/to/default/image.jpg" alt="Default Image" class="main-image">
+      {% endif %}
+    </div>
+    
+    <div class="side-thumbnails">
+      {% for img in ticket.images.all|slice:"1:3" %}
+        <div class="thumbnail-container">
+          <img src="{{ img.image.url }}" alt="Thumbnail {{ forloop.counter }}" class="thumbnail" onclick="openModal({{ forloop.counter0|add:1 }})">
+          {% if forloop.last %}
+            {% if ticket.images.all %}
+              <div class="see-more" onclick="openModal(0)">
+                <i class="fas fa-image"></i> {{ ticket.images.all|length }}
+              </div>
+            {% endif %}
+            {% if ticket.videos.all %}
+              <div class="video-icon">
+                <i class="fas fa-video"></i>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+</div>
+
+<style>
+  /* Keep all your existing styles for the image-section */
+  .image-section {
+    display: flex;
+    gap: 10px;
+    flex: 2;
+  }
+  
+  .main-image-container {
+    position: relative;
+  }
+  
+  .main-image {
+    width: 1100px;
+    max-height: 380px;
+    border-radius: 10px;
+    object-fit: ticket;
+    cursor: pointer;
+  }
+  
+  .side-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .thumbnail-container {
+    position: relative;
+  }
+  
+  .thumbnail {
+    width: 440px;
+    height: 185px;
+    object-fit: ticket;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+  }
+  
+  .see-more {
+    position: absolute;
+    bottom: 10px;
+    margin-right: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .video-icon {
+    position: absolute;
+    top: 148px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 5px;
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   
+  .video-icon i {
+    color: white;
+    font-size: 12px;
+  }
+</style>
+<div id="galleryModal" class="gallery-modal" onclick="handleOutsideClick(event)">
+  <div class="gallery-container" onclick="event.stopPropagation()">
+    <!-- Left Gallery Section -->
+    <div class="gallery-section">
+      <div class="main-gallery-view">
+        {% for img in ticket.images.all %}
+          <div class="gallery-item">
+            <img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" class="gallery-image">
+          </div>
+        {% endfor %}
+        {% for vid in ticket.videos.all %}
+          <div class="gallery-item">
+            <video class="gallery-video" controls poster="{{ vid.thumbnail.url }}">
+              <source src="{{ vid.video.url }}" type="video/mp4">
+              Your browser doesn't support HTML5 video.
+            </video>
+          </div>
+        {% endfor %}
+        <div class="navigation prev" onclick="navigateGallery(-1)">&#10094;</div>
+        <div class="navigation next" onclick="navigateGallery(1)">&#10095;</div>
+      </div>
+      
+      <div class="gallery-controls">
+        <div class="image-counter">
+  <i class="fas fa-image"></i> <!-- Image icon added -->
+  <span id="currentIndex">1</span>/<span id="totalCount">{{ ticket.images.all.count|add:ticket.videos.all.count }}</span>
+</div>
+        <!-- Close button for normal view -->
+        <div class="close-btn" onclick="closeGalleryModal()">
+          <i class="fas fa-times"></i>
+        </div>
+        
+        <div class="fullscreen-toggle" onclick="toggleFullscreen()">
+          <i class="fas fa-expand"></i>
+        </div>
+        
+        <div class="thumbnail-gallery">
+          {% for img in ticket.images.all %}
+            <div class="thumbnail-item" onclick="goToImage({{ forloop.counter0 }})">
+              <img src="{{ img.image.url }}" alt="Thumbnail {{ forloop.counter }}" class="modal-thumbnail">
+            </div>
+          {% endfor %}
+          {% for vid in ticket.videos.all %}
+            <div class="thumbnail-item border bg-secondary" onclick="goToImage({{ forloop.counter0|add:ticket.images.all.count }})">
+              
+              <div class="video-thumbnail-icon">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Contact Card Section -->
+    <div class="contact-section">
+      <div class="contact-card">
+        <div class="contact-header">
+          <h2 class="property-price">
+            {{ ticket.price|floatformat:0|intcomma }} <span>OMR</span>
+           
+          </h2>
+        </div>
+        <div class="notify">
+        <a href="">Notify me if price drops</a>
+        </div>
+       <div class="contact-buttons-container">
+       {% if request.user.is_authenticated %}
+<button onclick="window.location.href='https://wa.me/{{ ticket.user.whatsapp }}'" class="btn-whatsapp">
+    <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+</button>
+{% else %}
+<button onclick="window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'" class="btn-whatsapp">
+    <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+</button>
+{% endif %}
+
+{% if request.user.is_authenticated %}
+<button onclick="event.stopPropagation(); showPhonePopup('{{ ticket.user.phone }}')" class="btn-call">
+    <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button>
+{% else %}
+<button onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'" class="btn-call">
+    <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button>
+{% endif %}
+
+  
+</div>
+<div class="contact-buttons-container">
+   {% if request.user.is_authenticated %}
+    <button 
+        class="btn-chat" 
+        onclick="event.stopPropagation(); openChatPopup(
+            '{{ ticket.user.id }}',
+            '{{ ticket.id }}',
+            'ticket',
+            '{{ ticket.title|escapejs }}',
+            '{{ ticket.user.username|escapejs }}',
+            '{% if ticket.images.first %}{{ ticket.images.first.image.url }}{% endif %}'
+        );">
+        <img src="{% static 'assets/images/chaticon.png' %}" 
+             alt="Chat" 
+             style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;"> 
+        Chat
+    </button>
+{% else %}
+    <button 
+        class="btn-chat"
+        onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+        <img src="{% static 'assets/images/chaticon.png' %}" 
+             alt="Chat" 
+             style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;"> 
+        Chat
+    </button>
+{% endif %}
+
+   {% if request.user.is_authenticated %}
+<button class="btn-save" onclick="showContactPopup('{{ ticket.id }}', '{{ ticket.user.id }}', '{{ ticket.user.whatsapp|default:"" }}', '{{ ticket.user.phone|default:"" }}', 'true')">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+{% else %}
+<button class="btn-save" onclick="window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+{% endif %}
+</div>
+       <div class="contact-info">
+  <ul class="safety-tips">
+    <li class="info-item">
+      <img src="/static/assets/images/icons/location.svg" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Only meet in public places</span>
+    </li>
+    <li class="info-item">
+       <img src="/static/assets/images/icons/clock.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Never pay or transfer money in advance</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/search.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Inspect the product before you buy it</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/user.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Bring a friend when possible</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/phone.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Keep your phone charged and with you</span>
+    </li>
+  </ul>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Base Modal Styles */
+  .gallery-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    overflow: hidden;
+  }
+  
+  .gallery-modal.fullscreen .contact-section {
+    display: none;
+  }
+  
+  .gallery-modal.fullscreen .gallery-container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .gallery-modal.fullscreen .gallery-section {
+    width: 100%;
+  }
+  
+  /* Split View Container */
+  .gallery-container {
+    display: flex;
+    width: 90%;
+    height: 80%;
+    margin: 5% auto;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* Left Gallery Section */
+  .gallery-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .main-gallery-view {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+  }
+  
+  /* Right Contact Section */
+  .contact-section {
+    flex: 1;
+    width: 400px;
+    border-left: 1px solid #eee;
+    padding: 20px;
+    background: #fafafa;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    overflow-y: auto;
+  }
+  
+  /* Gallery Items */
+  .gallery-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .gallery-item.active {
+    opacity: 1;
+  }
+  
+  .gallery-image {
+    width: 100%;
+    height: 80%;
+    object-fit: contain;
+  }
+  
+  .gallery-video {
+    width: 100%;
+   height: 100%;
+    object-fit: contain;
+  }
+  
+ 
+  
+  /* Gallery Controls */
+  .gallery-controls {
+    padding: 15px;
+    background: #fff;
+  }
+  
+  .image-counter {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 10;
+  }
+  
+  /* Close button styles */
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    /* background: rgba(0,0,0,0.7); */
+    color: rgb(77, 75, 75);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .gallery-modal.fullscreen .close-btn {
+    display: none;
+  }
+  
+  .fullscreen-toggle {
+    position: absolute;
+    bottom: 80px;
+    right: 15px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  /* Thumbnails */
+  .thumbnail-gallery {
+    height: 80px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px 0;
+  }
+  
+  .thumbnail-item {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .thumbnail-item.active {
+    border-color:#15818E;
+  }
+  
+  .modal-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .video-thumbnail-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background: rgba(0,0,0,0.5);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+  }
+  
+  /* Contact Card */
+  .contact-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .contact-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .contact-header h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .rating {
+    color: #FFA41C;
+    font-size: 14px;
+  }
+  .contact-buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.contact-buttons-container button{
+  height:50px;
+  width:300px;
+  border-radius: 8px;
+}
+.call-btn, .message-btn {
+  flex: 1; /* This makes both buttons equal width */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.call-btn {
+  background: #15818E;
+  color: white;
+}
+
+.message-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+ .safety-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.icon-fixed-width {
+  width: 20px;
+  text-align: center; 
+  margin-right: 8px; 
+}
+
+.info-item span {
+  flex: 1; 
+}
+
+.info-item i {
+  margin-top: 5px; 
+  flex-shrink: 0; 
+  margin-right: 10px;
+}
+
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .gallery-container {
+      flex-direction: column;
+      height: 90%;
+    }
+    
+    .contact-section {
+      max-width: 100%;
+      border-left: none;
+      border-top: 1px solid #eee;
+      padding: 15px;
+    }
+    
+    .fullscreen-toggle {
+      bottom: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .gallery-container {
+      width: 95%;
+      height: 95%;
+    }
+    
+    .contact-buttons {
+      flex-direction: column;
+    }
+    
+    .thumbnail-item {
+      width: 50px;
+      height: 50px;
+    }
+  }
+</style>
+
+<script>
+  let currentGalleryIndex = 0;
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const thumbnailItems = document.querySelectorAll('.thumbnail-item');
+  const totalCount = galleryItems.length;
+  const galleryModal = document.getElementById('galleryModal');
+  
+  function openModal(index) {
+    currentGalleryIndex = index;
+    updateGallery();
+    galleryModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeGalleryModal() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().then(() => {
+        galleryModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        pauseAllVideos();
+      });
+    } else {
+      galleryModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      pauseAllVideos();
+    }
+  }
+  
+  function handleOutsideClick(event) {
+    if (event.target === galleryModal) {
+      closeGalleryModal();
+    }
+  }
+  
+  function navigateGallery(direction) {
+    currentGalleryIndex += direction;
+    if (currentGalleryIndex < 0) {
+      currentGalleryIndex = totalCount - 1;
+    } else if (currentGalleryIndex >= totalCount) {
+      currentGalleryIndex = 0;
+    }
+    updateGallery();
+  }
+  
+  function goToImage(index) {
+    currentGalleryIndex = index;
+    updateGallery();
+  }
+  
+  function toggleFullscreen() {
+    const modal = document.getElementById('galleryModal');
+    if (!document.fullscreenElement) {
+      modal.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+      modal.classList.add('fullscreen');
+    } else {
+      document.exitFullscreen();
+      modal.classList.remove('fullscreen');
+    }
+  }
+  
+  function updateGallery() {
+    galleryItems.forEach((item, index) => {
+      item.classList.toggle('active', index === currentGalleryIndex);
+    });
+    
+    thumbnailItems.forEach((item, index) => {
+      item.classList.toggle('active', index === currentGalleryIndex);
+      if (index === currentGalleryIndex) {
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+    
+    document.getElementById('currentIndex').textContent = currentGalleryIndex + 1;
+    
+    const activeItem = galleryItems[currentGalleryIndex];
+    if (activeItem.querySelector('.gallery-video')) {
+      const video = activeItem.querySelector('.gallery-video');
+      video.currentTime = 0;
+      video.play();
+    }
+  }
+  
+  function pauseAllVideos() {
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+  }
+  
+  document.addEventListener('fullscreenchange', function() {
+    if (!document.fullscreenElement) {
+      galleryModal.classList.remove('fullscreen');
+    }
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (galleryModal.style.display === 'block') {
+      if (e.key === 'ArrowLeft') {
+        navigateGallery(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigateGallery(1);
+      } else if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          closeGalleryModal();
+        }
+      }
+    }
+  });
+</script>
+<style>
+    /* Contact Popup Styles */
+    .contact-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .contact-popup-inner {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .contact-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+    }
+    
+    .contact-popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .contact-popup-close {
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    
+    .contact-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        color: #333;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    
+    
+    
+    .contact-option i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+    
+
+  /* Two Column Layout */
+  .property-details-container {
+    display: flex;
+    gap: 20px;
+   width: 1300px; /* Adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .property-info-column {
+    flex: 1;
+    /* Existing styles remain the same */
+  }
+  
+  .advertisement-column {
+    width: 200px;
+    margin-left: 200px;
+    margin-top: -15px;
+  }
+  
+  .vertical-ad {
+    position: relative;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: #f5f5f5;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 5px solid gray;
+    margin-left:-280px;
+    width:300px;
+    margin-top:20px;
+  
+  }
+  /* User Profile Styles */
+  .user-profile {
+    background: white;
+    border-radius: 2px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    padding: 20px;
+    margin-left:-280px;
+    margin-top:20px;
+   
+    width:300px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: ticket;
+  }
+
+  .default-avatar {
+    color: #999;
+    font-size: 24px;
+  }
+
+  .profile-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+  }
+
+  .rating {
+   
+    font-size: 14px;
+  }
+
+  
+
+  .profile-details {
+    margin: 15px 0;
+   
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .detail-item i {
+    margin-right: 8px;
+    color: #4CAF50;
+  }
+
+  .contact-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .contact-actions button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-call {
+   background-color: #fff3f3;
+   text-decoration: none;
+   color: #1A73E8;
+  }
+.btn-whatsapp{
+    background-color: #e9f7ef;
+    color: #128C7E;
+}
+
+  .btn-chat {
+    background-color: #f0f6ff;
+    color: #063e71;
+   
+    text-decoration: none;
+  }
+
+  .btn-save {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .contact-actions button i {
+    margin-right: 5px;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .ad-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+  }
+  
+  /* Adjust existing styles to account for the new layout */
+  .line {
+    width: 100%; /* Now takes full width of its column */
+  }
+  
+  .columns-container {
+    width: 100%; /* Adjust width to fit column */
+  }
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1; /* Takes available space */
+  min-width: 200px /* Prevents overflow */
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px; /* Space between action buttons */
+  flex-shrink: 0; /* Prevents shrinking */
+  margin-right: -190px;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  
+}
+.post-actions {
+  display: inline-flex; /* or 'flex' if you want it to stay block-level but shrink-to-fit */
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  margin-top: 10px;
+  /* Remove width: 200px */
+}
+
+.property-actions a {
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+.icon-buttons{
+    font-family: 'FontStyle6', Arial, sans-serif;
+}
+</style>
+<style>
+  /* ===== IMAGE GALLERY STYLES ===== */
+  .image-section {
+    display: flex;
+    gap: 10px;
+    flex: 2;
+  }
+  
+  .main-image-container {
+    position: relative;
+  }
+  
+  .main-image {
+    width: 1100px;
+    max-height: 380px;
+    border-radius: 10px;
+    object-fit: ticket;
+    cursor: pointer;
+  }
+  
+  .see-more {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .side-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .thumbnail {
+    width: 440px;
+    height: 185px;
+    object-fit: ticket;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+  }
+  
+  /* ===== MODAL STYLES ===== */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: auto;
+  }
+ 
+  .modal-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    width: 100%;
+    
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .modal-image {
+    width: 1500px;
+    height: 600px;
+    object-fit: fill;
+    border-radius: 8px;
+  }
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .prev:hover, .next:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-50%) scale(1.05);
+    border-color: #bbb;
+    color: #111;
+  }
+  
+  .prev { left: 12px; }
+  .next { right: 12px; }
+  
+  
+  </style>
+
+
+   
+   
+<script>
+  let currentIndex = 0;
+  let galleryItems = [];
+  
+  function openModal(startIndex = 0) {
+    const modal = document.getElementById("galleryModal");
+    modal.style.display = "block";
+    
+    galleryItems = document.querySelectorAll('.gallery-item');
+    currentIndex = startIndex;
+    
+    updateGallery();
+    
+    // Pause all videos when modal opens
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.addEventListener("keydown", handleKeydown);
+  }
+  
+  function closeGalleryModal() {
+    document.getElementById("galleryModal").style.display = "none";
+    
+    // Pause all videos when closing
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.removeEventListener("keydown", handleKeydown);
+  }
+  
+  function navigateGallery(direction) {
+    currentIndex += direction;
+    
+    // Wrap around if at beginning or end
+    if (currentIndex < 0) {
+      currentIndex = galleryItems.length - 1;
+    } else if (currentIndex >= galleryItems.length) {
+      currentIndex = 0;
+    }
+    
+    updateGallery();
+  }
+  
+  function updateGallery() {
+    // Hide all items
+    galleryItems.forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Show current item
+    if (galleryItems[currentIndex]) {
+      galleryItems[currentIndex].classList.add('active');
+    }
+    
+    // Update counter
+    document.getElementById('currentIndex').textContent = currentIndex + 1;
+    
+    // Pause any playing videos when changing items
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+  }
+  
+  function handleKeydown(e) {
+    if (e.key === "Escape") {
+      closeGalleryModal();
+    } else if (e.key === "ArrowLeft") {
+      navigateGallery(-1);
+    } else if (e.key === "ArrowRight") {
+      navigateGallery(1);
+    }
+  }
+  
+  // Auto-pause other videos when one plays
+  document.addEventListener('play', function(e) {
+    if (e.target.classList.contains('gallery-video')) {
+      document.querySelectorAll('.gallery-video').forEach(video => {
+        if (video !== e.target) video.pause();
+      });
+    }
+  }, true);
+</script>
+ <style>
+/* ===== BASE STYLES ===== */
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.property-actions a {
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+.property-details-container {
+  display: flex;
+  gap: 20px;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.property-info-column {
+  flex: 1;
+}
+
+.advertisement-column {
+  width: 300px;
+}
+
+/* ===== DESCRIPTION SECTION ===== */
+.product-description {
+  margin-top: 20px;
+  max-width: 800px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  
+}
+.product-description span {
+    font-size: 15px;  
+    line-height: 1.4; 
+    color: #333;     
+    margin: 0 0 8px 0; 
+  }
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #000;
+}
+
+.read-more-btn {
+  /* Your button styling */
+  display: none; /* Initial state - JS will override if needed */
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+
+/* ===== FEATURES SECTION ===== */
+.features-container {
+  margin: 30px 0 40px 0;
+  padding-top: 20px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+ 
+}
+
+.features-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.features-list {
+  columns: 2;
+  column-gap: 40px;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  list-style: none;
+}
+
+.features-list li {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  padding-left: 20px;
+  position: relative;
+}
+
+.features-list li:before {
+  content: "•";
+  color: #EB362D;
+  position: absolute;
+  left: 0;
+}
+
+/* ===== NEARBY LOCATIONS ===== */
+.nearby-section {
+  margin: 50px 0 30px 0;
+  clear: both;
+  width:800px;
+  margin-top: 5px;
+}
+
+.nearby-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  
+}
+
+.nearby-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 0;
+  list-style: none;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.nearby-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #f8f6f6;
+  border-radius: 8px;
+}
+.nearbyimg {
+  height: 60px;
+  width: 60px;
+  margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .property-details-container {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 15px;
+  }
+  
+  .advertisement-column {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .features-list {
+    columns: 1;
+  }
+  
+  .nearby-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+
+</style>
+
+<style>
+    
+   .columns-container {
+    display: flex;
+    margin-top: -20px;
+    margin-left:-20px;
+    width:900px;
+    margin-bottom:20px;
+}
+
+.column {
+    flex: 1;
+    padding: 10px;
+}
+
+.left-column {
+    border-right: 1px solid #ccc; /* Separator line */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+    
+}
+
+.right-column {
+    /* No border needed */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.info-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.info-table td {
+    padding: 5px 10px;
+    vertical-align: top;
+    
+    border: none; /* Ensures no borders */
+}
+
+.details-location{
+    margin-top:-10px;
+    font-size:14px;
+   
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+.details-location span{
+    
+    font-size:14px;
+}
+     .property-title {
+    font-size: 20px;
+    margin-top:20px;
+    
+     margin-bottom:20px;
+    font-weight: 300;
+   
+  }
+    .line{
+        width:750px;
+        margin-top:20px;
+    }
+    .details-icons{
+        font-size:14px;
+        padding-bottom:15px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+    }
+    .details-icons span{
+        padding-right:18px;
+    }
+    .property-price-row {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  
+}
+.property-actions{
+    display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.property-actions a{
+    text-decoration:none;
+    color:black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+
+}
+.bottom-line{
+    width: 800px;
+    color: #333;
+}
+.report-text{
+  padding-left:10px ;
+  font-weight: 600;
+}
+.report{
+  margin-left:500px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+</style>  
+<div class="property-details-container mt-3">
+  <!-- Main Property Details Column -->
+  <div class="property-info-column">
+    <div class="property-info">
+      <!-- Price and actions section -->
+      <div class="property-price-container">
+        <div class="price-column">
+          <h2 class="property-price">
+            {{ ticket.price|floatformat:0|intcomma }} <span>OMR</span>
+            {% if ticket.listing_type == "rent" and ticket.rental_period %}
+              - {{ ticket.rental_period|capfirst }}
+            {% endif %}
+          </h2>
+        </div>
+        <div class="actions-column">
+          <!-- Favorite and Share buttons -->
+          <div class="property-actions">
+               <a href="#"
+   class="favorite-link icon-button"
+   data-product-id="{{ ticket.id }}"
+   data-product-type="ticket"
+   data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+   style="padding-right:10px;">
+   <i class="far fa-heart {% if ticket in user.favorites.all %}fas filled{% endif %}" 
+      id="favorite-icon-{{ ticket.id }}"></i>
+   <span class="fav-font" id="favorite-text-{{ ticket.id }}">
+       {% if ticket in user.favorites.all %}Favorite{% else %}Favorite{% endif %}
+   </span>
+</a>
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('.favorite-link');
+        if (!link) return;
+
+        const icon = link.querySelector('i');
+        const text = link.querySelector('.fav-font');
+        const productId = link.dataset.productId;
+        const productType = link.dataset.productType;
+        const isAuthenticated = link.dataset.isAuthenticated === 'true';
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!isAuthenticated) {
+            window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname);
+            return;
+        }
+
+        const isCurrentlyFavorite = icon.classList.contains('fas');
+
+        // Toggle UI
+        icon.classList.toggle('far');
+        icon.classList.toggle('fas');
+        icon.classList.toggle('filled');
+        text.textContent = isCurrentlyFavorite ? 'Favorite' : 'Favorite';
+
+        const action = isCurrentlyFavorite ? 'remove' : 'add';
+
+        fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+            method: 'POST',
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') throw new Error(data.message);
+            localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // Revert UI on error
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            icon.classList.toggle('filled');
+            text.textContent = isCurrentlyFavorite ? 'Favorite' : 'Favorite';
+        });
+    });
+
+    // Initialize all favorite buttons from localStorage
+    document.querySelectorAll('.favorite-link').forEach(link => {
+        const icon = link.querySelector('i');
+        const text = link.querySelector('.fav-font');
+        const productId = link.dataset.productId;
+        const productType = link.dataset.productType;
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+
+        if (isFavorite) {
+            icon.classList.replace('far', 'fas');
+            icon.classList.add('filled');
+            text.textContent = 'Favorite';
+        }
+    });
+});
+</script>
+
+<style>
+.filled { color: #EB362D; }
+</style>
+          </div>
+          <div class="property-actions" style="margin-right:280px;">
+            <a href="#" onclick="shareProperty('{{ request.build_absolute_uri }}'); return false;" title="Share" class="icon-button">
+              <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:16px;" alt="icon"><span class="fav-font">Share</span> 
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic info icons -->
+      <div class="details-icons mt-1">
+      
+<span>
+  <img src="{% static 'assets/images/icons/calendar.svg' %}" style="margin-top:-3px;"> {{ ticket.get_number_of_tickets_display }}
+</span>
+   {% if ticket.provide == "yes" %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}"> Delivery Available
+                                    </span>
+                                    {% else %}
+                                    <span>
+                                        <img src="{% static 'assets/images/icons/delivery.svg' %}"> Delivery Unavailable
+                                    </span>
+                                    {% endif %}
+                           
+
+<!-- {% if ticket.listing_type %}
+<span>
+  <img src="{% static 'assets/images/icons/listing.svg' %}" style="margin-top:-3px;"> {{ ticket.listing_type|title }}
+</span>
+{% endif %} -->
+
+<!-- {% if ticket.created_at %}
+<span>
+  <img src="{% static 'assets/images/icons/time.svg' %}" style="margin-top:-3px;"> {{ ticket.created_at|timesince }} ago
+</span>
+{% endif %} -->
+      
+       
+       
+      </div>
+      
+      <!-- Location -->
+      <div class="details-location">
+        <span class="location"><i class="fas fa-map-marker-alt"></i> {{ ticket.city|clean_city_name|truncatechars:25 }}, {{ ticket.city.district.name }}, {{ ticket.city.district.governate.name }}</span>
+      </div>
+
+      <!-- <div class="post-actions">
+           <span>Post ID:{{ticket.id}}</span>
+          </div> -->
+    </div>
+    <hr class="bottom-line">
+   <style>
+    .details{
+        margin-top: 30px;
+    }
+   </style>
+    <!-- Property details tables -->
+    <div class="details">
+      <h2 class="property-title">{{ ticket.name|title }}</h2>
+      <div class="columns-container">
+        <div class="column left-column">
+          <table class="info-table">
+            <tr>
+              <td>Type</td>
+              <td class="tr1">Ticket Vouchers</td>
+            </tr>
+    
+            
+          </table>
+        </div>
+        <div class="column right-column">
+          <table class="info-table">
+           
+
+            <tr>
+              <td>Posted</td>
+              <td class="tr1">{{ ticket.created_at|display_registered_time }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  <div class="product-description">
+     <h2 class="property-title">Description</h2>
+  <span id="descriptionText" class="clamped">
+    {{ ticket.description|capfirst }}
+  </span>
+  <button id="readMoreBtn" class="read-more-btn" style="display: none;">Read More</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const desc = document.getElementById('descriptionText');
+  const readMoreBtn = document.getElementById('readMoreBtn');
+  
+  // Check if text is clamped (overflowing)
+  function checkTextOverflow() {
+    // Only hide the button if text is clamped AND we're not in expanded state
+    if (desc.classList.contains('clamped')) {
+      const isOverflowing = desc.scrollHeight > desc.clientHeight;
+      readMoreBtn.style.display = isOverflowing ? 'block' : 'none';
+    }
+    // If text is expanded (not clamped), we always show the "Show Less" button
+  }
+  
+  // Initial check
+  checkTextOverflow();
+  
+  // Check on resize
+  window.addEventListener('resize', checkTextOverflow);
+  document.fonts?.ready?.then(checkTextOverflow);
+  
+  // Read More/Less Toggle
+  readMoreBtn.addEventListener('click', function() {
+    desc.classList.toggle('clamped');
+    this.textContent = desc.classList.contains('clamped') ? 'Read More' : 'Show Less';
+    
+    // Always show the button when expanded ("Show Less" state)
+    if (!desc.classList.contains('clamped')) {
+      readMoreBtn.style.display = 'block';
+    } else {
+      // When collapsed, check if we still need the button
+      checkTextOverflow();
+    }
+  });
+});
+
+// Your other functions...
+function shareProperty(url) {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      url: url
+    }).catch(console.error);
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      alert("Link copied to clipboard!");
+    });
+  }
+}
+</script> 
+  <!-- Features Section -->
+    <div class="features-container">
+      <div class="features-title">Features</div>
+      <ul class="features-list"> 
+       {% if ticket.category %}
+  <li>{{ ticket.category|format_category|title }}</li>
+{% endif %}
+
+{% if ticket.age %}
+  <li>{{ ticket.age|capfirst }}</li>
+{% endif %}
+
+{% if ticket.condition %}
+  <li>{{ ticket.condition|capfirst }}</li>
+{% endif %}
+<li>{{ ticket.get_number_of_tickets_display }}</li>
+
+      
+      </ul>
+    </div>
+     
+    <hr class="bottom-line">
+<!-- Map Section -->
+<div class="content-four single-box">
+  <div class="text">
+    <h3 class="nearby-title">Location</h3>
+    {% if location_display %}
+      <p style="margin-top: 5px; color: #666; font-size: 14px;">
+        <i class="fas fa-map-marker-alt"></i> {{ location_display }}
+      </p>
+    {% endif %}
+  </div>
+  
+  <div class="contact-map" style="position: relative; width: 100%; margin: 0 auto;">
+    {% if ticket %}
+      <!-- Always use coordinates for precision -->
+      <iframe
+        src="https://www.google.com/maps?q={{ ticket.latitude }},{{ ticket.longitude }}&hl=en&z=15&output=embed"
+        allowfullscreen=""
+        loading="lazy"
+        style="width: 90%; height: 400px; border: none; border-radius: 8px;"
+        title="Location map for {{ ticket.name }}">
+      </iframe>
+      
+      <!-- Map Buttons -->
+      <div class="map-buttons" style="position: absolute; margin-top: -460px; margin-left: 680px;"> 
+        <a 
+          href="https://www.google.com/maps/dir/?api=1&destination={{ ticket.latitude }},{{ ticket.longitude }}" 
+          target="_blank"
+          class="btn border">
+          <img src="{% static '/assets/images/icons/traffic-sign.png' %}" style="height:24px;" alt="Get Directions">
+        </a>
+        
+        <button 
+          onclick="shareLocation()"
+          class="btn border">
+          <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:24px;" alt="Share Location">
+        </button>
+      </div>
+      
+      <script>
+        function shareLocation() {
+          const lat = "{{ ticket.latitude }}";
+          const lng = "{{ ticket.longitude }}";
+          const locationName = "{{ ticket.name|escapejs }}";
+          const url = `https://www.google.com/maps?q=${lat},${lng}`;
+          
+          if (navigator.share) {
+            navigator.share({
+              title: locationName || 'Ticket Shop Location',
+              text: `Check out this location: ${locationName}`,
+              url: url
+            }).catch(err => {
+              console.log('Error sharing:', err);
+              copyToClipboard(url);
+            });
+          } else {
+            copyToClipboard(url);
+          }
+        }
+        
+        function copyToClipboard(url) {
+          navigator.clipboard.writeText(url).then(() => {
+            showNotification('Location link copied to clipboard!', 'success');
+          }).catch(err => {
+            console.log('Failed to copy:', err);
+            prompt('Copy this link:', url);
+          });
+        }
+        
+        function showNotification(message, type) {
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: ${type === 'success' ? '#28a745' : '#dc3545'};
+            color: white;
+            border-radius: 5px;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+          `;
+          notification.textContent = message;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+              document.body.removeChild(notification);
+            }, 300);
+          }, 3000);
+        }
+        
+        // Add CSS animations if not already present
+        if (!document.getElementById('location-styles')) {
+          const style = document.createElement('style');
+          style.id = 'location-styles';
+          style.textContent = `
+            @keyframes slideIn {
+              from { transform: translateX(100%); opacity: 0; }
+              to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+              from { transform: translateX(0); opacity: 1; }
+              to { transform: translateX(100%); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      </script>
+      
+      <!-- Debug Info (remove in production) -->
+      {% if debug %}
+        <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 12px; color: #666;">
+          <p><strong>📍 Location Debug Info:</strong></p>
+          <p>Latitude: {{ ticket.latitude }}</p>
+          <p>Longitude: {{ ticket.longitude }}</p>
+          <p>Ticket shop has coordinates: {% if ticket.latitude %}Yes ({{ ticket.latitude }}, {{ ticket.longitude }}){% else %}No{% endif %}</p>
+          <p>City: {{ ticket.city.name }} ({% if ticket.city.latitude %}Has coordinates: {{ ticket.city.latitude }}, {{ ticket.city.longitude }}{% else %}No coordinates{% endif %})</p>
+          <p>Full Address: {{ full_address }}</p>
+          <p>Location in Oman: ✅ Yes</p>
+        </div>
+      {% endif %}
+      
+    {% else %}
+      <p style="text-align: center; padding: 40px 20px; color: #666;">Location data is not available for this ticket shop.</p>
+    {% endif %}
+  </div>
+</div>
+ 
+
+   
+<div class="product-report-container">
+  <!-- Product Info and Report Button Row -->
+  <div class="product-report-row">
+    <div class="product-id-box">
+      <span class="product-id-label">Post ID:</span>
+      <span class="product-id-value">#{{ticket.id}}</span>
+    </div>
+    <div class="report-trigger">
+      <span class="report-btn">
+        <img src="{% static 'assets/images/icons/flag (1).svg' %}" alt="Report Icon">
+        <strong>Report this Listing</strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- Report Listing Modal -->
+  <div class="report-modal" id="reportModal">
+    <div class="modal-container">
+      <div class="modal-content">
+        <form method="post" class="report-form">
+          {% csrf_token %}
+          <input type="hidden" name="report_submit" value="1">
+          <input type="hidden" name="reason" id="reasonInput" required>
+
+          <div class="modal-header">
+            <h3 class="modal-title">
+              <i class="bi bi-flag-fill"></i> Report This Listing
+            </h3>
+            <button type="button" class="close-btn" aria-label="Close">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group reasons-group">
+              <label class="form-label">Select a Reason <span class="required">*</span></label>
+              <div class="reason-list">
+                <div class="reason-item" data-value="abuse">Report Abuse</div>
+                <div class="reason-item" data-value="sold">Listing Sold</div>
+                <div class="reason-item" data-value="duplicate">Duplicate Listing</div>
+                <div class="reason-item" data-value="inappropriate">Inappropriate Content</div>
+                <div class="reason-item" data-value="wrong_category">Wrong Category</div>
+                <div class="reason-item" data-value="incorrect_pictures">Incorrect Pictures</div>
+                <div class="reason-item" data-value="incorrect_pricing">Incorrect Pricing</div>
+                <div class="reason-item" data-value="fraud">Suspected Fraud</div>
+                <div class="reason-item" data-value="other">Other Reason</div>
+              </div>
+              <div class="error-message" id="reasonError">Please select a reason.</div>
+            </div>
+
+            <div class="form-group description-group">
+              <label for="description" class="form-label">Additional Details</label>
+              <textarea name="description" id="description" rows="4" placeholder="Please provide any helpful information..."></textarea>
+              <div class="form-hint">Optional, but helps us review better</div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="submit-btn">
+              <i class="bi bi-send-fill"></i> Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Main Container */
+.product-report-container {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 15px 20px;
+  margin-left: -2px;
+}
+
+/* Product and Report Row */
+.product-report-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.product-id-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.product-id-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+.product-id-value {
+  font-weight: 600;
+  color: #212529;
+}
+
+.report-trigger {
+  margin-left: auto;
+}
+
+.report-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #dc3545;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: #fff;
+  border: 1px solid #dc3545;
+}
+
+.report-btn:hover {
+  background-color: #f8d7da;
+}
+
+.report-btn img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Modal Backdrop */
+.report-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.modal-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 0 20px;
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Modal Header */
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.modal-title i {
+  color: #dc3545;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #777;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Modal Body */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Form Elements */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.required {
+  color: #dc3545;
+}
+
+/* Horizontal Reason List */
+.reason-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reason-item {
+  flex: 1 1 30%; /* Three items per row */
+  min-width: 120px;
+  text-align: center;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.reason-item:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+.reason-item.selected {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+/* Description */
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.form-hint {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-top: 5px;
+}
+
+/* Error Message */
+.error-message {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+}
+
+.cancel-btn, .submit-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.cancel-btn:hover {
+  background-color: #e2e2e2;
+}
+
+.submit-btn {
+  background-color: #dc3545;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.submit-btn:hover {
+  background-color: #c82333;
+}
+
+/* Responsive for small screens */
+@media (max-width: 768px) {
+  .reason-item {
+    flex: 1 1 45%; /* Two items per row */
+  }
+}
+
+@media (max-width: 576px) {
+  .reason-item {
+    flex: 1 1 100%; /* One item per row */
+    min-width: 100%;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Select the report button and modal
+  const reportBtn = document.querySelector('.report-btn');
+  const modal = document.getElementById('reportModal');
+  const closeBtn = modal.querySelector('.close-btn');
+  const cancelBtn = modal.querySelector('.cancel-btn');
+  const reasonItems = modal.querySelectorAll('.reason-item');
+  const reasonInput = modal.querySelector('#reasonInput');
+  const reasonError = modal.querySelector('#reasonError');
+  const form = modal.querySelector('.report-form');
+
+  // Open modal when clicking the report button
+  reportBtn.addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  // Close modal function
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  // Close modal when clicking the close button
+  closeBtn.addEventListener('click', closeModal);
+
+  // Close modal when clicking the cancel button
+  cancelBtn.addEventListener('click', closeModal);
+
+  // Close modal when clicking outside the modal content
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Handle reason item selection
+  reasonItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // Remove selection from all items
+      reasonItems.forEach(i => i.classList.remove('selected'));
+      // Add selection to clicked item
+      item.classList.add('selected');
+      // Set hidden input value
+      reasonInput.value = item.getAttribute('data-value');
+      // Hide error message
+      reasonError.style.display = 'none';
+    });
+  });
+
+  // Validate form on submit
+  form.addEventListener('submit', function (e) {
+    if (!reasonInput.value) {
+      e.preventDefault();
+      reasonError.style.display = 'block';
+    }
+  });
+});
+</script>
+
+</div>
+  
+  <!-- Right Sidebar Column -->
+  <div class="advertisement-column">
+    <!-- User Profile -->
+    <div class="user-profile">
+   
+  <div class="profile-header">
+  <a href="{% url 'user_listings' ticket.user.id %}" class="text-decoration-none text-dark d-flex align-items-center">
+    <div class="profile-avatar me-2">
+      {% if ticket.user.image %}
+        <img src="{{ ticket.user.image.url }}" alt="{{ ticket.user.username }}" class="avatar-image">
+      {% else %}
+        <div class="default-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h4>{{ ticket.user.username|capfirst }}</h4>
+      
+    </div>
+  </a>
+</div>
+  
+  <hr>
+  
+   <div class="contact-actions">
+   {% if request.user.is_authenticated %}
+<button onclick="window.location.href='https://wa.me/{{ ticket.user.whatsapp }}'" class="btn-whatsapp">
+    <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+</button>
+{% else %}
+<button onclick="window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'" class="btn-whatsapp">
+    <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+</button>
+{% endif %}
+
+{% if request.user.is_authenticated %}
+<button onclick="event.stopPropagation(); showPhonePopup('{{ ticket.user.phone }}')" class="btn-call">
+    <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button>
+{% else %}
+<button onclick="event.stopPropagation(); window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'" class="btn-call">
+    <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button>
+{% endif %}   
+       <button 
+    class="btn-chat"
+    data-is-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
+    onclick="event.stopPropagation(); {% if request.user.is_authenticated %}openChatPopup(
+        '{{ ticket.user.id }}',
+        '{{ ticket.id }}',
+        'ticket',
+        '{{ ticket.title|escapejs }}',
+        '{{ ticket.user.username|escapejs }}',
+        '{% if ticket.images.first %}{{ ticket.images.first.image.url }}{% endif %}'
+    );{% else %}window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'{% endif %}">
+    <img src="{% static 'assets/images/chaticon.png' %}" 
+         alt="Chat"
+         style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+    Chat
+</button>
+    <!-- Contact Button -->
+{% if request.user.is_authenticated %}
+<button class="btn-save" onclick="showContactPopup('{{ ticket.id }}', '{{ ticket.user.id }}', '{{ ticket.user.whatsapp|default:"" }}', '{{ ticket.user.phone|default:"" }}', 'true')">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+{% else %}
+<button class="btn-save" onclick="window.location.href='{% url "login1" %}?next={{ request.get_full_path|urlencode }}'">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+{% endif %}
+<div id="contactPopup" class="contact-popup" style="display: none;">
+    <div class="contact-popup-inner">
+        <div class="contact-popup-header">
+            <h3 class="contact-popup-title">Contact Options</h3>
+            <button class="contact-popup-close" style="font-size: 28px;" onclick="hideContactPopup()">&times;</button>
+        </div>
+        <div id="contactOptions" class="contact-options" style="text-decoration: none;">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ensures no underlines appear */
+    .contact-option, 
+    .contact-option:hover, 
+    .contact-option:focus {
+        text-decoration: none !important;
+    }
+</style>
+
+
+  </div>
+
+
+    </div>
+    
+    <!-- Advertisement -->
+    <div class="vertical-ad">
+      <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement" class="ad-image">
+    </div>
+  </div>
+</div>
+<script>
+function showContactPopup(adId, userId, whatsapp, phone, isAuthenticated) {
+    const popup = document.getElementById('contactPopup');
+    const options = document.getElementById('contactOptions');
+    if (!popup || !options) return;
+
+    options.innerHTML = '';
+
+    if (phone) {
+        const smsMessage = `Hi, I'm interested in your listing (ID: ${adId})`;
+        options.innerHTML += `
+            <a href="sms:${phone}?body=${encodeURIComponent(smsMessage)}" class="contact-option sms-option">
+                <i class="fas fa-sms"></i> SMS
+            </a>`;
+    }
+
+    options.innerHTML += `
+        <a href="mailto:?subject=Regarding Listing ${encodeURIComponent(adId)}" class="contact-option email-option">
+            <i class="fas fa-envelope"></i> Email
+        </a>`;
+
+    popup.style.display = 'flex';
+}
+
+function hideContactPopup() {
+    document.getElementById('contactPopup').style.display = 'none';
+}
+
+// Close when clicking outside popup
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('contactPopup')) {
+        hideContactPopup();
+    }
+});
+</script>
+
+
+            <script>
+                const bannerSection = document.getElementById('banner-section');
+                const images = [
+                    "{% static 'assets/images/banner/1-01.png' %}",
+                    "{% static 'assets/images/banner/1-02.png' %}",
+                    "{% static 'assets/images/banner/1-03.png' %}",
+                    "{% static 'assets/images/banner/1-04.png' %}",
+                ];
+                let currentIndex = 0;
+            
+                function changeBackground() {
+                    bannerSection.style.backgroundImage = `url(${images[currentIndex]})`; // Corrected line
+                    currentIndex = (currentIndex + 1) % images.length; // Loop through the images
+                }
+            
+                // Change background every 4 seconds
+                setInterval(changeBackground, 4000);
+            
+                // Initialize with the first image
+                changeBackground();
+            </script>
+
+
+        
+            <!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+<!-- Update your chat popup HTML structure -->
+<div id="chatPopup" class="chat-popup-container" style="display: none;">
+    <div class="chat-popup-header">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+            <!-- User avatar -->
+            <div class="chat-popup-avatar" id="chatPopupAvatar"></div>
+            
+            <!-- User and product info -->
+            <div style="flex: 1; min-width: 0;">
+                <div class="chat-popup-username" id="chatPopupUsername"></div>
+                <!-- Product info will be inserted here -->
+                <div id="chatPopupProductInfo" style="display: flex; align-items: center; gap: 6px; margin-top: 2px;"></div>
+            </div>
+        </div>
+        <button onclick="closeChatPopup()" class="chat-popup-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- General Tips -->
+    <div class="chat-popup-tips">
+        <strong>General Tips</strong>
+        <ul>
+            <li>Only meet in public places</li>
+            <li>Never pay or transfer money in advance</li>
+            <li>Inspect the product before you buy it</li>
+        </ul>
+    </div>
+    
+    <div class="chat-popup-messages" id="chatPopupMessages">
+        <!-- Messages will be loaded here -->
+    </div>
+    
+    <div class="chat-popup-input">
+        <textarea id="chatPopupInput" placeholder="Type your message..."></textarea>
+        <button onclick="sendPopupMessage()" id="chatPopupSendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+
+<script>
+// Store current chat data
+let currentChatData = null;
+let chatPollingInterval = null;
+
+// Function to open chat popup
+function openChatPopup(userId, productId, productType, productTitle, username, productImage) {
+    console.log('Opening chat popup with data:', {
+        userId, productId, productType, productTitle, username, productImage
+    });
+    
+    // Store chat data
+    currentChatData = {
+        userId: userId,
+        productId: productId,
+        productType: productType,
+        productTitle: productTitle,
+        username: username,
+        productImage: productImage
+    };
+    
+    // Update popup header - User info
+    const avatarElement = document.getElementById('chatPopupAvatar');
+    const usernameElement = document.getElementById('chatPopupUsername');
+    const productInfoElement = document.getElementById('chatPopupProductInfo');
+    
+    if (avatarElement) {
+        avatarElement.textContent = username ? username.charAt(0).toUpperCase() : 'U';
+    }
+    
+    if (usernameElement) {
+        usernameElement.textContent = username || 'Seller';
+    }
+    
+    // Update popup header - Product info
+    if (productInfoElement) {
+        let productImageHtml = '';
+        if (productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined') {
+            productImageHtml = `
+                <img src="${productImage}" 
+                     alt="${productTitle}" 
+                     style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            `;
+        }
+        
+        productInfoElement.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                    ${productImageHtml}
+                    <div style="display: ${productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined' ? 'none' : 'flex'}; 
+                         align-items: center; justify-content: center; width: 24px; height: 18px; 
+                         background: rgba(255,255,255,0.1); border-radius: 3px;">
+                        <i class="fas fa-${getProductIcon(productType)}" style="font-size: 10px;"></i>
+                    </div>
+                    <span style="font-size: 12px; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
+                          title="${productTitle}">
+                        ${productTitle.length > 20 ? productTitle.substring(0, 20) + '...' : productTitle}
+                    </span>
+                </div>
+                <span style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 3px;">
+                    ${productType.toUpperCase()}
+                </span>
+            </div>
+        `;
+    }
+    
+    // Show popup
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'flex';
+    }
+    
+    // Load existing messages
+    loadChatMessages();
+    
+    // Start polling for new messages
+    startChatPolling();
+    
+    // Focus on input
+    setTimeout(() => {
+        const inputElement = document.getElementById('chatPopupInput');
+        if (inputElement) {
+            inputElement.focus();
+        }
+    }, 100);
+}
+
+// Helper function to get product icon
+function getProductIcon(productType) {
+    const iconMap = {
+        'car': 'car',
+        'land': 'map-marker-alt',
+        'apartment': 'building',
+        'electronics': 'mobile-alt',
+        'furniture': 'couch',
+        'motorcycle': 'motorcycle',
+        'scooter': 'motorcycle',
+        'boat': 'ship',
+        'computer': 'laptop',
+        'camera': 'camera',
+        'jewelry': 'gem',
+        'clothing': 'tshirt',
+        'pet': 'paw',
+        'business': 'briefcase',
+        'service': 'concierge-bell'
+    };
+    return iconMap[productType] || 'tag';
+}
+
+// Function to close chat popup
+function closeChatPopup() {
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'none';
+    }
+    
+    // Stop polling
+    stopChatPolling();
+    
+    // Clear current chat data
+    currentChatData = null;
+    
+    // Clear messages
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+    }
+    
+    // Clear input
+    const inputElement = document.getElementById('chatPopupInput');
+    if (inputElement) {
+        inputElement.value = '';
+        inputElement.style.height = 'auto';
+    }
+}
+
+// Function to load chat messages
+function loadChatMessages() {
+    if (!currentChatData) {
+        console.error('No current chat data');
+        return;
+    }
+    
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) {
+        console.error('Messages container not found');
+        return;
+    }
+    
+    messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Loading messages...</div>';
+    
+    // First check if chat exists
+    fetch(`/chat/${currentChatData.userId}/check-chat-exists/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.exists) {
+                // Load existing messages
+                return fetch(`/chat/${currentChatData.userId}/get-messages/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`);
+            } else {
+                // Show initial message for new chat
+                showInitialMessage();
+                // Automatically create the first message
+                createInitialChat();
+                throw new Error('new_chat');
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayMessages(data.messages);
+        })
+        .catch(error => {
+            if (error.message === 'new_chat') {
+                // This is expected for new chats
+                return;
+            }
+            console.error('Error loading messages:', error);
+            messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Error loading messages</div>';
+        });
+}
+
+// Function to create initial chat message
+function createInitialChat() {
+    if (!currentChatData) return;
+    
+    // Send initial interest message
+    const initialMessage = `I'm interested in your Product`;
+    
+    const formData = new FormData();
+    formData.append('message', initialMessage);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    }
+    
+    // Send initial message silently
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Initial message sent:', data);
+    })
+    .catch(error => {
+        console.error('Error sending initial message:', error);
+    });
+}
+
+// Function to show initial message
+function showInitialMessage() {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    // Show initial message
+    const initialMessage = document.createElement('div');
+    initialMessage.className = 'chat-popup-message received';
+    initialMessage.innerHTML = `
+        <div>Hello! Thanks for your interest in my product.</div>
+        <div class="message-time">Now</div>
+    `;
+    messagesContainer.appendChild(initialMessage);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to display messages
+function displayMessages(messages) {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    if (messages && messages.length > 0) {
+        // Sort messages by timestamp (oldest first)
+        messages.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+        
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-popup-message ${message.is_sent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div>${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+        });
+    } else {
+        // If no messages, show initial message
+        showInitialMessage();
+    }
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to send message
+function sendPopupMessage() {
+    if (!currentChatData) {
+        console.log('No active chat');
+        return;
+    }
+    
+    const inputElement = document.getElementById('chatPopupInput');
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    
+    if (!inputElement || !sendBtn) return;
+    
+    const message = inputElement.value.trim();
+    if (!message) {
+        // Just return without alert
+        return;
+    }
+    
+    // Disable send button
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    // Create message element immediately for better UX
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-popup-message sent';
+        messageDiv.innerHTML = `
+            <div>${message}</div>
+            <div class="message-time">Sending...</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Clear input
+    inputElement.value = '';
+    inputElement.style.height = 'auto';
+    
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    } else {
+        console.error('CSRF token not found');
+        // Show error in message instead of alert
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Security error. Please refresh the page.</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        return;
+    }
+    
+    // Send message to server
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update message with success timestamp
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0');
+        
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div>${data.message || message}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+        }
+        
+        // Scroll to show new message
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        
+        // Update message to show error
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Failed to send: ${message}</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+    })
+    .finally(() => {
+        // Re-enable send button
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+    });
+}
+
+// Function to start polling for new messages
+function startChatPolling() {
+    // Clear any existing interval
+    stopChatPolling();
+    
+    if (!currentChatData) return;
+    
+    // Poll every 3 seconds for new messages
+    chatPollingInterval = setInterval(() => {
+        if (!currentChatData) {
+            stopChatPolling();
+            return;
+        }
+        
+        fetch(`/chat/${currentChatData.userId}/check-new/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.has_new && data.count > 0) {
+                    // Reload messages if new ones arrived
+                    loadChatMessages();
+                }
+            })
+            .catch(error => {
+                console.error('Polling error:', error);
+            });
+    }, 3000);
+}
+
+// Function to stop polling
+function stopChatPolling() {
+    if (chatPollingInterval) {
+        clearInterval(chatPollingInterval);
+        chatPollingInterval = null;
+    }
+}
+
+// Function to handle Enter key in textarea
+function handleChatInputKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        
+        const inputElement = event.target;
+        const message = inputElement.value.trim();
+        
+        if (message) {
+            sendPopupMessage();
+        } else {
+            // Just clear the input on Enter
+            inputElement.value = '';
+            inputElement.style.height = 'auto';
+        }
+    }
+}
+
+// Function to auto-resize textarea
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+}
+
+// Initialize chat popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up textarea event listeners
+    const textarea = document.getElementById('chatPopupInput');
+    if (textarea) {
+        textarea.addEventListener('keydown', handleChatInputKeydown);
+        textarea.addEventListener('input', function() {
+            autoResizeTextarea(this);
+        });
+    }
+    
+    // Set up send button - FIXED VERSION
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    if (sendBtn) {
+        // Remove any existing onclick handlers
+        sendBtn.onclick = null;
+        
+        // Add new event listener
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const inputElement = document.getElementById('chatPopupInput');
+            if (!inputElement) return;
+            
+            const message = inputElement.value.trim();
+            if (!message) {
+                // Clear input and return without alert
+                inputElement.value = '';
+                inputElement.style.height = 'auto';
+                return;
+            }
+            
+            // Call sendPopupMessage function
+            sendPopupMessage();
+        });
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+        const popup = document.getElementById('chatPopup');
+        if (popup && popup.style.display === 'flex') {
+            const isClickInsidePopup = popup.contains(e.target);
+            const isChatButton = e.target.closest('[onclick*="openChatPopup"]') || 
+                                 e.target.closest('.chat-button') ||
+                                 e.target.closest('a[href*="chat"]');
+            
+            if (!isClickInsidePopup && !isChatButton) {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('chatPopup');
+            if (popup && popup.style.display === 'flex') {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Debug: Log all chat buttons for testing
+    const chatButtons = document.querySelectorAll('[onclick*="openChatPopup"]');
+    console.log(`Found ${chatButtons.length} chat buttons on page`);
+    
+    // Add click handler to all chat buttons (backup)
+    chatButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Prevent default if it's an anchor tag
+            if (this.tagName === 'A' && this.getAttribute('href') === 'javascript:void(0);') {
+                e.preventDefault();
+            }
+        });
+    });
+});
+
+// Global function to be called from onclick attribute
+window.openChatPopup = openChatPopup;
+window.closeChatPopup = closeChatPopup;
+window.sendPopupMessage = sendPopupMessage;
+</script>      
+        
+            {% include 'footer.html' %}
+
+
+
+
+
+
+

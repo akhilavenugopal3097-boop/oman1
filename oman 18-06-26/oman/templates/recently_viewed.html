@@ -1,0 +1,4572 @@
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+
+
+{% load automobile_filters %}
+
+
+
+           
+            {% include 'header2.html' %}
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+        
+/* Number Plate 3D Box */
+.numberplate-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    margin-left: -180px;
+    margin-top: 60px;
+}
+
+/* ============================= */
+/* CAR PLATE DESIGN */
+/* ============================= */
+.plate {
+    display: flex;
+    align-items: center;
+    background: #FFD700;
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+    height: 60px;
+    border: 3px solid black;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Vertical Separator Lines */
+.plate::before,
+.plate::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 80%;
+    background: black;
+    top: 10%;
+}
+
+.plate::before {
+    left: 36.33%;
+}
+
+.plate::after {
+    right: 33.33%;
+}
+
+/* Plate Sections */
+.plate .section {
+    width: 31.33%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Car plate number */
+.plate .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    margin-right: 15px;
+}
+
+/* Auto size for longer numbers */
+.plate .number[data-length="5"] {
+    font-size: 30px;
+    letter-spacing: 0.5px;
+}
+
+/* Letters container */
+.letters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Arabic letters */
+.letters .arabic {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    direction: rtl;
+    letter-spacing: 16px;
+    line-height: 1;
+}
+
+/* English letters */
+.letters .english {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    letter-spacing: 8px;
+    line-height: 1;
+    margin-left: 8px;
+}
+
+/* Country text */
+.plate .country {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* 3D Base Effect */
+.base {
+    width: 100px;
+    height: 10px;
+    background: #ddd;
+    border-radius: 50%;
+    margin-top: 5px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Commercial Car Plate (Red) */
+.plate.commercial {
+    background: #DC3545;
+    color: white;
+}
+
+.plate.commercial::before,
+.plate.commercial::after {
+    background: white;
+}
+
+.plate.commercial .section {
+    color: white;
+}
+
+/* Hover effect */
+.plate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================= */
+/* MOTORCYCLE PLATE DESIGN */
+/* ============================= */
+.motorcycle-plate {
+    display: flex;
+    width: 200px;   /* half of car plate width */
+    height: 60px;   /* same height as car plate */
+    border: 3px solid #000;
+    border-radius: 4px;
+    overflow: hidden;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Private Motorcycle Plate (Yellow) */
+.motorcycle-plate.private {
+    background-color: #FFD700;
+}
+
+/* Commercial Motorcycle Plate (Red) */
+.motorcycle-plate.commercial {
+    background-color: #DC3545;
+    color: white;
+}
+
+.motorcycle-plate.commercial .arabic-letters,
+.motorcycle-plate.commercial .english-letters,
+.motorcycle-plate.commercial .region,
+.motorcycle-plate.commercial .number {
+    color: white;
+}
+
+.motorcycle-plate.commercial .motorcycle-section {
+    border-left: 1px solid white;
+}
+
+.motorcycle-plate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.motorcycle-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #000;
+    padding: 6px;
+}
+
+.motorcycle-section:first-child {
+    border-left: none;
+}
+
+/* Motorcycle Arabic letters */
+.arabic-section .arabic-letters {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    direction: rtl;
+    line-height: 1;
+    letter-spacing: 16px;
+ 
+}
+
+/* Motorcycle English letters */
+.arabic-section .english-letters {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-top: 3px;
+    letter-spacing: 8px;
+    margin-left: 8px;
+}
+
+/* Motorcycle region text */
+.number-section .region {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Motorcycle numbers */
+.number-section .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Auto size for 5-digit motorcycle numbers */
+.number-section .number[data-length="5"] {
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* ============================= */
+/* GRID + BADGES */
+/* ============================= */
+.product-image-container.listing-image-container {
+    background-color: #f8f9fa;
+    overflow: hidden;
+}
+ .simcard-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        
+     
+        border-radius: 12px;
+    }
+
+    /* SIM Plate Style */
+    .sim-plate {
+        display: flex;
+        /* align-items: center; */
+        margin-left: -210px;
+        justify-content: center;
+        background: linear-gradient(135deg, #15818E 0%, #0E5C66 100%);
+        border: 3px solid #22221f;
+        border-radius: 8px;
+        padding: 0 20px;
+        width: 220px;
+        height: 70px;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        animation: floating 2s infinite alternate ease-in-out;
+    }
+
+    .sim-plate .sim-number {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        letter-spacing: 3px;
+        font-family: monospace;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .sim-base {
+        width: 100px;
+        height: 8px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 50%;
+        margin-top: 8px;
+        margin-left: -210px;
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    @keyframes floating {
+        from { transform: translateY(0); }
+        to { transform: translateY(8px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sim-plate {
+            width: 180px;
+            height: 60px;
+            padding: 0 15px;
+        }
+        
+        .sim-plate .sim-number {
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        
+        .sim-base {
+            width: 80px;
+            height: 6px;
+        }
+    }
+.plate-wrapper {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Usage type badges */
+.icon-item .badge {
+    font-size: 0.7em;
+    padding: 2px 6px;
+    margin-left: 5px;
+}
+
+.icon-item .badge.bg-danger {
+    background-color: #DC3545 !important;
+}
+
+.icon-item .badge.bg-warning {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+}
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            <!-- banner-section -->
+            <section id="banner-section" class="banner-section centred">
+                <div class="auto-container">
+                    <div class="content-column">
+                        <div class="content-box">
+                            <div class="custom-form">
+                                <form action="{% url 'search_results' %}" method="get" autocomplete="off">
+                                    {% csrf_token %}
+                                    <div class="form-group-row">
+                                        <!-- Search Input -->
+                                         <div class="form-group oval-container">
+    <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon3">
+    <div class="search-autocomplete">
+        <input class="input" type="search"
+               name="keyword"
+               placeholder="Search for Everything"
+               value="{{ request.GET.keyword }}">
+        <button type="button" id="clear-search" aria-label="Clear search">×</button>
+        <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
+    </div>
+</div>
+
+<style>
+.search-autocomplete {
+    position: relative;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-autocomplete input {
+    width: 100%;
+    
+}
+
+#clear-search {
+    position: absolute;
+    top: 70%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    display: none; /* hidden initially */
+    padding: 0;
+    line-height: 1;
+}
+
+#clear-search:hover {
+    color: #555;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 640px; /* Increased width */
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    display: none;
+    max-height: 400px; /* Increased height */
+    overflow-y: hidden;
+    padding: 6px 0;
+    transition: all 0.2s ease-in-out;
+    margin-top: 20px;
+  
+}
+
+.autocomplete-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #2d3748;
+    transition: background 0.2s ease, color 0.2s ease;
+    border-radius: 6px;
+    margin: 2px 8px;
+    text-align: left;       /* <-- Force text alignment to the left */
+    display: block;         /* <-- Ensure full width alignment */
+    width: calc(100% - 16px); /* Align with margin, keeping item full width */
+}
+
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #f0f4f8;
+    color: #1a202c;
+}
+
+.suggestion-text strong {
+    font-weight: 600;
+    color: #1a73e8;
+}
+</style>
+
+
+<script>
+    window.addEventListener('pageshow', function(event) {
+        // Reload if page is restored from cache (back/forward navigation)
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+    </script>
+
+
+
+
+
+
+                                        <style>
+                                            /* Remove default clear (×) button in search inputs */
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+input[type="search"]::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+                                        </style>
+                                
+                                      
+                                
+                                        <!-- Submit Button -->
+                                        <div class="btn-box oval-container">
+                                            <button type="submit" class="theme-btn-one">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                               <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                        const dropdownLists = document.querySelectorAll('.value-list');
+                                    
+                                        dropdownInputs.forEach(input => {
+                                            const dropdownId = input.getAttribute('data-dropdown');
+                                            const dropdown = document.getElementById(dropdownId);
+                                    
+                                            // Toggle dropdown visibility on click
+                                            input.addEventListener('click', (event) => {
+                                                event.stopPropagation(); // Prevent the click from propagating to the document
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open')); // Close other dropdowns
+                                                dropdown.classList.toggle('open');
+                                            });
+                                     // Handle clicks on category items
+                                     dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                                            // Prevent dropdown from closing when clicking inside
+                                            dropdown.addEventListener('mousedown', (event) => {
+                                                event.stopPropagation();
+                                            });
+                       // Handle clicks on region items
+dropdown.querySelectorAll('.main-menu1[data-region]').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document
+        const region = item.getAttribute('data-region');
+        selectRegion(region); // Call the selectRegion function
+
+        // Update the input field with the selected region only
+        input.value = regionName; // Update the input with the selected region
+
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('region', region); // Set the region parameter
+        
+        // Clear the city parameter if it exists
+        url.searchParams.delete('city'); // Remove the city parameter if it exists
+        
+        window.location.href = url; // Redirect to the updated URL
+
+        // Close the dropdown after selection
+        dropdown.classList.remove('open');
+    });
+
+    // Handle clicks on submenu items (cities)
+    item.querySelectorAll('ul li').forEach(subItem => {
+        subItem.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click from propagating to the document
+            const city = subItem.textContent; // Get the city name from the text content
+            const region = item.getAttribute('data-region'); // Get the region from the parent item
+
+            selectCity(city); // Call the selectCity function
+
+            // Update the input field with the selected city and region
+            input.value = city; // Update the input with city and region
+
+            // Create a new URL object based on the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('region', region); // Set the region parameter
+            url.searchParams.set('city', city); // Set the city parameter
+            window.location.href = url; // Redirect to the updated URL
+
+            // Close the dropdown after selection
+            dropdown.classList.remove('open');
+        });
+    });
+});                 
+                                           // Filter dropdown items based on input
+// Filter dropdown items based on input
+input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    const items = dropdown.querySelectorAll('li');
+
+    items.forEach(item => {
+        const text = item.firstChild.textContent.toLowerCase();
+        let matchFound = text.includes(filter);
+
+        // Check submenu items if the main item doesn't match
+        if (!matchFound && item.querySelector('.submenus')) {
+            const subItems = item.querySelectorAll('.submenus ul li');
+            subItems.forEach(subItem => {
+                const subText = subItem.textContent.toLowerCase();
+                if (subText.includes(filter)) {
+                    matchFound = true;
+                }
+            });
+        }
+
+        // Show the main menu item if it or any of its submenu items match
+        if (matchFound) {
+            item.style.display = 'block';
+            // Expand the main menu item if it has submenus
+            if (item.classList.contains('main-menu1') && item.querySelector('.submenus')) {
+                item.classList.add('open'); // Add a class to expand the main menu
+                item.querySelector('.submenus').style.display = 'block'; // Show submenus
+            }
+        } else {
+            item.style.display = 'none';
+            // Hide submenus if the main menu item is not matched
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none';
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        }
+    });
+
+    // If the input is empty, show all main menu items and hide all submenus
+    if (filter === '') {
+        items.forEach(item => {
+            item.style.display = 'block'; // Show all main menu items
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none'; // Hide all submenus
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        });
+    }
+});                       
+                                            // Show submenus on hover
+                                            dropdown.querySelectorAll('.main-menu1').forEach(item => {
+                                                item.addEventListener('mouseenter', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'block';
+                                                    }
+                                                });
+                                
+                                                item.addEventListener('mouseleave', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'none';
+                                                    }
+                                                });
+                                            });
+                                            // Close dropdown when mouse leaves the dropdown container
+                                            dropdown.addEventListener('mouseout', (event) => {
+                                                // Check if the mouse is leaving the dropdown container
+                                                if (!dropdown.contains(event.relatedTarget)) {
+                                                    dropdown.classList.remove('open');
+                                                }
+                                            });
+                                        });
+                                    
+                                        // Close dropdown if clicking outside
+                                        document.addEventListener('click', (event) => {
+                                            if (!event.target.matches('.chosen-value')) {
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            }
+                                        });
+                                    });
+                                    // Handle clicks on category items
+                                    dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                            
+                                   
+                          
+                                </script>
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 38%;
+        margin-top: -75px;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon3{
+        position: absolute;
+        left: 36px;
+        height: 15px;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+     
+    
+  <style>
+                                    .breadcrumb {
+                            list-style: none;
+                            padding: 10px;
+                            background-color: #ffffff;
+                            border-radius: 5px;
+                            }
+                            
+                            .breadcrumb li {
+                            display: inline;
+                            font-size: 16px;
+                            }
+                            
+                            .breadcrumb li + li:before {
+                            content: ">";
+                            padding: 0 8px;
+                            color: #999;
+                            }
+                            
+                            .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+                            
+                            .breadcrumb li a:hover {
+                            text-decoration: underline;
+                            }
+                            
+                            .breadcrumb li[aria-current="page"] {
+                            color: #666;
+                            }
+                                  </style>
+
+                         <!-- Content Section -->
+                         <div class="col-lg-16 col-md-12 col-sm-12 content-side" style="margin-top: 10px;">
+                             <div class="category-details-content">
+                                
+                                  
+             
+                                 <!-- Sorting and View Options -->
+                                 <!-- Sorting and View Options -->
+<div class="item-shorting clearfix">
+    <div class="right-column pull-right clearfix">
+        <div class="select-box">
+            <!-- You can add a select dropdown here if needed -->
+        </div>
+        
+        
+    </div>
+</div>
+
+             
+                              
+             
+                                <!-- Replace your existing list view section with this: -->
+<div class="category-block wrapper list-view-active" id="list-view">
+    
+    <div class="list-item feature-style2-three pd-0" id="item-list-container" style="margin-top: -40px;">
+
+<style>
+    .filter-container{
+        border: 1px solid black;
+    }
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #333;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background-color: #f0f0f0;
+    border-radius: 50rem; /* pill-shaped */
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+}
+
+.filter-badge:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-badge .remove-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.filter-badge .remove-filter:hover {
+    color: #fff;
+   
+}
+
+/* For the active/highlighted state */
+.filter-badge.active {
+    background-color: #e0f7fa;
+    border-color: #b2ebf2;
+    color: #006064;
+}
+
+/* Clear filters link style */
+.clear-filters-link {
+    color: #d32f2f;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    transition: color 0.2s;
+}
+
+.clear-filters-link:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.property-count {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+.clear-filters-link {
+    color: #e01919;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    margin-right: 20px;
+}
+
+.clear-filters-link:hover {
+    color: #c01010;
+    text-decoration: none;
+}
+/* Sorting Dropdown Styles */
+.sort-dropdown {
+    min-width: 180px;
+}
+
+.sort-dropdown select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-dropdown select:hover {
+    border-color: #aaa;
+}
+
+.sort-dropdown select:focus {
+    outline: none;
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+</style>
+
+<nav aria-label="Breadcrumb" style="margin-left: -50px;margin-bottom: 30px;">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <!-- Breadcrumb Trail -->
+        <ol class="breadcrumb mb-0">
+            <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+           
+                <li>Recently Viewed</li>
+                
+        </ol>
+        
+        <style>
+            .breadcrumb {
+                list-style: none;
+                padding: 10px;
+                background-color: #ffffff;
+                border-radius: 5px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+            }
+            
+            .breadcrumb li {
+                display: inline;
+                font-size: 16px;
+                color: #15818E;
+            }
+            
+            .breadcrumb li + li:before {
+                content: ">";
+                padding: 0 8px;
+                color: #999;
+            }
+            
+            .breadcrumb li a {
+                color: #15818E;
+                text-decoration: none;
+            }
+            
+            .breadcrumb li a:hover {
+                text-decoration: none;
+            }
+            
+            .breadcrumb li[aria-current="page"] {
+                color: #15818E;
+            }
+        </style>
+        
+        <!-- Section Heading -->
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <h5 class="mb-0">
+                    Recently Viewed Items
+                </h5>
+                <span class="property-count">{{ total_results }} Ads</span>
+            </div>
+            
+        </div>
+        
+        <style>
+            h5 {
+                font-size: 1.25rem;
+                margin: 0.5rem 0;
+                color: #333;
+                font-weight: 600;
+                margin-left: 13px;
+            }
+        </style>
+    </div>
+</nav>
+
+<style>
+    .feature-block-one {
+        margin-bottom: 25px;
+    }
+    .lower-content {
+        padding: 15px;
+        font-size: 16px;
+        margin-left: 120px;
+    }
+    
+    .lower-content h4 {
+        font-size: 16px;
+        color: #1976d2;
+    }
+    
+    .lower-content p,
+    .lower-content h6,
+    .lower-content .details-icons span {
+        font-size: 16px;
+    }
+    
+    /* Add these styles to your existing CSS */
+    .image-box {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .image-box:hover .btn {
+        opacity: 1;
+    }
+    
+    .btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(16, 15, 15, 0.8);
+        border: none;
+        border-radius: 30%;
+        padding: 2px 8px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .btn.backward {
+        left: 10px;
+    }
+    
+    .btn.forward {
+        right: 230px;
+    }
+    
+    .btn span {
+        font-size: 18px;
+        color: white;
+    }
+    
+    /* Ensure the slider container is positioned relative */
+    .slider {
+        position: relative;
+    }
+</style>
+
+<style>
+    .image-box {
+        position: relative;
+    }
+    
+    .dots-container {
+        display: flex !important;
+        justify-content: center;
+        position: absolute;
+        bottom: 10px;
+        margin-left: 170px;
+        transform: translateX(-50%);
+        z-index: 10;
+        gap: 5px;
+    }
+    
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .dot.active {
+        background-color: white;
+    }
+    
+    .image-counter {
+        position: absolute;
+        bottom: 10px;
+        font-family: 'FontStyle1', Arial, sans-serif;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        z-index: 1;
+    }
+    
+    .listings-container {
+        width: 1125px;
+        margin-left: -58px;
+    }
+    
+    .location-icons {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .favorite-btn:hover {
+        background: #e0e0e0;
+        border-radius: 6px;
+    }
+    
+    .favorite-btn i {
+        font-size: 18px;
+        color: #d32f2f;
+        transition: all 0.3s ease;
+    }
+    
+    .favorite-btn i.filled {
+        color: #d32f2f;
+    }
+    
+    .badge-style {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 16px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    
+    .badge-style:hover {
+        background-color: #e0e0e0;
+        color: #E35D20;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 60px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        width: 799px;
+    }
+    
+    .no-results i {
+        color: #ccc;
+        font-size: 3em;
+        margin-bottom: 20px;
+    }
+    
+    .no-results h4 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .no-results p {
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    .btn-clear-filters {
+        background-color: #E35D20;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s;
+    }
+    
+    .btn-clear-filters:hover {
+        background-color: #c04e1a;
+        color: white;
+    }
+    
+    .custom-sort-dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 1;
+        margin-right: -40px;
+    }
+    
+    .sort-trigger {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-trigger:hover {
+        border-color: #E35D20;
+    }
+    
+    .sort-text {
+        margin-right: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .sort-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .sort-dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 180px;
+        margin-top: 5px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 100;
+    }
+    
+    .custom-sort-dropdown:hover .sort-icon {
+        transform: rotate(180deg);
+    }
+    
+    .sort-option {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .sort-option:hover {
+        background-color: #f8f8f8;
+        color: #E35D20;
+    }
+    
+    .sort-option.active {
+        color: #E35D20;
+        background-color: #f8f8f8;
+        font-weight: 500;
+    }
+    
+    .vertical-divider {
+        display: inline-block;
+        height: 20px;
+        width: 1px;
+        background-color: #ddd;
+        margin: 0 10px;
+    }
+</style>
+
+<!-- Listings Section -->
+<div class="listings-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column - Products (9 columns on large screens) -->
+            <div class="col-lg-9 col-md-12">
+                                            {% if recently_viewed_items %}
+                                
+                                    {% for item in recently_viewed_items %}
+
+                    <div class="feature-block-one" style="cursor: pointer; width: 799px;" onclick="window.open('{{ item.url }}', '_blank')">
+                       
+                           
+                            <div class="inner-box">
+   <div class="image-box">
+    <figure class="image">
+        {% if item.model_name == 'NumberPlate' %}
+            <!-- Show Number Plate Design -->
+            <div class="numberplate-preview">
+                {% if item.data.plate_type == 'motorcycle' %}
+                    <!-- Motorcycle Plate -->
+                    <div class="numberplate-box" style="transform: scale(0.7);">
+                        <div class="motorcycle-plate {% if item.data.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                            <div class="motorcycle-section arabic-section">
+                                <div class="arabic-letters">{{ item.data.letter_arabic }}</div>
+                                <div class="english-letters">{{ item.data.letter_english }}</div>
+                            </div>
+                            <div class="motorcycle-section number-section">
+                                <div class="region">عُمان</div>
+                                <div class="number">{{ item.data.number }}</div>
+                            </div>
+                        </div>
+                        <div class="base"></div>
+                    </div>
+                {% else %}
+                    <!-- Car Plate -->
+                    <div class="numberplate-box" style="transform: scale(0.7);">
+                        <div class="plate {% if item.data.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                            <div class="section number">{{ item.data.number }}</div>
+                            <div class="section letters">
+                                <span class="arabic">{{ item.data.letter_arabic }}</span>
+                                <span class="english">{{ item.data.letter_english }}</span>
+                            </div>
+                            <div class="section country">عُمان</div>
+                        </div>
+                        <div class="base"></div>
+                    </div>
+                {% endif %}
+                {% if item.is_boosted %}
+                <div class="boost-icon" title="Boosted listing" style="position:absolute;top:10px;right:10px;">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                {% endif %}
+            </div>
+
+        {% elif item.model_name == 'MobileSIM' %}
+            <!-- Show Mobile SIM Design -->
+            <div class="simcard-wrapper">
+                <div class="sim-plate">
+                    <div class="sim-number">{{ item.data.oman_number|default:'XXXXXXXX' }}</div>
+                    {% if item.data.provider %}
+                    <div class="sim-provider">{{ item.data.provider }}</div>
+                    {% endif %}
+                    {% if item.data.network_type %}
+                    <div class="sim-network">{{ item.data.network_type }}</div>
+                    {% endif %}
+                </div>
+                <div class="sim-base"></div>
+            </div>
+            {% if item.is_boosted %}
+            <div class="boost-icon" title="Boosted listing" style="position:absolute;top:10px;right:10px;">
+                <i class="fas fa-rocket"></i>
+            </div>
+            {% endif %}
+
+        {% else %}
+            <!-- Regular Image Slider for all other categories -->
+            <div class="slider" data-current-index="0">
+                <a href="#" target="_new">
+                    <img
+                        class="slide-image"
+                        src="{% if item.images.0 %}{{ item.images.0.image.url }}{% else %}{% static 'assets/images/no-image.jpg' %}{% endif %}"
+                        alt="{{ item.title }}"
+                        data-images='{{ item.images_json|safe }}'
+                    />
+                </a>
+                {% if item.data.videos.all %}
+                <div class="video-icon" style="position: absolute; top: 215px; left:60px; background: rgba(0,0,0,0.6); border-radius: 40%; width: 30px; height: 25px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-video" style="color: white; font-size: 12px;"></i>
+                </div>
+                {% endif %}
+                <div class="dots-container"></div>
+                <div class="image-counter mx-2">
+                    <i class="fas fa-image"></i> 1 / {{ item.images|length|default:1 }}
+                </div>
+                <div class="btn backward" onclick="navigateSlide(this, -1)" style="display: none;">
+                    <span class="material-icons-outlined"><</span>
+                </div>
+                <div class="btn forward" onclick="navigateSlide(this, 1)">
+                    <span class="material-icons-outlined">></span>
+                </div>
+            </div>
+        {% endif %}
+    </figure>
+</div>
+
+                            <div class="lower-content" style="margin-top: -10px;">
+                                <h3 style="position: relative; margin: 0;">
+                                    <a href="#" style="text-decoration: none; white-space: nowrap;" target="_new">
+                                       <span style="color: #EB362D; font-size: 1em;">{{ item.price|floatformat:0|intcomma }}</span>
+                                        <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                                        {% if item.data.listing_type == "rent" and item.data.rental_period %}
+                                            <span style="color: #EB362D; font-size: 0.85em;"> - {{ item.data.rental_period|capfirst }}</span>
+                                        {% endif %}
+                                    </a>
+                                    <!-- Favorite button -->
+                                    <button class="favorite-btn" 
+                                            style="position: absolute; right: -325px; top: -5px;"
+                                            data-product-id="{{ item.data.id }}" 
+                                            data-product-type="{{ item.category }}" 
+                                            data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+                                            onclick="event.stopPropagation(); handleFavoriteClick(this);">
+                                        <i id="favorite-icon-{{ item.data.id }}" 
+                                           class="far fa-heart {% if item.data.id in user_favorites %}filled{% endif %}" 
+                                           data-favorite="{% if item.data.id in user_favorites %}true{% else %}false{% endif %}"
+                                           style="{% if item.data.id in user_favorites %}color: #d32f2f;{% endif %}"></i>
+                                    </button>
+                                </h3>
+                                <div class="cat" style="margin-top:2px;margin-right: -300px;">
+
+{% if item.model_name == 'Automobile' %}
+    {{ item.data.name|default:'' }}{% if item.data.kilometers %}, {{ item.data.kilometers|format_kilometers }}{% endif %}{% if item.data.condition %}, {{ item.data.condition|title }}{% endif %}{% if item.data.body_type %}, {{ item.data.body_type|format_body_type }}{% endif %}
+
+{% elif item.model_name == 'Motorcycle' %}
+    {{ item.data.model|title|default:'' }}{% if item.data.kilometers %}, {{ item.data.kilometers|format_kilometers }}{% endif %}{% if item.data.body_type %}, {{ item.data.body_type|format_body_type }}{% endif %}
+
+{% elif item.model_name == 'Scooter' %}
+    {{ item.data.model|title|default:'' }}{% if item.data.kilometers %}, {{ item.data.kilometers|format_kilometers }}{% endif %}{% if item.data.condition %}, {{ item.data.condition|title }}{% endif %}
+
+{% elif item.model_name == 'Quadbikes' %}
+    {% if item.data.types == 'quadbikes' %}Quad Bikes
+    {% elif item.data.types == 'buggies' %}Buggies
+    {% else %}ATV{% endif %}
+
+{% elif item.model_name == 'HeavyVehicle' %}
+    {{ item.data.main_type|title|default:'' }}
+
+{% elif item.model_name == 'HelmetClothes' %}
+    {% if item.data.helmetcloth_type == 'helmet' %}Helmet{% else %}Cloth{% endif %}
+
+{% elif item.model_name == 'Boat' %}
+    {{ item.data.boat_type|format_boat_type|title|default:'' }}
+
+{% elif item.model_name == 'NumberPlate' %}
+    {{ item.data.seller_name|title|default:'' }}
+
+{% elif item.model_name == 'JunkCar' %}
+    {{ item.data.name|capfirst|default:'' }}
+
+{% elif item.model_name == 'AutoAccessoryPart' %}
+    {{ item.data.get_main_category_display|title|default:'' }}
+
+{% elif item.model_name == 'TiresAndCaps' %}
+    {{ item.data.tire_type|title|default:'' }}
+
+<!-- ================= REAL ESTATE ================= -->
+
+{% elif item.model_name == 'Land' %}Land
+{% elif item.model_name == 'Villa' %}Villa
+{% elif item.model_name == 'Commercial' %}Commercial Villa
+{% elif item.model_name == 'Farm' %}Farm & Chalet
+{% elif item.model_name == 'Apartment' %}Apartment
+{% elif item.model_name == 'Factory' %}Factory
+{% elif item.model_name == 'Complex' %}Complex
+{% elif item.model_name == 'Clinic' %}Clinic
+{% elif item.model_name == 'Hostel' %}Hotel
+{% elif item.model_name == 'Office' %}Office
+{% elif item.model_name == 'Shop' %}Shop
+{% elif item.model_name == 'Cafe' %}Restaurant and Cafe
+{% elif item.model_name == 'Staff' %}Staff Housing
+{% elif item.model_name == 'Warehouse' %}Warehouse
+{% elif item.model_name == 'Townhouse' %}Town House
+{% elif item.model_name == 'Fullfloors' %}Full Floors
+{% elif item.model_name == 'Showrooms' %}Show Rooms
+{% elif item.model_name == 'Wholebuilding' %}Whole Building
+{% elif item.model_name == 'Supermarket' %}Supermarket
+{% elif item.model_name == 'Foreign' %}Foreign Real Estate
+{% elif item.model_name == 'Shared' %}Shared Rooms
+{% elif item.model_name == 'Suits' %}Hotel Apartment and Suite
+
+<!-- ================= MOBILE ================= -->
+
+{% elif item.model_name == 'Mobile' %}Mobiles
+{% elif item.model_name == 'Tablet' %}Tablets
+{% elif item.model_name == 'SmartWatch' %}Smart Watch
+{% elif item.model_name == 'Cover' %}Cover & Protectors
+{% elif item.model_name == 'Accessory' %}Accessories
+{% elif item.model_name == 'MobileSIM' %}VIP Mobile Numbers
+{% elif item.model_name == 'Headset' %}Headsets
+
+<!-- ================= GOODS ================= -->
+
+{% elif item.model_name == 'ComputerListing' %}Computers & Networking
+{% elif item.model_name == 'BusinessIndustrialListing' %}Business & Industrial
+{% elif item.model_name == 'PetListing' %}Pets
+{% elif item.model_name == 'SportsListing' %}Sports Equipment
+{% elif item.model_name == 'MusicalListing' %}Musical Instruments
+{% elif item.model_name == 'GamingListing' %}Gaming
+{% elif item.model_name == 'TicketVoucherListing' %}Ticket & Voucher
+{% elif item.model_name == 'CollectibleListing' %}Collectibles
+{% elif item.model_name == 'BooksListing' %}Books
+{% elif item.model_name == 'MusicListing' %}Music
+{% elif item.model_name == 'DVDsMoviesListing' %}DVDs & Movies
+{% elif item.model_name == 'FurnitureHomeGardenListing' %}Furniture, Home, Garden
+{% elif item.model_name == 'BabyItemsListing' %}Baby Items
+{% elif item.model_name == 'ToysListing' %}Toys
+{% elif item.model_name == 'LostFoundListing' %}Lost / Found
+{% elif item.model_name == 'CameraListing' %}Cameras & Imaging
+{% elif item.model_name == 'JewelryListing' %}Jewelry & Watches
+{% elif item.model_name == 'HomeApplianceListing' %}Home Appliance
+{% elif item.model_name == 'ClothingAccessoriesListing' %}Clothing & Accessories
+{% elif item.model_name == 'ElectronicsListing' %}Electronics
+
+<!-- ================= SERVICES ================= -->
+
+{% elif item.model_name == 'AutoServiceListing' %}
+    {{ item.data.service_type|format_service_type:'autoservice'|default:'' }}
+{% elif item.model_name == 'ConsultancyServiceListing' %}
+    {{ item.data.service_type|format_service_type:'consultancy'|default:'' }}
+{% elif item.model_name == 'DomesticServiceListing' %}
+    {{ item.data.service_type|format_service_type:'domestic'|default:'' }}
+{% elif item.model_name == 'EventEntertainmentServiceListing' %}
+    {{ item.data.service_type|format_service_type:'events'|default:'' }}
+{% elif item.model_name == 'FreelancersServiceListing' %}
+    {{ item.data.service_type|format_service_type:'freelancer'|default:'' }}
+{% elif item.model_name == 'HealthWellbeingServiceListing' %}
+    {{ item.data.service_type|format_service_type:'health'|default:'' }}
+{% elif item.model_name == 'HomeMaintenanceServiceListing' %}
+    {{ item.data.service_type|format_service_type:'homemaintenance'|default:'' }}
+{% elif item.model_name == 'MoversServiceListing' %}
+    {{ item.data.service_type|format_service_type:'movers'|default:'' }}
+{% elif item.model_name == 'RestorationServiceListing' %}
+    {{ item.data.service_type|format_service_type:'restoration'|default:'' }}
+{% elif item.model_name == 'TutorsServiceListing' %}
+    {{ item.data.service_type|format_service_type:'tutor'|default:'' }}
+{% elif item.model_name == 'WebComputerServiceListing' %}
+    {{ item.data.service_type|format_service_type:'webservice'|default:'' }}
+{% elif item.model_name == 'OtherServiceListing' %}
+    {{ item.data.service_type|format_service_type:'autoservice'|default:'' }}
+
+{% else %}
+    {{ item.title|default:'' }}
+{% endif %}
+
+</div>
+
+                                
+                                <div class="details-icons">
+                                     {% if item.model_name == 'Automobile' %}
+                                                    <span><img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Year"> {{ item.data.year }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/regional-specs.svg' %}" alt="Regional Specs"> {{ item.data.get_regional_spec_display }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/Fuel.svg' %}" alt="Fuel Type"> {{ item.data.get_fuel_type_display }}</span>
+                                                {% elif item.model_name == 'Motorcycle' %}
+                                                    <span><img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Year"> {{ item.data.year }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/motorcycle.svg' %}" alt="Body Type"> {{ item.data.body_type|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/car-engine.svg' %}" alt="Engine"> {{ item.data.engine_capacity }} cc</span>
+                                                {% elif item.model_name == 'Scooter' %}
+                                                    <span><img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Year"> {{ item.data.year }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/car-engine.svg' %}" alt="Engine"> {{ item.data.engine_capacity }} cc</span>
+                                                {% elif item.model_name == 'Quadbikes' %}
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                {% elif item.model_name == 'HeavyVehicle' %}
+                                                    <span><img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Year"> {{ item.data.year }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/subtype.svg' %}" alt="Subtype"> {{ item.data.sub_type|title }}</span>
+                                                {% elif item.model_name == 'HelmetClothes' %}
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Lister Type"> {{ item.data.lister_type|title }}</span>
+                                                {% elif item.model_name == 'JunkCar' %}
+                                                    <span><img src="{% static 'assets/images/icons/payment.svg' %}" alt="Payment"> {{ item.data.payment_method|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.get_condition_display|title|cut:"_" }}</span>
+                                                {% elif item.model_name == 'Boat' %}
+                                                    <span><img src="{% static 'assets/images/icons/lister.svg' %}" alt="Lister"> {{ item.data.lister_type|title }}</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                {% elif item.model_name == 'AutoAccessoryPart' %}
+                                                    <span><img src="{% static 'assets/images/icons/payment.svg' %}" alt="Payment"> {{ item.data.payment_method|title }}</span>
+                                                {% elif item.model_name == 'TiresAndCaps' %}
+                                                    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Size"> {{ item.data.size|title }} inches</span>
+                                                    <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|title }}</span>
+                                                {% elif item.model_name == 'NumberPlate' %}
+                                                    <span><img src="{% static 'assets/images/icons/user.svg' %}" style="margin-top:-3px;" alt="Seller"> {{ item.data.seller_name|title }}</span>
+                                                {% elif item.model_name == 'Land' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Bathrooms"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+    <span><img src="{% static 'assets/images/icons/house.svg' %}" alt="Area"> {{ item.data.get_zoned_for_display }}</span>
+
+{% elif item.model_name == 'Villa' %}
+    <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg' %}" alt="Bathrooms"> {{ item.data.bathrooms }}{% if item.data.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Commercial' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+{% elif item.model_name == 'Farm' %}
+     <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg' %}" alt="Bathrooms"> {{ item.data.bathrooms }}{% if item.data.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Apartment' %}
+    <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 %}{% if item.data.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg' %}" alt="Bathrooms"> {{ item.data.bathrooms }}{% if item.data.bathrooms|floatformat:0|add:0 %}{% if item.data.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Factory' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+{% elif item.model_name == 'Complex' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/floor.svg' %}" alt="Bathrooms"> {{ item.data.get_floors_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+{% elif item.model_name == 'Clinic' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/apartment.svg' %}" alt="Bathrooms"> {{ item.data.get_property_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+{% elif item.model_name == 'Hostel' %}
+    <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/floor.svg' %}" alt="Bathrooms"> {{ item.data.get_floors_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Office' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/floor.svg' %}" alt="Bathrooms"> {{ item.data.get_floors_display }}</span>
+
+{% elif item.model_name == 'Shop' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Cafe' %}
+  
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Staff' %}
+     <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/floor.svg' %}" alt="Bathrooms"> {{ item.data.get_floors_display }}</span>
+
+{% elif item.model_name == 'Warehouse' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Townhouse' %}
+     <span><img src="{% static 'assets/images/icons/bed_space.svg' %}" alt="Bedrooms"> {{ item.data.bedrooms }}{% if item.data.bedrooms|floatformat:0|add:0 %}{% if townhouse.bedrooms|floatformat:0|add:0 == 1 %} Bed{% else %} Beds{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/bath.svg' %}" alt="Bathrooms"> {{ item.data.bathrooms }}{% if item.data.bathrooms|floatformat:0|add:0 == 1 %} Bath{% else %} Baths{% endif %}{% endif %}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Fullfloors' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+{% elif item.model_name == 'Showrooms' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Wholebuilding' %}
+     <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+    <span><img src="{% static 'assets/images/icons/floor.svg' %}" alt="Bathrooms"> {{ item.data.get_floors_display }}</span>
+    <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Supermarket' %}
+     <span><img src="{% static 'assets/images/icons/size.svg' %}" alt="Area"> {{ item.data.plot_area|floatformat:0 }} Sqm</span>
+
+{% elif item.model_name == 'Foreign' %}
+    <span><img src="{% static 'assets/images/icons/earth.svg' %}" alt="Country"> {{ item.data.country|get_country_name|capfirst }}</span>
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+
+{% elif item.model_name == 'Shared' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+
+{% elif item.model_name == 'Suits' %}
+    <span><img src="{% static 'assets/images/icons/tags.svg' %}" alt="Bedrooms"> {{ item.data.get_listing_type_display }}</span>
+
+{% elif item.model_name == 'Mobile' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+
+    {% elif item.model_name == 'Cover' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+
+    {% elif item.model_name == 'Tablet' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+    {% elif item.model_name == 'Headset' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+
+    {% elif item.model_name == 'SmartWatch' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+
+    {% elif item.model_name == 'Accessory' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.condition|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+    {% elif item.model_name == 'MobileSIM' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition">
+        {{ item.data.operator|format_condition|title }}
+    </span>
+
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if item.data.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            Delivery Unavailable
+        {% endif %}
+    </span>
+    {% elif item.model_name == 'BabyItemsListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.get_usage_display|title }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'BooksListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;" alt="Usage"> {{ item.data.usage|title|format_usage }}
+        </span>
+    {% endif %}
+
+  {% elif item.model_name == 'BusinessIndustrialListing' %}
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|capfirst }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'business' }}
+        </span>
+    {% endif %}
+{% elif item.model_name == 'CameraListing' %}
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|capfirst }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'camera' }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'ClothingAccessoriesListing' %}
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|capfirst }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'clothing' }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'CollectibleListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.provide == "yes" %}
+        <span>
+            <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery"> Delivery Available
+        </span>
+    {% else %}
+        <span>
+            <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery"> Delivery Unavailable
+        </span>
+    {% endif %}
+
+   {% elif item.model_name == 'ComputerListing' %}
+    {% if item.data.brand %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Brand"> {{ item.data.brand|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.year %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Year"> {{ item.data.year|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.storage_capacity %}
+        <span>
+            <img src="{% static 'assets/images/icons/storage.svg' %}" alt="Storage"> {{ item.data.storage_capacity|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.operating_system %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Operating System"> {{ item.data.operating_system|format_operating_system }}
+        </span>
+    {% endif %}
+
+    {% if item.data.processor_brand and item.data.processor_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Processor"> {{ item.data.processor_brand }} {{ item.data.processor_type|title }}
+        </span>
+    {% elif item.data.processor_brand %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Processor"> {{ item.data.processor_brand|title }}
+        </span>
+    {% elif item.data.processor_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Processor"> {{ item.data.processor_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.component_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Component Type"> {{ item.data.get_component_type_display|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.accessory_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Accessory Type"> {{ item.data.get_accessory_type_display|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.peripheral_brand %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Peripheral Brand"> {{ item.data.peripheral_brand|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.screen_size %}
+        <span>
+            <img src="{% static 'assets/images/icons/size.svg' %}" alt="Screen Size"> {{ item.data.screen_size|title }} inches
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'DVDsMoviesListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;" alt="Usage"> {{ item.data.usage|title|format_usage }}
+        </span>
+    {% endif %}
+
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;" alt="Condition"> {{ item.data.condition|title|format_condition }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'ElectronicsListing' %}
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Warranty">
+        {% if item.data.warranty|lower == 'yes' %}
+            Warranty Available
+        {% else %}
+            No Warranty
+        {% endif %}
+    </span>
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'electronics' }}
+        </span>
+    {% endif %}
+
+{% elif item.model_name == 'FurnitureHomeGardenListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age  }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.get_usage_display|title }}
+        </span>
+    {% endif %}
+
+    <!-- {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %} -->
+    {% elif item.model_name == 'GamingListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.get_usage_display|title }}
+        </span>
+    {% endif %}
+
+    <!-- {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %} -->
+
+    {% elif item.model_name == 'HomeApplianceListing' %}
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|capfirst }}
+        </span>
+    {% endif %}
+
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Age"> {{ item.data.age|format_age:'homeappliance' }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'homeappliance' }}
+        </span>
+    {% endif %}
+
+{% elif item.model_name == 'JewelryListing' %}
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.data.condition|capfirst }}
+        </span>
+    {% endif %}
+
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Age"> {{ item.data.age|format_age:'jewelry' }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/usage.svg' %}" alt="Usage"> {{ item.data.usage|format_usage:'jewelry' }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'MusicListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;" alt="Usage"> {{ item.data.usage|title|format_usage }}
+        </span>
+    {% endif %}
+
+    {% if item.data.condition %}
+        <span>
+            <img src="{% static 'assets/images/icons/condition.svg' %}" style="margin-top:-3px;" alt="Condition"> {{ item.data.condition|title|format_condition }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'MusicalListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.usage|title }}
+        </span>
+    {% endif %}
+
+    <!-- {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %} -->
+    {% elif item.model_name == 'PetListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'SportsListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.usage|title }}
+        </span>
+    {% endif %}
+
+    {% elif item.model_name == 'TicketVoucherListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.usage|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %}
+
+{% elif item.model_name == 'ToysListing' %}
+    {% if item.data.age %}
+        <span>
+            <img src="{% static 'assets/images/icons/calendar.svg' %}" alt="Age"> {{ item.data.age|format_age }}
+        </span>
+    {% endif %}
+
+    {% if item.data.listing_type %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Listing Type"> {{ item.data.listing_type|title }}
+        </span>
+    {% endif %}
+
+    {% if item.data.usage %}
+        <span>
+            <img src="{% static 'assets/images/icons/listing.svg' %}" alt="Usage"> {{ item.data.get_usage_display|title }}
+        </span>
+    {% endif %}
+
+    <!-- {% if item.data.created_at %}
+        <span>
+            <img src="{% static 'assets/images/icons/time.svg' %}" alt="Created At"> {{ item.data.created_at|timesince }} ago
+        </span>
+    {% endif %} -->
+
+
+    {% elif item.model_name == 'AutoServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'ConsultancyServiceListing' %}
+              <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'DomesticServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'EventEntertainmentServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'FreelancersServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'HealthWellbeingServiceListing' %}
+              <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'HomeMaintenanceServiceListing' %}
+              <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'MoversServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                {% elif item.model_name == 'RestorationServiceListing' %}
+              <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+                {% elif item.model_name == 'TutorsServiceListing' %}
+             <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+                {% elif item.model_name == 'WebComputerServiceListing' %}
+              <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+                {% elif item.model_name == 'OtherServiceListing' %}
+               <span><img src="{% static 'assets/images/icons/time.svg' %}">  {{ item.data.created_at|timesince }} ago</span>
+
+                                                
+                                                    {% else %}
+                                                    {% if item.data.description_value %}
+                                                        <!-- {{ item.description_value|truncatewords:15 }} -->
+                                                    {% else %}
+                                                        <span><img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> {{ item.condition|default:""|title }}</span>
+                                                        <span><img src="{% static 'assets/images/icons/lister.svg' %}" alt="Listing Type"> {{ item.listing_type|default:""|title }}</span>
+                                                    {% endif %}
+                                                {% endif %}
+
+                                </div>
+                                
+                                <div class="details-icons2">
+                                    {% if item.model_name == 'Land' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ item.data.facade|title }}</b></span>
+
+            {% elif item.model_name == 'Villa' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ item.data.facade|title }}</b></span>
+            
+            {% elif item.model_name == 'Apartment' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ item.data.facade|title }}</b></span>
+            
+            {% elif item.model_name == 'Showrooms' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+            
+            {% elif item.model_name == 'Clinic' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Factory' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Townhouse' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Fullfloors' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Shop' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+            
+            {% elif item.model_name == 'Staff' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Farm' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Warehouse' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Cafe' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Commercial' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Wholebuilding' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Complex' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Office' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+            
+            {% elif item.model_name == 'Hostel' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Supermarket' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Foreign' %}
+                <span>Lister Type: <b>{{ item.data.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Shared' %}
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+
+            {% elif item.model_name == 'Suits' %}
+                <span>Payment Method: <b>{{ item.data.payment_method|title }}</b></span>
+            
+           
+            {% endif %}
+                                </div>
+                                
+                                <p style="white-space: nowrap; margin-top:5px; color:black;">  <!-- [Keep all the existing subtitle code here] -->
+                                                {% if item.model_name == 'Automobile' %}
+        <span>{{ item.data.make|truncatechars:25|title }}</span>      
+
+    {% elif item.model_name == 'Motorcycle' %}
+        <span>{{ item.data.make|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'Scooter' %}
+        <span>{{ item.data.make|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'Quadbikes' %}
+        <span>{{ item.data.description|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'HeavyVehicle' %}
+        <span>{{ item.data.model|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'HelmetClothes' %}
+        <span>{{ item.data.description|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'JunkCar' %}
+        <span>{{ item.data.name|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'Boat' %}
+        <span>{{ item.data.description|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'AutoAccessoryPart' %}
+        <span>{{ item.data.name|truncatechars:25|title }}</span>
+    {% elif item.model_name == 'TiresAndCaps' %}
+        <span>{{ item.data.description|truncatechars:25|title }} </span>    
+    {% elif item.model_name == 'NumberPlate' %}
+        <span>{{ item.data.plate_type|truncatechars:25|title  }}</span>
+
+        {% comment %} Property type model names {% endcomment %}
+    {% elif item.model_name == 'Land' or item.model_name == 'Villa' or item.model_name == 'Commercial' or item.model_name == 'Farm' or item.model_name == 'Apartment' or item.model_name == 'Factory' or item.model_name == 'Complex' or item.model_name == 'Clinic' or item.model_name == 'Hostel' or item.model_name == 'Office' or item.model_name == 'Shop' or item.model_name == 'Cafe' or item.model_name == 'Staff' or item.model_name == 'Warehouse' or item.model_name == 'Townhouse' or item.model_name == 'Fullfloors' or item.model_name == 'Showrooms' or item.model_name == 'Wholebuilding' or item.model_name == 'Supermarket' or item.model_name == 'Foreign' or item.model_name == 'Shared' or item.model_name == 'Suits' %}
+        <span>{{ item.data.property_title|default:item.model_name|title }}</span>
+
+        {% comment %} Electronics / Gadget type model names {% endcomment %}
+
+{% elif item.model_name == 'Mobile' %}
+    <span>{{ item.data.brand|default:item.model_name|title }}</span>
+
+{% elif item.model_name == 'Tablet' %}
+    <span>{{ item.data.brand|default:item.model_name|title }}</span>
+
+{% elif item.model_name == 'Headset' %}
+    <span>{{ item.data.title|default:item.model_name|title }}</span>
+
+{% elif item.model_name == 'Cover' %}
+    <span>{{ item.data.title|default:item.model_name|title }}</span>
+
+{% elif item.model_name == 'Accessory' %}
+    <span>{{ item.data.title|default:item.model_name|title }}</span>
+
+{% elif item.model_name == 'MobileSIM' %}
+    <span>{{ item.data.title|default:item.model_name|title }}</span>
+
+    {% elif item.model_name == 'ComputerListing' %}
+    <span>{{ item.data.listing_type|truncatechars:25|title }}</span>
+
+{% elif item.model_name == 'BusinessIndustrialListing' %}
+    <span>{{ item.data.get_service_type_display }}</span>
+
+{% elif item.model_name == 'PetListing' %}
+   <span>{% if item.data.breed %}
+                                        {{ item.data.breed|truncatechars:25|title }}
+                                    {% else %}
+                                        {{ item.data.condition|truncatechars:25|title }}
+                                    {% endif %}</span>
+
+{% elif item.model_name == 'SportsListing' %}
+    <span>{{ item.data.subcategory|capfirst }}</span>
+
+{% elif item.model_name == 'MusicalListing' %}
+    <span>{{ item.data.type }}</span>
+
+{% elif item.model_name == 'GamingListing' %}
+    <span>{{ item.data.type }}</span>
+
+{% elif item.model_name == 'TicketVoucherListing' %}
+    <span>{{ item.data.get_subcategory_display }}</span>
+
+{% elif item.model_name == 'CollectibleListing' %}
+    <span>{{ item.data.get_subcategory_display }}</span>
+
+{% elif item.model_name == 'BooksListing' %}
+    <span>{{ item.data.type  }}</span>
+
+{% elif item.model_name == 'MusicListing' %}
+     <span>{{ item.data.type  }}</span>
+
+{% elif item.model_name == 'DVDsMoviesListing' %}
+   <span>{{ item.data.get_subcategory_display }}</span>
+
+{% elif item.model_name == 'FurnitureHomeGardenListing' %}
+    <span>{{ item.data.subcategory|format_subcategory }}</span>
+
+{% elif item.model_name == 'BabyItemsListing' %}
+   <span>{{ item.data.subcategory }}</span>
+
+{% elif item.model_name == 'ToysListing' %}
+   <span>{{ item.data.title|truncatechars:25|title }}</span>
+
+{% elif item.model_name == 'LostFoundListing' %}
+   <span>{{ item.data.title|truncatechars:25|title }}</span>
+
+{% elif item.model_name == 'CameraListing' %}
+   <span>{{ item.data.main_category|format_main_category|truncatechars:25|title }}</span>
+
+{% elif item.model_name == 'JewelryListing' %}
+   <span>{{ item.data.main_category|format_main_category:"jewelry" }}</span>
+
+{% elif item.model_name == 'HomeApplianceListing' %}
+   <span>{{ item.data.main_category|format_main_category:'homeappliance' }}</span>
+
+{% elif item.model_name == 'ClothingAccessoriesListing' %}
+   <span>{{ item.data.main_category|format_main_category|truncatechars:25|title }}</span>
+
+{% elif item.model_name == 'ElectronicsListing' %}
+    <span>{{ item.data.main_category|truncatechars:25|title }}</span>
+
+
+
+
+     {% elif item.model_name == 'AutoServiceListing' %}
+               {{ item.data.title|truncatechars:40}} 
+
+                {% elif item.model_name == 'ConsultancyServiceListing' %}
+                 {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'DomesticServiceListing' %}
+               {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'EventEntertainmentServiceListing' %}
+               {{ item.data.title|truncatechars:40}} 
+
+                {% elif item.model_name == 'FreelancersServiceListing' %}
+              {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'HealthWellbeingServiceListing' %}
+                {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'HomeMaintenanceServiceListing' %}
+                {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'MoversServiceListing' %}
+                {{ item.data.title|truncatechars:40}} 
+
+                {% elif item.model_name == 'RestorationServiceListing' %}
+                {{ item.data.title|truncatechars:40}} 
+
+
+                {% elif item.model_name == 'TutorsServiceListing' %}
+                 {{ item.data.title|truncatechars:40}} 
+
+                {% elif item.model_name == 'WebComputerServiceListing' %}
+                 {{ item.data.title|truncatechars:40}} 
+
+
+
+                {% elif item.model_name == 'OtherServiceListing' %}
+               {{ item.data.title|truncatechars:40}} 
+
+                                                
+
+
+
+    {% else %}
+        {% if item.data.description_value %}
+            <!-- {{ item.data.description_value|truncatewords:15 }} -->
+        {% else %}
+            <span>{{ item.data.condition|default:""|title }}</span>
+            <span>{{ item.data.listing_type|default:""|title }}</span>
+        {% endif %}
+    {% endif %}
+</p>
+                                
+                                
+                                <div style="white-space: nowrap; margin-left: -2px; margin-top:-10px; margin-bottom:5px;">
+                                    <img src="{% static 'assets/images/icons/location.svg' %}" alt="Location" class="location-icons" style="vertical-align: middle;">
+                                    <span>{{ item.city|clean_city_name|truncatechars:25 }}, {{ item.city.district.name }}, {{ item.city.district.governate.name }}</span>
+                                </div>
+                                
+                                  <div class="lower-box">
+                                    <div class="details-row" style="margin-top: 5px;">
+                                        <div class="action-buttons">
+                                            <li>
+                                                {% if item.data.user.whatsapp %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <!-- Logged in: direct WhatsApp -->
+                                                        <a href="https://wa.me/{{ item.data.user.whatsapp }}"
+                                                           target="_blank"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% else %}
+                                                        <!-- Not logged in: send back to same page after login -->
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                           onclick="event.stopPropagation()"
+                                                           class="badge-style"
+                                                           style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                                          <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </li>
+
+                                            <!-- Phone Button -->
+                                            <li>
+                                                {% if item.data.user.phone %}
+                                                    {% if request.user.is_authenticated %}
+                                                        <!-- Logged in: Direct call -->
+                                                        <a href="#"
+                onclick="event.stopPropagation(); showPhonePopup('{{ item.data.user.phone }}'); return false;"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fff3f3;font-size:16px; padding: 8px 12px; margin-left:5px;border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% else %}
+                                                        <!-- Not logged in: Redirect to login with full return URL -->
+                                                        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                            onclick="event.stopPropagation();"
+                                                            class="badge-style"
+                                                            style="width:80px;background-color: #fcd9db;font-size:16px;margin-left:3px; padding: 8px 12px; border-radius: 10px; color: #1A73E8; border: none;">
+                                                            <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                                alt="Call"
+                                                                style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                            Call
+                                                        </a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <!-- No phone number available -->
+                                                    <span class="badge-style"
+                                                        style="width:90px;background-color: #fcd9db;font-size:16px;margin-left:-16px; padding: 8px 12px; border-radius: 10px; color: #1A73E8;">
+                                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                                            alt="Call"
+                                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                                        Call
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+
+                                           <!-- Chat Button -->
+                                            <li>
+    {% if request.user.is_authenticated %}
+        <!-- Logged in: Go to chat - Modified to open popup -->
+        <a href="javascript:void(0);"
+           onclick="openChatPopup('{{ item.user.id }}', '{{ item.id }}', 'item', '{{ item.title|escapejs }}', '{{ item.user.username|escapejs }}', '{% if item.images.first %}{{ item.images.first.image.url }}{% endif %}'); event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px; cursor: pointer;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% else %}
+        <!-- Not logged in: redirect to login preserving full URL -->
+        <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+           onclick="event.stopPropagation();"
+           style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px;">
+            <img src="{% static 'assets/images/chaticon.png' %}"
+                alt="Chat"
+                style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+            Chat
+        </a>
+    {% endif %}
+</li>
+
+                                            <!-- Contact Popup Button -->
+                                            <li>
+                                                {% if request.user.is_authenticated %}
+                                                    <!-- Logged in: Show contact popup -->
+                                                    <a href="#"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;"
+                                                       onclick="showContactPopup('{{ item.data.id }}', '{{ item.data.user.id }}', '{{ item.data.user.whatsapp|default:'' }}', '{{ item.data.user.phone|default:'' }}', 'true'); event.stopPropagation();">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% else %}
+                                                    <!-- Not logged in: redirect to login and return to same page -->
+                                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                                       onclick="event.stopPropagation();"
+                                                       class="contact-toggle"
+                                                       style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;">
+                                                        <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                                    </a>
+                                                {% endif %}
+                                            </li>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Pagination -->
+                    {% if recently_viewed_items.paginator.num_pages > 1 %}
+                    <div class="container">  
+                        <ul class="page">
+                            {% if recently_viewed_items.has_previous %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ recently_viewed_items.previous_page_number }}">
+                                        <span class="material-icons">chevron_left</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_left</span>
+                                </li>
+                            {% endif %}
+                            
+                            {% if recently_viewed_items.number > 3 %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">1</a>
+                                </li>
+                                {% if recently_viewed_items.number > 4 %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% for num in recently_viewed_items.paginator.page_range %}
+                                {% if num >= recently_viewed_items.number|add:"-2" and num <= recently_viewed_items.number|add:"2" %}
+                                    <li class="page__numbers {% if num == recently_viewed_items.number %}active{% endif %}">
+                                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if recently_viewed_items.number < recently_viewed_items.paginator.num_pages|add:"-2" %}
+                                {% if recently_viewed_items.number < recently_viewed_items.paginator.num_pages|add:"-3" %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ recently_viewed_items.paginator.num_pages }}">{{ recently_viewed_items.paginator.num_pages }}</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% if recently_viewed_items.has_next %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ recently_viewed_items.next_page_number }}">
+                                        <span class="material-icons">chevron_right</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_right</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                {% else %}
+                    <!-- No Results Found -->
+                    <div class="no-results">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <h4>No results found for "{{ keyword }}"</h4>
+                        <p>Try different keywords or browse our categories</p>
+                        
+                        <div class="mt-4">
+                            <a href="{% url 'index' %}" class="btn btn-clear-filters">Go to Homepage</a>
+                            <a href="{% url 'index3' %}" class="btn btn-outline-primary ms-2" style="border: 1px solid #E35D20; color: #E35D20; padding: 10px 20px; border-radius: 25px; text-decoration: none;">Browse Real Estate</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Right Column - Categories (3 columns) - Optional -->
+            <div class="col-lg-3 col-md-12">
+                 
+                    <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script>
+    function updateSort(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', value);
+        url.searchParams.delete('page'); // Reset to page 1 when sorting changes
+        window.location.href = url.toString();
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.custom-sort-dropdown')) {
+            const dropdown = document.querySelector('.sort-dropdown-menu');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+            }
+        }
+    });
+    
+    // Toggle dropdown
+    function toggleSortDropdown() {
+        const dropdown = document.querySelector('.sort-dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+<script>
+    // Sorting functions
+    function toggleSortDropdown() {
+        const dropdown = document.querySelector('.sort-dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+    
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.custom-sort-dropdown')) {
+            document.querySelector('.sort-dropdown-menu').style.display = 'none';
+        }
+    });
+    
+    function updateSort(value) {
+        const newUrl = updateQueryStringParameter(window.location.href, 'sort', value);
+        window.history.pushState({}, '', newUrl);
+        
+        fetch(newUrl, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.querySelector('#item-list-container').innerHTML = data;
+        })
+        .catch(err => console.error("AJAX Sort Error:", err));
+    }
+    
+    function updateQueryStringParameter(uri, key, value) {
+        const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        const separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        return uri + separator + key + "=" + value;
+    }
+    
+    // Favorite handling
+    function handleFavoriteClick(button) {
+        const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+        
+        if (!isAuthenticated) {
+            const currentFullUrl = window.location.href;
+            const encodedUrl = encodeURIComponent(currentFullUrl);
+            window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+            return;
+        }
+        
+        toggleFavorite(button);
+    }
+    
+    function toggleFavorite(button) {
+        const icon = button.querySelector('i');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        const isCurrentlyFavorite = icon.classList.contains('filled');
+        
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        } else {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        }
+        
+        localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+        
+        fetch(`/add-to-favorites/${productType}/${productId}/${isCurrentlyFavorite ? 'remove' : 'add'}/`, {
+            method: 'GET',
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                if (isCurrentlyFavorite) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'filled');
+                } else {
+                    icon.classList.remove('fas', 'filled');
+                    icon.classList.add('far');
+                }
+                console.error("Error updating favorite:", data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error updating favorite:", error);
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Slider navigation
+    function navigateSlide(button, direction) {
+        event.stopPropagation();
+        
+        const block = button.closest('.feature-block-one');
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        
+        if (images.length === 0) return;
+        
+        let currentIndex = parseInt(slider.getAttribute('data-current-index')) || 0;
+        let newIndex = currentIndex + direction;
+        
+        if (newIndex < 0) {
+            newIndex = images.length - 1;
+        } else if (newIndex >= images.length) {
+            newIndex = 0;
+        }
+        
+        updateSlider(block, newIndex);
+    }
+    
+    function updateSlider(block, newIndex) {
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        const imageCounter = block.querySelector('.image-counter');
+        
+        imgElement.src = images[newIndex];
+        slider.setAttribute('data-current-index', newIndex);
+        
+        if (imageCounter) {
+            imageCounter.innerHTML = `<i class="fas fa-image"></i> ${newIndex + 1}/${images.length}`;
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.feature-block-one').forEach(block => {
+            const slider = block.querySelector('.slider');
+            const imgElement = slider.querySelector('img');
+            const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+            
+            if (images.length > 0) {
+                imgElement.src = images[0];
+                slider.setAttribute('data-current-index', 0);
+                
+                const imageCounter = block.querySelector('.image-counter');
+                if (imageCounter) {
+                    imageCounter.innerHTML = `<i class="fas fa-image"></i> 1/${images.length}`;
+                }
+            }
+        });
+    });
+    
+    // Phone popup functions
+    let currentPhoneNumber = '';
+    
+    function showPhonePopup(phone, event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        currentPhoneNumber = phone;
+        
+        const popup = document.getElementById('phonePopup');
+        const display = document.getElementById('phoneNumberDisplay');
+        
+        display.innerText = formatPhoneNumber(phone);
+        popup.style.display = 'flex';
+    }
+    
+    function hidePhonePopup() {
+        document.getElementById('phonePopup').style.display = 'none';
+        currentPhoneNumber = '';
+    }
+    
+    function copyPhoneNumber() {
+        if (!currentPhoneNumber) return;
+        
+        navigator.clipboard.writeText(currentPhoneNumber).then(() => {
+            alert('Phone number copied');
+        });
+    }
+    
+    function formatPhoneNumber(phone) {
+        phone = phone.replace(/\s/g, '');
+        
+        if (phone.length === 8) return phone.replace(/(\d{4})(\d{4})/, '$1 $2');
+        if (phone.length === 9) return phone.replace(/(\d{4})(\d{5})/, '$1 $2');
+        if (phone.length === 10) return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2 $3');
+        
+        return phone;
+    }
+    
+    document.addEventListener('keydown', function (e) {
+        const popup = document.getElementById('phonePopup');
+        if (e.key === 'Escape' && popup.style.display === 'flex') {
+            hidePhonePopup();
+        }
+    });
+    
+    // Contact popup functions
+    function showContactPopup(itemId, userId, email, phone, isAuthenticated) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const popup = document.getElementById('contactPopup');
+        const optionsContainer = document.getElementById('contactOptions');
+        
+        optionsContainer.innerHTML = '';
+        
+        if (phone) {
+            const smsOption = document.createElement('a');
+            smsOption.href = `sms:${phone.trim().replace(/\s/g, '')}?body=Hello,%20I'm%20interested%20in%20your%20item%20listing%20(ID:%20${itemId})`;
+            smsOption.style.backgroundColor = '#f5f5f5';
+            smsOption.style.padding = '10px';
+            smsOption.style.borderRadius = '4px';
+            smsOption.style.display = 'flex';
+            smsOption.style.alignItems = 'center';
+            smsOption.style.gap = '10px';
+            smsOption.style.textDecoration = 'none';
+            smsOption.style.color = 'inherit';
+            smsOption.innerHTML = `<i class="fas fa-sms"></i> SMS`;
+            smsOption.onclick = function () {
+                window.location.href = this.href;
+                hideContactPopup();
+                return false;
+            };
+            optionsContainer.appendChild(smsOption);
+        }
+        
+        if (email) {
+            const emailOption = document.createElement('a');
+            emailOption.href = `mailto:${email}?subject=Item%20Inquiry&body=Hello,%20I'm%20interested%20in%20your%20item%20listing%20(ID:%20${itemId})`;
+            emailOption.style.backgroundColor = '#f5f5f5';
+            emailOption.style.padding = '10px';
+            emailOption.style.borderRadius = '4px';
+            emailOption.style.display = 'flex';
+            emailOption.style.alignItems = 'center';
+            emailOption.style.gap = '10px';
+            emailOption.style.textDecoration = 'none';
+            emailOption.style.color = 'inherit';
+            emailOption.innerHTML = `<i class="fas fa-envelope"></i> Email`;
+            emailOption.onclick = function () {
+                hideContactPopup();
+            };
+            optionsContainer.appendChild(emailOption);
+        }
+        
+        popup.style.display = 'flex';
+    }
+    
+    function hideContactPopup() {
+        document.getElementById('contactPopup').style.display = 'none';
+    }
+</script>
+
+<!-- Contact Popup -->
+<div id="contactPopup" class="contact-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0;">Email / SMS Contact</h3>
+            <button onclick="hideContactPopup()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+        <div id="contactOptions" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+</div>
+
+<!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+ </div>
+    
+</div>
+                                                             <script>
+// Favorite toggle function
+function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const productId = button.getAttribute('data-product-id');
+    const productType = button.getAttribute('data-product-type');
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = '/login/';
+        return;
+    }
+    
+    const isCurrentlyFavorite = icon.classList.contains('filled');
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    
+    // Toggle visual state immediately for better UX
+    if (isCurrentlyFavorite) {
+        icon.classList.remove('fas', 'filled');
+        icon.classList.add('far');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas', 'filled');
+    }
+
+    // Update localStorage
+    localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+    
+    // Send AJAX request
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: 'GET',
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            // Revert visual state if there was an error
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+            console.error("Error updating favorite:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error updating favorite:", error);
+        // Revert visual state on error
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize favorite icons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn i').forEach(icon => {
+        const button = icon.closest('.favorite-btn');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        // Check localStorage for favorite status
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+});
+</script>
+                                
+                                
+                                
+                                <!-- Add some CSS to handle the filled state -->
+                                <style>
+                                .far.fa-heart {
+                                transition: color 0.3s ease; /* For smooth transition */
+                                }
+                                
+                                .far.fa-heart.filled {
+                                color: red;  /* Change color when the icon is filled */
+                                font-weight: bold;  /* Make the icon bold */
+                                }
+                                
+                                
+                                </style> 
+                                 
+                               
+                                 <style>
+                                     .gradient1-text {
+       background: #EB362D;
+       -webkit-background-clip: text; /* Clips the background to the text */
+       -webkit-text-fill-color: transparent; /* Makes the text transparent to show the gradient */
+       font-weight: bold; /* Optional */
+     }                         .slide-image{
+        height:200px;
+        border-radius:8px 8px 8px 8px;
+     }
+  
+                                 </style>
+                                 
+    
+                                                                         
+                                 </div>
+                                
+                                    
+        
+                                 
+                                    <style>
+                               
+                                        /* General Styles for Mobile */
+                                        @media (max-width: 768px) {
+                                          .category-block .feature-style2-three {
+                                            width: 90%; /* Adjust width for mobile responsiveness */
+                                            margin: 0 auto; /* Center the container */
+                                           
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one {
+                                            margin-bottom: 20px;
+                                            width: 100%;
+                                            border: 1px solid #ddd; /* Border around the container */
+                                            border-radius: 8px; /* Rounded corners */
+                                            padding: 20px; /* Space between content and border */
+                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                                            background: #fff; /* White background for contrast */
+                                            height: 450px; /* Allow the container to expand with content */
+                                          }
+                                        
+                                          
+                                          .feature-style2-three .feature-block-one .inner-box {
+                                            display: flex;
+                                            flex-direction: column;
+                                            padding: 0;
+                                            width: 100%;
+                                           
+                                            border-radius: 8px;
+                                            background-color: #fff;
+                                          }
+                                        
+                                          /* Image Box */
+                                          .feature-style2-three .feature-block-one .inner-box .image-box {
+                                            width: 100%;
+                                            margin-bottom: 15px;
+                                            text-align: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .inner-box .image-box img {
+                                            width: 100%;
+                                           
+                                            border-radius: 8px 8px 0 0; /* Rounded corners on the top */
+                                          }
+                                        
+                                          /* Content Section (below and outside the inner box) */
+                                          .feature-style2-three .feature-block-one .lower-content {
+                                            padding: 20px; /* Add padding around the content */
+                                            margin-top: 250px; /* Add space between image and content */
+                                            border-top: 1px solid #ddd; /* Optional: Add border between image and content */
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content h4 {
+                                            margin-bottom: 10px;
+                                            font-size: 18px;
+                                            font-weight: bold;
+                                            color: #333;
+                                          }
+                                        
+                                          /* Action Buttons */
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons {
+                                            display: flex;
+                                            flex-direction: row;
+                                            gap: 10px; /* Space between buttons */
+                                            justify-content: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li {
+                                            list-style: none;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a {
+                                            display: inline-block;
+                                            padding: 12px 20px;
+                                            font-size: 16px;
+                                            color: #fff;
+                                            background: #EB362D;
+                                            border-radius: 5px;
+                                            text-decoration: none;
+                                            transition: background 0.3s ease;
+                                            margin-left: -9px;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a:hover {
+                                            background: #F9AD1F; /* Hover effect */
+                                          }
+                                        }
+                                        
+                                            </style>
+                                 
+        
+    
+    
+            </div>
+
+            <script>
+                const bannerSection = document.getElementById('banner-section');
+                const images = [
+                    "{% static 'assets/images/banner/1-01.png' %}",
+                    "{% static 'assets/images/banner/1-02.png' %}",
+                    "{% static 'assets/images/banner/1-03.png' %}",
+                    "{% static 'assets/images/banner/1-04.png' %}",
+                ];
+                let currentIndex = 0;
+            
+                function changeBackground() {
+                    bannerSection.style.backgroundImage = `url(${images[currentIndex]})`; // Corrected line
+                    currentIndex = (currentIndex + 1) % images.length; // Loop through the images
+                }
+            
+                // Change background every 4 seconds
+                setInterval(changeBackground, 4000);
+            
+                // Initialize with the first image
+                changeBackground();
+            </script>
+                                        
+                                                                        <style>
+                                                                        .loading-indicator {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #666;
+                                                                        }
+                                                                        
+                                                                        .error-message {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #EB362D;
+                                                                        }
+                                                                        </style>      
+                                                                        
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        // Price Range
+        const priceFromInput = document.querySelector('#price_from');
+        const priceToInput = document.querySelector('#price_to');
+        const priceFrom = new URLSearchParams(window.location.search).get('price_from');
+        const priceTo = new URLSearchParams(window.location.search).get('price_to');
+
+        if (priceFromInput) priceFromInput.value = priceFrom || '';
+        if (priceToInput) priceToInput.value = priceTo || '';
+
+        const priceField = document.querySelector('#selected-price');
+        if (priceField) {
+            if (priceFrom && priceTo) {
+                priceField.value = `${priceFrom} - ${priceTo}`;
+            } else if (priceFrom) {
+                priceField.value = `From ${priceFrom}`;
+            } else if (priceTo) {
+                priceField.value = `Up to ${priceTo}`;
+            } else {
+                priceField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = new URLSearchParams(window.location.search).get('year_from');
+        const yearTo = new URLSearchParams(window.location.search).get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = new URLSearchParams(window.location.search).get('kilometers_from');
+        const kmTo = new URLSearchParams(window.location.search).get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters - UPDATED with proper breadcrumb logic
+        updateLocationBreadcrumbs();
+
+        // 🔁 Additional Filters Display
+        const additionalFiltersField = document.querySelector('#selected-additional-filters');
+        if (additionalFiltersField) {
+            const selectedFilters = [];
+
+            // ✅ Delivery
+            const provide = new URLSearchParams(window.location.search).get('provide');
+            if (provide) {
+                selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+            }
+
+            // ✅ Usage
+            const usage = new URLSearchParams(window.location.search).getAll('usage');
+            if (usage.length > 0) {
+                selectedFilters.push(`Usage: ${usage.join(', ')}`);
+            }
+
+            // ✅ Service Type (map values to labels)
+            const service_type = new URLSearchParams(window.location.search).getAll('service_type');
+            if (service_type.length > 0) {
+                const accLabels = service_type.map(a => {
+                    switch (a) {
+                        case 'box': return 'Original Box';
+                        case 'charger': return 'Charger';
+                        case 'headset': return 'Headset';
+                        default: return a;
+                    }
+                });
+                selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+            }
+
+            const multiKeys = {
+                payment_method: 'Payment Method',
+                lister_type: 'Lister Type', 
+                floors: 'Floors',
+                building: 'Building Age',
+                surface_area: 'Surface Area',
+                property_mortgage: 'Mortgaged',
+                main_amenity: 'Main Amenities',
+                additional_amenity: 'Additional Amenities',
+                nearby: 'Nearby',
+                facade: 'Facade',
+                rental_period: 'Rental Period'
+            };
+
+            Object.entries(multiKeys).forEach(([key, label]) => {
+                const values = new URLSearchParams(window.location.search).getAll(key).flatMap(v => v.split(','));
+                if (values.length > 0) {
+                    selectedFilters.push(`${label}: ${values.join(', ')}`);
+                }
+            });
+
+            // Update field
+            additionalFiltersField.value = selectedFilters.join(' | ');
+
+            // Toggle active class
+            const toggleEl = document.getElementById('toggle-additional-filters');
+            if (toggleEl) {
+                toggleEl.classList.toggle('active', selectedFilters.length > 0);
+            }
+        }
+
+        // Other Filters
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            priceFrom && priceTo ? `Price: ${priceFrom} - ${priceTo}` : 
+                priceFrom ? `Price from ${priceFrom}` : 
+                priceTo ? `Price to ${priceTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+
+        // Update active filter badges
+        updateActiveFilterBadges();
+    }
+// FIXED: Function to update location breadcrumbs with proper name handling
+function updateLocationBreadcrumbs() {
+    const params = new URLSearchParams(window.location.search);
+    const governateIds = params.getAll('governate');
+    const districtIds = params.getAll('district');
+    const cityIds = params.getAll('city');
+
+    const governateField = document.querySelector('#selected-governate');
+    const districtField = document.querySelector('#selected-district');
+    const cityField = document.querySelector('#selected-city');
+    const locationField = document.querySelector('#selected-location');
+
+    // Get location names from DOM or use a more reliable approach
+    const selectedGovs = getLocationNames(governateIds, 'governate');
+    const selectedDistricts = getLocationNames(districtIds, 'district');
+    const selectedCities = getLocationNames(cityIds, 'city');
+    
+    // Update individual fields
+    if (governateField) governateField.value = selectedGovs.join(', ') || '';
+    if (districtField) districtField.value = selectedDistricts.join(', ') || '';
+    if (cityField) cityField.value = selectedCities.join(', ') || '';
+    
+    // Build location breadcrumb text - show actual selected locations, not "All Governates"
+    let locationText = '';
+    if (selectedGovs.length > 0) {
+        locationText = selectedGovs.join(', ');
+    }
+    if (selectedDistricts.length > 0) {
+        locationText += (locationText ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    if (selectedCities.length > 0) {
+        locationText += (locationText ? ' > ' : '') + selectedCities.join(', ');
+    }
+    
+    // Only show "Select Location" if nothing is selected
+    if (locationField) {
+        locationField.value = locationText || "Select Location";
+    }
+
+    // Update the "All Governates" checkbox state based on actual selection
+    const allCheckbox = document.querySelector('#select-all-governates');
+    if (allCheckbox) {
+        // "All" should only be checked if specifically selected, not when individual locations are selected
+        allCheckbox.checked = false;
+    }
+}
+    // NEW: Helper function to get location names reliably
+    function getLocationNames(ids, type) {
+        if (!ids || ids.length === 0) return [];
+        
+        const names = [];
+        
+        ids.forEach(id => {
+            let name = id; // Default to ID if name not found
+            
+            // Try to find the element in the DOM
+            const element = document.querySelector(`.location-item[data-type="${type}"][data-id="${id}"]`);
+            if (element) {
+                const label = element.querySelector('label');
+                if (label) {
+                    name = label.textContent.trim();
+                }
+            } else {
+                // If element not found in DOM, try to get from data-name attribute or cached data
+                // This handles cases where the location dropdown isn't fully expanded
+                const cachedElement = document.querySelector(`[data-id="${id}"]`);
+                if (cachedElement && cachedElement.dataset.name) {
+                    name = cachedElement.dataset.name;
+                }
+            }
+            
+            names.push(name);
+        });
+        
+        return names;
+    }
+
+    // UPDATED: Improved location filter removal with proper hierarchy
+    function handleLocationRemoval(key, value, params) {
+        console.log('Removing location:', key, value); // Debug log
+        
+        if (key === 'city') {
+            // Remove only the specific city
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(v => v && v !== value);
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck only this city
+            const cityCheckbox = document.querySelector(`input[name="city"][value="${value}"]`);
+            if (cityCheckbox) cityCheckbox.checked = false;
+            
+        } else if (key === 'district') {
+            // Remove district and all its cities
+            const currentDistricts = params.getAll('district').flatMap(v => v.split(','));
+            const updatedDistricts = currentDistricts.filter(v => v && v !== value);
+            
+            params.delete('district');
+            if (updatedDistricts.length > 0) {
+                updatedDistricts.forEach(v => params.append('district', v));
+            }
+            
+            // Get all cities under this district and remove them
+            const citiesToRemove = getCitiesForDistrict(value);
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(cityId => !citiesToRemove.includes(cityId));
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck the district and all its cities
+            const districtCheckbox = document.querySelector(`input[name="district"][value="${value}"]`);
+            if (districtCheckbox) districtCheckbox.checked = false;
+            
+            citiesToRemove.forEach(cityId => {
+                const cityCheckbox = document.querySelector(`input[name="city"][value="${cityId}"]`);
+                if (cityCheckbox) cityCheckbox.checked = false;
+            });
+            
+        } else if (key === 'governate') {
+            // Remove governate and all its districts and cities
+            const currentGovernates = params.getAll('governate').flatMap(v => v.split(','));
+            const updatedGovernates = currentGovernates.filter(v => v && v !== value);
+            
+            params.delete('governate');
+            if (updatedGovernates.length > 0) {
+                updatedGovernates.forEach(v => params.append('governate', v));
+            }
+            
+            // Get all districts and cities under this governate and remove them
+            const { districts: districtsToRemove, cities: citiesToRemove } = getDistrictsAndCitiesForGovernate(value);
+            
+            // Remove districts
+            const currentDistricts = params.getAll('district').flatMap(v => v.split(','));
+            const updatedDistricts = currentDistricts.filter(districtId => !districtsToRemove.includes(districtId));
+            
+            params.delete('district');
+            if (updatedDistricts.length > 0) {
+                updatedDistricts.forEach(v => params.append('district', v));
+            }
+            
+            // Remove cities
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(cityId => !citiesToRemove.includes(cityId));
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck the governate and all its districts and cities
+            const governateCheckbox = document.querySelector(`input[name="governate"][value="${value}"]`);
+            if (governateCheckbox) governateCheckbox.checked = false;
+            
+            districtsToRemove.forEach(districtId => {
+                const districtCheckbox = document.querySelector(`input[name="district"][value="${districtId}"]`);
+                if (districtCheckbox) districtCheckbox.checked = false;
+            });
+            
+            citiesToRemove.forEach(cityId => {
+                const cityCheckbox = document.querySelector(`input[name="city"][value="${cityId}"]`);
+                if (cityCheckbox) cityCheckbox.checked = false;
+            });
+        }
+        
+        // Update location display fields
+        updateLocationBreadcrumbs();
+        
+        // Reset location dropdown lists when items are removed
+        resetLocationDropdownLists();
+    }
+
+    // Helper function to get cities for a district
+    function getCitiesForDistrict(districtId) {
+        const districtItem = document.querySelector(`.location-item[data-type="district"][data-id="${districtId}"]`);
+        if (!districtItem) return [];
+        
+        const cityItems = districtItem.querySelectorAll('.location-item[data-type="city"]');
+        return Array.from(cityItems).map(city => city.dataset.id);
+    }
+
+    // Helper function to get districts and cities for a governate
+    function getDistrictsAndCitiesForGovernate(governateId) {
+        const governateItem = document.querySelector(`.location-item[data-type="governate"][data-id="${governateId}"]`);
+        if (!governateItem) return { districts: [], cities: [] };
+        
+        const districtItems = governateItem.querySelectorAll('.location-item[data-type="district"]');
+        const districts = Array.from(districtItems).map(district => district.dataset.id);
+        
+        const cities = [];
+        districtItems.forEach(districtItem => {
+            const cityItems = districtItem.querySelectorAll('.location-item[data-type="city"]');
+            cities.push(...Array.from(cityItems).map(city => city.dataset.id));
+        });
+        
+        return { districts, cities };
+    }
+
+    // Function to reset location dropdown lists when items are removed
+    function resetLocationDropdownLists() {
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        // If no locations are selected, ensure all lists are visible and reset
+        if (governates.length === 0 && districts.length === 0 && cities.length === 0) {
+            // Reset "All" checkbox
+            const allCheckbox = document.querySelector('#select-all-governates');
+            if (allCheckbox) allCheckbox.checked = false;
+            
+            // Show all governates
+            document.querySelectorAll('.location-item[data-type="governate"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Show all districts (they might be hidden due to search)
+            document.querySelectorAll('.location-item[data-type="district"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Show all cities (they might be hidden due to search)
+            document.querySelectorAll('.location-item[data-type="city"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Reset any search
+            const locationSearch = document.getElementById('location-search');
+            if (locationSearch) locationSearch.value = '';
+        }
+    }
+
+    // NEW: Function to update active filter badges
+    function updateActiveFilterBadges() {
+        const params = new URLSearchParams(window.location.search);
+        const activeFiltersContainer = document.querySelector('.active-filters');
+        
+        if (!activeFiltersContainer) return;
+        
+        // Clear existing badges
+        activeFiltersContainer.innerHTML = '';
+        
+        // Add badges for each active filter
+        params.forEach((value, key) => {
+            if (key === 'governate') {
+                value.split(',').forEach(governate => {
+                    if (governate.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'governate', governate, `Governate: ${governate}`);
+                    }
+                });
+            } else if (key === 'district') {
+                value.split(',').forEach(district => {
+                    if (district.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'district', district, `District: ${district}`);
+                    }
+                });
+            } else if (key === 'city') {
+                value.split(',').forEach(city => {
+                    if (city.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'city', city, `City: ${city}`);
+                    }
+                });
+            } else if (key === 'price_from' || key === 'price_to') {
+                const priceFrom = params.get('price_from');
+                const priceTo = params.get('price_to');
+                if ((key === 'price_from' && priceFrom) || (key === 'price_to' && priceTo)) {
+                    // Only add once
+                    if (key === 'price_from') {
+                        const priceText = priceTo ? `${priceFrom} - ${priceTo}` : `From ${priceFrom}`;
+                        addFilterBadge(activeFiltersContainer, 'price_range', `${priceFrom}-${priceTo || ''}`, `Price: ${priceText}`);
+                    }
+                }
+            } else if (key === 'year_from' || key === 'year_to') {
+                const yearFrom = params.get('year_from');
+                const yearTo = params.get('year_to');
+                if ((key === 'year_from' && yearFrom) || (key === 'year_to' && yearTo)) {
+                    // Only add once
+                    if (key === 'year_from') {
+                        const yearText = yearTo ? `${yearFrom} - ${yearTo}` : `From ${yearFrom}`;
+                        addFilterBadge(activeFiltersContainer, 'year_range', `${yearFrom}-${yearTo || ''}`, `Year: ${yearText}`);
+                    }
+                }
+            } else if (key === 'kilometers_from' || key === 'kilometers_to') {
+                const kmFrom = params.get('kilometers_from');
+                const kmTo = params.get('kilometers_to');
+                if ((key === 'kilometers_from' && kmFrom) || (key === 'kilometers_to' && kmTo)) {
+                    // Only add once
+                    if (key === 'kilometers_from') {
+                        const kmText = kmTo ? `${kmFrom} - ${kmTo} km` : `From ${kmFrom} km`;
+                        addFilterBadge(activeFiltersContainer, 'kilometer_range', `${kmFrom}-${kmTo || ''}`, `KM: ${kmText}`);
+                    }
+                }
+            }
+            // Add more filter types as needed...
+        });
+    }
+
+    // NEW: Function to add individual filter badge
+    function addFilterBadge(container, key, value, displayText) {
+        const badge = document.createElement('div');
+        badge.className = 'filter-badge';
+        badge.innerHTML = `
+            <span>${displayText}</span>
+            <button class="remove-filter" data-key="${key}" data-value="${value}">×</button>
+        `;
+        container.appendChild(badge);
+    }
+
+    // UPDATED: Unified function to handle filter removal - FIXED VERSION
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        console.log('Removing filter:', key, value); // Debug log
+        
+        if (['governate', 'district', 'city'].includes(key)) {
+            // Handle hierarchical location removal
+            handleLocationRemoval(key, value, params);
+            
+        } else if (['payment_method', 'lister_type', 'floors', 'building', 'property_mortgage', 'main_amenity', 'additional_amenity', 'nearby', 'facade', 'rental_period'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+        } else if (['bathrooms', 'furnished', 'size', 'bedrooms'].includes(key)) {
+            // Multi-value parameters for item filters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-${key}`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+            
+        } else if (key === 'price_range') {
+            const [from, to] = value.split('-');
+            params.delete('price_from');
+            params.delete('price_to');
+            const fromInput = document.querySelector('#price_from');
+            const toInput = document.querySelector('#price_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            const displayField = document.querySelector('#selected-price');
+            if (displayField) displayField.value = '';
+            
+        } else if (key === 'surface_area_range') {
+            const [from, to] = value.split('-');
+            params.delete('surface_area_from');
+            params.delete('surface_area_to');
+            const fromInput = document.querySelector('#surface_area_from');
+            const toInput = document.querySelector('#surface_area_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            
+        } else if (key === 'year_range') {
+            const [from, to] = value.split('-');
+            params.delete('year_from');
+            params.delete('year_to');
+            const fromInput = document.querySelector('#year_from');
+            const toInput = document.querySelector('#year_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            
+        } else if (key === 'kilometer_range') {
+            const [from, to] = value.split('-');
+            params.delete('kilometers_from');
+            params.delete('kilometers_to');
+            const fromInput = document.querySelector('#kilometers_from');
+            const toInput = document.querySelector('#kilometers_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            
+        } else if (key === 'sort') {
+            params.delete('sort');
+        } else if (key === 'provide') {
+            params.delete('provide');
+            const provideInputs = document.querySelectorAll('input[name="provide"]');
+            provideInputs.forEach(input => input.checked = false);
+        } else if (key === 'usage') {
+            const currentValues = params.getAll('usage').flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            params.delete('usage');
+            if (updatedValues.length > 0) {
+                updatedValues.forEach(v => params.append('usage', v));
+            }
+            const checkbox = document.querySelector(`input[name="usage"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+        } else if (key === 'service_type') {
+            const currentValues = params.getAll('service_type').flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            params.delete('service_type');
+            if (updatedValues.length > 0) {
+                updatedValues.forEach(v => params.append('service_type', v));
+            }
+            const checkbox = document.querySelector(`input[name="service_type"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    // Function to update content via AJAX
+    function updateContent(params) {
+        fetch(`{% url 'search_results' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById('item-list-container');
+            if (container) container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+            updateFilterDisplay(); // Update filter display after content loads
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+// Clear all filters
+document.body.addEventListener('click', function(e) {
+    if (e.target.matches('#clear-all-filters')) {
+        e.preventDefault();
+
+        // Store the current listing type value before clearing
+        const listingTypeInput = document.querySelector('#selected-listing-type');
+        const currentListingType = listingTypeInput ? listingTypeInput.value : '';
+
+        // Clear all checkboxes and radios
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear all input fields
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+            if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                input.value = '';
+            }
+        });
+
+        // Clear all hidden/selected fields (except listing type)
+        const filterFields = [
+            '#selected-price', '#selected-year', '#selected-kilometer',
+            '#selected-governate', '#selected-district', '#selected-city',
+            '#selected-all-filters', '#selected-additional-filters',
+            '#selected-category', '#selected-age', '#selected-subcategory','#selected-bathrooms',
+            '#selected-furnished', '#selected-size', '#selected-bedrooms'
+        ];
+        filterFields.forEach(id => {
+            const el = document.querySelector(id);
+            if (el) el.value = '';
+        });
+
+        // Clear active filter badges
+        const activeFiltersContainer = document.querySelector('.active-filters');
+        if (activeFiltersContainer) activeFiltersContainer.innerHTML = '';
+
+        // Restore the listing type value
+        if (listingTypeInput && currentListingType) {
+            listingTypeInput.value = currentListingType;
+        }
+
+        // Clear URL params and refresh (preserve listing type, keyword, and csrf token in URL)
+        const url = new URL(window.location.href);
+        const currentUrlListingType = url.searchParams.get('listing_type');
+        const currentKeyword = url.searchParams.get('keyword');
+        const currentCsrfToken = url.searchParams.get('csrfmiddlewaretoken');
+        
+        url.search = '';
+        
+        // Re-add preserved parameters to URL
+        if (currentListingType || currentUrlListingType) {
+            const listingTypeToPreserve = currentListingType || currentUrlListingType;
+            url.searchParams.set('listing_type', listingTypeToPreserve);
+        }
+        
+        // Preserve keyword if it exists
+        if (currentKeyword) {
+            url.searchParams.set('keyword', currentKeyword);
+        }
+        
+        // Preserve csrf token if it exists
+        if (currentCsrfToken) {
+            url.searchParams.set('csrfmiddlewaretoken', currentCsrfToken);
+        }
+
+        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const container = document.querySelector('#item-list-container');
+                if (container) container.innerHTML = html;
+                history.pushState(null, '', url.toString());
+                updateFilterDisplay();
+            })
+            .catch(err => console.error('Error:', err));
+    }
+});
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script>   
+</div>                                                  
+{% include 'footer.html' %}
+        

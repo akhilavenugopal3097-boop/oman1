@@ -1,0 +1,2872 @@
+{% load static %}
+{% include 'header.html' %}
+
+<style>
+body {
+    font-family: 'FontStyle6';
+    background: #f8f9fa;
+}
+
+.inquiries-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    overflow: hidden;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Product Header - Clean and modern */
+.product-header {
+    background: linear-gradient(135deg, #f9ad1f, #ffcd48);
+    padding: 15px 25px;
+    color: white;
+}
+
+.product-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.back-link {
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    transition: background 0.2s;
+}
+
+.back-link:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+}
+
+.product-header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.product-header-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.product-header-details {
+    flex: 1;
+}
+
+.product-header-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.product-header-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.product-header-meta i {
+    margin-right: 3px;
+}
+
+.product-header-price {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Main Content Area - Split layout */
+.main-content {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+/* User List Sidebar */
+.user-sidebar {
+    width: 350px;
+    background: #fafafa;
+    border-right: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-sidebar-header {
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+.user-sidebar-header h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-sidebar-header h4 i {
+    color: #15818E;
+}
+
+.user-search {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border 0.2s;
+}
+
+.user-search:focus {
+    border-color: #15818E;
+    outline: none;
+}
+
+.user-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* User Item Styling - Modern */
+.user-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #f2f2f2;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.user-item:hover {
+    background: #fef8ec;
+    transform: translateX(5px);
+}
+
+.user-item.active {
+    background: #fef6e6;
+    border-right: 3px solid #15818E;
+}
+
+/* User Profile Avatar - Circular */
+.user-item-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid #fff;
+}
+
+.user-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.user-item-avatar .avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f9ad1f, #ffcd48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+/* Three Dots Menu for Sidebar */
+.user-item-menu-container {
+    position: relative;
+    margin-left: 5px;
+    z-index: 10;
+}
+
+.user-item-menu-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #999;
+    transition: all 0.2s;
+    opacity: 0;
+}
+
+.user-item:hover .user-item-menu-button {
+    opacity: 1;
+}
+
+.user-item.active .user-item-menu-button {
+    opacity: 1;
+    color: #15818E;
+}
+
+.user-item-menu-button:hover {
+    background: rgba(0,0,0,0.05);
+    color: #15818E;
+}
+
+.user-item-dropdown {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    min-width: 180px;
+    z-index: 100;
+    display: none;
+    overflow: hidden;
+    animation: slideDown 0.2s ease;
+}
+
+.user-item-dropdown.show {
+    display: block;
+}
+
+.user-item-dropdown-item {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-item-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.user-item-dropdown-item:hover {
+    background: #f8f9fa;
+}
+
+.user-item-dropdown-item i {
+    width: 18px;
+    font-size: 14px;
+}
+
+.user-item-dropdown-item.block-item {
+    color: #EB362D;
+}
+
+.user-item-dropdown-item.block-item:hover {
+    background: #fff1f0;
+}
+
+.user-item-dropdown-item.unblock-item {
+    color: #2e7d32;
+}
+
+.user-item-dropdown-item.unblock-item:hover {
+    background: #e8f5e9;
+}
+
+.user-item-dropdown-item.delete-item {
+    color: #dc3545;
+}
+
+.user-item-dropdown-item.delete-item:hover {
+    background: #f8d7da;
+}
+
+/* User Info Section */
+.user-item-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.user-name-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #333;
+}
+
+.user-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    background: #f0f6ff;
+    color: #063e71;
+}
+
+.user-badge i {
+    margin-right: 3px;
+    font-size: 8px;
+}
+
+.unread-count {
+    background: #EB362D;
+    color: #fff;
+    border-radius: 10px;
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* Product Title - Smaller */
+.user-item-product {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 2px 0;
+}
+
+.product-thumbnail {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.product-title {
+    font-size: 12px;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+}
+
+/* Last Message Preview */
+.user-item-last-message {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+}
+
+.user-item-last-message i {
+    font-size: 10px;
+    color: #15818E;
+}
+
+.message-preview {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.message-time-small {
+    font-size: 11px;
+    color: #ccc;
+    margin-left: auto;
+}
+
+/* Chat Area */
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
+    min-width: 0;
+}
+
+/* Chat Header */
+.chat-header {
+    padding: 15px 25px;
+    background: white;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.chat-avatar-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(249, 173, 31, 0.3);
+}
+
+.chat-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.chat-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f9ad1f, #ffcd48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.chat-header-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-user-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.chat-username {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.chat-product-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #f0f6ff;
+    color: #063e71;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.chat-product-badge i {
+    margin-right: 3px;
+    font-size: 8px;
+}
+
+/* Three Dots Menu for Chat Header */
+.chat-menu-container {
+    position: relative;
+    margin-left: 10px;
+}
+
+.chat-menu-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.chat-menu-button:hover {
+    background: #f0f0f0;
+    color: #15818E;
+}
+
+.chat-menu-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 100;
+    display: none;
+    overflow: hidden;
+    animation: slideDown 0.2s ease;
+}
+
+.chat-menu-dropdown.show {
+    display: block;
+}
+
+.chat-menu-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.chat-menu-item:last-child {
+    border-bottom: none;
+}
+
+.chat-menu-item:hover {
+    background: #f8f9fa;
+}
+
+.chat-menu-item i {
+    width: 20px;
+    font-size: 16px;
+}
+
+.chat-menu-item.block-item {
+    color: #EB362D;
+}
+
+.chat-menu-item.block-item:hover {
+    background: #fff1f0;
+}
+
+.chat-menu-item.unblock-item {
+    color: #2e7d32;
+}
+
+.chat-menu-item.unblock-item:hover {
+    background: #e8f5e9;
+}
+
+.chat-menu-item.delete-item {
+    color: #dc3545;
+}
+
+.chat-menu-item.delete-item:hover {
+    background: #f8d7da;
+}
+
+/* Product Info Card */
+.chat-product-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: all 0.2s;
+    max-width: 400px;
+}
+
+.chat-product-card:hover {
+    background: #f0f0f0;
+    border-color: #15818E;
+}
+
+.chat-product-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chat-product-image-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f9ad1f, #ffcd48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.chat-product-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-product-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-product-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.chat-product-price {
+    color: #EB362D;
+    font-weight: 600;
+}
+
+.chat-product-type {
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.chat-product-type i {
+    font-size: 10px;
+    color: #15818E;
+}
+
+/* Messages Container */
+.messages-container {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.message-date {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 12px;
+    color: #999;
+    position: relative;
+}
+
+.message-date span {
+    background: #f0f0f0;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.message-wrapper {
+    max-width: 70%;
+    clear: both;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.message-wrapper.sent {
+    float: right;
+}
+
+.message-wrapper.received {
+    float: left;
+}
+
+.message-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    word-break: break-word;
+    line-height: 1.4;
+    position: relative;
+}
+
+.sent .message-bubble {
+    background: #15818E;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.received .message-bubble {
+    background: white;
+    border: 1px solid #e8e8e8;
+    border-bottom-left-radius: 5px;
+}
+
+.message-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 5px;
+    text-align: right;
+}
+
+.received .message-time {
+    color: #999;
+    text-align: left;
+}
+
+.message-sender {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: #666;
+}
+
+/* Message Actions */
+.message-actions {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    display: none;
+    gap: 5px;
+    background: white;
+    border-radius: 20px;
+    padding: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.message-wrapper.sent:hover .message-actions {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+.message-wrapper.received:hover .message-actions {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 16px;
+    font-size: 12px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.delete-btn {
+    color: #EB362D;
+}
+
+.delete-btn:hover {
+    background: #fee;
+    transform: scale(1.05);
+}
+
+/* Deleted message styling */
+.message-wrapper.deleted .message-bubble {
+    opacity: 0.7;
+    background: #f5f5f5 !important;
+    color: #999 !important;
+    border: 1px dashed #ccc !important;
+    font-style: italic;
+}
+
+.message-wrapper.deleted .message-actions {
+    display: none !important;
+}
+
+/* Blocked message banner */
+.blocked-message {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+    margin: 10px 20px;
+    border: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.blocked-message i {
+    color: #EB362D;
+    font-size: 14px;
+}
+
+/* ========== CENTERED POPUP STYLES ========== */
+/* Popup Overlay */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInOverlay 0.3s ease;
+}
+
+/* Base Popup Container - Centered */
+.delete-options-popup,
+.delete-chat-confirmation,
+.block-confirmation-popup,
+.unblock-confirmation-popup,
+.custom-confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 32px;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    width: 380px;
+    max-width: 90vw;
+    text-align: center;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Delete Options Popup */
+.delete-options-popup h3,
+.delete-chat-confirmation h3,
+.block-confirmation-popup h3,
+.unblock-confirmation-popup h3,
+.custom-confirmation-popup h3 {
+    margin: 0 0 12px 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.delete-options-popup p,
+.delete-chat-confirmation p,
+.block-confirmation-popup p,
+.unblock-confirmation-popup p,
+.custom-confirmation-popup p {
+    margin: 0 0 28px 0;
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* Delete Options Buttons Container */
+.delete-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* Delete Option Buttons */
+.delete-option-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 16px;
+}
+
+.delete-option-btn.delete-self {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+
+.delete-option-btn.delete-self:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.delete-option-btn.delete-everyone {
+    background: #dc3545;
+    color: white;
+}
+
+.delete-option-btn.delete-everyone:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(220, 53, 69, 0.3);
+}
+
+/* Cancel Button */
+.cancel-delete {
+    padding: 12px 24px;
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s;
+    min-width: 140px;
+    margin-top: 8px;
+}
+
+.cancel-delete:hover {
+    background: #f8f9fa;
+    border-color: #ccc;
+    transform: translateY(-2px);
+}
+
+/* Delete Chat Confirmation */
+.delete-chat-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.delete-chat-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 15px;
+    min-width: 120px;
+}
+
+.delete-chat-btn.confirm {
+    background: #dc3545;
+    color: white;
+}
+
+.delete-chat-btn.confirm:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(220, 53, 69, 0.3);
+}
+
+.delete-chat-btn.cancel {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.delete-chat-btn.cancel:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+/* Block/Unblock Confirmation Buttons */
+.confirmation-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.confirmation-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s;
+    min-width: 120px;
+}
+
+.confirmation-btn.block-confirm {
+    background: #EB362D;
+    color: white;
+}
+
+.confirmation-btn.block-confirm:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(235, 54, 45, 0.3);
+}
+
+.confirmation-btn.unblock-confirm {
+    background: #2e7d32;
+    color: white;
+}
+
+.confirmation-btn.unblock-confirm:hover {
+    background: #1b5e20;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(46, 125, 50, 0.3);
+}
+
+.confirmation-btn.cancel {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.confirmation-btn.cancel:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+/* Warning Icon */
+.popup-warning-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #EB362D;
+    display: block;
+}
+
+.popup-info-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #15818E;
+    display: block;
+}
+
+.popup-success-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #2e7d32;
+    display: block;
+}
+
+/* Animations */
+@keyframes popIn {
+    0% {
+        transform: translate(-50%, -45%) scale(0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toast notification */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 2000;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0%); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0%); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+.toast-notification.success i {
+    color: #4caf50;
+}
+
+.toast-notification.error i {
+    color: #f44336;
+}
+
+.toast-notification.info i {
+    color: #2196f3;
+}
+
+/* Quick Reply Area */
+.quick-reply-area {
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.reply-input-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.reply-input-group textarea {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    padding: 14px 20px;
+    resize: none;
+    font-family: inherit;
+    font-size: 14px;
+    min-height: 50px;
+    max-height: 120px;
+    transition: border 0.2s;
+    outline: none;
+}
+
+.reply-input-group textarea:focus {
+    border-color: #15818E;
+}
+
+.reply-input-group textarea:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.send-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: #15818E;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.send-btn:hover {
+    background: #e89c0e;
+}
+
+.send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* No User Selected */
+.no-user-selected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #f8f9fa;
+    color: #999;
+    text-align: center;
+    padding: 40px;
+}
+
+.no-user-selected-content i {
+    font-size: 60px;
+    margin-bottom: 20px;
+    color: #ddd;
+}
+
+.no-user-selected-content h3 {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.no-user-selected-content p {
+    font-size: 14px;
+    max-width: 300px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 60px;
+    margin-bottom: 20px;
+    color: #ddd;
+}
+
+.empty-state h3 {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.loading i {
+    font-size: 30px;
+    margin-bottom: 15px;
+    color: #15818E;
+}
+
+/* Scrollbar Styling */
+.messages-container::-webkit-scrollbar,
+.user-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track,
+.user-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb,
+.user-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+/* New Message Notification */
+.new-message-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #15818E;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 14px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(249, 173, 31, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(249, 173, 31, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(249, 173, 31, 0); }
+}
+
+/* Loading Messages */
+.loading-messages {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.loading-messages i {
+    font-size: 30px;
+    margin-bottom: 15px;
+    color: #15818E;
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .user-sidebar {
+        width: 100%;
+        max-height: 300px;
+    }
+    
+    .product-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .message-wrapper {
+        max-width: 85%;
+    }
+    
+    .chat-header {
+        flex-wrap: wrap;
+    }
+    
+    .chat-product-card {
+        max-width: 100%;
+    }
+    
+    .delete-options-popup,
+    .delete-chat-confirmation,
+    .block-confirmation-popup,
+    .unblock-confirmation-popup,
+    .custom-confirmation-popup {
+        width: 90%;
+        padding: 24px;
+    }
+    
+    .delete-chat-buttons,
+    .confirmation-buttons {
+        flex-direction: column;
+    }
+    
+    .delete-chat-btn,
+    .confirmation-btn {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="inquiries-container">
+    <!-- Product Header - Clean Banner -->
+    <div class="product-header">
+        <div class="product-header-top">
+            <a href="{% url 'user_chat' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to All Chats
+            </a>
+            <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 20px; font-size: 12px;">
+                <i class="fas fa-box"></i> Product Inquiries
+            </span>
+        </div>
+        
+        <div class="product-header-content">
+            {% if product_info.image_url %}
+            <img src="{{ product_info.image_url }}" alt="" class="product-header-image"
+                 onerror="this.src='{% static 'images/no-image.png' %}'">
+            {% else %}
+            <div class="product-header-image" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-{% if product_type == 'car' %}car{% elif product_type == 'land' %}map-marker-alt{% elif product_type == 'apartment' %}building{% else %}tag{% endif %}" style="font-size: 30px;"></i>
+            </div>
+            {% endif %}
+            
+            <div class="product-header-details">
+                <div class="product-header-title">{{ product_info.title }}</div>
+                <div class="product-header-meta">
+                    <span><i class="far fa-calendar"></i> {{ product.created_at|date:"M d, Y" }}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> {{ product.city|default:"Location not specified" }}</span>
+                    <span><i class="fas fa-tag"></i> {{ product_type|title }}</span>
+                </div>
+                <div class="product-header-price">
+                    {% if product_info.price %}
+                        OMR {{ product_info.price|floatformat:0 }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content - Split Layout -->
+    <div class="main-content">
+        <!-- User List Sidebar - Modern Design -->
+        <div class="user-sidebar">
+            <div class="user-sidebar-header">
+                <h4><i class="fas fa-users"></i> Interested Buyers</h4>
+                <input type="text" class="user-search" id="userSearch" placeholder="Search buyers...">
+            </div>
+            
+            <div class="user-list" id="userList">
+                {% for conversation in conversations %}
+                <div class="user-item" 
+                     onclick="selectUser({{ conversation.user.id }}, '{{ conversation.user.username|escapejs }}', '{{ conversation.product_title|escapejs }}', '{{ conversation.product_image|default:'' }}', '{{ conversation.product_price|default:'' }}', '{{ conversation.user.image.url|default:'' }}')" 
+                     id="user-{{ conversation.user.id }}"
+                     data-username="{{ conversation.user.username }}"
+                     data-product-title="{{ conversation.product_title }}"
+                     data-product-image="{{ conversation.product_image|default:'' }}"
+                     data-product-price="{{ conversation.product_price|default:'' }}"
+                     data-user-image="{% if conversation.user.image %}{{ conversation.user.image.url }}{% endif %}"
+                     data-product-id="{{ product_id }}"
+                     data-product-type="{{ product_type }}">
+                    
+                    <!-- User Profile Avatar - Circular -->
+                    <div class="user-item-avatar">
+                        {% if conversation.user.image and conversation.user.image.url %}
+                            <img src="{{ conversation.user.image.url }}" 
+                                 alt="{{ conversation.user.username }}" 
+                                 class="user-item-image"
+                                 onerror="this.onerror=null; this.style.display='none'; this.parentNode.querySelector('.avatar-fallback').style.display='flex';">
+                            <div class="avatar-fallback" style="display: none;">
+                                {{ conversation.user.username|first|upper }}
+                            </div>
+                        {% else %}
+                            <div class="avatar-fallback">
+                                {{ conversation.user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- User Info Section -->
+                    <div class="user-item-info">
+                        <!-- Header with name and badge -->
+                        <div class="user-item-header">
+                            <div class="user-name-section">
+                                <span class="user-name">{{ conversation.user.username }}</span>
+                                <span class="user-badge">
+                                    <i class="fas fa-user"></i> Buyer
+                                </span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center;">
+                                {% if conversation.unread_count > 0 %}
+                                <span class="unread-count" id="unread-{{ conversation.user.id }}">{{ conversation.unread_count }}</span>
+                                {% endif %}
+                                
+                                <!-- Three Dots Menu for Sidebar -->
+                                <div class="user-item-menu-container" onclick="event.stopPropagation()">
+                                    <button class="user-item-menu-button" onclick="toggleUserMenu('{{ conversation.user.id }}')">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="user-item-dropdown" id="user-menu-{{ conversation.user.id }}">
+                                        <div class="user-item-dropdown-item block-item" onclick="showBlockConfirmation({{ conversation.user.id }}, '{{ conversation.user.username|escapejs }}')">
+                                            <i class="fas fa-ban"></i>
+                                            <span>Block User</span>
+                                        </div>
+                                        <div class="user-item-dropdown-item delete-item" onclick="showDeleteChatConfirmation({{ conversation.user.id }}, '{{ conversation.user.username|escapejs }}', this)">
+                                            <i class="fas fa-trash-alt"></i>
+                                            <span>Delete Chat</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Product Title with small thumbnail -->
+                        {% if conversation.product_title %}
+                        <div class="user-item-product">
+                            {% if conversation.product_image %}
+                            <img src="{{ conversation.product_image }}" 
+                                 alt="" 
+                                 class="product-thumbnail"
+                                 onerror="this.style.display='none'">
+                            {% endif %}
+                            <span class="product-title">
+                                {{ conversation.product_title|truncatechars:30 }}
+                            </span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Last Message Preview -->
+                        {% if conversation.last_message %}
+                        <div class="user-item-last-message">
+                            <i class="fas fa-comment"></i>
+                            <span class="message-preview">
+                                {{ conversation.last_message|truncatechars:30 }}
+                            </span>
+                            {% if conversation.last_message_time %}
+                            <span class="message-time-small">{{ conversation.last_message_time|timesince }} ago</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <h3>No Inquiries Yet</h3>
+                    <p>When someone messages about this product, they'll appear here</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Chat Area - Modern Design -->
+        <div class="chat-area" id="chatArea">
+            <!-- No User Selected State -->
+            <div class="no-user-selected" id="noUserSelected" style="display: flex;">
+                <div class="no-user-selected-content">
+                    <i class="fas fa-comment-dots"></i>
+                    <h3>Select a Buyer</h3>
+                    <p>Choose a buyer from the list to view their messages and reply</p>
+                </div>
+            </div>
+            
+            <!-- Active Chat Container (Hidden by default) -->
+            <div id="activeChatContainer" style="display: none; height: 100%; flex-direction: column;">
+                <!-- Chat Header with User Info -->
+                <div class="chat-header">
+                    <div class="chat-avatar-container" id="selectedUserAvatarContainer">
+                        <img src="" alt="" class="chat-avatar-image" id="selectedUserAvatarImage" style="display: none;">
+                        <div class="chat-avatar-fallback" id="selectedUserAvatarFallback">U</div>
+                    </div>
+                    
+                    <div class="chat-header-info">
+                        <div class="chat-user-details">
+                            <span class="chat-username" id="selectedUserName">Username</span>
+                            <span class="chat-product-badge" id="selectedUserBadge">
+                                <i class="fas fa-user"></i> Buyer
+                            </span>
+                        </div>
+                        
+                        <!-- Product Info Card -->
+                        <div class="chat-product-card" id="chatProductCard">
+                            <div id="productImageContainer">
+                                <img src="" alt="" class="chat-product-image" id="chatProductImage" style="display: none;">
+                                <div class="chat-product-image-placeholder" id="chatProductPlaceholder">
+                                    <i class="fas fa-tag"></i>
+                                </div>
+                            </div>
+                            <div class="chat-product-details">
+                                <div class="chat-product-title" id="chatProductTitle">Product Title</div>
+                                <div class="chat-product-meta">
+                                    <span class="chat-product-price" id="chatProductPrice"></span>
+                                    <span class="chat-product-type" id="chatProductType">
+                                        <i class="fas fa-tag"></i> {{ product_type|title }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Three Dots Menu -->
+                    <div class="chat-menu-container">
+                        <button class="chat-menu-button" onclick="toggleChatMenu()">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="chat-menu-dropdown" id="chatMenuDropdown"></div>
+                    </div>
+                </div>
+                
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer"></div>
+                
+                <!-- Quick Reply Area -->
+                <div class="quick-reply-area">
+                    <form class="reply-input-group" onsubmit="sendReply(event)">
+                        {% csrf_token %}
+                        <textarea id="replyMessage" placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)" rows="1"></textarea>
+                        <button type="submit" class="send-btn" id="sendReplyBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Message Notification -->
+<div class="new-message-notification" id="newMessageNotification" onclick="scrollToBottom()">
+    <i class="fas fa-envelope"></i> New message received
+</div>
+
+<script>
+// Parse messages data from Django
+const messagesData = {{ messages_data_json|safe }};
+let currentUserId = null;
+let currentUsername = '';
+let currentProductTitle = '';
+let currentProductImage = '';
+let currentProductPrice = '';
+let currentChatSessionId = '';
+let pollingInterval = null;
+let blockStatus = {}; // Store block status for users
+let userProfiles = {}; // Store user profile data
+
+// Get CSRF token
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Function to generate unique chat ID
+function getChatUniqueId(userId) {
+    return `product-{{ product_id }}-{{ product_type }}-${userId}`;
+}
+
+// Function to show toast notification
+function showToast(message, type = 'info', duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+    
+    let icon = 'info-circle';
+    if (type === 'success') icon = 'check-circle';
+    if (type === 'error') icon = 'exclamation-circle';
+    if (type === 'warning') icon = 'exclamation-triangle';
+    
+    toast.innerHTML = `
+        <i class="fas fa-${icon}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
+// Function to update unread count for a user
+function updateUnreadCount(userId, newCount) {
+    const unreadBadge = document.getElementById(`unread-${userId}`);
+    
+    if (newCount > 0) {
+        if (unreadBadge) {
+            unreadBadge.textContent = newCount;
+            unreadBadge.style.display = 'flex';
+        } else {
+            // Create new badge if it doesn't exist
+            const userItem = document.getElementById(`user-${userId}`);
+            if (userItem) {
+                const headerDiv = userItem.querySelector('.user-item-header div:last-child');
+                if (headerDiv) {
+                    const badgeContainer = document.createElement('span');
+                    badgeContainer.className = 'unread-count';
+                    badgeContainer.id = `unread-${userId}`;
+                    badgeContainer.textContent = newCount;
+                    headerDiv.appendChild(badgeContainer);
+                }
+            }
+        }
+    } else {
+        if (unreadBadge) {
+            unreadBadge.style.display = 'none';
+        }
+    }
+}
+
+// ========== CENTERED POPUP FUNCTIONS ==========
+
+// Function to close any open popup
+function closePopup() {
+    const overlay = document.querySelector('.popup-overlay');
+    const popup = document.querySelector('.delete-options-popup, .delete-chat-confirmation, .block-confirmation-popup, .unblock-confirmation-popup, .custom-confirmation-popup');
+    
+    if (overlay) {
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => overlay.remove(), 300);
+    }
+    if (popup) {
+        popup.style.animation = 'popOut 0.3s ease';
+        setTimeout(() => popup.remove(), 300);
+    }
+}
+
+// Function to show block confirmation (centered)
+function showBlockConfirmation(userId, username) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.id = 'popupOverlay';
+    overlay.onclick = closePopup;
+    document.body.appendChild(overlay);
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.className = 'block-confirmation-popup';
+    popup.id = 'blockConfirmationPopup';
+    
+    popup.innerHTML = `
+        <i class="fas fa-exclamation-triangle popup-warning-icon"></i>
+        <h3>Block User</h3>
+        <p>Are you sure you want to block <strong>${username}</strong>?<br>You won't receive messages from them.</p>
+        <div class="confirmation-buttons">
+            <button class="confirmation-btn block-confirm" onclick="blockUser(${userId}, '${username}')">
+                <i class="fas fa-ban"></i> Block
+            </button>
+            <button class="confirmation-btn cancel" onclick="closePopup()">
+                Cancel
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+}
+
+// Function to block user
+async function blockUser(userId, username) {
+    closePopup();
+    
+    try {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+        
+        const response = await fetch(`/chat/block-user/${userId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            
+            // Update block status
+            blockStatus[userId] = true;
+            
+            // Close all menus
+            document.querySelectorAll('.user-item-dropdown').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            document.getElementById('chatMenuDropdown')?.classList.remove('show');
+            
+            // Update the menu in sidebar for this user
+            updateUserSidebarMenu(userId, true, username);
+            
+            // If this user is currently selected, update the UI
+            if (currentUserId == userId) {
+                updateChatMenu(true);
+                disableMessageInput(true);
+                
+                // Add blocked message if not already there
+                const messagesContainer = document.getElementById('messagesContainer');
+                const existingBlockedMsg = document.querySelector('.blocked-message');
+                if (!existingBlockedMsg) {
+                    const blockedMessage = document.createElement('div');
+                    blockedMessage.className = 'blocked-message';
+                    blockedMessage.innerHTML = '<i class="fas fa-ban"></i> You have blocked this user';
+                    if (messagesContainer && messagesContainer.parentNode) {
+                        messagesContainer.parentNode.insertBefore(blockedMessage, messagesContainer.nextSibling);
+                    }
+                }
+            }
+        } else {
+            showToast('Error: ' + data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error blocking user:', error);
+        showToast('Failed to block user. Please try again.', 'error');
+    }
+}
+
+// Function to update sidebar menu after block/unblock
+function updateUserSidebarMenu(userId, isBlocked, username) {
+    const menu = document.getElementById(`user-menu-${userId}`);
+    
+    if (menu) {
+        if (isBlocked) {
+            menu.innerHTML = `
+                <div class="user-item-dropdown-item unblock-item" onclick="showUnblockConfirmation(${userId}, '${username}')">
+                    <i class="fas fa-user-check"></i>
+                    <span>Unblock User</span>
+                </div>
+                <div class="user-item-dropdown-item delete-item" onclick="showDeleteChatConfirmation(${userId}, '${username}', this)">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Delete Chat</span>
+                </div>
+            `;
+        } else {
+            menu.innerHTML = `
+                <div class="user-item-dropdown-item block-item" onclick="showBlockConfirmation(${userId}, '${username}')">
+                    <i class="fas fa-ban"></i>
+                    <span>Block User</span>
+                </div>
+                <div class="user-item-dropdown-item delete-item" onclick="showDeleteChatConfirmation(${userId}, '${username}', this)">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Delete Chat</span>
+                </div>
+            `;
+        }
+    }
+}
+
+// Function to show unblock confirmation (centered)
+function showUnblockConfirmation(userId, username) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.id = 'popupOverlay';
+    overlay.onclick = closePopup;
+    document.body.appendChild(overlay);
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.className = 'unblock-confirmation-popup';
+    popup.id = 'unblockConfirmationPopup';
+    
+    popup.innerHTML = `
+        <i class="fas fa-info-circle popup-info-icon"></i>
+        <h3>Unblock User</h3>
+        <p>Are you sure you want to unblock <strong>${username}</strong>?</p>
+        <div class="confirmation-buttons">
+            <button class="confirmation-btn unblock-confirm" onclick="unblockUser(${userId}, '${username}')">
+                <i class="fas fa-user-check"></i> Unblock
+            </button>
+            <button class="confirmation-btn cancel" onclick="closePopup()">
+                Cancel
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+}
+
+// Function to unblock user
+async function unblockUser(userId, username) {
+    closePopup();
+    
+    try {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+        
+        const response = await fetch(`/chat/unblock-user/${userId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            
+            // Update block status
+            blockStatus[userId] = false;
+            
+            // Close all menus
+            document.querySelectorAll('.user-item-dropdown').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            document.getElementById('chatMenuDropdown')?.classList.remove('show');
+            
+            // Update the menu in sidebar for this user
+            updateUserSidebarMenu(userId, false, username);
+            
+            // If this user is currently selected, update the UI
+            if (currentUserId == userId) {
+                updateChatMenu(false);
+                disableMessageInput(false);
+                
+                // Remove blocked message if exists
+                const blockedMsg = document.querySelector('.blocked-message');
+                if (blockedMsg) blockedMsg.remove();
+            }
+        } else {
+            showToast('Error: ' + data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error unblocking user:', error);
+        showToast('Failed to unblock user. Please try again.', 'error');
+    }
+}
+
+// Function to show delete chat confirmation with context
+function showDeleteChatConfirmation(userId, username, element) {
+    // Get the specific user item
+    const userItem = element?.closest('.user-item') || document.getElementById(`user-${userId}`);
+    
+    // Get product info from the user item's data attributes
+    const productTitle = userItem?.dataset.productTitle || 'this chat';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.id = 'popupOverlay';
+    overlay.onclick = closePopup;
+    document.body.appendChild(overlay);
+    
+    // Create popup with specific context
+    const popup = document.createElement('div');
+    popup.className = 'delete-chat-confirmation';
+    popup.id = 'deleteChatConfirmationPopup';
+    
+    popup.innerHTML = `
+        <i class="fas fa-exclamation-triangle popup-warning-icon"></i>
+        <h3>Delete Chat</h3>
+        <p>Are you sure you want to delete the chat with <strong>${username}</strong> about "${productTitle}"?<br><span style="color: #dc3545; font-size: 14px;">This action cannot be undone.</span></p>
+        <div class="delete-chat-buttons">
+            <button class="delete-chat-btn confirm" onclick="deleteChat(${userId}, '${username}', this)">
+                <i class="fas fa-trash-alt"></i> Delete
+            </button>
+            <button class="delete-chat-btn cancel" onclick="closePopup()">
+                Cancel
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+}
+
+// UPDATED: Function to delete entire chat with proper UI update
+async function deleteChat(userId, username, element) {
+    closePopup();
+    
+    // Get the specific user item
+    const userItem = element?.closest('.user-item') || document.getElementById(`user-${userId}`);
+    
+    if (!userItem) {
+        console.error('User item not found');
+        return;
+    }
+    
+    console.log('Deleting chat for product:', { 
+        userId, 
+        username, 
+        productId: '{{ product_id }}', 
+        productType: '{{ product_type }}' 
+    });
+    
+    // Show loading state on the user item
+    userItem.style.opacity = '0.5';
+    userItem.style.pointerEvents = 'none';
+    
+    try {
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+        formData.append('product_id', '{{ product_id }}');
+        formData.append('product_type', '{{ product_type }}');
+        
+        const response = await fetch(`/chat/delete-chat/${userId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            
+            // Close all menus
+            document.querySelectorAll('.user-item-dropdown').forEach(menu => {
+                menu.classList.remove('show');
+            });
+            document.getElementById('chatMenuDropdown')?.classList.remove('show');
+            
+            // Remove the user item with animation
+            userItem.style.transition = 'all 0.3s ease';
+            userItem.style.opacity = '0';
+            userItem.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                // Remove the item from DOM
+                userItem.remove();
+                
+                // Remove from messagesData
+                delete messagesData[userId];
+                
+                // Remove from userProfiles
+                delete userProfiles[userId];
+                
+                // Remove from blockStatus
+                delete blockStatus[userId];
+                
+                // Check if there are any users left
+                const remainingUsers = document.querySelectorAll('.user-item');
+                
+                if (remainingUsers.length === 0) {
+                    // No users left - show empty state
+                    const userList = document.getElementById('userList');
+                    if (userList) {
+                        userList.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-comments"></i>
+                                <h3>No Inquiries Yet</h3>
+                                <p>When someone messages about this product, they'll appear here</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // Hide chat area and show no user selected
+                    document.getElementById('noUserSelected').style.display = 'flex';
+                    document.getElementById('activeChatContainer').style.display = 'none';
+                    currentUserId = null;
+                    
+                    // Stop polling
+                    if (pollingInterval) {
+                        clearInterval(pollingInterval);
+                        pollingInterval = null;
+                    }
+                    
+                } else {
+                    // If the deleted user was the current selected user, select the first available user
+                    if (currentUserId == userId) {
+                        const firstUser = remainingUsers[0];
+                        if (firstUser) {
+                            const newUserId = parseInt(firstUser.id.replace('user-', ''));
+                            const newUsername = firstUser.dataset.username || '';
+                            const newProductTitle = firstUser.dataset.productTitle || '';
+                            const newProductImage = firstUser.dataset.productImage || '';
+                            const newProductPrice = firstUser.dataset.productPrice || '';
+                            const newUserImage = firstUser.dataset.userImage || '';
+                            
+                            // Auto-select the first user
+                            selectUser(newUserId, newUsername, newProductTitle, newProductImage, newProductPrice, newUserImage);
+                        }
+                    }
+                }
+                
+                // If the chat area was showing this user's messages, clear them
+                if (currentUserId === null) {
+                    const messagesContainer = document.getElementById('messagesContainer');
+                    if (messagesContainer) {
+                        messagesContainer.innerHTML = '';
+                    }
+                }
+                
+            }, 300);
+            
+        } else {
+            showToast('Error: ' + (data.error || 'Failed to delete chat'), 'error');
+            // Restore the user item
+            userItem.style.opacity = '1';
+            userItem.style.pointerEvents = 'auto';
+        }
+        
+    } catch (error) {
+        console.error('Error deleting chat:', error);
+        showToast('Failed to delete chat. Please try again.', 'error');
+        // Restore the user item
+        if (userItem) {
+            userItem.style.opacity = '1';
+            userItem.style.pointerEvents = 'auto';
+        }
+    }
+}
+
+// Function to show delete message confirmation (centered)
+function showDeleteMessageConfirmation(messageId, canDeleteForEveryone) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.id = 'popupOverlay';
+    overlay.onclick = closePopup;
+    document.body.appendChild(overlay);
+    
+    // Create popup
+    const popup = document.createElement('div');
+    popup.className = 'custom-confirmation-popup';
+    popup.id = 'deleteMessageConfirmationPopup';
+    
+    if (canDeleteForEveryone) {
+        popup.innerHTML = `
+            <i class="fas fa-question-circle popup-info-icon"></i>
+            <h3>Delete Message</h3>
+            <p>Choose an option:</p>
+            <div class="delete-options">
+                <button class="delete-option-btn delete-self" onclick="deleteMessage(${messageId}, false)">
+                    <i class="fas fa-user"></i> Delete for me
+                </button>
+                <button class="delete-option-btn delete-everyone" onclick="deleteMessage(${messageId}, true)">
+                    <i class="fas fa-users"></i> Delete for everyone
+                </button>
+            </div>
+            <button class="cancel-delete" onclick="closePopup()">Cancel</button>
+        `;
+    } else {
+        popup.innerHTML = `
+            <i class="fas fa-exclamation-triangle popup-warning-icon"></i>
+            <h3>Delete Message</h3>
+            <p>Delete this message for yourself?</p>
+            <div class="delete-options">
+                <button class="delete-option-btn delete-self" onclick="deleteMessage(${messageId}, false)">
+                    <i class="fas fa-user"></i> Delete for me
+                </button>
+            </div>
+            <button class="cancel-delete" onclick="closePopup()">Cancel</button>
+        `;
+    }
+    
+    document.body.appendChild(popup);
+}
+
+// Function to delete message
+async function deleteMessage(messageId, deleteForEveryone = false) {
+    closePopup();
+    
+    try {
+        const response = await fetch(`/chat/delete-message/${messageId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                delete_for_everyone: deleteForEveryone
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update message in UI
+            const messageWrapper = document.querySelector(`[data-message-id="${messageId}"]`);
+            
+            if (messageWrapper) {
+                if (data.deleted_for_everyone) {
+                    messageWrapper.classList.add('deleted');
+                    const messageBubble = messageWrapper.querySelector('.message-bubble');
+                    if (messageBubble) {
+                        const timeElement = messageBubble.querySelector('.message-time');
+                        messageBubble.innerHTML = '[This message has been deleted]';
+                        if (timeElement) messageBubble.appendChild(timeElement);
+                    }
+                    const actions = messageWrapper.querySelector('.message-actions');
+                    if (actions) actions.remove();
+                    showToast('Message deleted for everyone', 'success');
+                } else {
+                    messageWrapper.remove();
+                    showToast('Message deleted', 'success');
+                }
+            }
+        } else {
+            showToast('Error: ' + data.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        showToast('Failed to delete message. Please try again.', 'error');
+    }
+}
+
+// Function to toggle user menu in sidebar
+function toggleUserMenu(userId) {
+    // Close all other menus first
+    document.querySelectorAll('.user-item-dropdown').forEach(menu => {
+        if (!menu.id.includes(`user-menu-${userId}`)) {
+            menu.classList.remove('show');
+        }
+    });
+    
+    const menu = document.getElementById(`user-menu-${userId}`);
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// Function to toggle chat menu
+function toggleChatMenu() {
+    const menu = document.getElementById('chatMenuDropdown');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// Close menus when clicking outside
+document.addEventListener('click', function(event) {
+    // Close sidebar menus
+    document.querySelectorAll('.user-item-dropdown').forEach(menu => {
+        if (!menu.contains(event.target) && !event.target.closest('.user-item-menu-button')) {
+            menu.classList.remove('show');
+        }
+    });
+    
+    // Close chat menu
+    const chatMenu = document.getElementById('chatMenuDropdown');
+    const chatButton = document.querySelector('.chat-menu-button');
+    if (chatMenu && chatButton && !chatButton.contains(event.target) && !chatMenu.contains(event.target)) {
+        chatMenu.classList.remove('show');
+    }
+});
+
+// Function to check block status
+async function checkBlockStatus(userId) {
+    try {
+        const response = await fetch(`/chat/check-block-status/${userId}/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            blockStatus[userId] = data.is_blocked;
+            return {
+                isBlocked: data.is_blocked,
+                isBlockedByOther: data.is_blocked_by_other
+            };
+        }
+        return { isBlocked: false, isBlockedByOther: false };
+    } catch (error) {
+        console.error('Error checking block status:', error);
+        return { isBlocked: false, isBlockedByOther: false };
+    }
+}
+
+// Function to update chat menu based on block status
+function updateChatMenu(isBlocked) {
+    const menu = document.getElementById('chatMenuDropdown');
+    if (!menu || !currentUserId) return;
+    
+    const username = currentUsername;
+    
+    if (isBlocked) {
+        menu.innerHTML = `
+            <div class="chat-menu-item unblock-item" onclick="showUnblockConfirmation(${currentUserId}, '${username}')">
+                <i class="fas fa-user-check"></i>
+                <span>Unblock User</span>
+            </div>
+            <div class="chat-menu-item delete-item" onclick="showDeleteChatConfirmation(${currentUserId}, '${username}', this)">
+                <i class="fas fa-trash-alt"></i>
+                <span>Delete Chat</span>
+            </div>
+        `;
+    } else {
+        menu.innerHTML = `
+            <div class="chat-menu-item block-item" onclick="showBlockConfirmation(${currentUserId}, '${username}')">
+                <i class="fas fa-ban"></i>
+                <span>Block User</span>
+            </div>
+            <div class="chat-menu-item delete-item" onclick="showDeleteChatConfirmation(${currentUserId}, '${username}', this)">
+                <i class="fas fa-trash-alt"></i>
+                <span>Delete Chat</span>
+            </div>
+        `;
+    }
+}
+
+// Function to disable/enable message input
+function disableMessageInput(disabled) {
+    const input = document.getElementById('replyMessage');
+    const sendBtn = document.getElementById('sendReplyBtn');
+    
+    if (input && sendBtn) {
+        input.disabled = disabled;
+        sendBtn.disabled = disabled;
+        
+        if (disabled) {
+            input.placeholder = 'You cannot send messages to this user';
+        } else {
+            input.placeholder = 'Type your message here... (Press Enter to send, Shift+Enter for new line)';
+        }
+    }
+}
+
+// Function to get product icon
+function getProductIcon(productType) {
+    const icons = {
+        'car': 'car',
+        'land': 'map-marker-alt',
+        'apartment': 'building',
+        'electronics': 'mobile-alt',
+        'furniture': 'couch',
+        'motorcycle': 'motorcycle',
+        'scooter': 'motorcycle',
+        'boat': 'ship'
+    };
+    return icons['{{ product_type }}'] || 'tag';
+}
+
+// Select a user to view their chat
+async function selectUser(userId, username, productTitle, productImage, productPrice, userImage) {
+    console.log('Selecting user:', userId);
+    currentUserId = userId;
+    currentUsername = username;
+    currentProductTitle = productTitle;
+    currentProductImage = productImage;
+    currentProductPrice = productPrice;
+    
+    // Store user profile
+    userProfiles[userId] = {
+        username: username,
+        imageUrl: userImage
+    };
+    
+    // Update active state in user list
+    document.querySelectorAll('.user-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    const selectedUser = document.getElementById('user-' + userId);
+    if (selectedUser) {
+        selectedUser.classList.add('active');
+        
+        // Add unique chat ID attribute
+        const uniqueId = getChatUniqueId(userId);
+        selectedUser.setAttribute('data-chat-id', uniqueId);
+    }
+    
+    // Get user image from parameter or from the selected user item
+    let userImageUrl = userImage || '';
+    if (!userImageUrl && selectedUser) {
+        const userAvatarImg = selectedUser.querySelector('.user-item-image');
+        userImageUrl = userAvatarImg?.src || '';
+    }
+    
+    // Check block status
+    const status = await checkBlockStatus(userId);
+    
+    // Hide no user selected and show chat container
+    const noUserSelected = document.getElementById('noUserSelected');
+    const activeContainer = document.getElementById('activeChatContainer');
+    
+    if (noUserSelected) noUserSelected.style.display = 'none';
+    if (activeContainer) {
+        activeContainer.style.display = 'flex';
+        activeContainer.style.flexDirection = 'column';
+    }
+    
+    // Update header with user info
+    const selectedUserName = document.getElementById('selectedUserName');
+    const selectedUserBadge = document.getElementById('selectedUserBadge');
+    
+    if (selectedUserName) selectedUserName.textContent = username;
+    if (selectedUserBadge) selectedUserBadge.innerHTML = '<i class="fas fa-user"></i> Buyer';
+    
+    // Update user avatar
+    const avatarImage = document.getElementById('selectedUserAvatarImage');
+    const avatarFallback = document.getElementById('selectedUserAvatarFallback');
+    
+    if (avatarImage && avatarFallback) {
+        if (userImageUrl) {
+            avatarImage.src = userImageUrl;
+            avatarImage.style.display = 'block';
+            avatarFallback.style.display = 'none';
+        } else {
+            avatarImage.style.display = 'none';
+            avatarFallback.style.display = 'flex';
+            avatarFallback.textContent = username.charAt(0).toUpperCase();
+        }
+    }
+    
+    // Update product info in chat header
+    updateProductInfoInChat(productTitle, productImage, productPrice);
+    
+    // Update chat menu based on block status
+    updateChatMenu(status.isBlocked);
+    
+    // Remove any existing blocked message
+    const existingBlockedMsg = document.querySelector('.blocked-message');
+    if (existingBlockedMsg) existingBlockedMsg.remove();
+    
+    // Disable input if blocked
+    disableMessageInput(status.isBlocked || status.isBlockedByOther);
+    
+    // Add blocked message if needed
+    if (status.isBlocked || status.isBlockedByOther) {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const blockedMessage = document.createElement('div');
+        blockedMessage.className = 'blocked-message';
+        
+        if (status.isBlocked) {
+            blockedMessage.innerHTML = '<i class="fas fa-ban"></i> You have blocked this user';
+        } else if (status.isBlockedByOther) {
+            blockedMessage.innerHTML = '<i class="fas fa-ban"></i> This user has blocked you';
+        }
+        
+        if (messagesContainer && messagesContainer.parentNode) {
+            messagesContainer.parentNode.insertBefore(blockedMessage, messagesContainer.nextSibling);
+        }
+    }
+    
+    // Display messages
+    displayMessages(userId);
+    
+    // Clear unread badge for this user
+    updateUnreadCount(userId, 0);
+    
+    // Focus on reply input if not blocked
+    if (!status.isBlocked && !status.isBlockedByOther) {
+        const replyInput = document.getElementById('replyMessage');
+        if (replyInput) replyInput.focus();
+    }
+    
+    // Start polling for this user
+    startPolling(userId);
+}
+
+// Update product info in chat header
+function updateProductInfoInChat(title, image, price) {
+    const productTitle = document.getElementById('chatProductTitle');
+    const productImage = document.getElementById('chatProductImage');
+    const productPlaceholder = document.getElementById('chatProductPlaceholder');
+    const productPrice = document.getElementById('chatProductPrice');
+    const productType = document.getElementById('chatProductType');
+    
+    if (productTitle) productTitle.textContent = title || 'Product Title';
+    
+    // Update image
+    if (image && productImage && productPlaceholder) {
+        productImage.src = image;
+        productImage.style.display = 'block';
+        productPlaceholder.style.display = 'none';
+    } else if (productImage && productPlaceholder) {
+        productImage.style.display = 'none';
+        productPlaceholder.style.display = 'flex';
+        const icon = productPlaceholder.querySelector('i');
+        if (icon) {
+            icon.className = `fas fa-${getProductIcon('{{ product_type }}')}`;
+        }
+    }
+    
+    // Update price
+    if (price && productPrice) {
+        productPrice.textContent = `OMR ${price}`;
+        productPrice.style.display = 'inline';
+    } else if (productPrice) {
+        productPrice.style.display = 'none';
+    }
+    
+    // Update product type icon
+    if (productType) {
+        const typeIcon = productType.querySelector('i');
+        if (typeIcon) {
+            typeIcon.className = `fas fa-${getProductIcon('{{ product_type }}')}`;
+        }
+    }
+}
+
+// Display messages for selected user
+function displayMessages(userId) {
+    const container = document.getElementById('messagesContainer');
+    if (!container) return;
+    
+    const userData = messagesData[userId];
+    
+    if (!userData || !userData.messages || userData.messages.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><h3>No Messages</h3><p>Start the conversation!</p></div>';
+        return;
+    }
+    
+    let html = '';
+    let currentDate = '';
+    
+    // Sort messages by date
+    const sortedMessages = [...userData.messages].sort((a, b) => {
+        return new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time);
+    });
+    
+    sortedMessages.forEach(msg => {
+        // Add date separator if date changes
+        if (msg.date !== currentDate) {
+            currentDate = msg.date;
+            html += `<div class="message-date"><span>${formatDate(msg.date)}</span></div>`;
+        }
+        
+        const messageClass = msg.is_deleted ? 'message-wrapper deleted' : `message-wrapper ${msg.is_sent ? 'sent' : 'received'}`;
+        
+        html += `
+            <div class="${messageClass}" data-message-id="${msg.id}">
+                ${!msg.is_deleted && msg.is_sent ? `
+                    <div class="message-actions">
+                        <button class="delete-btn" onclick="showDeleteMessageConfirmation('${msg.id}', true)" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                ` : ''}
+                <div class="message-bubble">
+                    ${msg.is_deleted ? '[This message has been deleted]' : msg.text}
+                    <div class="message-time">${msg.time}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    container.scrollTop = container.scrollHeight;
+}
+
+// Format date for display
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+    } else if (date.toDateString() === yesterday.toDateString()) {
+        return 'Yesterday';
+    } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+}
+
+// Send reply to current user
+async function sendReply(event) {
+    event.preventDefault();
+    
+    if (!currentUserId) {
+        showToast('Please select a buyer first', 'warning');
+        return;
+    }
+    
+    // Check if blocked
+    const status = blockStatus[currentUserId];
+    if (status === true) {
+        showToast('You have blocked this user. Unblock them to send messages.', 'error');
+        return;
+    }
+    
+    const replyInput = document.getElementById('replyMessage');
+    if (!replyInput) return;
+    
+    const message = replyInput.value.trim();
+    
+    if (!message) return;
+    
+    const sendBtn = document.getElementById('sendReplyBtn');
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+    
+    try {
+        const formData = new FormData();
+        formData.append('message', message);
+        formData.append('product_id', '{{ product_id }}');
+        formData.append('product_type', '{{ product_type }}');
+        formData.append('csrfmiddlewaretoken', getCSRFToken());
+        
+        const response = await fetch(`/chat/${currentUserId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) throw new Error('Failed to send');
+        
+        const data = await response.json();
+        
+        // Add message to local data
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0');
+        const dateStr = now.toISOString().split('T')[0];
+        
+        if (!messagesData[currentUserId]) {
+            messagesData[currentUserId] = {
+                username: currentUsername,
+                messages: []
+            };
+        }
+        
+        messagesData[currentUserId].messages.push({
+            id: data.message_id || Date.now(),
+            text: data.message,
+            time: timeStr,
+            date: dateStr,
+            is_sent: true,
+            is_deleted: false,
+            can_delete_for_everyone: true
+        });
+        
+        // Update display
+        displayMessages(currentUserId);
+        
+        // Move user to top of list (they're active now)
+        moveUserToTop(currentUserId);
+        
+        // Update last message preview
+        updateLastMessagePreview(currentUserId, message);
+        
+        // Clear input
+        replyInput.value = '';
+        replyInput.style.height = 'auto';
+        
+    } catch (error) {
+        console.error('Error sending reply:', error);
+        showToast('Failed to send message. Please try again.', 'error');
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        }
+    }
+}
+
+// Function to move user to top of list
+function moveUserToTop(userId) {
+    const userList = document.getElementById('userList');
+    const userItem = document.getElementById(`user-${userId}`);
+    
+    if (!userItem || !userList) return;
+    
+    // Remove the user item from its current position
+    userItem.remove();
+    
+    // Insert it at the beginning of the container
+    userList.insertBefore(userItem, userList.firstChild);
+    
+    // Add a visual highlight effect
+    userItem.style.transition = 'background-color 0.5s ease';
+    userItem.style.backgroundColor = '#fff9e6';
+    
+    setTimeout(() => {
+        userItem.style.backgroundColor = '';
+    }, 1000);
+}
+
+// Function to update last message preview
+function updateLastMessagePreview(userId, message) {
+    const userItem = document.getElementById(`user-${userId}`);
+    if (!userItem) return;
+    
+    const previewElement = userItem.querySelector('.message-preview');
+    if (previewElement) {
+        previewElement.innerHTML = message || 'New message...';
+        
+        // Add animation
+        previewElement.style.transition = 'color 0.3s ease';
+        previewElement.style.color = '#15818E';
+        
+        setTimeout(() => {
+            previewElement.style.color = '';
+        }, 1000);
+    }
+}
+
+// Start polling for new messages
+function startPolling(userId) {
+    // Clear existing polling
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+    
+    // Poll every 3 seconds
+    pollingInterval = setInterval(() => {
+        checkNewMessages(userId);
+    }, 3000);
+}
+
+// Check for new messages
+async function checkNewMessages(userId) {
+    try {
+        const response = await fetch(`/chat/${userId}/check-new/?product_id={{ product_id }}&product_type={{ product_type }}`);
+        const data = await response.json();
+        
+        if (data.has_new && data.count > 0) {
+            if (userId === currentUserId) {
+                // Show notification
+                const notification = document.getElementById('newMessageNotification');
+                if (notification) {
+                    notification.style.display = 'block';
+                    notification.innerHTML = `<i class="fas fa-envelope"></i> ${data.count} new message${data.count > 1 ? 's' : ''}`;
+                    
+                    // Hide notification after 5 seconds
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 5000);
+                }
+                
+                // Reload messages
+                const messagesResponse = await fetch(`/chat/${userId}/get-messages/?product_id={{ product_id }}&product_type={{ product_type }}`);
+                const messagesDataResponse = await messagesResponse.json();
+                
+                // Update local data
+                if (messagesDataResponse.messages) {
+                    if (!messagesData[currentUserId]) {
+                        messagesData[currentUserId] = { messages: [] };
+                    }
+                    messagesData[currentUserId].messages = messagesDataResponse.messages;
+                    displayMessages(currentUserId);
+                }
+            } else {
+                // Update unread badge for other user
+                const currentBadge = document.getElementById(`unread-${userId}`);
+                const currentCount = currentBadge ? parseInt(currentBadge.textContent) || 0 : 0;
+                updateUnreadCount(userId, currentCount + data.count);
+                
+                // Move user to top of list
+                moveUserToTop(userId);
+                
+                // Update last message preview
+                updateLastMessagePreview(userId, data.last_message || 'New message...');
+            }
+        }
+        
+        // Update block status if changed
+        if (data.is_blocked !== undefined && blockStatus[userId] !== data.is_blocked) {
+            blockStatus[userId] = data.is_blocked;
+            if (userId === currentUserId) {
+                updateChatMenu(data.is_blocked);
+                disableMessageInput(data.is_blocked || data.is_blocked_by_other);
+                
+                // Update blocked message
+                const existingBlockedMsg = document.querySelector('.blocked-message');
+                if (data.is_blocked || data.is_blocked_by_other) {
+                    if (!existingBlockedMsg) {
+                        const messagesContainer = document.getElementById('messagesContainer');
+                        const blockedMessage = document.createElement('div');
+                        blockedMessage.className = 'blocked-message';
+                        
+                        if (data.is_blocked) {
+                            blockedMessage.innerHTML = '<i class="fas fa-ban"></i> You have blocked this user';
+                        } else if (data.is_blocked_by_other) {
+                            blockedMessage.innerHTML = '<i class="fas fa-ban"></i> This user has blocked you';
+                        }
+                        
+                        if (messagesContainer && messagesContainer.parentNode) {
+                            messagesContainer.parentNode.insertBefore(blockedMessage, messagesContainer.nextSibling);
+                        }
+                    }
+                } else {
+                    if (existingBlockedMsg) existingBlockedMsg.remove();
+                }
+            }
+            
+            // Update sidebar menu
+            const userItem = document.getElementById(`user-${userId}`);
+            const username = userItem?.dataset.username || 'User';
+            updateUserSidebarMenu(userId, data.is_blocked, username);
+        }
+        
+    } catch (error) {
+        console.error('Polling error:', error);
+    }
+}
+
+// Auto-resize textarea
+function autoResizeTextarea() {
+    const textarea = document.getElementById('replyMessage');
+    if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+}
+
+// Setup textarea
+function setupTextarea() {
+    const replyInput = document.getElementById('replyMessage');
+    if (replyInput) {
+        replyInput.addEventListener('input', autoResizeTextarea);
+        
+        replyInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendReply(e);
+            }
+        });
+    }
+}
+
+// Scroll to bottom of messages
+function scrollToBottom() {
+    const container = document.getElementById('messagesContainer');
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+    const notification = document.getElementById('newMessageNotification');
+    if (notification) {
+        notification.style.display = 'none';
+    }
+}
+
+// Search functionality
+function setupSearch() {
+    const searchInput = document.getElementById('userSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            document.querySelectorAll('.user-item').forEach(item => {
+                const name = item.querySelector('.user-name')?.textContent.toLowerCase() || '';
+                const product = item.querySelector('.product-title')?.textContent.toLowerCase() || '';
+                if (name.includes(query) || product.includes(query)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+}
+
+// Add data attributes to all user items on load
+function addDataAttributes() {
+    document.querySelectorAll('.user-item').forEach(item => {
+        const userId = item.id.replace('user-', '');
+        const username = item.dataset.username || '';
+        const productTitle = item.dataset.productTitle || '';
+        const productImage = item.dataset.productImage || '';
+        const productPrice = item.dataset.productPrice || '';
+        const userImage = item.dataset.userImage || '';
+        
+        // Add unique chat ID
+        const uniqueId = getChatUniqueId(userId);
+        item.setAttribute('data-chat-id', uniqueId);
+        
+        // Store user profile
+        userProfiles[userId] = {
+            username: username,
+            imageUrl: userImage
+        };
+    });
+}
+
+// Clean up on page unload
+window.addEventListener('beforeunload', function() {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setupSearch();
+    setupTextarea();
+    addDataAttributes();
+    
+    // Auto-select first user if available
+    const firstUser = document.querySelector('.user-item');
+    if (firstUser) {
+        const userId = firstUser.id.replace('user-', '');
+        const username = firstUser.dataset.username || '';
+        const productTitle = firstUser.dataset.productTitle || '';
+        const productImage = firstUser.dataset.productImage || '';
+        const productPrice = firstUser.dataset.productPrice || '';
+        const userImage = firstUser.dataset.userImage || '';
+        selectUser(parseInt(userId), username, productTitle, productImage, productPrice, userImage);
+    }
+});
+</script>
+
+{% include 'footer.html' %}

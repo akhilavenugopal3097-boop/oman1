@@ -1,0 +1,140 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Refund Management{% endblock %}
+{% block page_title %}Refund Requests{% endblock %}
+
+{% block content %}
+<!-- Status Tabs -->
+<div class="bg-white rounded-xl shadow-sm mb-6">
+    <div class="border-b border-gray-200">
+        <nav class="flex -mb-px">
+            <button class="px-6 py-3 font-medium text-sm border-b-2" style="color: #F9AD1F; border-bottom-color: #F9AD1F;">
+                All Refunds ({{ refunds|length }})
+            </button>
+            <button class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium text-sm">
+                Pending (1)
+            </button>
+            <button class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium text-sm">
+                Approved (1)
+            </button>
+            <button class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium text-sm">
+                Completed (1)
+            </button>
+            <button class="px-6 py-3 text-gray-500 hover:text-gray-700 font-medium text-sm">
+                Rejected (0)
+            </button>
+        </nav>
+    </div>
+</div>
+
+<!-- Refunds Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    {% for refund in refunds %}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-scale">
+        <div class="p-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <span class="text-sm text-gray-500">Refund #{{ refund.id }}</span>
+                    <h3 class="text-lg font-semibold mt-1">Transaction {{ refund.transaction }}</h3>
+                </div>
+                <span class="px-3 py-1 text-xs rounded-full font-medium
+                    {% if refund.status == 'pending' %}" style="background: #EB362D20; color: #EB362D;"
+                    {% elif refund.status == 'approved' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                    {% elif refund.status == 'completed' %}" style="background: #10b98120; color: #10b981;"
+                    {% else %}" style="background: #dc262620; color: #dc2626;"
+                    {% endif %}>{{ refund.status }}</span>
+            </div>
+            
+            <div class="space-y-3 mb-4">
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-user w-5" style="color: #F9AD1F;"></i>
+                    <span class="ml-2 text-gray-600">{{ refund.user }}</span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-money-bill-wave w-5" style="color: #EB362D;"></i>
+                    <span class="ml-2 font-semibold">
+                        <span class="currency-symbol">OMR</span> {{ refund.amount }}
+                    </span>
+                </div>
+                <div class="flex items-center text-sm">
+                    <i class="fas fa-calendar w-5" style="color: #F9AD1F;"></i>
+                    <span class="ml-2 text-gray-600">{{ refund.request_date }}</span>
+                </div>
+                <div class="flex items-start text-sm">
+                    <i class="fas fa-comment w-5 mt-1" style="color: #EB362D;"></i>
+                    <span class="ml-2 text-gray-600">{{ refund.reason }}</span>
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                {% if refund.status == 'pending' %}
+                <button class="flex-1 px-3 py-2 text-white rounded-lg text-sm transition-colors btn-gradient">
+                    <i class="fas fa-check mr-1"></i> Approve
+                </button>
+                <button class="flex-1 px-3 py-2 text-white rounded-lg text-sm transition-colors" style="background: #EB362D;">
+                    <i class="fas fa-times mr-1"></i> Reject
+                </button>
+                {% elif refund.status == 'approved' %}
+                <button class="flex-1 px-3 py-2 text-white rounded-lg text-sm transition-colors" style="background: #F9AD1F;">
+                    <i class="fas fa-exchange-alt mr-1"></i> Process
+                </button>
+                {% endif %}
+                <button class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors" style="color: #F9AD1F;">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Summary Section -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4" style="color: #F9AD1F;">Refund Statistics</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between">
+                <span class="text-gray-600">Total Refund Amount</span>
+                <span class="font-bold"><span class="currency-symbol">OMR</span> 95.97</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Average Processing Time</span>
+                <span class="font-bold">2.3 days</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Success Rate</span>
+                <span class="font-bold" style="color: #10b981;">98.5%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4" style="color: #EB362D;">Common Reasons</h3>
+        <div class="space-y-2">
+            <div class="flex items-center">
+                <span class="w-2 h-2 rounded-full mr-2" style="background: #F9AD1F;"></span>
+                <span class="text-sm text-gray-600">Product not as described (40%)</span>
+            </div>
+            <div class="flex items-center">
+                <span class="w-2 h-2 rounded-full mr-2" style="background: #EB362D;"></span>
+                <span class="text-sm text-gray-600">Wrong item sent (30%)</span>
+            </div>
+            <div class="flex items-center">
+                <span class="w-2 h-2 rounded-full mr-2" style="background: #F9AD1F;"></span>
+                <span class="text-sm text-gray-600">Duplicate charge (30%)</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 gradient-text">Quick Actions</h3>
+        <div class="space-y-2">
+            <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors" style="color: #F9AD1F;">
+                <i class="fas fa-cog mr-2"></i> Configure Auto-Refund Rules
+            </button>
+            <button class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors" style="color: #EB362D;">
+                <i class="fas fa-download mr-2"></i> Export Refund Report
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

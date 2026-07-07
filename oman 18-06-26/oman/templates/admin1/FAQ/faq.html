@@ -1,0 +1,272 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+   .toolbar {
+         background: #15818E;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+    }
+</style>
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">FAQ Management</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search FAQs..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addFAQModal">
+                Add FAQ
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Frequently Asked Questions</h3>
+                            
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="table-responsive">
+                                <table id="faqTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th>Question</th>
+                                            <th>Answer</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for faq in faqs %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ faq.question|truncatechars:50 }}</td>
+                                            <td>{{ faq.answer|truncatechars:30 }}</td>
+                                            <td>
+                                                <span class="badge {% if faq.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {% if faq.is_active %}Active{% else %}Inactive{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>{{ faq.created_at|date:"Y-m-d H:i" }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                        data-edit-url="{% url 'edit_faq' faq.id %}" 
+                                                        data-faq-question="{{ faq.question }}" 
+                                                        data-faq-answer="{{ faq.answer }}" 
+                                                        data-faq-status="{{ faq.is_active }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editFAQModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                
+                                                <form method="POST" action="{% url 'toggle_faq_status' faq.id %}" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm {% if faq.is_active %}btn-warning{% else %}btn-success{% endif %}" 
+                                                            title="{% if faq.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                                        <i class="fas {% if faq.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                                                    </button>
+                                                </form>
+                                                
+                                                <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                        data-delete-url="{% url 'delete_faq' faq.id %}" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteFAQModal">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center">No FAQs found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add FAQ Modal -->
+<div class="modal fade" id="addFAQModal" tabindex="-1" aria-labelledby="addFAQModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="addFAQForm" method="POST" action="{% url 'add_faq' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFAQModalLabel">Add New FAQ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="faqQuestion" class="form-label">Question</label>
+                        <input type="text" class="form-control" id="faqQuestion" name="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="faqAnswer" class="form-label">Answer</label>
+                        <textarea class="form-control" id="faqAnswer" name="answer" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="faqIsActive" name="is_active" checked>
+                            <label class="form-check-label" for="faqIsActive">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save FAQ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit FAQ Modal -->
+<div class="modal fade" id="editFAQModal" tabindex="-1" aria-labelledby="editFAQModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form id="editFAQForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFAQModalLabel">Edit FAQ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editFAQQuestion" class="form-label">Question</label>
+                        <input type="text" class="form-control" id="editFAQQuestion" name="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFAQAnswer" class="form-label">Answer</label>
+                        <textarea class="form-control" id="editFAQAnswer" name="answer" rows="5" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editFAQIsActive" name="is_active">
+                            <label class="form-check-label" for="editFAQIsActive">
+                                Active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteFAQModal" tabindex="-1" aria-labelledby="deleteFAQModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteFAQForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteFAQModalLabel">Delete FAQ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this FAQ?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteFAQForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.action = deleteUrl;
+            });
+        });
+
+        // Handle edit modal
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editFAQForm');
+        const editQuestionInput = document.getElementById('editFAQQuestion');
+        const editAnswerInput = document.getElementById('editFAQAnswer');
+        const editStatusCheckbox = document.getElementById('editFAQIsActive');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const question = button.getAttribute('data-faq-question');
+                const answer = button.getAttribute('data-faq-answer');
+                const isActive = button.getAttribute('data-faq-status') === 'True';
+
+                editForm.action = editUrl;
+                editQuestionInput.value = question;
+                editAnswerInput.value = answer;
+                editStatusCheckbox.checked = isActive;
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('input[name="search"]');
+        const tableRows = document.querySelectorAll('#faqTable tbody tr');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    if (row.querySelector('td[colspan]')) return; // Skip "No FAQs found" row
+                    
+                    const question = row.cells[1]?.textContent.toLowerCase() || '';
+                    const answer = row.cells[2]?.textContent.toLowerCase() || '';
+                    
+                    if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>

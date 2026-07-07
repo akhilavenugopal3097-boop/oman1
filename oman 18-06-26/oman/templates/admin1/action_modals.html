@@ -1,0 +1,406 @@
+<!-- action_modals.html -->
+<style>
+    :root {
+        --primary-color: #15818E;
+        --primary-dark: #0e5f69;
+        --primary-light: #e6f3f5;
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(21, 129, 142, 0.2);
+    }
+
+    .modal-header {
+        background: var(--primary-color) !important;
+        color: white;
+        border-radius: 20px 20px 0 0;
+        padding: 20px;
+        border-bottom: none;
+    }
+
+    .modal-header.bg-warning {
+        background: #f39c12 !important;
+    }
+
+    .modal-header.bg-danger {
+        background: #e74c3c !important;
+    }
+
+    .modal-header.bg-secondary {
+        background: #6c757d !important;
+    }
+
+    .modal-header.bg-success {
+        background: #27ae60 !important;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    .modal-footer {
+        border-top: 2px solid var(--border-color);
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--dark-text);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary {
+        background: #e2e8f0;
+        border: none;
+        color: var(--dark-text);
+    }
+
+    .btn-secondary:hover {
+        background: #cbd5e0;
+        transform: translateY(-2px);
+    }
+
+    .btn-info {
+        background: var(--primary-color);
+        border: none;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(21, 129, 142, 0.3);
+    }
+
+    .btn-warning {
+        background: #f39c12;
+        border: none;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #e67e22;
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: #e74c3c;
+        border: none;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    .btn-success {
+        background: #27ae60;
+        border: none;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #229954;
+        transform: translateY(-2px);
+    }
+
+    .alert {
+        border-radius: 10px;
+        border-left: 4px solid;
+        padding: 15px;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        border-left-color: #f39c12;
+        color: #856404;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        border-left-color: #e74c3c;
+        color: #721c24;
+    }
+
+    .alert i {
+        margin-right: 10px;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .form-check-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .bg-light {
+        background: var(--primary-light) !important;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-dark);
+    }
+</style>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-search me-2"></i>
+                    Mark Report Under Review
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="review">
+                <div class="modal-body">
+                    <p>You are marking this report as <strong style="color: var(--primary-color);">Under Review</strong>.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notes (Optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Add any notes about this review..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-search me-2"></i>Mark Under Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Hide Modal -->
+<div class="modal fade" id="hideModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye-slash me-2"></i>
+                    Hide Product
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="hide">
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This will hide the product from public view.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Hiding <span class="text-danger">*</span></label>
+                        <textarea name="admin_notes" class="form-control" rows="3" required placeholder="Explain why this product is being hidden..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-eye-slash me-2"></i>Hide Product
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-trash me-2"></i>
+                    Delete Product
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                        <h5 class="alert-heading">Warning: This action cannot be undone!</h5>
+                        <p>You are about to permanently delete this product.</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Deletion <span class="text-danger">*</span></label>
+                        <textarea name="admin_notes" class="form-control" rows="3" required placeholder="Explain why this product is being deleted..."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                        <label class="form-check-label" for="confirmDelete">
+                            I understand that this action is permanent and cannot be undone
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-danger" onclick="return document.getElementById('confirmDelete').checked;">
+                        <i class="fas fa-trash me-2"></i>Delete Permanently
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Warn Owner Modal -->
+<div class="modal fade" id="warnModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Warn Product Owner
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="warn_user">
+                <div class="modal-body">
+                    {% if product and product.user %}
+                    <div class="bg-light p-3 rounded mb-3">
+                        <i class="fas fa-user me-2" style="color: var(--primary-color);"></i>
+                        <strong>Owner:</strong> {{ product.user.username }} 
+                        <span class="text-muted">({{ product.user.email }})</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Warning Message <span class="text-danger">*</span></label>
+                        <textarea name="admin_notes" class="form-control" rows="5" required placeholder="Write a clear warning message..."></textarea>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle me-1" style="color: var(--primary-color);"></i>
+                            This message will be sent to the product owner
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-paper-plane me-2"></i>Send Warning
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Dismiss Modal -->
+<div class="modal fade" id="dismissModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-times me-2"></i>
+                    Dismiss Report
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="dismiss">
+                <div class="modal-body">
+                    <p>Are you sure you want to dismiss this report?</p>
+                    <p class="text-muted">The report will be marked as dismissed and no action will be taken.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Reason for Dismissal (Optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Why are you dismissing this report?"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="fas fa-check me-2"></i>Dismiss Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Resolve Modal -->
+<div class="modal fade" id="resolveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check me-2"></i>
+                    Resolve Report
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% url 'handle_product_report' report.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="resolve">
+                <div class="modal-body">
+                    <p>Mark this report as resolved.</p>
+                    <p class="text-muted">Use this when the issue has been addressed and no further action is needed.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Resolution Notes</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Explain how this was resolved..."></textarea>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle me-1" style="color: var(--primary-color);"></i>
+                            These notes will be saved for future reference
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Resolve Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

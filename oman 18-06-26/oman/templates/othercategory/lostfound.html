@@ -1,0 +1,2096 @@
+{% load static %}
+{% load automobile_filters %}
+{% load static %}
+
+
+            {% include 'header2.html' %}
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+               
+            {% include 'search.html' %}
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 52px;
+        border: 1px solid #ccc;
+        width: 36%;
+        margin-top: 5px ;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon5{
+        position: absolute;
+        left: 14px !important;
+        height: 20px !important;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+      
+<style>
+.price-container,
+.brand-container,
+.location-list-container,
+.usage-container,
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+    margin-left: -30px;
+     z-index: 2;
+    display: none;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.price-container {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    font-size:14px;
+    gap: 5px;
+}
+
+.price-inputs label {
+    font-weight: 500;
+}
+
+.price-inputs input {
+    padding: 5px 5px;
+    border-radius: 25px;
+
+    border: 1px solid #ccc;
+}
+
+.location-list-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    margin-left: -10px;
+    margin-top:56px;
+     z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top:56px;
+     width: 260px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-left:-40px;
+    z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+    position: sticky;
+    bottom: -12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+
+.additional-filters-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.additional-filters-inputs input,
+.additional-filters-inputs select {
+    padding: 5px;
+    border-radius: 25px;
+    border: 1px solid #aaa9a9;
+    width: 100px;
+    flex: 1;
+}
+
+.oval-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.oval-checkbox,
+.oval-radio {
+    position: fixed;   /* 🔥 key fix */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.oval-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.oval-checkbox:checked + .oval-button,
+.oval-radio:checked + .oval-button {
+    background-color: #E35D20;
+    color: white;
+    border-color: #E35D20;
+}
+
+.oval-button:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    background-color: #d35400;
+}
+
+.dropdown-icons {
+     position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icons2 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+    z-index: 2038;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px;
+    border: 1px solid #5d5b5b;
+    padding: 10px;
+    border-radius: 20px;
+    width: 1120px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+}
+
+.filter-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position:relative;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    margin-bottom: -5px;
+}
+
+
+
+.input-value {
+    font-size: 14px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #555555;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+#region_search, #city_search {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+/* List Styles */
+.regions-lists {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.region-item {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.city-list {
+    list-style: none;
+    padding-left: 15px;
+    display: none;
+}
+
+.city-list li {
+    cursor: pointer;
+    color: #333;
+}
+
+#back-to-oman,
+#clear-selected-city {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#clear-selected-city {
+    margin-top: 10px;
+}
+
+#back-to-oman:hover {
+    background: #E35D20;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.loading-indicator {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+.price-label, .year-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+    /* Navigation Buttons */
+    .location-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .back-button, .clear-button {
+        padding: 5px 10px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        background-color: #f8f8f8;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .back-button:hover, .clear-button:hover {
+        background-color: #e0e0e0;
+    }
+
+    .clear-button {
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: white;
+        border: none;
+    }
+
+    /* Search Inputs */
+    .search-container input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 25px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+
+    /* Lists Container */
+    .location-lists {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .location-lists ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Location Items - Applied to all levels */
+    .location-item {
+        padding: 5px 0;
+        cursor: pointer;
+    }
+
+    .location-option {
+        position: relative;
+        margin-bottom: 5px;
+    }
+
+    .location-checkbox {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .location-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        background-color: #f8f8f8;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Selected state - applied to ALL levels */
+    .location-checkbox:checked + .location-label {
+        background-color: #E35D20;
+        color: white;
+        border-color: #E35D20;
+    }
+
+    .location-label:hover {
+        background-color: #e0e0e0;
+    }
+
+    /* Chevron for navigation levels */
+    .location-chevron {
+        margin-left: 8px;
+        font-size: 12px;
+    }
+
+    /* Loading States */
+    .loading {
+        padding: 10px;
+        text-align: center;
+        font-style: italic;
+        color: #666;
+    }
+
+    .empty {
+        padding: 10px;
+        text-align: center;
+        color: #666;
+    }
+
+    .error {
+        padding: 10px;
+        text-align: center;
+        color: red;
+    }
+
+.location-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+ border-radius: 25px;
+}
+
+.location-lists {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.location-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.location-item {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.location-item:hover {
+  background-color: #f5f5f5;
+}
+
+.location-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.hidden-checkbox:checked + .oval-button {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.select-all-container {
+  padding: 5px 15px;
+  margin-bottom: 5px;
+}
+
+
+
+</style>
+
+
+
+                         
+
+             
+                              
+             
+                                <!-- Replace your existing list view section with this: -->
+<div class="category-block wrapper list-view-active" id="list-view">
+    
+    <div class="list-item feature-style2-three pd-0" id="lostfound-list-container">
+        {% include 'othercategory/lostfound_list_partial.html' %}
+    </div>
+    
+</div>
+                                   <script>
+// Favorite toggle function
+function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const productId = button.getAttribute('data-product-id');
+    const productType = button.getAttribute('data-product-type');
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = '/login/';
+        return;
+    }
+    
+    const isCurrentlyFavorite = icon.classList.contains('filled');
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    
+    // Toggle visual state immediately for better UX
+    if (isCurrentlyFavorite) {
+        icon.classList.remove('fas', 'filled');
+        icon.classList.add('far');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas', 'filled');
+    }
+
+    // Update localStorage
+    localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+    
+    // Send AJAX request
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: 'GET',
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            // Revert visual state if there was an error
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+            console.error("Error updating favorite:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error updating favorite:", error);
+        // Revert visual state on error
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize favorite icons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn i').forEach(icon => {
+        const button = icon.closest('.favorite-btn');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        // Check localStorage for favorite status
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+});
+</script>
+                                
+                                
+                                
+                                <!-- Add some CSS to handle the filled state -->
+                                <style>
+                                .far.fa-heart {
+                                transition: color 0.3s ease; /* For smooth transition */
+                                }
+                                
+                                .far.fa-heart.filled {
+                                color: red;  /* Change color when the icon is filled */
+                                font-weight: bold;  /* Make the icon bold */
+                                }
+                                
+                                
+                                </style> 
+                                 
+                               
+                                 <style>
+                                     .gradient1-text {
+       background: #EB362D;
+       -webkit-background-clip: text; /* Clips the background to the text */
+       -webkit-text-fill-color: transparent; /* Makes the text transparent to show the gradient */
+       font-weight: bold; /* Optional */
+     }                         .slide-image{
+        height:200px;
+        border-radius:8px 8px 8px 8px;
+     }
+  
+                                 </style>
+                                 
+    
+                                                                         
+                                 </div>
+                                
+                                    
+        
+                                 
+                                    <style>
+                               
+                                        /* General Styles for Mobile */
+                                        @media (max-width: 768px) {
+                                          .category-block .feature-style2-three {
+                                            width: 90%; /* Adjust width for mobile responsiveness */
+                                            margin: 0 auto; /* Center the container */
+                                           
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one {
+                                            margin-bottom: 20px;
+                                            width: 100%;
+                                            border: 1px solid #ddd; /* Border around the container */
+                                            border-radius: 8px; /* Rounded corners */
+                                            padding: 20px; /* Space between content and border */
+                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                                            background: #fff; /* White background for contrast */
+                                            height: 450px; /* Allow the container to expand with content */
+                                          }
+                                        
+                                          
+                                          .feature-style2-three .feature-block-one .inner-box {
+                                            display: flex;
+                                            flex-direction: column;
+                                            padding: 0;
+                                            width: 100%;
+                                           
+                                            border-radius: 8px;
+                                            background-color: #fff;
+                                          }
+                                        
+                                          /* Image Box */
+                                          .feature-style2-three .feature-block-one .inner-box .image-box {
+                                            width: 100%;
+                                            margin-bottom: 15px;
+                                            text-align: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .inner-box .image-box img {
+                                            width: 100%;
+                                           
+                                            border-radius: 8px 8px 0 0; /* Rounded corners on the top */
+                                          }
+                                        
+                                          /* Content Section (below and outside the inner box) */
+                                          .feature-style2-three .feature-block-one .lower-content {
+                                            padding: 20px; /* Add padding around the content */
+                                            margin-top: 250px; /* Add space between image and content */
+                                            border-top: 1px solid #ddd; /* Optional: Add border between image and content */
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content h4 {
+                                            margin-bottom: 10px;
+                                            font-size: 18px;
+                                            font-weight: bold;
+                                            color: #333;
+                                          }
+                                        
+                                          /* Action Buttons */
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons {
+                                            display: flex;
+                                            flex-direction: row;
+                                            gap: 10px; /* Space between buttons */
+                                            justify-content: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li {
+                                            list-style: none;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a {
+                                            display: inline-block;
+                                            padding: 12px 20px;
+                                            font-size: 16px;
+                                            color: #fff;
+                                            background: #EB362D;
+                                            border-radius: 5px;
+                                            text-decoration: none;
+                                            transition: background 0.3s ease;
+                                            margin-left: -9px;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a:hover {
+                                            background: #F9AD1F; /* Hover effect */
+                                          }
+                                        }
+                                        
+                                            </style>
+                                 
+                                 
+                                
+             
+             <script>
+                function showListView() {
+                    document.getElementById('grid-view').style.display = 'none';
+                    document.getElementById('list-view').style.display = 'block';
+                }
+            
+                function showGridView() {
+                    document.getElementById('list-view').style.display = 'none';
+                    document.getElementById('grid-view').style.display = 'block';
+                }
+            </script>
+            
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+        const gridButton = document.querySelector(".grid-view");
+        const listButton = document.querySelector(".list-view");
+        const categoryBlock = document.querySelector(".category-block.wrapper");
+    
+        // Set initial state: List view active
+        categoryBlock.classList.add("list-view-active");
+        listButton.classList.add("on");
+        gridButton.classList.remove("on");
+    
+        gridButton.addEventListener("click", () => {
+            categoryBlock.classList.add("grid-view-active");
+            categoryBlock.classList.remove("list-view-active");
+            gridButton.classList.add("on");
+            listButton.classList.remove("on");
+            console.log("Switched to Grid View");
+        });
+    
+        listButton.addEventListener("click", () => {
+            categoryBlock.classList.add("list-view-active");
+            categoryBlock.classList.remove("grid-view-active");
+            listButton.classList.add("on");
+            gridButton.classList.remove("on");
+            console.log("Switched to List View");
+        });
+    });
+    
+            </script>
+    
+    
+            </div>
+
+             <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+          
+                                                                        <style>
+                                                                        .loading-indicator {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #666;
+                                                                        }
+                                                                        
+                                                                        .error-message {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #EB362D;
+                                                                        }
+                                                                        </style>      
+                                                                        
+                                                                
+                                                                        
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        // Price Range
+        const priceFromInput = document.querySelector('#price_from');
+        const priceToInput = document.querySelector('#price_to');
+        const priceFrom = new URLSearchParams(window.location.search).get('price_from');
+        const priceTo = new URLSearchParams(window.location.search).get('price_to');
+
+        if (priceFromInput) priceFromInput.value = priceFrom || '';
+        if (priceToInput) priceToInput.value = priceTo || '';
+
+        const priceField = document.querySelector('#selected-price');
+        if (priceField) {
+            if (priceFrom && priceTo) {
+                priceField.value = `${priceFrom} - ${priceTo}`;
+            } else if (priceFrom) {
+                priceField.value = `From ${priceFrom}`;
+            } else if (priceTo) {
+                priceField.value = `Up to ${priceTo}`;
+            } else {
+                priceField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = new URLSearchParams(window.location.search).get('year_from');
+        const yearTo = new URLSearchParams(window.location.search).get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // ... existing code ...
+
+// Make and Model Filters
+const makeParam = new URLSearchParams(window.location.search).get('make');
+const nameParam = new URLSearchParams(window.location.search).get('name');
+
+if (makeParam) {
+    // Select the brand visually
+    const brandCard = document.querySelector(`.brand-card[data-make="${makeParam}"]`);
+    if (brandCard) {
+        brandCard.classList.add('selected');
+        
+        // Show models container
+        const brandGrid = document.getElementById('brandGrid');
+        const modelsContainer = document.getElementById('modelsContainer');
+        if (brandGrid) brandGrid.style.display = 'none';
+        if (modelsContainer) modelsContainer.style.display = 'block';
+        
+        // Update models title
+        const selectedBrandTitle = document.getElementById('selectedBrandTitle');
+        if (selectedBrandTitle) selectedBrandTitle.textContent = `${makeParam} Models`;
+    }
+    
+    // Add make to selected filters
+    selectedFilters.push(`Brand: ${makeParam}`);
+}
+
+if (nameParam) {
+    const models = nameParam.split(',');
+    // Select models visually
+    models.forEach(model => {
+        const modelCard = [...document.querySelectorAll('.model-card span')]
+            .find(span => span.textContent === model);
+        if (modelCard) modelCard.parentElement.classList.add('selected');
+    });
+    
+    // Add models to selected filters
+    selectedFilters.push(`Models: ${models.join(', ')}`);
+}
+
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = new URLSearchParams(window.location.search).get('kilometers_from');
+        const kmTo = new URLSearchParams(window.location.search).get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters
+        const governateField = document.querySelector('#selected-governate');
+        const districtField = document.querySelector('#selected-district');
+        const cityField = document.querySelector('#selected-city');
+
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        if (governateField) governateField.value = governates.join(', ') || '';
+        if (districtField) districtField.value = districts.join(', ') || '';
+        if (cityField) cityField.value = cities.join(', ') || '';
+
+        // 🔁 Additional Filters Display
+const additionalFiltersField = document.querySelector('#selected-additional-filters');
+if (additionalFiltersField) {
+    const selectedFilters = [];
+
+    // ✅ Delivery
+    const provide = params.get('provide');
+    if (provide) {
+        selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+    }
+
+
+    // ✅ Service Type (map values to labels)
+    const service_type = params.getAll('service_type');
+    if (service_type.length > 0) {
+        const accLabels = service_type.map(a => {
+            switch (a) {
+                case 'box': return 'Original Box';
+                case 'charger': return 'Charger';
+                case 'headset': return 'Headset';
+                default: return a;
+            }
+        });
+        selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+    }
+
+    const multiKeys = {
+        listing_type: 'Listing Type',
+        warranty: 'Warranty',
+        age: 'Age',
+       
+    };
+    Object.entries(multiKeys).forEach(([key, label]) => {
+        const values = params.getAll(key).flatMap(v => v.split(','));
+        if (values.length > 0) {
+            selectedFilters.push(`${label}: ${values.join(', ')}`);
+        }
+    });
+
+    // Update field
+    additionalFiltersField.value = selectedFilters.join(' | ');
+
+    // Toggle active class
+    const toggleEl = document.getElementById('toggle-additional-filters');
+    if (toggleEl) {
+        toggleEl.classList.toggle('active', selectedFilters.length > 0);
+    }
+}
+
+        // Other Filters
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            priceFrom && priceTo ? `Price: ${priceFrom} - ${priceTo}` : 
+                priceFrom ? `Price from ${priceFrom}` : 
+                priceTo ? `Price to ${priceTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+    }
+
+    // Unified function to handle filter removal
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        if (['warranty','age','listing_type'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            /// Update the display field if it exists
+const displayField = document.querySelector(`#selected-additional-filters`);
+if (displayField) {
+    const allValues = ['warranty','age','listing_type']
+        .flatMap(k => params.getAll(k).flatMap(v => v.split(',')));
+
+    displayField.value = allValues.join(', ') || '';
+}
+
+        } 
+       
+else if (['governate', 'district', 'city'].includes(key)) {
+    // Remove the value from its parameter
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v && v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Handle hierarchy clearing
+    if (key === 'governate') {
+        // Clear districts and cities if governate removed
+        params.delete('district');
+        params.delete('city');
+        document.querySelectorAll(`input[name="district"], input[name="city"]`).forEach(cb => cb.checked = false);
+    } else if (key === 'district') {
+        // Clear cities if district removed
+        params.delete('city');
+        document.querySelectorAll(`input[name="city"]`).forEach(cb => cb.checked = false);
+    }
+
+    // ✅ Collect selected labels instead of IDs
+    const selectedLabels = [];
+    ['governate', 'district', 'city'].forEach(type => {
+        document.querySelectorAll(`input[name="${type}"]:checked`).forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`);
+            if (label) {
+                selectedLabels.push(label.innerText.trim());
+            } else {
+                // fallback if label not found
+                selectedLabels.push(cb.value);
+            }
+        });
+    });
+
+    // Update the display field with human-readable names
+    const displayField = document.querySelector('#selected-location');
+    if (displayField) {
+        displayField.value = selectedLabels.length > 0 ? selectedLabels.join(', ') : '';
+    }
+}
+
+
+        else if (key === 'price_range') {
+    const [from, to] = value.split('-');
+    params.delete('price_from');
+    params.delete('price_to');
+    const fromInput = document.querySelector('#price_from');
+    const toInput = document.querySelector('#price_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-price');
+    if (displayField) displayField.value = '';
+}
+else if (['brand'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-brand`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+else if (['usage'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-usage`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+ else if (key === 'year_range') {
+    const [from, to] = value.split('-');
+    params.delete('year_from');
+    params.delete('year_to');
+    const fromInput = document.querySelector('#year_from');
+    const toInput = document.querySelector('#year_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-year');
+    if (displayField) displayField.value = '';
+}
+else if (['category'].includes(key)) {
+    // Get current values from URL
+    const currentValues = params.get('category') 
+        ? params.get('category').split(',') 
+        : [];
+    
+    // Filter out the value being removed
+    const updatedValues = currentValues.filter(v => v !== value);
+    
+    // Update URL params
+    params.delete('category');
+    if (updatedValues.length > 0) {
+        params.set('category', updatedValues.join(','));
+    }
+    
+    // Uncheck the corresponding checkbox (if exists)
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+    
+    // Update the display field if it exists
+    const displayField = document.querySelector(`#selected-main-category`);
+    if (displayField) {
+        displayField.value = updatedValues.join(', ') || '';
+    }
+    
+    // ✅ CRITICAL FIX: Update badge states with updatedValues BEFORE AJAX call
+    updateBadgeStates(updatedValues);
+    
+    // Update URL and refresh content
+    updateContent(params);
+}
+else if (['brand'].includes(key)) {
+    // Multi-value parameters
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        // Re-add remaining values
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox (if exists)
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Update the display field if it exists
+    const displayField = document.querySelector(`#selected-brand`);
+    if (displayField) {
+        displayField.value = updatedValues.join(', ') || '';
+    }
+
+    // ✅ Get ALL selected categories from URL, not just updatedValues
+    const allSelected = params.get('brand')
+        ? params.get('brand').split(',')
+        : [];
+
+    updateBadgeStates(allSelected);
+}
+
+
+else if (key === 'name') {
+    // Remove specific model from URL param
+    const currentModels = params.get('name')?.split(',') || [];
+    const updatedModels = currentModels.filter(m => m !== value);
+
+    if (updatedModels.length > 0) {
+        params.set('name', updatedModels.join(','));
+    } else {
+        params.delete('name');
+    }
+
+    // Unselect the model visually
+    document.querySelectorAll('.model-card').forEach(card => {
+        if (card.textContent.trim() === value) {
+            card.classList.remove('selected');
+        }
+    });
+
+    // Remove badge immediately from DOM
+    const badge = document.querySelector(
+        `.remove-filter[data-key="name"][data-value="${value}"]`
+    );
+    if (badge) badge.parentElement.remove();
+}
+
+ else if (key === 'kilometer_range') {
+    const [from, to] = value.split('-');
+    params.delete('kilometers_from');
+    params.delete('kilometers_to');
+    const fromInput = document.querySelector('#kilometers_from');
+    const toInput = document.querySelector('#kilometers_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-kilometer');
+    if (displayField) displayField.value = '';
+}
+        else if (key === 'sort') {
+            // Special case for sort
+            params.delete('sort');
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    function updateContent(params) {
+    fetch(`{% url 'lostfound' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.text())
+    .then(html => {
+        const container = document.getElementById('lostfound-list-container');
+        if (container) container.innerHTML = html;
+        window.history.replaceState(null, '', `?${params.toString()}`);
+        updateFilterDisplay(); // Update filter display after content loads
+        
+        // ✅ Update badge states after AJAX update
+        const selectedCategories = params.get('category') 
+            ? params.get('category').split(',') 
+            : [];
+        updateBadgeStates(selectedCategories);
+    })
+    .catch(err => console.error('Error:', err));
+}
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+
+    // Clear all filters
+document.body.addEventListener('click', function(e) {
+    if (e.target.matches('#clear-all-filters')) {
+        e.preventDefault();
+
+        // Clear all checkboxes and radios
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+            input.checked = false;
+        });
+
+        // Clear all input fields
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+            if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                input.value = '';
+            }
+        });
+
+        // Clear all hidden/selected fields
+        const filterFields = [
+            '#selected-price', '#selected-brand', '#selected-usage',
+            '#selected-governate', '#selected-district', '#selected-city',
+            '#selected-all-filters', '#selected-additional-filters',
+            '#selected-listing-type', '#selected-category', '#selected-age', '#selected-subcategory'
+        ];
+        filterFields.forEach(id => {
+            const el = document.querySelector(id);
+            if (el) el.value = '';
+        });
+
+        // Reset brand and model selections
+        document.querySelectorAll('.brand-card.selected, .model-card.selected').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Show brand grid and hide models container
+        const brandGrid = document.getElementById('brandGrid');
+        const modelsContainer = document.getElementById('modelsContainer');
+        if (brandGrid) brandGrid.style.display = 'grid';
+        if (modelsContainer) modelsContainer.style.display = 'none';
+// Clear all URL params
+const url = new URL(window.location.href);
+url.search = ''; // wipe everything
+
+// Update the browser URL without reloading
+window.history.replaceState({}, document.title, url);
+
+        fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(res => res.text())
+            .then(html => {
+                const container = document.querySelector('#lostfound-list-container');
+                if (container) container.innerHTML = html;
+                history.pushState(null, '', url.toString());
+                updateFilterDisplay();
+            })
+            .catch(err => console.error('Error:', err));
+    }
+});
+
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script>                                          
+                </div>  
+
+<style>
+#lostfound-list-container {
+    min-height: 600px; 
+    position: relative;
+}
+</style>     
+                                                           
+            {% include 'footer.html' %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+

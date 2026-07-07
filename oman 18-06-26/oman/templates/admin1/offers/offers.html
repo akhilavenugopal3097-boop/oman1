@@ -1,0 +1,453 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+   .toolbar {
+        background: #15818E;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        color: white;
+   }
+   .offer-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+   }
+   .contact-info {
+        font-size: 0.9rem;
+        font-family: monospace;
+   }
+   .contact-info i {
+        width: 25px;
+        color: #15818E;
+   }
+   .oman-flag {
+        width: 20px;
+        margin-right: 5px;
+   }
+   .form-text {
+        font-size: 0.8rem;
+   }
+</style>
+
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">
+            <i class="fas fa-tag"></i> Offers Management
+        </h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search by ID or number..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+                <i class="fas fa-plus"></i> Add Offer
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Offers</h3>
+                            
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="table-responsive">
+                                <table id="offersTable" class="table table-bordered table-striped table-hover table-sm">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="50px">#</th>
+                                            <th>Image</th>
+                                            <!-- <th>Offer ID</th> -->
+                                            <th>Phone Number</th>
+                                            <th>WhatsApp Number</th>
+                                            <!-- <th>Created At</th> -->
+                                            <th width="100px">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for offer in offers %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if offer.image %}
+                                                <img src="{{ offer.image.url }}" alt="Offer {{ offer.id }}" class="offer-image">
+                                                {% else %}
+                                                <span class="text-muted">No image</span>
+                                                {% endif %}
+                                            </td>
+                                            <!-- <td><strong>#{{ offer.id }}</strong></td> -->
+                                            <td class="contact-info">
+                                                {% if offer.phone_number %}
+                                                    <i class="fas fa-phone-alt"></i> 
+                                                    <span dir="ltr">{{ offer.get_formatted_phone }}</span>
+                                                    <br>
+                                                    <small class="text-muted">+968 {{ offer.get_formatted_phone }}</small>
+                                                {% else %}
+                                                    <span class="text-muted">Not provided</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="contact-info">
+                                                {% if offer.whatsapp_number %}
+                                                    <i class="fab fa-whatsapp" style="color: #25D366;"></i> 
+                                                    <span dir="ltr">{{ offer.get_formatted_whatsapp }}</span>
+                                                    <br>
+                                                    <small class="text-muted">+968 {{ offer.get_formatted_whatsapp }}</small>
+                                                {% else %}
+                                                    <span class="text-muted">Not provided</span>
+                                                {% endif %}
+                                            </td>
+                                            <!-- <td>{{ offer.created_at|date:"Y-m-d H:i" }}</td> -->
+                                            <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                        data-edit-url="{% url 'edit_offer' offer.id %}" 
+                                                        data-offer-id="{{ offer.id }}"
+                                                        data-phone="{{ offer.phone_number }}"
+                                                        data-whatsapp="{{ offer.whatsapp_number|default:'' }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#editOfferModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                
+                                                <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                        data-delete-url="{% url 'delete_offer' offer.id %}" 
+                                                        data-offer-id="{{ offer.id }}"
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#deleteOfferModal">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <i class="fas fa-folder-open fa-2x text-muted mb-2 d-block"></i>
+                                                No offers found. Click "Add Offer" to create one.
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>                                    
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Offer Modal -->
+<div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addOfferForm" method="POST" action="{% url 'add_offer' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addOfferModalLabel">
+                        <i class="fas fa-plus-circle"></i> Add New Offer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="offerImage" class="form-label">Offer Image <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="offerImage" name="image" accept="image/*" required>
+                        <small class="text-muted">Upload an image for the offer (JPEG, PNG)</small>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <img id="imagePreview" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 200px; border-radius: 5px;">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">
+                            <i class="fas fa-phone-alt"></i> Phone Number <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">+968</span>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phone_number" 
+                                   maxlength="8" pattern="\d{8}" placeholder="91234567" required>
+                        </div>
+                        <small class="text-muted">Enter 8-digit phone number (e.g., 91234567)</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="whatsappNumber" class="form-label">
+                            <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp Number
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">+968</span>
+                            <input type="tel" class="form-control" id="whatsappNumber" name="whatsapp_number" 
+                                   maxlength="8" pattern="\d{8}" placeholder="91234567">
+                        </div>
+                        <small class="text-muted">Optional: Enter 8-digit WhatsApp number</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Offer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Offer Modal -->
+<div class="modal fade" id="editOfferModal" tabindex="-1" aria-labelledby="editOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editOfferForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editOfferModalLabel">
+                        <i class="fas fa-edit"></i> Edit Offer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editOfferImage" class="form-label">Offer Image</label>
+                        <input type="file" class="form-control" id="editOfferImage" name="image" accept="image/*">
+                        <small class="text-muted">Leave empty to keep current image</small>
+                    </div>
+                    <div class="mb-3 text-center">
+                        <p class="text-muted mb-2">Current Image:</p>
+                        <img id="currentImagePreview" src="" alt="Current Offer" style="max-width: 100%; max-height: 200px; border-radius: 5px; display: none;">
+                    </div>
+                    <div class="mb-3 text-center">
+                        <img id="editImagePreview" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 200px; border-radius: 5px;">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editPhoneNumber" class="form-label">
+                            <i class="fas fa-phone-alt"></i> Phone Number <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">+968</span>
+                            <input type="tel" class="form-control" id="editPhoneNumber" name="phone_number" 
+                                   maxlength="8" pattern="\d{8}" placeholder="91234567" required>
+                        </div>
+                        <small class="text-muted">Enter 8-digit phone number</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editWhatsappNumber" class="form-label">
+                            <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp Number
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">+968</span>
+                            <input type="tel" class="form-control" id="editWhatsappNumber" name="whatsapp_number" 
+                                   maxlength="8" pattern="\d{8}" placeholder="91234567">
+                        </div>
+                        <small class="text-muted">Optional: Enter 8-digit WhatsApp number</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteOfferModal" tabindex="-1" aria-labelledby="deleteOfferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteOfferForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteOfferModalLabel">
+                        <i class="fas fa-trash"></i> Delete Offer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this offer?</p>
+                    <p class="text-danger"><small><i class="fas fa-exclamation-triangle"></i> This action cannot be undone and will permanently remove the offer image.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Image preview for add modal
+        const imageInput = document.getElementById('offerImage');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.style.display = 'block';
+                        imagePreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    imagePreview.style.display = 'none';
+                    imagePreview.src = '#';
+                }
+            });
+        }
+
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteOfferForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                const offerId = button.getAttribute('data-offer-id');
+                deleteForm.action = deleteUrl;
+                
+                const modalBody = document.querySelector('#deleteOfferModal .modal-body p:first-child');
+                if (modalBody) {
+                    modalBody.innerHTML = `Are you sure you want to delete <strong>Offer #${offerId}</strong>?`;
+                }
+            });
+        });
+
+        // Handle edit modal
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editOfferForm');
+        const currentImagePreview = document.getElementById('currentImagePreview');
+        const editImagePreview = document.getElementById('editImagePreview');
+        const editImageInput = document.getElementById('editOfferImage');
+        const editPhoneNumber = document.getElementById('editPhoneNumber');
+        const editWhatsappNumber = document.getElementById('editWhatsappNumber');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const phoneNumber = button.getAttribute('data-phone');
+                const whatsappNumber = button.getAttribute('data-whatsapp');
+                
+                editForm.action = editUrl;
+                
+                if (editPhoneNumber) {
+                    editPhoneNumber.value = phoneNumber || '';
+                }
+                if (editWhatsappNumber) {
+                    editWhatsappNumber.value = whatsappNumber || '';
+                }
+                
+                const row = button.closest('tr');
+                const imageCell = row.querySelector('td:nth-child(2) img');
+                
+                if (imageCell) {
+                    currentImagePreview.src = imageCell.src;
+                    currentImagePreview.style.display = 'block';
+                } else {
+                    currentImagePreview.style.display = 'none';
+                }
+                
+                editImagePreview.style.display = 'none';
+                editImagePreview.src = '#';
+            });
+        });
+
+        // Preview new image in edit modal
+        if (editImageInput) {
+            editImageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        editImagePreview.style.display = 'block';
+                        editImagePreview.src = e.target.result;
+                        currentImagePreview.style.display = 'none';
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    editImagePreview.style.display = 'none';
+                    editImagePreview.src = '#';
+                    if (currentImagePreview.src && currentImagePreview.src !== '#') {
+                        currentImagePreview.style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        // Enhanced search functionality
+        const searchInput = document.querySelector('input[name="search"]');
+        const tableRows = document.querySelectorAll('#offersTable tbody tr');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                tableRows.forEach(row => {
+                    if (row.querySelector('td[colspan]')) return;
+                    
+                    const offerId = row.cells[2]?.textContent.toLowerCase() || '';
+                    const phoneNumber = row.cells[3]?.textContent.toLowerCase() || '';
+                    const whatsappNumber = row.cells[4]?.textContent.toLowerCase() || '';
+                    
+                    if (offerId.includes(searchTerm) || phoneNumber.includes(searchTerm) || whatsappNumber.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Reset modals when closed
+        const addModal = document.getElementById('addOfferModal');
+        if (addModal) {
+            addModal.addEventListener('hidden.bs.modal', function () {
+                const form = document.getElementById('addOfferForm');
+                form.reset();
+                imagePreview.style.display = 'none';
+                imagePreview.src = '#';
+            });
+        }
+
+        const editModal = document.getElementById('editOfferModal');
+        if (editModal) {
+            editModal.addEventListener('hidden.bs.modal', function () {
+                const form = document.getElementById('editOfferForm');
+                form.reset();
+                editImagePreview.style.display = 'none';
+                editImagePreview.src = '#';
+                currentImagePreview.style.display = 'none';
+                currentImagePreview.src = '#';
+            });
+        }
+
+        // Input validation for phone numbers (only digits)
+        const phoneInputs = document.querySelectorAll('input[name="phone_number"], input[name="whatsapp_number"]');
+        phoneInputs.forEach(input => {
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    });
+</script>

@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ZOQO DEAL</title>
+
+    {% load static %}
+    {% include 'header.html' %}
+    {% load socialaccount %}
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* RESET & GLOBAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .signup-hero {
+            height: 100vh;
+            background: url("{% static 'assets/images/banner/20.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+             margin-top: 0;           /* Ensure no extra spacing issues */
+        }
+
+        .auto-container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 0 20px;
+            height: 100%;
+        }
+
+        .signup-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80%;
+           
+        }
+
+        .signup-left {
+            width: 38.5%;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .signup-left h1 {
+            font-size: 65px;
+            font-weight: 200;
+            margin-bottom: 10px;
+            color: white;
+            font-family: 'FontStyle5', 'Inter', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .signup-left p {
+            font-size: 15px;
+            margin-bottom: 30px;
+            color: white;
+            font-family: 'FontStyle5', 'Inter', sans-serif;
+           
+        }
+
+        .signup-left form {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .signup-left input {
+            width: 100%;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            background: #f3f3f3;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .signup-left input:focus {
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+
+        /* Two-column layout for first and last name */
+        .name-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .name-field input {
+            width: 100%;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            background: #f3f3f3;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.2s;
+            margin-bottom: 0;
+        }
+
+        .name-field input:focus {
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+
+        /* ========= PHONE FIELD WITH STATIC COUNTRY CODE PREFIX (+968) ========= */
+        .phone-prefix-wrapper {
+            display: flex;
+            align-items: center;
+            background: #f3f3f3;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            transition: all 0.2s ease;
+            padding: 0 8px 0 16px;
+            width: 100%;
+        }
+        
+        .phone-prefix-wrapper:focus-within {
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+        
+        .country-prefix-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            background: transparent;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            font-family: 'Inter', monospace;
+            border-right: 1px solid rgba(0,0,0,0.2);
+            padding-right: 12px;
+            margin-right: 8px;
+        }
+        
+        .phone-prefix-wrapper input {
+            flex: 1;
+            background: transparent !important;
+            padding: 14px 12px 14px 0 !important;
+            margin-bottom: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            font-size: 13px;
+            border: none;
+            outline: none;
+            width: auto;
+        }
+        
+        .phone-prefix-wrapper input:focus {
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+        
+        .phone-prefix-wrapper input::placeholder {
+            color: #7f8c8d;
+            font-weight: 400;
+            font-size: 13px;
+        }
+        
+        /* override any generic input margin inside wrapper */
+        .signup-left .phone-prefix-wrapper input {
+            margin-bottom: 0;
+        }
+        
+        /* Radio button group (hidden but preserved) */
+        .user-type-group {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 24px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            margin: 0;
+            padding: 6px 0;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            background: transparent;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-custom {
+            background: white;
+            border-color: white;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #000;
+        }
+
+        .radio-option:hover .radio-custom {
+            border-color: #cccccc;
+            transform: scale(1.05);
+        }
+
+        .radio-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .radio-badge {
+            font-size: 10px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 4px;
+        }
+
+        .theme-btn-one {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            background: black;
+            color: white;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .theme-btn-one:hover {
+            transform: scale(0.96);
+            background: #222;
+        }
+
+        .theme-btn-one:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+        }
+        .alert-danger { background: rgba(220, 53, 69, 0.9); color: white; }
+        .alert-success { background: rgba(40, 167, 69, 0.9); color: white; }
+        .alert-info { background: rgba(23, 162, 184, 0.85); color: white; }
+        .alert-warning { background: rgba(255, 193, 7, 0.9); color: #000; }
+
+        /* Password wrapper styles (for eye toggle) */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding: 14px 40px 14px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            background: #f3f3f3;
+            outline: none;
+            margin-bottom: 0;
+        }
+        .password-wrapper input:focus {
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+            background: #ffffff;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+        }
+        .toggle-password:hover {
+            color: #000;
+        }
+
+        #otp-timer {
+            font-weight: 600;
+            margin: 10px 0 5px;
+            font-size: 13px;
+            color: white;
+            background: rgba(0,0,0,0.4);
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 30px;
+        }
+        .text-primary {
+            color: #ffd966 !important;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .text-primary:hover {
+            color: #ffed4a !important;
+        }
+
+        .form-text {
+            font-size: 10px;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            display: block;
+            color: #e0e0e0;
+            text-align: left;
+        }
+
+        .links {
+            margin-top: 12px;
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+        }
+        .links a {
+            color: white;
+            text-decoration: underline;
+        }
+        .signin {
+            margin-top: 16px;
+            font-size: 13px;
+            text-align: center;
+            width: 100%;
+        }
+        .signin a {
+            color: white;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .phone-helper {
+            font-size: 11px;
+            color: #ccc;
+            text-align: left;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .phone-helper i {
+            font-size: 12px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Right video slider */
+        .signup-right {
+            width:56%;
+        display:flex;
+        flex-direction:column;
+        align-items:flex-end;
+        gap:25px;
+        position: relative;
+        height: 100%;
+        justify-content: center;
+        margin-right: -60px;
+        }
+
+        .vertical-carousel-container {
+            width: 90%;
+        height: 1560px;
+        position: relative;
+        overflow: hidden;
+      
+        /* border-radius: 10px; */
+        background: transparent;    
+        margin-left: 15px;
+        }
+
+        .carousel-track {
+             position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        will-change: transform;
+        gap: 20px;
+        }
+
+        .carousel-slide {
+            width: 100%;
+        height: 500px !important;
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px;
+        background: #0a0a0a;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        flex-shrink: 0;
+        transition: none;
+        transform: none;
+        cursor: pointer;
+        }
+
+        .carousel-slide video {
+            width: 560px;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 28px;
+        pointer-events: none;
+        transition: none;
+        }
+
+        .slide-caption {
+           position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;           /* center text horizontally */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4), rgba(0,0,0,0.6)); /* centered gradient look */
+    padding: 8px 16px;
+    border-radius: 40px;
+    backdrop-filter: blur(4px);
+    font-family:'FontStyle6';
+    letter-spacing: 0.3px;
+    pointer-events: none;
+        }
+
+        .carousel-slide.paused-highlight {
+            /* box-shadow: 0 0 0 3px rgba(255,215,0,0.6), 0 20px 40px rgba(0,0,0,0.4); */
+            transition: box-shadow 0.2s ease;
+        }
+
+        @media(max-width: 950px) {
+            .signup-inner {
+                flex-direction: column;
+                justify-content: center;
+                padding: 40px 0;
+            }
+            .signup-left {
+                width: 100%;
+                margin-top: 20px;
+            }
+            .signup-right {
+                display: none;
+            }
+            .signup-hero {
+                height: auto;
+                min-height: 100vh;
+                padding: 40px 0;
+            }
+        }
+        @media (max-width: 480px) {
+            .name-row {
+                gap: 8px;
+            }
+            .name-field input {
+                padding: 12px 14px;
+                font-size: 12px;
+            }
+            .phone-prefix-wrapper {
+                padding: 0 6px 0 12px;
+            }
+            .country-prefix-text {
+                font-size: 13px;
+                padding-right: 8px;
+            }
+        }
+
+        .carousel-track {
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+        .carousel-slide video {
+            backface-visibility: hidden;
+        }
+        /* ========== RESPONSIVE FOR SIGNUP PAGE (Carousel below form on mobile) ========== */
+@media (max-width: 950px) {
+    /* Fix container overflow */
+    body, .signup-hero, .auto-container {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .signup-hero {
+        height: auto;
+        min-height: 100vh;
+        background-position: center top;
+        overflow-y: auto;
+        padding: 40px 0;
+    }
+
+    .auto-container {
+        padding: 0 16px;
+        height: auto;
+    }
+
+    /* Stack layout vertically */
+    .signup-inner {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+        gap: 30px;
+        padding: 0;
+    }
+
+    /* Login form appears first */
+    .signup-left {
+        width: 100%;
+        order: 1;
+        padding: 0;
+    }
+
+    /* Carousel appears below the form */
+    .signup-right {
+        display: flex !important;
+        width: 100%;
+        margin-right: 0;
+        order: 2;
+        align-items: center;
+        justify-content: center;
+        height: auto;
+    }
+
+    /* Reduced height for carousel container on mobile */
+    .vertical-carousel-container {
+        width: 100%;
+        height: 400px;          /* Reduced height for tablets */
+        margin-left: 0;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    /* Adjust slide height dynamically */
+    .carousel-slide {
+        height: auto !important;
+    }
+
+    /* Make videos fill slides properly */
+    .carousel-slide video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Adjust signup form heading and text sizes */
+    .signup-left h1 {
+        font-size: 42px;
+        margin-bottom: 8px;
+    }
+
+    .signup-left p {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    /* Form inputs full width */
+    .signup-left input,
+    .password-wrapper input,
+    .phone-prefix-wrapper input {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+
+    .name-row {
+        gap: 10px;
+    }
+
+    .name-field input {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .phone-prefix-wrapper {
+        padding: 0 8px 0 14px;
+    }
+
+    .country-prefix-text {
+        font-size: 14px;
+    }
+
+    .theme-btn-one {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    /* Alert messages */
+    .alert {
+        font-size: 12px;
+        padding: 10px 12px;
+        margin-bottom: 18px;
+    }
+
+    /* Links */
+    .links, .signin {
+        font-size: 12px;
+    }
+
+    .signin {
+        margin-top: 20px;
+    }
+
+    /* Timer and OTP text adjustments */
+    #otp-timer {
+        font-size: 12px;
+    }
+
+    .form-text {
+        font-size: 10px;
+    }
+}
+
+/* Extra small devices (phones under 480px) - further reduce height */
+@media (max-width: 480px) {
+    .vertical-carousel-container {
+        height: 320px;          /* Smaller for narrow screens */
+    }
+
+    .signup-left h1 {
+        font-size: 32px;
+    }
+
+    .signup-left p {
+        font-size: 11px;
+    }
+
+    .signup-left input,
+    .password-wrapper input,
+    .phone-prefix-wrapper input {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .name-field input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .country-prefix-text {
+        font-size: 12px;
+    }
+
+    .theme-btn-one {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .name-row {
+        gap: 8px;
+    }
+
+    .alert {
+        font-size: 11px;
+        padding: 8px 10px;
+    }
+
+    .signin {
+        font-size: 11px;
+    }
+}
+
+/* Landscape orientation on small devices */
+@media (max-width: 850px) and (orientation: landscape) {
+    .vertical-carousel-container {
+        height: 280px;
+    }
+}
+    </style>
+</head>
+<body>
+
+<div class="signup-hero">
+    <div class="auto-container">
+        <div class="signup-inner">
+
+            <!-- LEFT: SIGNUP FORM -->
+            <div class="signup-left">
+                <h1>JOIN US</h1>
+                <p>CREATE YOUR ZOQO DEAL ACCOUNT</p>
+
+                <!-- ========= FILTERED MESSAGES: only error and success (signup related) ========= -->
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'error' or message.tags == 'success' %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <!-- ============================================ -->
+                <!-- STEP 1: FIRST NAME + LAST NAME + EMAIL + PHONE (WITH +968 STATIC PREFIX) + USER TYPE -->
+                <!-- ============================================ -->
+                {% if not show_otp and not show_password_form %}
+                <form action="{% url 'signup' %}" method="post" id="initialForm" onsubmit="return validateInitialForm(this)">
+                    {% csrf_token %}
+                    
+                    <!-- User type radios are hidden as per original, but kept for structure -->
+                    <div class="user-type-group" style="display: none;">
+                        <!-- hidden fields or structure preserved -->
+                    </div>
+
+                    <!-- First and Last Name in a row -->
+                    <div class="name-row">
+                        <div class="name-field">
+                            <input type="text" 
+                                   name="first_name" 
+                                   id="id_first_name" 
+                                   placeholder="FIRST NAME" 
+                                   required
+                                   autocomplete="given-name"
+                                   pattern="[A-Za-z\s]+"
+                                   title="Only letters and spaces"
+                                   value="{{ first_name|default:'' }}">
+                        </div>
+                        <div class="name-field">
+                            <input type="text" 
+                                   name="last_name" 
+                                   id="id_last_name" 
+                                   placeholder="LAST NAME" 
+                                   required
+                                   autocomplete="family-name"
+                                   pattern="[A-Za-z\s]+"
+                                   title="Only letters and spaces"
+                                   value="{{ last_name|default:'' }}">
+                        </div>
+                    </div>
+
+                    <!-- Email Field -->
+                    <input type="email" 
+                           name="email" 
+                           id="id_email" 
+                           placeholder="EMAIL ADDRESS" 
+                           required
+                           autocomplete="email"
+                           value="{{ email|default:'' }}">
+
+                    <!-- Phone Field with static Oman country code (+968) -->
+                    <div class="phone-prefix-wrapper">
+                        <span class="country-prefix-text">+968</span>
+                        <input type="tel" 
+                               name="phone" 
+                               id="id_phone" 
+                               placeholder="91234567" 
+                               required 
+                               pattern="[0-9]{7,8}" 
+                               maxlength="8"
+                               title="Enter a valid 7-8 digit Oman number (after +968)"
+                               value="{{ phone|default:'' }}">
+                    </div>
+                    
+                    <div class="phone-helper">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Oman number: +968 followed by 7-8 digits (e.g., 91234567)</span>
+                    </div>
+
+                    <button type="submit" class="theme-btn-one" id="sendOtpBtn">
+                        SEND OTP →
+                    </button>
+                </form>
+
+                <div class="signin">
+                    ALREADY HAVE AN ACCOUNT? <a href="{% url 'login' %}">SIGN IN</a>
+                </div>
+                {% endif %}
+
+                <!-- ============================================ -->
+                <!-- STEP 2: OTP VERIFICATION (sent to email)     -->
+                <!-- ============================================ -->
+                {% if show_otp %}
+                <form action="{% url 'signup' %}" method="post" id="otpForm" onsubmit="return validateOtpForm(this)">
+                    {% csrf_token %}
+                    <input type="hidden" name="verify_otp" value="1">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <input type="hidden" name="phone" value="{{ phone }}">
+                    <input type="hidden" name="user_type" value="{{ user_type }}">
+                    <input type="hidden" name="first_name" value="{{ first_name|default:'' }}">
+                    <input type="hidden" name="last_name" value="{{ last_name|default:'' }}">
+
+                    <input type="text" 
+                           name="otp" 
+                           id="otp" 
+                           placeholder="ENTER 6-DIGIT OTP" 
+                           required 
+                           maxlength="6" 
+                           inputmode="numeric"
+                           pattern="[0-9]{6}"
+                           autocomplete="off">
+
+                    <div style="text-align: center;">
+                        <p id="otp-timer">OTP expires in 5:00</p>
+                        <p id="resend-link" style="display: none; margin-top: 6px;">
+                            <a href="#" onclick="resendOTP(event)" class="text-primary">Resend OTP</a>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="theme-btn-one" id="verifyOtpBtn">
+                        VERIFY OTP
+                    </button>
+                </form>
+
+                <script>
+                    let timer = 300;
+                    let timerInterval;
+                    let canResend = false;
+                    
+                    function startTimer() {
+                        const displayTimer = document.getElementById("otp-timer");
+                        const resendLinkDiv = document.getElementById("resend-link");
+                        
+                        if (timerInterval) clearInterval(timerInterval);
+                        
+                        timerInterval = setInterval(function() {
+                            if (timer >= 0) {
+                                const minutes = Math.floor(timer / 60);
+                                const seconds = timer % 60;
+                                if (displayTimer) {
+                                    displayTimer.textContent = `OTP expires in ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+                                }
+                                if (timer === 0) {
+                                    if (displayTimer) displayTimer.textContent = "OTP expired. Request a new one.";
+                                    if (resendLinkDiv) resendLinkDiv.style.display = "block";
+                                    canResend = true;
+                                    clearInterval(timerInterval);
+                                }
+                                timer--;
+                            }
+                        }, 1000);
+                    }
+                    
+                    startTimer();
+                    
+                    function resendOTP(event) {
+                        event.preventDefault();
+                        if (!canResend) {
+                            alert("Please wait 5 minutes before requesting a new OTP");
+                            return;
+                        }
+                        
+                        const email = "{{ email }}";
+                        const phone = "{{ phone }}";
+                        const userType = "{{ user_type }}";
+                        
+                        const resendLink = event.target;
+                        const originalText = resendLink.textContent;
+                        resendLink.textContent = "Sending...";
+                        resendLink.style.pointerEvents = "none";
+                        
+                        fetch("{% url 'resend_otp' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            body: `email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&user_type=${encodeURIComponent(userType)}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                timer = 300;
+                                canResend = false;
+                                document.getElementById("resend-link").style.display = "none";
+                                startTimer();
+                                alert("OTP resent successfully! Please check your email.");
+                            } else {
+                                alert("Failed to resend OTP. Please try again.");
+                            }
+                        })
+                        .catch(error => {
+                            alert("Network error. Please try again.");
+                        })
+                        .finally(() => {
+                            resendLink.textContent = originalText;
+                            resendLink.style.pointerEvents = "auto";
+                        });
+                    }
+                    
+                    function validateOtpForm(form) {
+                        const otpInput = document.getElementById('otp');
+                        const otp = otpInput.value;
+                        
+                        if (!otp || otp.length !== 6 || !/^\d+$/.test(otp)) {
+                            alert("Please enter a valid 6-digit OTP");
+                            return false;
+                        }
+                        
+                        const btn = document.getElementById('verifyOtpBtn');
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner"></span> VERIFYING...';
+                        
+                        return true;
+                    }
+                    
+                    document.getElementById('otp').addEventListener('input', function(e) {
+                        this.value = this.value.replace(/[^0-9]/g, '');
+                    });
+                </script>
+                {% endif %}
+
+                <!-- ============================================ -->
+                <!-- STEP 3: FINAL REGISTRATION (username+password) with eye toggle -->
+                <!-- ============================================ -->
+                {% if show_password_form %}
+                <form action="{% url 'signup' %}" method="post" id="finalForm" onsubmit="return validateFinalForm(this)">
+                    {% csrf_token %}
+                    <input type="hidden" name="final_register" value="1">
+                    <input type="hidden" name="email" value="{{ email }}">
+                    <input type="hidden" name="phone" value="{{ phone }}">
+                    <input type="hidden" name="user_type" value="{{ user_type }}">
+                    <input type="hidden" name="first_name" value="{{ first_name|default:'' }}">
+                    <input type="hidden" name="last_name" value="{{ last_name|default:'' }}">
+
+                    {% if user_type == 'agent' %}
+                    <div class="alert alert-info" style="background:rgba(0,0,0,0.7); border-left:3px solid #ffaa33; margin-bottom:15px;">
+                        <i class="fas fa-shield-alt"></i> Agent account requires admin approval before login.
+                    </div>
+                    {% endif %}
+
+                    <input type="text" 
+                           name="username" 
+                           id="id_username" 
+                           placeholder="USERNAME (letters, numbers, _)" 
+                           required
+                           pattern="^[A-Za-z0-9_]+$" 
+                           title="Only letters, numbers and underscores allowed."
+                           minlength="3"
+                           maxlength="30">
+
+                    <!-- Password field with eye toggle -->
+                    <div class="password-wrapper">
+                        <input type="password" 
+                               name="password1" 
+                               id="id_password" 
+                               placeholder="PASSWORD" 
+                               required
+                               minlength="8">
+                        <span class="toggle-password" data-target="password1">
+                            <i class="far fa-eye-slash"></i>
+                        </span>
+                    </div>
+                    <small class="form-text"><i class="fas fa-lock"></i> Minimum 8 characters</small>
+
+                    <!-- Confirm password field with eye toggle -->
+                    <div class="password-wrapper">
+                        <input type="password" 
+                               name="password2" 
+                               id="id_cpassword" 
+                               placeholder="CONFIRM PASSWORD" 
+                               required>
+                        <span class="toggle-password" data-target="password2">
+                            <i class="far fa-eye-slash"></i>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="theme-btn-one" id="registerBtn">
+                        COMPLETE REGISTRATION
+                    </button>
+                </form>
+                <script>
+                    function validateFinalForm(form) {
+                        const password = document.getElementById('id_password');
+                        const confirm = document.getElementById('id_cpassword');
+                        const username = document.getElementById('id_username');
+                        
+                        if (username.value.length < 3) {
+                            alert("Username must be at least 3 characters");
+                            return false;
+                        }
+                        
+                        if (password.value.length < 8) {
+                            alert("Password must be at least 8 characters");
+                            return false;
+                        }
+                        
+                        if (password.value !== confirm.value) {
+                            alert("Passwords do not match");
+                            return false;
+                        }
+                        
+                        const btn = document.getElementById('registerBtn');
+                        btn.disabled = true;
+                        btn.innerHTML = '<span class="spinner"></span> CREATING ACCOUNT...';
+                        
+                        return true;
+                    }
+                    
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const password = document.getElementById('id_password');
+                        const confirm = document.getElementById('id_cpassword');
+                        
+                        function validatePassword() {
+                            if (password.value !== confirm.value) {
+                                confirm.setCustomValidity("Passwords don't match");
+                            } else {
+                                confirm.setCustomValidity('');
+                            }
+                        }
+                        
+                        password.addEventListener('change', validatePassword);
+                        confirm.addEventListener('keyup', validatePassword);
+                    });
+                </script>
+                {% endif %}
+            </div>
+
+            <!-- RIGHT: VERTICAL VIDEO SLIDER (unchanged) -->
+            <div class="signup-right">
+                <div class="vertical-carousel-container" id="verticalCarousel">
+                    <div class="carousel-track" id="carouselTrack"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============ FORM VALIDATION & PASSWORD TOGGLE (unchanged) ============
+    function validateInitialForm(form) {
+        const firstName = document.getElementById('id_first_name').value.trim();
+        const lastName = document.getElementById('id_last_name').value.trim();
+        const email = document.getElementById('id_email').value;
+        const phone = document.getElementById('id_phone').value;
+        
+        if (!firstName || !/^[A-Za-z\s]+$/.test(firstName)) {
+            alert("Please enter a valid first name (letters and spaces only).");
+            return false;
+        }
+        if (!lastName || !/^[A-Za-z\s]+$/.test(lastName)) {
+            alert("Please enter a valid last name (letters and spaces only).");
+            return false;
+        }
+        if (!email || !email.includes('@')) {
+            alert("Please enter a valid email address.");
+            return false;
+        }
+        if (!phone || phone.length < 7 || phone.length > 8 || !/^\d+$/.test(phone)) {
+            alert("Please enter a valid 7-8 digit Oman phone number (digits only after +968).");
+            return false;
+        }
+        
+        const btn = document.getElementById('sendOtpBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> SENDING OTP...';
+        
+        return true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const targetName = this.getAttribute('data-target');
+                const input = document.querySelector(`input[name="${targetName}"]`);
+                if (input) {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    const i = this.querySelector('i');
+                    if (i) {
+                        i.classList.toggle('fa-eye');
+                        i.classList.toggle('fa-eye-slash');
+                    }
+                }
+            });
+        });
+        
+        const phoneInput = document.getElementById('id_phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+    });
+
+    // ============ VERTICAL CAROUSEL WITH EASING (FASTER & SLOW STOP AT CENTER) ============
+    // Your original slide data (captions as you defined them)
+    const originalSlidesData = [
+        {
+            videoSrc: "{% static 'assets/images/video/6.mp4' %}",
+            caption: "THE ULTIMATE MARKETPLACE FOR MOTORS"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/2.mp4' %}",
+            caption: "CONNECTING SELLERS AND BUYERS ACROSS THE OMAN"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/1.mp4' %}",
+            caption: "EXPERIENCE THE SMARTEST WAY TO TRADE IN OMAN"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/3.mp4' %}",
+            caption: "INVEST IN YOURS FAMILY'S FUTURE WITH ZOQO DEAL"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/5.mp4' %}",
+            caption: "FIND YOUR DREAM HOME IN THE HEART OF OMAN"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/7.mp4' %}",
+            caption: "YOUR NEXT DRIVE IS JUST A CLICK AWAY"
+        },
+        {
+            videoSrc: "{% static 'assets/images/video/4.mp4' %}",
+            caption: "DISCOVER EXCLUSIVE PROPERTY DEALS AT YOUR FINGERTIPS"
+        }
+    ];
+
+    // Build duplicated slides for infinite loop (6 copies for smoothness)
+    let carouselSlidesData = [];
+    const DUPLICATE_COUNT = 6;
+    for (let i = 0; i < DUPLICATE_COUNT; i++) {
+        carouselSlidesData = carouselSlidesData.concat(originalSlidesData.map((slide, idx) => ({
+            ...slide,
+            originalIndex: idx,
+            copyId: i
+        })));
+    }
+
+    let track = document.getElementById('carouselTrack');
+    let container = document.getElementById('verticalCarousel');
+    let slideHeight = 0;
+    let gapSize = 20;
+    let totalSlides = carouselSlidesData.length;
+    
+    let animationFrameId = null;
+    let currentTranslateY = 0;
+    let isAnimating = true;
+    
+    // Easing parameters – faster base speed, slowdown zone near center
+    const MAX_SPEED_PX_PER_SEC = 280;   // increased from 135
+    const SLOWDOWN_ZONE = 120;          // pixels from center where slowing starts
+    const MIN_SPEED_FACTOR = 0.02;      // almost stopped at exact center
+    
+    let lastTimestamp = null;
+
+    function buildSlides() {
+        if (!track) return;
+        track.innerHTML = '';
+        
+        for (let i = 0; i < carouselSlidesData.length; i++) {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'carousel-slide';
+            slideDiv.setAttribute('data-slide-index', i);
+            slideDiv.setAttribute('data-original-idx', carouselSlidesData[i].originalIndex);
+            
+            const videoElem = document.createElement('video');
+            videoElem.muted = true;
+            videoElem.loop = true;
+            videoElem.playsInline = true;
+            videoElem.setAttribute('preload', 'auto');
+            
+            let videoPath = carouselSlidesData[i].videoSrc;
+            if (videoPath.includes("{% static")) {
+                const match = videoPath.match(/'([^']+)'/);
+                if (match) videoPath = match[1];
+            }
+            videoElem.src = videoPath;
+            
+            videoElem.addEventListener('error', function() {
+                const fallbackPath = `/static/assets/images/video/${(carouselSlidesData[i].originalIndex % 7) + 1}.mp4`;
+                videoElem.src = fallbackPath;
+                videoElem.load();
+            });
+            
+            const captionDiv = document.createElement('div');
+            captionDiv.className = 'slide-caption';
+            captionDiv.textContent = carouselSlidesData[i].caption;
+            
+            slideDiv.appendChild(videoElem);
+            slideDiv.appendChild(captionDiv);
+            track.appendChild(slideDiv);
+        }
+        
+        setTimeout(() => {
+            updateDimensionsAndReset();
+            startContinuousScroll();
+            startVideoPlayback();
+        }, 100);
+    }
+    
+    function updateDimensionsAndReset() {
+        if (!container || !track) return;
+        const containerHeight = container.clientHeight;
+        if (containerHeight === 0) return;
+        
+        const calculatedSlideHeight = (containerHeight - (2 * gapSize)) / 2;
+        if (calculatedSlideHeight <= 0) return;
+        slideHeight = calculatedSlideHeight;
+        
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach(slide => { slide.style.height = `${slideHeight}px`; });
+        
+        const totalTrackHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+        track.style.height = `${totalTrackHeight}px`;
+        
+        currentTranslateY = 0;
+        applyTransform(currentTranslateY);
+        isAnimating = true;
+    }
+    
+    function applyTransform(yPos) {
+        if (!track) return;
+        track.style.transform = `translateY(${yPos}px) translateZ(0)`;
+        track.style.willChange = 'transform';
+        currentTranslateY = yPos;
+    }
+    
+    // Returns signed distance from closest slide center to container center
+    function getDistanceToCenter() {
+        if (!track || slideHeight === 0) return null;
+        const slides = track.querySelectorAll('.carousel-slide');
+        if (slides.length === 0) return null;
+        
+        const containerRect = container.getBoundingClientRect();
+        const containerCenter = containerRect.top + containerRect.height / 2;
+        
+        let closestDist = Infinity;
+        let closestSlideCenter = null;
+        for (let i = 0; i < slides.length; i++) {
+            const rect = slides[i].getBoundingClientRect();
+            const slideCenter = rect.top + rect.height / 2;
+            const dist = Math.abs(slideCenter - containerCenter);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestSlideCenter = slideCenter;
+            }
+        }
+        if (closestSlideCenter === null) return null;
+        return closestSlideCenter - containerCenter;
+    }
+    
+    // Speed factor: near center → MIN_SPEED_FACTOR, far → 1.0
+    function getSpeedFactor(distance) {
+        const absDist = Math.abs(distance);
+        if (absDist >= SLOWDOWN_ZONE) return 1.0;
+        const t = absDist / SLOWDOWN_ZONE;
+        const factor = MIN_SPEED_FACTOR + t * (1 - MIN_SPEED_FACTOR);
+        return Math.min(1.0, Math.max(MIN_SPEED_FACTOR, factor));
+    }
+    
+    function startAnimationLoop() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        lastTimestamp = null;
+        
+        function animate(now) {
+            if (!isAnimating) return;
+            if (!track || slideHeight === 0) {
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            if (lastTimestamp === null) {
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            let delta = Math.min(100, now - lastTimestamp);
+            if (delta <= 0) {
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            const distance = getDistanceToCenter();
+            let speedFactor = 1.0;
+            if (distance !== null) {
+                speedFactor = getSpeedFactor(distance);
+            }
+            
+            let moveDistance = (MAX_SPEED_PX_PER_SEC * speedFactor * delta) / 1000;
+            let newY = currentTranslateY - moveDistance;
+            
+            const totalTrackHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+            const containerHeight = container.clientHeight;
+            const resetThreshold = -(totalTrackHeight / 2);
+            if (newY <= resetThreshold) {
+                newY = newY + (totalTrackHeight / 2);
+                applyTransform(newY);
+                lastTimestamp = now;
+                animationFrameId = requestAnimationFrame(animate);
+                return;
+            }
+            
+            const maxY = 0;
+            const minY = -(totalTrackHeight - containerHeight);
+            newY = Math.min(maxY, Math.max(minY, newY));
+            applyTransform(newY);
+            
+            // Highlight nearest slide when very close to center
+            if (distance !== null && Math.abs(distance) < 10) {
+                highlightNearestSlide();
+            } else {
+                clearHighlight();
+            }
+            
+            lastTimestamp = now;
+            animationFrameId = requestAnimationFrame(animate);
+        }
+        
+        animationFrameId = requestAnimationFrame(animate);
+    }
+    
+    let lastHighlighted = -1;
+    function highlightNearestSlide() {
+        if (!track) return;
+        const slides = track.querySelectorAll('.carousel-slide');
+        if (slides.length === 0) return;
+        const containerRect = container.getBoundingClientRect();
+        const containerCenter = containerRect.top + containerRect.height / 2;
+        let closestIdx = -1;
+        let minDist = Infinity;
+        for (let i = 0; i < slides.length; i++) {
+            const rect = slides[i].getBoundingClientRect();
+            const slideCenter = rect.top + rect.height / 2;
+            const dist = Math.abs(slideCenter - containerCenter);
+            if (dist < minDist) {
+                minDist = dist;
+                closestIdx = i;
+            }
+        }
+        if (closestIdx !== -1 && closestIdx !== lastHighlighted) {
+            if (lastHighlighted !== -1) slides[lastHighlighted]?.classList.remove('paused-highlight');
+            slides[closestIdx].classList.add('paused-highlight');
+            lastHighlighted = closestIdx;
+        }
+    }
+    
+    function clearHighlight() {
+        if (!track) return;
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach(slide => slide.classList.remove('paused-highlight'));
+        lastHighlighted = -1;
+    }
+    
+    function startContinuousScroll() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        isAnimating = true;
+        lastTimestamp = null;
+        startAnimationLoop();
+    }
+    
+    function startVideoPlayback() {
+        if (!track) return;
+        const slides = track.querySelectorAll('.carousel-slide');
+        slides.forEach((slide) => {
+            const video = slide.querySelector('video');
+            if (video) {
+                video.muted = true;
+                video.loop = true;
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(e => {
+                        setTimeout(() => video.play().catch(() => {}), 300);
+                    });
+                }
+            }
+        });
+    }
+    
+    let resizeTimeout;
+    function handleResize() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (container && container.clientHeight > 0) {
+                const oldTotalHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+                const oldProgress = -currentTranslateY / oldTotalHeight;
+                updateDimensionsAndReset();
+                const newTotalHeight = (totalSlides * slideHeight) + ((totalSlides - 1) * gapSize);
+                let newY = -oldProgress * newTotalHeight;
+                const maxY = 0;
+                const minY = -(newTotalHeight - container.clientHeight);
+                newY = Math.min(maxY, Math.max(minY, newY));
+                applyTransform(newY);
+                startContinuousScroll();
+                startVideoPlayback();
+            }
+        }, 200);
+    }
+    
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            startVideoPlayback();
+            if (!isAnimating) startContinuousScroll();
+        }
+    });
+    
+    function enableAutoplayOnInteraction() {
+        startVideoPlayback();
+        if (!isAnimating) startContinuousScroll();
+        document.removeEventListener('click', enableAutoplayOnInteraction);
+        document.removeEventListener('touchstart', enableAutoplayOnInteraction);
+    }
+    
+    function initCarousel() {
+        buildSlides();
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => setTimeout(handleResize, 100));
+        document.addEventListener('click', enableAutoplayOnInteraction, { once: true });
+        document.addEventListener('touchstart', enableAutoplayOnInteraction, { once: true });
+        setTimeout(() => startVideoPlayback(), 600);
+    }
+    
+    // Add a subtle box‑shadow transition for the highlighted slide
+    const style = document.createElement('style');
+    style.textContent = `
+        .carousel-slide { transition: none !important; transform: none !important; }
+        .carousel-track { transition: none !important; will-change: transform; }
+        .paused-highlight { box-shadow: 0 25px 40px rgba(0,0,0,0.5); transition: box-shadow 0.2s; }
+    `;
+    document.head.appendChild(style);
+    
+    initCarousel();
+    console.log("=== EASING CAROUSEL ACTIVE: faster scroll with smooth slowdown at center ===");
+</script>
+
+</body>
+</html>

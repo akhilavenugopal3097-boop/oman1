@@ -1,0 +1,32 @@
+{% if table_data %}
+<table id="data-table" class="ocr-table">
+    <thead>
+          ...
+            <th>#</th>
+            <th>Northing</th>
+            <th>Easting</th>
+          ...
+    </thead>
+    <tbody id="data-body">
+        {% for northing, easting in table_data %}
+        <tr data-northing="{{ northing }}" data-easting="{{ easting }}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ northing }}</td>
+            <td>{{ easting }}</td>
+         </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    {% if ocr_error %}
+    <div class="ocr-error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Warning:</strong> {{ ocr_error }}
+    </div>
+    {% elif request.method == 'POST' %}
+    <div class="ocr-info-message">
+        <i class="fas fa-info-circle"></i>
+        No coordinates found in the image.
+    </div>
+    {% endif %}
+{% endif %}

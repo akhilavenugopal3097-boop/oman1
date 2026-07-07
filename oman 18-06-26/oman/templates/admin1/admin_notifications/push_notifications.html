@@ -1,0 +1,394 @@
+{% extends 'admin1/admin_notifications/base.html' %}
+{% load static %}
+
+{% block title %}Push Notifications{% endblock %}
+
+{% block page_title %}Push Notifications{% endblock %}
+{% block page_icon %}bell{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Push Notifications</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary" style="background: linear-gradient(60deg, #F9AD1F, #EB362D) !important; padding: 0.6rem 1.2rem;">
+                    <i class="fas fa-bell me-2"></i>Send instant push notifications to your users
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Form Column -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-paper-plane me-2" style="color: #15818E;"></i>
+                        <span style="font-weight: 600;">Create New Push Notification</span>
+                    </div>
+                    <span class="badge bg-secondary" style="background: rgba(21, 129, 142, 0.1) !important; color: #15818E;">
+                        <i class="far fa-clock me-1"></i>Draft saved 5m ago
+                    </span>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <!-- Title Input -->
+                        <div class="mb-4">
+                            <label for="notificationTitle" class="form-label fw-semibold">
+                                <i class="fas fa-heading me-2" style="color: #15818E; font-size: 0.9rem;"></i>
+                                Notification Title
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="notificationTitle" 
+                                   placeholder="e.g., Special Announcement, New Feature, etc."
+                                   style="border-radius: 14px; border: 1px solid rgba(0,0,0,0.08); padding: 0.8rem 1.2rem;">
+                            <div class="form-text mt-2">
+                                <i class="fas fa-info-circle me-1" style="color: #15818E;"></i>
+                                Keep it short and catchy - max 50 characters
+                            </div>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="mb-4">
+                            <label for="notificationMessage" class="form-label fw-semibold">
+                                <i class="fas fa-comment-alt me-2" style="color: #15818E; font-size: 0.9rem;"></i>
+                                Message
+                            </label>
+                            <textarea class="form-control" id="notificationMessage" rows="5" 
+                                      placeholder="Write your notification message here..."
+                                      style="border-radius: 14px; border: 1px solid rgba(0,0,0,0.08); padding: 1rem;"></textarea>
+                            <div class="d-flex justify-content-between mt-2">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1" style="color: #15818E;"></i>
+                                    Max 200 characters
+                                </div>
+                                <span class="badge" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">0/200</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Target Users -->
+                        <div class="mb-4">
+                            <label for="targetUsers" class="form-label fw-semibold">
+                                <i class="fas fa-users me-2" style="color: #15818E; font-size: 0.9rem;"></i>
+                                Target Audience
+                            </label>
+                            <select class="form-select" id="targetUsers" 
+                                    style="border-radius: 14px; border: 1px solid rgba(0,0,0,0.08); padding: 0.8rem 1.2rem;">
+                                <option selected>All Users (24,567)</option>
+                                <option>Active Users (18,234)</option>
+                                <option>Inactive Users (6,333)</option>
+                                <option>Premium Users (3,456)</option>
+                                <option>Regular Users (21,111)</option>
+                            </select>
+                            <div class="form-text mt-2">
+                                <i class="fas fa-filter me-1" style="color: #15818E;"></i>
+                                You can create custom segments in Audience tab
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Options -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold d-block">
+                                <i class="fas fa-sliders-h me-2" style="color: #15818E; font-size: 0.9rem;"></i>
+                                Additional Options
+                            </label>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="option-card p-3" style="border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; cursor: pointer; transition: all 0.3s;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sendEmail" 
+                                                   style="border-color: #15818E; cursor: pointer;">
+                                            <label class="form-check-label fw-medium" for="sendEmail">
+                                                <i class="fas fa-envelope me-2" style="color: #15818E;"></i>
+                                                Email
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-card p-3" style="border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; cursor: pointer; transition: all 0.3s;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="sendSMS" 
+                                                   style="border-color: #15818E; cursor: pointer;">
+                                            <label class="form-check-label fw-medium" for="sendSMS">
+                                                <i class="fas fa-sms me-2" style="color: #15818E;"></i>
+                                                SMS
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-card p-3" style="border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; cursor: pointer; transition: all 0.3s;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="schedule" 
+                                                   style="border-color: #15818E; cursor: pointer;">
+                                            <label class="form-check-label fw-medium" for="schedule">
+                                                <i class="fas fa-clock me-2" style="color: #15818E;"></i>
+                                                Schedule
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 mt-4 pt-3 border-top">
+                            <button type="button" class="btn btn-primary px-5 py-2" disabled>
+                                <i class="fas fa-paper-plane me-2"></i>Send Notification
+                            </button>
+                            <button type="button" class="btn px-5 py-2" 
+                                    style="background: rgba(21, 129, 142, 0.1); color: #15818E; border: none; border-radius: 12px;">
+                                <i class="fas fa-save me-2"></i>Save Draft
+                            </button>
+                            <button type="button" class="btn px-4 py-2" 
+                                    style="background: transparent; color: #6c757d; border: 1px solid #dee2e6; border-radius: 12px;">
+                                <i class="fas fa-eye me-2"></i>Preview
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <!-- Recent Notifications -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-history me-2" style="color: #15818E;"></i>
+                        <span style="font-weight: 600;">Recent Notifications</span>
+                    </div>
+                    <a href="#" style="color: #15818E; text-decoration: none; font-size: 0.9rem;">View All <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex align-items-center gap-3 p-3" style="border-left: 3px solid #1cc88a;">
+                            <div class="flex-shrink-0">
+                                <div style="width: 40px; height: 40px; background: rgba(28, 200, 138, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-check" style="color: #1cc88a;"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">Welcome Message</h6>
+                                <p class="text-muted small mb-1">
+                                    <i class="fas fa-users me-1"></i>1,234 users
+                                </p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success">Delivered</span>
+                                    <small class="text-muted"><i class="far fa-clock me-1"></i>2 hours ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item d-flex align-items-center gap-3 p-3" style="border-left: 3px solid #f6c23e;">
+                            <div class="flex-shrink-0">
+                                <div style="width: 40px; height: 40px; background: rgba(246, 194, 62, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-clock" style="color: #f6c23e;"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">Special Offer</h6>
+                                <p class="text-muted small mb-1">
+                                    <i class="fas fa-users me-1"></i>567 users
+                                </p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning">Scheduled</span>
+                                    <small class="text-muted"><i class="far fa-clock me-1"></i>Tomorrow, 9 AM</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item d-flex align-items-center gap-3 p-3" style="border-left: 3px solid #36b9cc;">
+                            <div class="flex-shrink-0">
+                                <div style="width: 40px; height: 40px; background: rgba(54, 185, 204, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-sync-alt" style="color: #36b9cc;"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-semibold">System Update</h6>
+                                <p class="text-muted small mb-1">
+                                    <i class="fas fa-users me-1"></i>2,890 users
+                                </p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-info">Processing</span>
+                                    <small class="text-muted"><i class="far fa-clock me-1"></i>3 days ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-2" style="color: #15818E;"></i>
+                    <span style="font-weight: 600;">Performance Analytics</span>
+                </div>
+                <div class="card-body">
+                    <!-- Delivery Rate -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-medium">Delivery Rate</span>
+                            <span class="fw-bold" style="color: #15818E;">95%</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 20px; background: rgba(21, 129, 142, 0.1);">
+                            <div class="progress-bar" style="width: 95%; background: linear-gradient(60deg, #15818E, #1aa3b5); border-radius: 20px;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">23,452 delivered</small>
+                            <small class="text-muted">of 24,678 total</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Open Rate -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-medium">Open Rate</span>
+                            <span class="fw-bold" style="color: #15818E;">68%</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 20px; background: rgba(21, 129, 142, 0.1);">
+                            <div class="progress-bar" style="width: 68%; background: linear-gradient(60deg, #F9AD1F, #EB362D); border-radius: 20px;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">15,947 opened</small>
+                            <small class="text-muted">of 23,452 delivered</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Click Rate -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-medium">Click Rate</span>
+                            <span class="fw-bold" style="color: #15818E;">42%</span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 20px; background: rgba(21, 129, 142, 0.1);">
+                            <div class="progress-bar" style="width: 42%; background: #15818E; border-radius: 20px;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted">6,697 clicked</small>
+                            <small class="text-muted">of 15,947 opened</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="row g-3 mt-3 pt-3 border-top">
+                        <div class="col-6">
+                            <div class="text-center p-3" style="background: rgba(21, 129, 142, 0.05); border-radius: 14px;">
+                                <h4 class="mb-1 fw-bold" style="color: #15818E;">24.5k</h4>
+                                <small class="text-muted">Total Sent</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center p-3" style="background: rgba(235, 54, 45, 0.05); border-radius: 14px;">
+                                <h4 class="mb-1 fw-bold" style="color: #EB362D;">12</h4>
+                                <small class="text-muted">Drafts</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Tips -->
+            <div class="card mt-4" style="background: linear-gradient(135deg, rgba(21, 129, 142, 0.05), rgba(235, 54, 45, 0.05));">
+                <div class="card-body">
+                    <div class="d-flex gap-3">
+                        <div style="width: 40px; height: 40px; background: #15818E; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-lightbulb text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-semibold mb-2">Pro Tips</h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li class="mb-1">Best time to send: 10 AM - 2 PM</li>
+                                <li class="mb-1">Keep titles under 50 characters</li>
+                                <li>Use emojis to increase engagement by 25%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal (Hidden by default) -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Preview Notification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Preview content will be dynamically updated -->
+                <div style="background: #f8f9fc; border-radius: 16px; padding: 1.5rem;">
+                    <div class="d-flex gap-3 mb-3">
+                        <div style="width: 48px; height: 48px; background: linear-gradient(60deg, #F9AD1F, #EB362D); border-radius: 14px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bell text-white fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Notification Title</h6>
+                            <p class="small text-muted mb-0">via Push Notification</p>
+                        </div>
+                    </div>
+                    <p class="mb-0">Your notification message will appear here.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Character counter for message
+    document.getElementById('notificationMessage').addEventListener('input', function(e) {
+        const length = e.target.value.length;
+        const counter = document.querySelector('.badge:has(+ .form-text)');
+        if (counter) {
+            counter.textContent = length + '/200';
+            if (length > 180) {
+                counter.style.background = 'rgba(235, 54, 45, 0.1)';
+                counter.style.color = '#EB362D';
+            } else {
+                counter.style.background = 'rgba(21, 129, 142, 0.1)';
+                counter.style.color = '#15818E';
+            }
+        }
+    });
+
+    // Preview functionality
+    document.querySelector('.btn-outline-secondary:last-child').addEventListener('click', function() {
+        // Update preview modal with current form values
+        const title = document.getElementById('notificationTitle').value || 'Notification Title';
+        const message = document.getElementById('notificationMessage').value || 'Your notification message will appear here.';
+        
+        // Here you would update the modal content
+        // For now, just show the modal
+        new bootstrap.Modal(document.getElementById('previewModal')).show();
+    });
+
+    // Hover effects for option cards
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.borderColor = '#15818E';
+            this.style.boxShadow = '0 4px 12px rgba(21, 129, 142, 0.1)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.borderColor = 'rgba(0,0,0,0.08)';
+            this.style.boxShadow = 'none';
+        });
+    });
+</script>
+{% endblock %}

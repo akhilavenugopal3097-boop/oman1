@@ -1,0 +1,711 @@
+{% load static %}
+{% include 'header.html' %}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'FontStyle6';
+    }
+
+    /* Gallery Section */
+    .gallery-section {
+        padding: 80px 20px;
+        min-height: 100vh;
+    }
+
+    .container-custom {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Breadcrumb Styles */
+    .breadcrumb {
+        margin-bottom: 30px;
+        padding: 10px 0;
+        background-color: #fff;
+        border-radius: 12px;
+        padding-left: 20px;
+    }
+
+    .breadcrumb ul {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .breadcrumb li {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+
+    .breadcrumb li a {
+        color: #64748b;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .breadcrumb li a:hover {
+        color: #EB362D;
+    }
+
+    .breadcrumb li:last-child {
+        color: #EB362D;
+        font-weight: 600;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    /* Hero Header */
+    .gallery-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .gallery-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        margin-bottom: 15px;
+        letter-spacing: -0.02em;
+    }
+
+    .gallery-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Advertise Button */
+    .advertise-wrapper {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .advertise-btn {
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 15px rgba(235, 54, 45, 0.3);
+    }
+
+    .advertise-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(235, 54, 45, 0.4);
+    }
+
+    /* Offer Grid - 4 IN A ROW */
+    .offers-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+
+    /* Offer Card - WIDER shape (changed from 3/4 to 4/3 for more width) */
+    .offer-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.1);
+        position: relative;
+        aspect-ratio: 4 / 3;  /* CHANGED: Wider image (was 3/4 portrait, now 4/3 landscape) */
+    }
+
+    .offer-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        z-index: 2;
+    }
+
+    .offer-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .offer-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Highlight Animation */
+    .offer-card.highlighted {
+        animation: cardPop 0.6s ease 2;
+        box-shadow: 0 0 0 4px #F9AD1F, 0 0 0 8px rgba(249, 173, 31, 0.3);
+    }
+
+    @keyframes cardPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    /* Image Wrapper */
+    .offer-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    }
+
+    .offer-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .offer-card:hover .offer-image {
+        transform: scale(1.05);
+    }
+
+    /* Offer Badge */
+    .offer-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    /* Modal - TALLER Image Height (INCREASED) */
+    .custom-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .custom-modal.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-container {
+        background: white;
+        border-radius: 28px;
+        max-width: 750px;
+        width: 90%;
+        position: relative;
+        animation: modalSlideIn 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        overflow: hidden;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        border: none;
+        color: white;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+
+    .modal-close:hover {
+        background: #EB362D;
+        transform: rotate(90deg);
+    }
+
+    /* Modal Image Container - INCREASED HEIGHT */
+    .modal-image-container {
+        width: 100%;
+        background: #1a1a2e;
+        max-height: 700px;      /* CHANGED: Increased from 550px to 700px */
+        min-height: 500px;      /* CHANGED: Increased from 400px to 500px */
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+        max-height: 700px;      /* CHANGED: Increased from 550px to 700px */
+        min-height: 500px;      /* CHANGED: Increased from 400px to 500px */
+        object-fit: contain;
+        display: block;
+    }
+
+    .modal-content-bottom {
+        padding: 28px;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .contact-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .contact-btn {
+        flex: 1;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 60px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .contact-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.05);
+    }
+
+    .phone-btn {
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        color: white;
+    }
+
+    .whatsapp-btn {
+        background: #25D366;
+        color: white;
+    }
+
+    .share-btn {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 60px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .share-btn:hover {
+        background: #0f6a75;
+        transform: translateY(-2px);
+    }
+
+    /* No Offers */
+    .no-offers {
+        text-align: center;
+        padding: 80px 40px;
+        background: white;
+        border-radius: 28px;
+        grid-column: span 4;
+    }
+
+    .no-offers i {
+        font-size: 4rem;
+        background: linear-gradient(60deg, #F9AD1F, #EB362D);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        margin-bottom: 20px;
+    }
+
+    .no-offers h3 {
+        font-size: 1.5rem;
+        color: #1e293b;
+        margin-bottom: 10px;
+    }
+
+    .no-offers p {
+        color: #64748b;
+    }
+
+    /* Toast Message */
+    .toast-message {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e293b;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 60px;
+        font-size: 0.85rem;
+        z-index: 10000;
+        animation: toastFade 2.5s ease forwards;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    @keyframes toastFade {
+        0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+    }
+
+    /* Responsive - Tablet (1024px and below) */
+    @media (max-width: 1024px) {
+        .offers-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .no-offers {
+            grid-column: span 3;
+        }
+    }
+
+    /* Responsive - Mobile (768px and below) */
+    @media (max-width: 768px) {
+        .gallery-section {
+            padding: 50px 15px;
+        }
+        
+        .offers-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .no-offers {
+            grid-column: span 2;
+        }
+        
+        .gallery-header h1 {
+            font-size: 2rem;
+        }
+        
+        .contact-buttons {
+            flex-direction: column;
+        }
+        
+        .share-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .modal-content-bottom {
+            padding: 20px;
+        }
+        
+        /* Mobile modal height adjustment */
+        .modal-image-container {
+            max-height: 450px;
+            min-height: 350px;
+        }
+        
+        .modal-image {
+            max-height: 450px;
+            min-height: 350px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+        }
+        
+        .breadcrumb li {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Responsive - Small Mobile (480px and below) */
+    @media (max-width: 480px) {
+        .offers-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .no-offers {
+            grid-column: span 1;
+        }
+        
+        .modal-image-container {
+            max-height: 350px;
+            min-height: 280px;
+        }
+        
+        .modal-image {
+            max-height: 350px;
+            min-height: 280px;
+        }
+    }
+</style>
+
+<div class="auto-container">
+    <div class="gallery-section" style="margin-top: -75px;">
+        <div class="container-custom">
+            <!-- Hero Header -->
+            <div class="gallery-header">
+                <h1>Exclusive Offers</h1>
+            </div>
+
+            <!-- Advertise Button -->
+            <div class="advertise-wrapper">
+                <button class="advertise-btn" onclick="openAdvertiseWhatsApp()">
+                    <i class="fas fa-bullhorn"></i> Advertise Your Offer
+                    <i class="fab fa-whatsapp"></i>
+                </button>
+            </div>
+            
+            <div class="breadcrumb">
+                <ul>
+                    <li>
+                        <a href="{% url 'index' %}">
+                             Home
+                        </a>
+                    </li>
+                    <li>
+                         ZOQODEAL OFFERS
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Offers Grid - 4 in a row (WIDER images) -->
+            <div class="offers-grid" id="offersGrid">
+                {% if offers %}
+                    {% for offer in offers %}
+                    <div class="offer-card" 
+                         data-offer-id="{{ offer.id }}" 
+                         data-phone="{{ offer.phone_number }}"
+                         data-whatsapp="{% if offer.whatsapp_number %}{{ offer.whatsapp_number }}{% else %}{{ offer.phone_number }}{% endif %}"
+                         data-image="{{ offer.image.url }}"
+                         id="offer-{{ offer.id }}"
+                         onclick="openOfferModal(this)">
+                        <div class="offer-image-wrapper">
+                            <img src="{{ offer.image.url }}" alt="Offer" class="offer-image" loading="lazy">
+                            <div class="offer-badge">
+                                <i class="fas fa-fire"></i> Offer
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-offers">
+                        <i class="fas fa-gift"></i>
+                        <h3>No Offers Available</h3>
+                        <p>Check back later for exciting deals and promotions!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modern Modal with TALLER Image -->
+<div id="offerModal" class="custom-modal">
+    <div class="modal-container">
+        <button class="modal-close" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-image-container">
+            <img id="modalImage" src="" alt="Offer" class="modal-image">
+        </div>
+        <div class="modal-content-bottom">
+            <div class="modal-title">
+                <i class="fas fa-gift" style="color: #EB362D;"></i> Get This Offer
+            </div>
+            <div class="contact-buttons">
+                <button class="contact-btn phone-btn" onclick="makePhoneCall()">
+                    <i class="fas fa-phone-alt"></i> Call Now
+                </button>
+                <button class="contact-btn whatsapp-btn" onclick="sendWhatsAppMessage()">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="share-btn" onclick="copyOfferLink()">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Django template variables
+    const offersData = {{ offers_data_json|safe }};
+    const selectedOfferId = {{ selected_offer_id|default:'null' }};
+    
+    let currentOffer = null;
+    
+    // Open modal
+    function openOfferModal(element) {
+        const offerId = element.getAttribute('data-offer-id');
+        const phone = element.getAttribute('data-phone');
+        const whatsapp = element.getAttribute('data-whatsapp');
+        const image = element.getAttribute('data-image');
+        
+        currentOffer = {
+            id: offerId,
+            phone: phone,
+            whatsapp: whatsapp,
+            image: image,
+            url: window.location.href.split('?')[0] + '?offer=' + offerId
+        };
+        
+        document.getElementById('modalImage').src = currentOffer.image;
+        document.getElementById('offerModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Close modal
+    function closeModal() {
+        document.getElementById('offerModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+        currentOffer = null;
+    }
+    
+    // Make phone call
+    function makePhoneCall() {
+        if (currentOffer && currentOffer.phone) {
+            window.location.href = `tel:+968${currentOffer.phone}`;
+        } else {
+            showToast('Phone number not available', 'error');
+        }
+    }
+    
+    // Send WhatsApp message
+    function sendWhatsAppMessage() {
+        if (currentOffer && currentOffer.whatsapp) {
+            const message = encodeURIComponent(`Hello! I'm interested in this offer. Can you please provide more details?`);
+            window.open(`https://wa.me/968${currentOffer.whatsapp}?text=${message}`, '_blank');
+        } else {
+            showToast('WhatsApp number not available', 'error');
+        }
+    }
+    
+    // Copy offer link
+    function copyOfferLink() {
+        if (currentOffer) {
+            navigator.clipboard.writeText(currentOffer.url).then(() => {
+                showToast('Offer link copied! Share it with friends 📋', 'success');
+            }).catch(() => {
+                showToast('Failed to copy link', 'error');
+            });
+        }
+    }
+    
+    // Open advertise WhatsApp
+    function openAdvertiseWhatsApp() {
+        const ADMIN_WHATSAPP_NUMBER = '96897719505';
+        const message = encodeURIComponent(`Hello! I'm interested in advertising on your offers gallery. Can you please provide more information?`);
+        window.open(`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${message}`, '_blank');
+    }
+    
+    // Show toast message
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        toast.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
+    
+    // Highlight offer card
+    function highlightOffer(offerId) {
+        if (!offerId) return;
+        const offerElement = document.getElementById(`offer-${offerId}`);
+        if (offerElement) {
+            offerElement.classList.add('highlighted');
+            offerElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                offerElement.classList.remove('highlighted');
+            }, 2500);
+        }
+    }
+    
+    // Close modal on outside click
+    document.getElementById('offerModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('offerModal').classList.contains('active')) {
+            closeModal();
+        }
+    });
+    
+    // On load
+    document.addEventListener('DOMContentLoaded', function() {
+        if (selectedOfferId) {
+            setTimeout(() => highlightOffer(selectedOfferId), 400);
+        }
+    });
+</script>
+
+{% include 'footer.html' %}

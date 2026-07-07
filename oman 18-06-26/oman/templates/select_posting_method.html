@@ -1,0 +1,887 @@
+{% load static %}
+{% include 'header.html' %}
+
+<style>
+/* ===== GENERAL (unchanged) ===== */
+body {
+    background: #f7f8fa;
+    font-family: 'FontStyle1', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+h2 {
+    font-weight: 800;
+    color: #1e2a3e;
+    letter-spacing: -0.3px;
+}
+/* ===== CARD BASE DESIGN ===== */
+.sell-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 32px 24px 0 24px;
+    height: 100%;
+    border: 2px solid #6f7171;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    position: relative;
+}
+.sell-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
+    border-color: #e2e8f0;
+}
+.sell-card.selected {
+    border: 2px solid #F9AD1F;
+    background: #fffdf9;
+    box-shadow: 0 12px 24px -12px rgba(249,173,31,0.2);
+}
+.sell-card.premium {
+    background: linear-gradient(145deg, #fff8f0, #fff3ea);
+    border: 1px solid #ffe0c2;
+}
+.sell-card.premium.selected {
+    border: 2px solid #EB362D;
+    background: #fffaf5;
+}
+.card-header-center {
+    text-align: center;
+    margin-bottom: -14px;
+}
+.card-title {
+    font-size: 1.3rem;
+    font-family: 'FontStyle6';
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+}
+.card-subtitle {
+    font-size: 0.80rem;
+    color: #5b6e8c;
+    font-family: 'FontStyle3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+.divider-center {
+    width: 280px;
+    height: 0.25px;
+    background:#e3e8ec;
+    margin: 18px auto 22px auto;
+    border-radius: 4px;
+}
+.premium .divider-center {
+    background: linear-gradient(90deg, #EB362D, #ff8a7a);
+}
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px 0;
+    flex-grow: 1;
+}
+.feature-list li {
+    margin-bottom: 14px;
+    font-size: 0.82rem;
+    color: #1f2a44;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 400;
+    font-family: 'FontStyle3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    justify-content: flex-start;
+    line-height: 1.4;
+}
+.feature-list li i.fa-check-circle {
+    color: #15818E;
+    font-size: 1rem;
+    background: #e0f2f5;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.premium .feature-list li i.fa-check-circle {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border: none;
+}
+.premium .feature-list li i.fa-check-circle:before {
+    color: white;
+}
+.feature-list li .feature-text {
+    flex: 1;
+    display: inline;
+}
+.feature-list li strong {
+    font-weight: 700;
+    color: #1e2a3e;
+    display: inline;
+}
+.checkbox-section {
+    margin: 16px 0 20px 0;
+    padding-top: 6px;
+}
+.checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    justify-content: flex-start;
+}
+.checkbox-wrapper input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #F9AD1F;
+}
+.premium .checkbox-wrapper input[type="checkbox"]:checked {
+    accent-color: #EB362D;
+}
+.checkbox-label {
+    font-size: 0.72rem;
+    color: #4a5b79;
+    line-height: 1.35;
+    cursor: pointer;
+    text-align: left;
+}
+.checkbox-label a {
+    color: #15818E;
+    text-decoration: none;
+    font-weight: 600;
+}
+.checkbox-label a:hover {
+    text-decoration: underline;
+}
+.btn-action {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-normal {
+    background: linear-gradient(105deg, #15818E, #1abc9c);
+    color: white;
+    box-shadow: 0 4px 10px rgba(21,129,142,0.2);
+}
+.btn-normal:hover {
+    background: linear-gradient(105deg, #0f6b77, #0f9f84);
+    transform: translateY(-1px);
+}
+.btn-boost {
+    background: linear-gradient(105deg, #F9AD1F, #f39c12);
+    color: white;
+    box-shadow: 0 4px 10px rgba(249,173,31,0.25);
+}
+.btn-boost:hover {
+    background: linear-gradient(105deg, #e09d12, #e67e22);
+}
+.btn-premium {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    box-shadow: 0 4px 12px rgba(235,54,45,0.25);
+}
+.btn-premium:hover {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+}
+.btn-action.disabled-btn, .btn-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    pointer-events: none;
+}
+.card-error-msg {
+    font-size: 0.7rem;
+    color: #dc3545;
+    margin-top: 12px;
+    text-align: center;
+    min-height: 24px;
+    font-weight: 500;
+}
+.property-summary {
+    display: none;
+}
+.row.g-5 {
+    --bs-gutter-x: 1.8rem;
+    --bs-gutter-y: 2rem;
+}
+@media (min-width: 992px) {
+    .container {
+        max-width: 1500px;
+    }
+    .col-md-4 {
+        width: 32%;
+        flex: 0 0 auto;
+    }
+}
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1600px;
+    }
+    .col-md-4 {
+        width: 31.5%;
+    }
+}
+@media (min-width: 1800px) {
+    .container {
+        max-width: 1800px;
+    }
+    .col-md-4 {
+        width: 31%;
+    }
+}
+@media (min-width: 992px) {
+    .divider-center {
+        width: 85%;
+        max-width: 300px;
+    }
+}
+@media (max-width: 768px) {
+    .sell-card {
+        padding: 24px 18px;
+    }
+    .card-title {
+        font-size: 1.4rem;
+    }
+    .feature-list li {
+        font-size: 0.85rem;
+    }
+    .col-md-4 {
+        width: 100%;
+    }
+    .divider-center {
+        width: 80%;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .container {
+        max-width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .col-md-4 {
+        width: 50%;
+    }
+}
+
+/* ===== BOOST DURATION MODAL STYLES ===== */
+.boost-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+.boost-modal-content {
+    background: #ffffff;
+    border-radius: 32px;
+    width: 90%;
+    max-width: 400px;
+    padding: 24px 20px 28px 20px;
+    text-align: center;
+    box-shadow: 0 25px 45px -12px rgba(0,0,0,0.3);
+    animation: modalFadeIn 0.2s ease-out;
+}
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+.boost-modal-content h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e2a3e;
+    margin-bottom: 8px;
+}
+.boost-modal-content p {
+    color: #5b6e8c;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+.boost-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.boost-option-btn {
+    background: #f8f9fa;
+    border: 2px solid #e2e8f0;
+    padding: 14px;
+    border-radius: 60px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e2a3e;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+.boost-option-btn:hover {
+    border-color: #F9AD1F;
+    background: #fff8f0;
+    transform: scale(1.02);
+}
+.boost-option-btn.selected {
+    border-color: #F9AD1F;
+    background: #F9AD1F;
+    color: white;
+    box-shadow: 0 4px 12px rgba(249,173,31,0.3);
+}
+.boost-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.boost-modal-btn {
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.boost-modal-btn.confirm {
+    background: #15818E;
+    color: white;
+    flex: 1;
+}
+.boost-modal-btn.confirm:hover {
+    background: #0f6b77;
+}
+.boost-modal-btn.cancel {
+    background: #f1f3f5;
+    color: #4a5b79;
+    flex: 1;
+}
+.boost-modal-btn.cancel:hover {
+    background: #e9ecef;
+}
+
+/* Privacy modal (unchanged) */
+.privacy-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
+}
+.privacy-modal-content {
+    background: #ffffff;
+    border-radius: 28px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    max-height: none;
+    height: auto;
+    margin: 20px;
+}
+.privacy-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px 1px 18px;
+    background: #ffffff;
+    border-radius: 24px;
+    flex-shrink: 0;
+}
+.privacy-modal-header h3 {
+    margin: 0;
+    font-weight: 600 !important;
+    color: #EB362D !important;
+    font-size: 0.75rem !important;
+    letter-spacing: -0.3px;
+    font-family: 'FontStyle6', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.3;
+    margin-left: 62px;
+}
+.privacy-close-btn {
+    background: #dc3545;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    width: 20px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    color: #f1f5f9 !important;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: -22px;
+    margin-right: -18px;
+}
+.privacy-close-btn:hover {
+    background: #dc3545;
+    transform: scale(1.05);
+}
+.privacy-modal-body {
+    padding: 18px 22px 12px 22px;
+    font-family: 'FontStyle3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: #1f2a44;
+    background: #ffffff;
+    overflow: visible;
+    max-height: none;
+    border-radius: 24px;
+}
+.privacy-modal-body p {
+    font-size: 0.78rem;
+    margin-bottom: 0.75rem;
+    color: #2d3a4e;
+    line-height: 1.45;
+}
+.privacy-modal-body p strong {
+    color: #1e2a3e;
+    font-weight: 700;
+}
+.modal-checkbox-section {
+    margin: 12px 0 6px 0;
+    padding-top: 8px;
+}
+.modal-checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+.modal-checkbox-wrapper input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #EB362D;
+}
+.modal-checkbox-label {
+    font-size: 0.78rem;
+    color: #1f2a44;
+    line-height: 1.35;
+    cursor: pointer;
+    font-weight: 500;
+}
+.term-item {
+    margin-bottom: 13px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #2d3a4e;
+    text-align: justify;
+}
+.term-title {
+    font-weight: 700;
+    color: #1e2a3e;
+    margin-right: 4px;
+}
+.term-text {
+    font-weight: 400;
+}
+</style>
+
+<div class="container py-5">
+    <h2 class="text-center" style="color: #15818E; margin-top: -24px;">How would you like to sell?</h2>
+    <p class="text-center text-muted mb-5"></p>
+
+    <form method="POST" id="postingMethodForm">
+        {% csrf_token %}
+        <input type="hidden" name="posting_method" id="selectedMethod" value="">
+        <input type="hidden" name="boost_duration" id="boostDurationInput" value="7">
+
+        <div class="row g-5 justify-content-center">
+            <!-- NORMAL POST CARD -->
+            <div class="col-md-4">
+                <div class="sell-card" data-method="normal">
+                    <div class="card-header-center">
+                        <h4 class="card-title text-danger">Sell as a Normal Post</h4>
+                        <p class="card-subtitle">Ideal for experienced sellers who want full control.</p>
+                        <div class="divider-center"></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Direct Buyer Leads:</strong> Receive inquiries and chat directly with interested buyers.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Real-Time Dashboard:</strong> Manage your listing, track views, and update the price instantly.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Standard Listing Duration:</strong> Your property stays active for up to 45 days.</span></li>
+                    </ul>
+                    <div class="checkbox-section">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" class="terms-checkbox" data-method="normal">
+                            <span class="checkbox-label">The seller declares that he owns the property for sale, is legally authorized to sell it under Omani law, and bears full responsibility for this declaration.</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-action btn-normal method-submit-btn" data-method="normal">Continue Posting</button>
+                    <div class="card-error-msg" id="error-normal"></div>
+                </div>
+            </div>
+
+            <!-- BOOST PROMOTION CARD (no inline dropdown) -->
+            <div class="col-md-4">
+                <div class="sell-card" data-method="boosted">
+                    <div class="card-header-center">
+                        <h4 class="card-title text-danger">Sell with Boost Promotion</h4>
+                        <p class="card-subtitle">Maximize visibility to find a buyer in half the time.</p>
+                        <div class="divider-center"></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Priority Placement:</strong> Your property is prioritized at the top of search results.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Boost Tag:</strong> A high-visibility tag to make your listing stand out from the crowd.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Live Performance Stats:</strong> Track real-time views, clicks, and saves directly in your dashboard.</span></li>
+                    </ul>
+                    <div class="checkbox-section">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" class="terms-checkbox" data-method="boosted">
+                            <span class="checkbox-label">The seller declares that he owns the property for sale, is legally authorized to sell it under Omani law, and bears full responsibility for this declaration.</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-action btn-normal method-submit-btn" data-method="boosted">Continue Posting with Boost</button>
+                    <div class="card-error-msg" id="error-boosted"></div>
+                </div>
+            </div>
+
+            <!-- PREMIUM CARD (unchanged) -->
+            {% if category_type == 'property' %}
+            <div class="col-md-4">
+                <div class="sell-card premium" data-method="exclusive">
+                    <div class="card-header-center">
+                        <h4 class="card-title d-flex align-items-center justify-content-center" style="color: black;">Let <img src="{% static 'assets/images/Zoqo-01.svg' %}" alt="sell" style="width:100px; margin:0 8px;"> Sell for you</h4>
+                        <h4 style="color: black;">(Most Attractive)</h4>
+                        <p class="card-subtitle">This service is offered in collaboration<br> with <strong style="color: #15818E;">Saif Hadaifi Real Estate LLC</strong></p>
+                        <p style="font-family: 'FontStyle6'; font-weight: bold; font-size: 12px; color: #dc3545 !important;">Pay OMR 25 sign up fee to get started</p>
+                        <div class="divider-center"></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Professional Inspection & Photography:</strong> We'll visit your property to capture high-end visuals. You can schedule a visit or let us call you.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Expert Valuation & Ad Posting:</strong> We list your property at a data-driven market price to ensure it sells fast and fair.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Guided Site Visits:</strong> We personally conduct property tours with verified buyers on your behalf.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Legal & Closing Support:</strong> We coordinate with Saif Hadaifi Real Estate LLC to manage all paperwork and the ownership transfer at the Ministry of Housing.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span class="feature-text"><strong>Secure Payment & Success Fee:</strong> Funds are secured to your account first. We only deduct a 3% success fee once the deal is closed from the buyer.</span></li>
+                    </ul>
+                    <div class="checkbox-section">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" class="terms-checkbox" data-method="exclusive">
+                            <span class="checkbox-label">I've read and accept the <a href="#" class="terms-preview" id="privacyPolicyLink" style="color: #dc3545;">terms & conditions*</a></span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-action btn-premium method-submit-btn" data-method="exclusive">Sell It For Me</button>
+                    <div class="card-error-msg" id="error-exclusive"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- BOOST DURATION MODAL (popup) -->
+<div id="boostDurationModal" class="boost-modal">
+    <div class="boost-modal-content">
+        <h3>🚀 Boost Duration</h3>
+        <p>How many days would you like your listing to be boosted?</p>
+        <div class="boost-options">
+            <div class="boost-option-btn" data-days="7">7 days</div>
+            <div class="boost-option-btn" data-days="14">14 days</div>
+            <div class="boost-option-btn" data-days="30">30 days</div>
+        </div>
+        <div class="boost-modal-actions">
+            <button class="boost-modal-btn cancel" id="boostModalCancel">Cancel</button>
+            <button class="boost-modal-btn confirm" id="boostModalConfirm">Confirm & Continue</button>
+        </div>
+    </div>
+</div>
+
+<!-- PRIVACY MODAL (unchanged) -->
+<div id="privacyModal" class="privacy-modal">
+    <div class="privacy-modal-content">
+        <div class="privacy-modal-header">
+            <h3>Terms & Conditions for Managed Sales Service</h3>
+            <button class="privacy-close-btn" id="modalCloseBtn">&times;</button>
+        </div>
+        <div class="privacy-modal-body">
+            <div class="term-item"><span class="term-title">Authorized Partner:</span> <span class="term-text">You acknowledge that <strong>ZOQO DEAL </strong> coordinates with <strong>Saif Hadaifi Real Estate LLC</strong>, a licensed real estate broker, to facilitate legal documentation, brokerage services, and ownership transfers.</span></div>
+            <div class="term-item"><span class="term-title">Success Fee:</span> <span class="term-text"><strong>Saif Hadaifi Real Estate LLC</strong> will be eligible to receive a 3% commission fee from the buyer upon the successful completion of the property sale.</span></div>
+            <div class="term-item"><span class="term-title">No Upfront Costs:</span> <span class="term-text">Aside from the 5 OMR registration fee, no marketing or inspection fees will be charged unless a successful sale is achieved.</span></div>
+            <div class="term-item"><span class="term-title">Content Creation:</span> <span class="term-text">You grant <strong>Saif Hadaifi Real Estate LLC</strong> full authority to conduct site visits, take professional photographs, and record videos of the property for marketing purposes.</span></div>
+            <div class="term-item"><span class="term-title">Social Media Distribution:</span> <span class="term-text">You grant <strong>Saif Hadaifi Real Estate LLC</strong> full authority to publish, promote, and advertise the property across all social media platforms, including Instagram, Facebook, X, Snapchat, and TikTok.</span></div>
+            <div class="term-item"><span class="term-title">Third-Party Platforms:</span> <span class="term-text">You grant <strong>Saif Hadaifi Real Estate LLC</strong> the right to list and manage the property on external marketing platforms to maximize exposure.</span></div>
+            <div class="term-item"><span class="term-title">Showings:</span> <span class="term-text">The Seller agrees to provide reasonable collaboration for property site visits with potential buyers, coordinated by <strong>Saif Hadaifi Real Estate LLC</strong> agents.</span></div>
+            <div class="term-item"><span class="term-title">Documentation:</span> <span class="term-text">The Seller must provide accurate property details and valid ownership documents (Mulkiya and Krookie). The seller declares that he owns the property for sale, is legally authorized to sell it under Omani law, and bears full responsibility for this declaration.</span></div>
+            <div class="modal-checkbox-section">
+                <label class="modal-checkbox-wrapper">
+                    <input type="checkbox" id="modalAcceptCheckbox">
+                    <span class="modal-checkbox-label" style="color: #dc3545;">I agree to the Terms & Conditions</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function() {
+        const form = document.getElementById('postingMethodForm');
+        const hiddenMethodInput = document.getElementById('selectedMethod');
+        const boostDurationInput = document.getElementById('boostDurationInput');
+        
+        // Modal elements
+        const boostModal = document.getElementById('boostDurationModal');
+        const boostOptions = document.querySelectorAll('.boost-option-btn');
+        const boostConfirmBtn = document.getElementById('boostModalConfirm');
+        const boostCancelBtn = document.getElementById('boostModalCancel');
+        
+        let selectedBoostDays = 7;
+        let pendingMethod = null;  // store which method we are about to submit
+        
+        // Checkboxes and buttons
+        const checkboxes = document.querySelectorAll('.terms-checkbox');
+        const submitButtons = document.querySelectorAll('.method-submit-btn');
+        
+        let checkboxAccepted = { normal: false, boosted: false, exclusive: false };
+        
+        // Helper: update button enable/disable
+        function updateButtonState(method) {
+            const card = document.querySelector(`.sell-card[data-method="${method}"]`);
+            if (!card) return;
+            const btn = card.querySelector('.method-submit-btn');
+            const isChecked = checkboxAccepted[method] === true;
+            if (btn) {
+                btn.disabled = !isChecked;
+                if (isChecked) btn.classList.remove('disabled-btn');
+                else btn.classList.add('disabled-btn');
+            }
+            const errorDiv = document.getElementById(`error-${method}`);
+            if (errorDiv && isChecked) errorDiv.innerText = '';
+        }
+        
+        function clearSelectedCards() {
+            document.querySelectorAll('.sell-card').forEach(card => card.classList.remove('selected'));
+        }
+        
+        function highlightCard(method) {
+            clearSelectedCards();
+            const targetCard = document.querySelector(`.sell-card[data-method="${method}"]`);
+            if (targetCard) targetCard.classList.add('selected');
+        }
+        
+        function uncheckOtherCheckboxes(exceptCheckbox) {
+            checkboxes.forEach(checkbox => {
+                if (checkbox !== exceptCheckbox && checkbox.checked) {
+                    checkbox.checked = false;
+                    const otherMethod = checkbox.dataset.method;
+                    checkboxAccepted[otherMethod] = false;
+                    updateButtonState(otherMethod);
+                    const otherCard = document.querySelector(`.sell-card[data-method="${otherMethod}"]`);
+                    if (otherCard) otherCard.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Checkbox change handler
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function(e) {
+                e.stopPropagation();
+                const method = this.dataset.method;
+                if (this.checked) {
+                    uncheckOtherCheckboxes(this);
+                    checkboxAccepted[method] = true;
+                    updateButtonState(method);
+                    highlightCard(method);
+                    hiddenMethodInput.value = method;
+                } else {
+                    checkboxAccepted[method] = false;
+                    updateButtonState(method);
+                    const currentCard = document.querySelector(`.sell-card[data-method="${method}"]`);
+                    if (currentCard) currentCard.classList.remove('selected');
+                    if (hiddenMethodInput.value === method) hiddenMethodInput.value = '';
+                }
+            });
+        });
+        
+        // Submit logic: if method is 'boosted', show modal; else submit directly
+        function submitWithMethod(method) {
+            // Ensure checkbox is checked
+            const targetCheckbox = document.querySelector(`.terms-checkbox[data-method="${method}"]`);
+            if (!targetCheckbox || !targetCheckbox.checked) {
+                if (targetCheckbox) {
+                    targetCheckbox.checked = true;
+                    const changeEvent = new Event('change', { bubbles: true });
+                    targetCheckbox.dispatchEvent(changeEvent);
+                }
+            }
+            
+            // Small delay to let state update
+            setTimeout(() => {
+                if (!checkboxAccepted[method]) {
+                    const errorDiv = document.getElementById(`error-${method}`);
+                    if (errorDiv) {
+                        errorDiv.innerText = '⚠️ Please accept the Terms & Conditions to proceed.';
+                        errorDiv.style.color = '#dc3545';
+                    }
+                    const card = document.querySelector(`.sell-card[data-method="${method}"]`);
+                    if (card) {
+                        const cbSection = card.querySelector('.checkbox-section');
+                        if (cbSection) {
+                            cbSection.style.transition = '0.15s';
+                            cbSection.style.backgroundColor = '#fff0f0';
+                            setTimeout(() => cbSection.style.backgroundColor = '', 400);
+                        }
+                    }
+                    return false;
+                }
+                
+                hiddenMethodInput.value = method;
+                
+                if (method === 'boosted') {
+                    // Show boost duration modal
+                    pendingMethod = method;
+                    boostModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    // Normal or exclusive: submit directly
+                    form.submit();
+                }
+                return true;
+            }, 50);
+        }
+        
+        // Boost modal: option selection
+        boostOptions.forEach(opt => {
+            opt.addEventListener('click', function() {
+                boostOptions.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedBoostDays = parseInt(this.dataset.days);
+            });
+        });
+        // Set default selection (7 days)
+        const defaultOption = document.querySelector('.boost-option-btn[data-days="7"]');
+        if (defaultOption) defaultOption.classList.add('selected');
+        
+        // Confirm button in modal
+        boostConfirmBtn.addEventListener('click', function() {
+            boostDurationInput.value = selectedBoostDays;
+            boostModal.style.display = 'none';
+            document.body.style.overflow = '';
+            if (pendingMethod === 'boosted') {
+                form.submit();
+            }
+            pendingMethod = null;
+        });
+        
+        // Cancel button
+        boostCancelBtn.addEventListener('click', function() {
+            boostModal.style.display = 'none';
+            document.body.style.overflow = '';
+            pendingMethod = null;
+        });
+        
+        // Close modal if clicking outside content
+        boostModal.addEventListener('click', function(e) {
+            if (e.target === boostModal) {
+                boostModal.style.display = 'none';
+                document.body.style.overflow = '';
+                pendingMethod = null;
+            }
+        });
+        
+        // Attach click handlers to all method buttons
+        submitButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('disabled-btn');
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const method = this.dataset.method;
+                submitWithMethod(method);
+            });
+        });
+        
+        // Initialize button states
+        for (let m in checkboxAccepted) updateButtonState(m);
+        
+        // Card click to auto-check
+        document.querySelectorAll('.sell-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.type === 'checkbox' || e.target.classList?.contains('checkbox-label') || 
+                    e.target.closest('.checkbox-wrapper') || e.target.closest('.method-submit-btn') ||
+                    e.target.tagName === 'A' || e.target.closest('a')) return;
+                const method = this.dataset.method;
+                const targetCheckbox = document.querySelector(`.terms-checkbox[data-method="${method}"]`);
+                if (targetCheckbox && !targetCheckbox.checked) {
+                    targetCheckbox.checked = true;
+                    const changeEvent = new Event('change', { bubbles: true });
+                    targetCheckbox.dispatchEvent(changeEvent);
+                } else if (targetCheckbox && targetCheckbox.checked) {
+                    highlightCard(method);
+                    hiddenMethodInput.value = method;
+                }
+            });
+        });
+        
+        // Form final validation
+        form.addEventListener('submit', function(e) {
+            if (!hiddenMethodInput.value) {
+                e.preventDefault();
+                alert('Please select a selling method and agree to the corresponding terms.');
+                return false;
+            }
+            const selectedVal = hiddenMethodInput.value;
+            if (!checkboxAccepted[selectedVal]) {
+                e.preventDefault();
+                alert('Please accept the terms & conditions for the selected method.');
+                return false;
+            }
+            if (selectedVal === 'boosted' && !boostDurationInput.value) {
+                e.preventDefault();
+                alert('Please choose a boost duration.');
+                return false;
+            }
+            return true;
+        });
+        
+        // PRIVACY MODAL (unchanged)
+        const privacyModal = document.getElementById('privacyModal');
+        const privacyLink = document.getElementById('privacyPolicyLink');
+        const closeBtn = document.getElementById('modalCloseBtn');
+        const modalCheckbox = document.getElementById('modalAcceptCheckbox');
+        function openModal(e) { if(e) e.preventDefault(); privacyModal.style.display = 'flex'; document.body.style.overflow = 'hidden'; if(modalCheckbox) modalCheckbox.checked = false; }
+        function closeModalAndAcceptTerms() { privacyModal.style.display = 'none'; document.body.style.overflow = ''; const exclusiveCheckbox = document.querySelector('.terms-checkbox[data-method="exclusive"]'); if(exclusiveCheckbox && !exclusiveCheckbox.checked) { exclusiveCheckbox.checked = true; const changeEvent = new Event('change', { bubbles: true }); exclusiveCheckbox.dispatchEvent(changeEvent); } }
+        function closeModalOnly() { privacyModal.style.display = 'none'; document.body.style.overflow = ''; }
+        if(modalCheckbox) modalCheckbox.addEventListener('change', function() { if(this.checked) closeModalAndAcceptTerms(); });
+        if(privacyLink) privacyLink.addEventListener('click', openModal);
+        if(closeBtn) closeBtn.addEventListener('click', closeModalOnly);
+        privacyModal.addEventListener('click', function(e) { if(e.target === privacyModal) closeModalOnly(); });
+        document.addEventListener('keydown', function(e) { if(e.key === 'Escape' && privacyModal.style.display === 'flex') closeModalOnly(); });
+        
+        const exclusiveCheckbox = document.querySelector('.terms-checkbox[data-method="exclusive"]');
+        if(exclusiveCheckbox) { checkboxAccepted.exclusive = exclusiveCheckbox.checked; updateButtonState('exclusive'); }
+    })();
+</script>
+
+{% include 'footer.html' %}

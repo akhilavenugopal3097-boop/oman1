@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% include 'header.html' %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Edit Company Profile</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABBUguQag71PdtznQPtePBzovoFsVeuHk&callback=initMap&libraries=places,geometry" async defer></script>
+
+    <style>
+        :root {
+            --primary-color: #eef0fb;
+            --secondary-color: #eeeef4;
+            --accent-color: #e95d1c;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --text-color: #333;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+        }
+        
+        .header-section {
+            color: var(--text-color);
+            padding: 3rem 0;
+            border-radius: 0 0 1rem 1rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            background-color: white;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.3s;
+            background-color: white;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(76, 201, 240, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3ab0d6;
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            border-radius: 0.5rem;
+        }
+        
+        #map-job {
+            height: 300px;
+            width: 100%;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border: 1px solid #e0e0e0;
+            z-index: 1;
+        }
+        
+        .form-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .form-section h5 {
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 0.75rem;
+        }
+        
+        .social-icon {
+            color: var(--accent-color);
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+            background-color: var(--primary-color);
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .badge {
+            padding: 0.5em 0.75em;
+            font-weight: 500;
+        }
+        
+        .badge-primary {
+            background-color: var(--accent-color);
+        }
+        
+        .company-card {
+            transition: transform 0.3s;
+        }
+        
+        .company-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .invalid-feedback {
+            color: #dc3545;
+        }
+        
+        .logo-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            background-color: var(--secondary-color);
+        }
+        
+        /* Cropper Modal Styles */
+        .cropper-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .cropper-modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .cropper-container-box {
+            background: #fff;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 700px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        
+        .cropper-image-preview {
+            max-width: 100%;
+            max-height: 60vh;
+            background: #f0f0f0;
+        }
+        
+        .cropper-btns {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .img-preview-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem auto;
+            border: 3px solid var(--primary-color);
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .img-preview-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .current-logo-area {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-section {
+                padding: 2rem 0;
+            }
+            .card-header {
+                padding: 1rem;
+            }
+            .cropper-container-box {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h1 class="display-5 fw-bold mb-3">Edit Company Profile</h1>
+                    <p class="lead mb-0">Update your company information to maintain accurate records</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Check if user already has a company -->
+                {% if user.company %}
+                    <div class="card company-card mb-4">
+                        <div class="card-header text-center">
+                            <h3 class="mb-0"><i class="fas fa-building me-2"></i>Your Company Profile</h3>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="mb-4">
+                                {% if user.company.logo %}
+                                    <img src="{{ user.company.logo.url }}" alt="{{ user.company.company_name }}" class="logo-preview mb-3">
+                                {% else %}
+                                    <div class="logo-preview d-inline-flex align-items-center justify-content-center mb-3">
+                                        <i class="fas fa-building fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <h3 class="card-title">{{ user.company.company_name }}</h3>
+                                <div class="d-flex flex-wrap justify-content-center gap-2 my-3">
+                                    <span class="badge bg-primary">{{ user.company.get_company_type_display }}</span>
+                                    <span class="badge bg-secondary">{{ user.company.city }}</span>
+                                    <span class="badge bg-info">{{ user.company.get_industry_display }}</span>
+                                    <span class="badge bg-{% if user.company.status == 'approved' %}success{% elif user.company.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                                        {{ user.company.get_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-4">{{ user.company.description }}</p>
+                            <a href="{% url 'company_dashboard' company_id=user.company.id %}" class="btn btn-primary px-4">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Edit Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Company Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post" enctype="multipart/form-data" class="needs-validation" id="companyEditForm" novalidate>
+                            {% csrf_token %}
+                            
+                            <div class="row g-4">
+                                <!-- Left Column -->
+                                <div class="col-md-6">
+                                    <div class="form-section">
+                                        <h5><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="company_name" class="form-label">Company Name *</label>
+                                            <input type="text" id="company_name" name="company_name" class="form-control" 
+                                                   value="{{ company.company_name }}" required>
+                                            <div class="invalid-feedback">Please provide your company name.</div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="company_type" class="form-label">Company Type *</label>
+                                            <select id="company_type" name="company_type" class="form-select" required>
+                                                <option value="" disabled>Select Company Type</option>
+                                                {% for value, label in company.COMPANY_TYPES %}
+                                                    <option value="{{ value }}" {% if company.company_type == value %}selected{% endif %}>
+                                                        {{ label }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">Please select a company type.</div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="industry" class="form-label">Industry *</label>
+                                            <select id="industry" name="industry" class="form-select" required>
+                                                <option value="" disabled>Select Industry</option>
+                                                {% for value, label in company.INDUSTRIES %}
+                                                    <option value="{{ value }}" {% if company.industry == value %}selected{% endif %}>
+                                                        {{ label }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">Please select your industry.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-section">
+                                        <h5><i class="fas fa-id-card me-2"></i>Legal Information</h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="trade_license" class="form-label">Trade License Number *</label>
+                                            <input type="text" id="trade_license" name="trade_license" class="form-control" 
+                                                   value="{{ company.trade_license }}" required>
+                                            <div class="invalid-feedback">Please provide your trade license number.</div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="company_size" class="form-label">Company Size (Employees) *</label>
+                                            <input type="number" id="company_size" name="company_size" class="form-control" 
+                                                   value="{{ company.company_size }}" required min="1">
+                                            <div class="invalid-feedback">Please provide your company size.</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column -->
+                                <div class="col-md-6">
+                                    <div class="form-section">
+                                        <h5><i class="fas fa-user-tie me-2"></i>Contact Information</h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label for="contact_name" class="form-label">Contact Person *</label>
+                                            <input type="text" id="contact_name" name="contact_name" class="form-control" 
+                                                   value="{{ company.contact_name }}" required>
+                                            <div class="invalid-feedback">Please provide contact person name.</div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="phone" class="form-label">Phone Number *</label>
+                                            <input type="tel" id="phone" name="phone" class="form-control" 
+                                                   value="{{ company.phone }}" required>
+                                            <div class="invalid-feedback">Please provide a valid phone number.</div>
+                                        </div>
+
+                                        <div class="form-group mb-3">
+                                            <label for="email" class="form-label">Email Address *</label>
+                                            <input type="email" id="email" name="email" class="form-control" 
+                                                   value="{{ company.email }}" required>
+                                            <div class="invalid-feedback">Please provide a valid email address.</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Branding Section with Live Cropping Preview -->
+                                    <div class="form-section">
+                                        <h5><i class="fas fa-image me-2"></i>Branding</h5>
+                                        
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">Company Logo</label>
+                                            {% if company.logo %}
+                                                <div class="current-logo-area">
+                                                    <div class="img-preview-circle" id="currentLogoCircle">
+                                                        <img src="{{ company.logo.url }}" alt="Current Logo" id="currentLogoImg">
+                                                    </div>
+                                                    <div class="form-text mb-2">Current logo (will be replaced if you upload new)</div>
+                                                </div>
+                                            {% else %}
+                                                <div class="img-preview-circle" id="currentLogoCircle" style="display: none;">
+                                                    <img src="" alt="No Logo">
+                                                </div>
+                                            {% endif %}
+                                            
+                                            <!-- Hidden file input -->
+                                            <input type="file" id="logoInput" name="logo" class="form-control" accept="image/jpeg,image/png,image/jpg">
+                                            <div class="form-text mt-2">JPG or PNG, max 5MB. Click to upload and crop.</div>
+                                            <!-- Hidden field to store cropped image data (base64) will be converted to file before submit -->
+                                            <input type="hidden" id="croppedLogoData" name="cropped_logo_data">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Location Section (unchanged but preserved) -->
+                            <div class="form-section mt-3">
+                                <h5><i class="fas fa-map-marker-alt me-2"></i>Location Details</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">City *</label>
+                                        <select id="cityDropdown" name="city" class="form-select" required>
+                                            <option value="">Select City</option>
+                                            {% for city in cities %}
+                                                <option value="{{ city.id }}" 
+                                                    data-lat="{{ city.latitude|default:'23.6145' }}" 
+                                                    data-lng="{{ city.longitude|default:'58.5453' }}"
+                                                    {% if company.city and company.city.id == city.id %}selected{% endif %}>
+                                                    {{ city.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select your city.</div>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mt-2">
+                                    <!-- <div class="col-md-6">
+                                        <label class="form-label">Latitude *</label>
+                                        <input type="number" step="0.000001" name="latitude" id="latitudeInput" 
+                                               class="form-control" required value="{{ company.latitude|default:'' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Longitude *</label>
+                                        <input type="number" step="0.000001" name="longitude" id="longitudeInput" 
+                                               class="form-control" required value="{{ company.longitude|default:'' }}">
+                                    </div> -->
+                                </div>
+                                <div id="map-job" class="mt-3"></div>
+                                <small class="text-muted">Select your city first, then click on the map to set your company location</small>
+                            </div>
+
+                            <!-- Social Media Section -->
+                            <div class="form-section mt-3">
+                                <h5><i class="fas fa-share-alt me-2"></i>Social Media</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="website" class="form-label"><i class="fas fa-globe social-icon"></i>Website</label>
+                                        <input type="url" id="website" name="website" class="form-control" value="{{ company.website|default:'' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="linkedin" class="form-label"><i class="fab fa-linkedin social-icon"></i>LinkedIn</label>
+                                        <input type="url" id="linkedin" name="linkedin" class="form-control" value="{{ company.linkedin|default:'' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="facebook" class="form-label"><i class="fab fa-facebook social-icon"></i>Facebook</label>
+                                        <input type="url" id="facebook" name="facebook" class="form-control" value="{{ company.facebook|default:'' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="instagram" class="form-label"><i class="fab fa-instagram social-icon"></i>Instagram</label>
+                                        <input type="url" id="instagram" name="instagram" class="form-control" value="{{ company.instagram|default:'' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="youtube" class="form-label"><i class="fab fa-youtube social-icon"></i>YouTube</label>
+                                        <input type="url" id="youtube" name="youtube" class="form-control" value="{{ company.youtube|default:'' }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description Section -->
+                            <div class="form-section mt-3">
+                                <h5><i class="fas fa-align-left me-2"></i>Company Description</h5>
+                                <div class="form-group">
+                                    <label for="description" class="form-label">About Your Company *</label>
+                                    <textarea id="description" name="description" class="form-control" rows="5" required>{{ company.description }}</textarea>
+                                    <div class="invalid-feedback">Please provide a company description.</div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Section -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg py-3">
+                                    <i class="fas fa-save me-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper Modal -->
+    <div id="cropperModal" class="cropper-modal-overlay">
+        <div class="cropper-container-box">
+            <h5 class="mb-3"><i class="fas fa-crop-alt me-2"></i>Crop Your Logo</h5>
+            <div>
+                <img id="cropperImage" src="" alt="Crop Preview" class="cropper-image-preview" style="max-width:100%;">
+            </div>
+            <div class="cropper-btns">
+                <button type="button" class="btn btn-secondary" id="cancelCropBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="applyCropBtn">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="mt-5">
+        <div class="container">
+            <p>&copy; {% now "Y" %} Company Registration Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    
+    <script>
+        // ---------- CROPPER LOGIC WITH PREVIEW ----------
+        let cropperInstance = null;
+        let selectedFile = null;
+        const logoInput = document.getElementById('logoInput');
+        const cropperModal = document.getElementById('cropperModal');
+        const cropperImage = document.getElementById('cropperImage');
+        const cancelCropBtn = document.getElementById('cancelCropBtn');
+        const applyCropBtn = document.getElementById('applyCropBtn');
+        const croppedLogoDataInput = document.getElementById('croppedLogoData');
+        const currentLogoCircle = document.getElementById('currentLogoCircle');
+        const currentLogoImg = document.getElementById('currentLogoImg');
+        
+        // Function to show cropper modal
+        function showCropperModal(imageUrl) {
+            cropperImage.src = imageUrl;
+            cropperModal.classList.add('active');
+            if (cropperInstance) {
+                cropperInstance.destroy();
+            }
+            setTimeout(() => {
+                cropperInstance = new Cropper(cropperImage, {
+                    aspectRatio: 1,
+                    viewMode: 2,
+                    dragMode: 'move',
+                    autoCropArea: 0.8,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    background: true,
+                    responsive: true,
+                });
+            }, 100);
+        }
+        
+        function hideCropperModal() {
+            cropperModal.classList.remove('active');
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+        }
+        
+        // When file selected, read and show modal
+        logoInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file type and size
+            if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+                alert('Please select a valid JPG or PNG image.');
+                logoInput.value = '';
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size must be less than 5MB.');
+                logoInput.value = '';
+                return;
+            }
+            
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showCropperModal(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // Apply crop
+        applyCropBtn.addEventListener('click', function() {
+            if (cropperInstance) {
+                const canvas = cropperInstance.getCroppedCanvas({
+                    width: 300,
+                    height: 300,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                if (canvas) {
+                    const croppedImageDataURL = canvas.toDataURL('image/jpeg', 0.9);
+                    // Update preview circle with cropped image
+                    if (currentLogoCircle) {
+                        currentLogoCircle.style.display = 'flex';
+                        let previewImg = currentLogoCircle.querySelector('img');
+                        if (!previewImg) {
+                            previewImg = document.createElement('img');
+                            currentLogoCircle.innerHTML = '';
+                            currentLogoCircle.appendChild(previewImg);
+                        }
+                        previewImg.src = croppedImageDataURL;
+                        previewImg.style.width = '100%';
+                        previewImg.style.height = '100%';
+                        previewImg.style.objectFit = 'cover';
+                    } else {
+                        // fallback: create preview area
+                        const previewContainer = document.querySelector('.form-section .img-preview-circle');
+                        if (previewContainer) {
+                            previewContainer.style.display = 'flex';
+                            let previewImg = previewContainer.querySelector('img');
+                            if (!previewImg) {
+                                previewImg = document.createElement('img');
+                                previewContainer.innerHTML = '';
+                                previewContainer.appendChild(previewImg);
+                            }
+                            previewImg.src = croppedImageDataURL;
+                        }
+                    }
+                    // Store base64 data in hidden field for backend processing (optional)
+                    croppedLogoDataInput.value = croppedImageDataURL;
+                    
+                    // Convert base64 dataURL to blob file and create a new File object to replace original input file
+                    fetch(croppedImageDataURL)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const croppedFile = new File([blob], selectedFile.name, { type: 'image/jpeg', lastModified: Date.now() });
+                            // Create a new FileList-like object and replace input files
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(croppedFile);
+                            logoInput.files = dataTransfer.files;
+                            // Optionally trigger validation
+                        });
+                    
+                    hideCropperModal();
+                } else {
+                    alert('Unable to crop image. Please try again.');
+                }
+            }
+        });
+        
+        cancelCropBtn.addEventListener('click', function() {
+            hideCropperModal();
+            logoInput.value = ''; // clear the selected file
+            croppedLogoDataInput.value = '';
+        });
+        
+        // If there is existing logo preview, keep it. On new upload, the preview shows after crop.
+        // For initial display, we rely on Django's logo.
+        
+        // ----- GOOGLE MAPS CODE (Preserved from original, minimal adjustments) -----
+        let googleMapsInstance = null;
+        let cityMarker = null;
+        let cityCircle = null;
+        let locationMarker = null;
+
+        function initializeCompanyMap() {
+            const defaultLat = {% if company.latitude %}{{ company.latitude }}{% else %}23.6145{% endif %};
+            const defaultLng = {% if company.longitude %}{{ company.longitude }}{% else %}58.5453{% endif %};
+            const defaultCenter = { lat: defaultLat, lng: defaultLng };
+            const citySelect = document.getElementById('cityDropdown');
+            const latInput = document.getElementById('latitudeInput');
+            const lngInput = document.getElementById('longitudeInput');
+            
+            const map = new google.maps.Map(document.getElementById('map-job'), {
+                zoom: 12, center: defaultCenter, mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: true, streetViewControl: false, fullscreenControl: true, zoomControl: true, clickableIcons: false
+            });
+            googleMapsInstance = map;
+            
+            {% if company.latitude and company.longitude %}
+                locationMarker = new google.maps.Marker({
+                    position: { lat: {{ company.latitude }}, lng: {{ company.longitude }} },
+                    map: map, title: 'Current Location', icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', scaledSize: new google.maps.Size(40, 40) },
+                    draggable: true, animation: google.maps.Animation.DROP
+                });
+                const locationInfoWindow = new google.maps.InfoWindow({ content: `<strong>Current Location</strong><br>Lat: {{ company.latitude }}<br>Lng: {{ company.longitude }}<br><small>Drag to adjust position</small>` });
+                locationMarker.addListener('click', () => locationInfoWindow.open(map, locationMarker));
+                locationInfoWindow.open(map, locationMarker);
+                locationMarker.addListener('dragend', function() {
+                    const newPos = locationMarker.getPosition();
+                    const newLat = newPos.lat(), newLng = newPos.lng();
+                    if (cityCircle) {
+                        const center = cityCircle.getCenter();
+                        const distance = google.maps.geometry.spherical.computeDistanceBetween(center, newPos);
+                        if (distance <= 3000) {
+                            latInput.value = newLat.toFixed(6);
+                            lngInput.value = newLng.toFixed(6);
+                        } else { alert("Location must be within the city area (3km radius)"); locationMarker.setPosition(new google.maps.LatLng(parseFloat(latInput.value), parseFloat(lngInput.value))); }
+                    } else { latInput.value = newLat.toFixed(6); lngInput.value = newLng.toFixed(6); }
+                });
+            {% endif %}
+            
+            citySelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const lat = parseFloat(selectedOption.getAttribute('data-lat'));
+                const lng = parseFloat(selectedOption.getAttribute('data-lng'));
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const location = { lat: lat, lng: lng };
+                    map.setCenter(location); map.setZoom(12);
+                    if (cityMarker) cityMarker.setMap(null);
+                    if (cityCircle) cityCircle.setMap(null);
+                    cityMarker = new google.maps.Marker({ position: location, map: map, title: selectedOption.text, icon: { url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', scaledSize: new google.maps.Size(32, 32) } });
+                    cityCircle = new google.maps.Circle({ strokeColor: '#e95d1c', strokeOpacity: 0.8, strokeWeight: 2, fillColor: '#e95d1c', fillOpacity: 0.1, map: map, center: location, radius: 3000, clickable: false, zIndex: -1 });
+                    if (!locationMarker) { latInput.value = lat.toFixed(6); lngInput.value = lng.toFixed(6); }
+                }
+            });
+            
+            map.addListener('click', function(event) {
+                const clickedLocation = event.latLng;
+                if (!cityCircle) { alert("Please select a city first"); return; }
+                if (google.maps.geometry && google.maps.geometry.spherical) {
+                    const center = cityCircle.getCenter();
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(center, clickedLocation);
+                    if (distance <= 3000) {
+                        if (locationMarker) locationMarker.setMap(null);
+                        locationMarker = new google.maps.Marker({ position: clickedLocation, map: map, title: 'Selected Location', icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', scaledSize: new google.maps.Size(40, 40) }, draggable: true, animation: google.maps.Animation.DROP });
+                        const infoWin = new google.maps.InfoWindow({ content: `<strong>Selected Location</strong><br>Lat: ${clickedLocation.lat().toFixed(6)}<br>Lng: ${clickedLocation.lng().toFixed(6)}` });
+                        locationMarker.addListener('dragend', function() {
+                            const newPos = locationMarker.getPosition();
+                            const newLat = newPos.lat(), newLng = newPos.lng();
+                            const d = google.maps.geometry.spherical.computeDistanceBetween(cityCircle.getCenter(), newPos);
+                            if (d <= 3000) { latInput.value = newLat.toFixed(6); lngInput.value = newLng.toFixed(6); }
+                            else { alert("Outside city radius"); locationMarker.setPosition(new google.maps.LatLng(parseFloat(latInput.value), parseFloat(lngInput.value))); }
+                        });
+                        locationMarker.addListener('click', () => infoWin.open(map, locationMarker));
+                        latInput.value = clickedLocation.lat().toFixed(6);
+                        lngInput.value = clickedLocation.lng().toFixed(6);
+                        infoWin.open(map, locationMarker);
+                    } else { alert("Please select a location within the city area (3km radius)"); }
+                } else { alert("Map still loading, try again."); }
+            });
+            if (citySelect.value) { setTimeout(() => citySelect.dispatchEvent(new Event('change')), 100); }
+        }
+        
+        function waitForCompanyMap() {
+            if (typeof google !== 'undefined' && google.maps) { initializeCompanyMap(); }
+            else { setTimeout(waitForCompanyMap, 200); }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForCompanyMap();
+            (function() { 'use strict'; var forms = document.querySelectorAll('.needs-validation'); Array.prototype.slice.call(forms).forEach(function(form) { form.addEventListener('submit', function(event) { if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); })();
+        });
+    </script>
+</body>
+</html>
+<script>
+    document.querySelectorAll('.nav-item.dropdown > a.nav-link[href]').forEach(function(link) {
+    // Remove data-bs-toggle attribute
+    link.removeAttribute('data-bs-toggle');
+    
+    // Add click handler to open dropdown on hover instead
+    link.parentElement.addEventListener('mouseenter', function() {
+        let dropdown = this.querySelector('.dropdown-menu');
+        if (dropdown) {
+            dropdown.classList.add('show');
+        }
+    });
+    
+    link.parentElement.addEventListener('mouseleave', function() {
+        let dropdown = this.querySelector('.dropdown-menu');
+        if (dropdown) {
+            dropdown.classList.remove('show');
+        }
+    });
+});</script>

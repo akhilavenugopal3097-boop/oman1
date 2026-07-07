@@ -1,0 +1,2794 @@
+{% load static %}
+{% load automobile_filters %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+<title>OMAN</title>
+
+<!-- Fav Icon -->
+<link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+{% comment %} <!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet"> {% endcomment %}
+
+<!-- Stylesheets -->
+<link href="{% static 'assets/css/fonts' %}" rel="stylesheet" media="screen">
+<link href="{% static 'assets/css/font-awesome-all.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/flaticon.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/owl.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/jquery.fancybox.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/animate.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/nice-select.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/color.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css/responsive.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+</head>
+<style>
+    /* Show dropdown on hover */
+.navbar .dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Optional: Smooth transition effect */
+.dropdown-menu {
+    display: none; /* Hide by default */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.property-video{
+        width:300px;
+      }
+
+</style>
+<style>
+
+.location-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    background: linear-gradient(45deg, red, orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.search-input {
+    font-family: 'FontStyle6', Arial, sans-serif;
+    padding: 10px;
+    width: 70%; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+.search-btn {
+    position: absolute;
+    right: 0;
+    padding: 5px 10px;
+    background: linear-gradient(45deg, #EB362D, #F9AD1F, #EB362D, #F9AD1F); /* Gradient background */
+    border: none;
+    border-radius: 0 10px 20px 0;
+    cursor: pointer;
+}
+
+.search-btn i {
+    color: #fff; /* White color for the icon */
+}
+
+/* Adjust spacing for the right section */
+.row.align-items-center {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+/* Small line between Sign In and Add Post */
+.separator {
+    width: 1px;
+    height: 30px;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+/* Underline below Sign In */
+.sign-in a {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    {% comment %} font-weight: bold; {% endcomment %}
+}
+
+.sign-in a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+}
+.theme-btn-one {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size:14px;
+    display: inline-block; /* Allows padding and margin */
+    text-align: center; /* Centers text horizontally */
+    line-height: 20px; /* Adjust this value to match the button height for vertical centering */
+}
+
+.theme-btn-two {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    margin-top:-1px;
+    padding: 0px 10px;
+    border-radius: 16px;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size: 12px;
+    display: inline-block; /* Allows padding and margin */
+    text-align: center; /* Centers text horizontally */
+    line-height: 20px; /* Adjust this value to match the button height for vertical centering */
+}
+.theme-btn-three {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    margin-top:-1px;
+    padding: 0px 10px;
+    border-radius: 16px;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size: 12px;
+    display: inline-block; /* Allows padding and margin */
+    text-align: center; /* Centers text horizontally */
+    line-height: 20px; /* Adjust this value to match the button height for vertical centering */
+}
+
+/* Small line between Sign In and Add Post */
+.separator {
+    width: 1px;
+    height: 50px;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+/* Underline below Sign In */
+.sign-in a {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    font-weight: normal;
+}
+
+.sign-in a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #333;
+}
+/* Style for the "Log in or sign up" link */
+.login-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    {% comment %} font-weight: bold; {% endcomment %}
+    font-size: 14px; /* Reduced font size */
+    transition: font-size 0.3s ease, color 0.3s ease; /* Smooth transition for font size and color */
+}
+
+
+
+/* Animated underline effect with gradient */
+.login-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient( #F9AD1F, #EB362D); /* Gradient from orange to red */
+    transition: width 0.3s ease; /* Animate the width of the underline */
+}
+
+/* Hover effects on the link */
+.login-link:hover {
+    color: linear-gradient( #F9AD1F, #EB362D); /* Change text color on hover */
+    
+}
+
+.login-link:hover::after {
+    width: 100%; /* Expand underline to full width on hover */
+}
+
+
+/* Center the navbar */
+.main-menu {
+    text-align: center;
+    margin: 0 auto;
+    padding: 0;
+  
+}
+
+.main-menu .navigation {
+    display: inline-block; /* Center the navigation items */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.main-menu .navigation > li {
+    display: inline-block;
+   
+}
+
+.main-menu .navigation > li > a {
+    text-decoration: none;
+    color: #000; /* Default color */
+    padding: 10px 18px;
+}
+
+.main-menu .navigation > li > a:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.gradient-button {
+    display: inline-block;
+    background: linear-gradient( #F9AD1F, #EB362D);
+    padding: 5px;
+    border-radius: 30px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.3s ease, filter 0.3s ease;
+    filter: blur(0px); /* Initial blur level */
+}
+
+.gradient-button:hover {
+    background: linear-gradient( #F9AD1F, #EB362D);
+    filter: blur(18px); /* Add a blur effect on hover */
+}
+
+.gradient-button span {
+    font-size: 12px;
+}
+
+/* Hide the mobile toggle on larger screens */
+@media (min-width: 768px) {
+    .mobile-nav-toggler {
+        display: none;
+    }
+}
+
+ #l1{
+    padding: 28px 0px;
+    margin-right:-10px;
+  }
+
+
+</style>
+<style>
+    /* Ensure the navbar content stays in a single line */
+.navbar .ml-auto {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    
+}
+
+/* Prevent text from breaking */
+.sign-in a, .dropdown-toggle {
+    white-space: nowrap;
+}
+
+/* Adjust dropdown alignment */
+.dropdown-menu {
+    min-width: 200px;
+    text-align: left;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .navbar .ml-auto {
+        justify-content: flex-end;
+        margin-top: -5px;
+    }
+
+    .sign-in a {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        margin-left: -95px;
+    }
+
+    .user-image {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .ml-auto {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .sign-in a {
+        font-size: 10px;
+       
+    }
+
+    .dropdown-menu {
+        font-size: 12px;
+    }
+}
+
+</style>
+
+
+
+
+<style>
+    
+    .dropdown {
+        position: relative;
+    }
+    
+    .real-estate-container {
+        display: flex;
+        align-items: :
+        gap: 20px;
+        color:black;
+        padding: 10px 12px;
+    }
+    
+    .real-estate-container {
+        display: flex;
+        align-items: :
+        gap: 20px;
+        color:black;
+        padding: 10px 13px;
+    }
+    
+    .real-estate-container > a {
+        text-decoration: none; /* Removes underline from links */
+        color:black;
+        position: relative;
+        display: block;
+        text-align: center;
+        font-size: 14px;
+        line-height: 30px;
+    
+        font-weight: 600;
+        opacity: 1;
+    }
+    .real-estate-container > a:hover {
+       
+        color:#E35D20 !important;
+      
+    }
+    
+    .theme-btn-one.exclusive-btn:hover {
+        background-color: #ff7647; /* Slightly lighter color on hover */
+    }
+    .search-box {
+        position: relative;
+        width:240px;
+        border-color:#15818E;
+    }
+    
+    /* Make the search field smaller and position it closer to the logo */
+    .search-box {
+        display: inline-flex;
+        align-items: center;
+     
+        margin-left: -170px;
+    }
+    
+ 
+    .location-icon3 {
+        position: absolute;
+        top: 26%;
+        left: 45px;
+        height:23px;
+       
+    }
+    .location-icon2 {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        height:25px;
+    
+    }
+    .location-icon1 {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        height:23px;
+      
+    }
+    
+.search-input {
+    position: relative; /* Ensure this is set */
+    width: 83%;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    font-size: 12px;
+    padding-left: 35px; /* Space for the location icon */
+    padding-right: 50px; /* Space for the dropdown icon */
+    height: 30px;
+    padding: 0.32rem;
+    border-radius: 10px 10px 10px 10px;
+    border: 1px solid #7ECAB6;
+    box-shadow: none;
+    cursor: pointer;
+    background: #f9f9f9;
+}
+
+.location-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    height: 20px;
+    z-index: 1; /* Ensure it appears on top */
+}
+
+.dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: linear-gradient(45deg, red, orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+    .search-box {
+        position: relative; /* Ensure the dropdown is positioned relative to the search box */
+        width: 240px; /* Set a fixed width for the search box */
+    }
+    .regions-list {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        z-index: 1000;
+        width: 200px; /* Adjust width as needed */
+        max-height: 1700px; /* Set a maximum height */
+        overflow: hidden; /* Prevent scrollbars */
+        display: none; /* Initially hidden */
+        box-shadow: 8px 8px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .region-item {
+        margin-bottom: 10px;
+        position: relative;
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden; /* Hide overflow */
+        text-overflow: ellipsis; /* Show ellipsis for overflowed text */
+    }
+    
+    .region-item:hover .region-header {
+        background-color: #f0f0f0; /* Change the background color on hover */
+        cursor: pointer;
+        color: #E35D20;
+    }
+    .cities-container {
+        position: absolute;
+        margin-top:-50px;
+        left: 190px;
+        width:400px;
+        background: white;
+        padding: 10px;
+        display: none; /* Hidden by default */
+        z-index: 2000;
+    }
+    .cities-list {
+        font-family: 'FontStyle6', Arial, sans-serif;
+        list-style: none;
+        padding-left: 20px;
+        margin: 0;
+    }
+    .cities-list li:hover{
+        background-color: #f0f0f0; /* Change the background color on hover */
+        cursor: pointer;
+        color:#E35D20;
+    }
+    .region-header i {
+        transition: transform 0.3s ease;
+    }
+    
+    .region-item:hover .cities-container {
+        display: block; /* Display cities container on hover */
+    }
+    
+    .region-item:hover .region-header i {
+        transform: rotate(90deg); /* Rotate the arrow icon */
+    }
+    .region-item:hover .cities-container {
+        display: block;
+    }
+    
+    .cities-container {
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .lang1{
+        margin-left:10px;
+        font-weight:bold;
+        margin-top:-4px;
+    }
+    .icon-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center align icon and text */
+        margin: 0 5px; /* Consistent spacing between each icon-text pair */
+    }
+    
+    .icon-logo img {
+        width: 27px;
+        height: 27px;
+        margin-bottom: 5px; /* Add space between the icon and the text */
+        transition: transform 0.3s ease; /* Smooth scale effect for hover */
+    }
+    .icon-logo p{
+        font-size: 12px;
+        text-align: center;
+        margin-top: 5px;
+        color: #333; /* Default color */
+        transition: color 0.3s ease; /* Smooth color transition for text */
+        font-family: 'FontStyle6', Arial, sans-serif;
+        font-weight: normal;
+    }
+    .submenu-columns .column li img {
+        width: 15px; /* Adjust image size */
+        height: 15px;
+        margin-right: 10px; /* Add spacing between image and text */
+        vertical-align: middle; /* Align image with text */
+    }
+    
+    .icon-logo:hover img {
+        transform: scale(1.1); /* Slightly enlarge the icon on hover */
+    }
+    
+    .icon-logo{
+        font-size: 12px;
+        text-align: center;
+        margin-top: 5px;
+        color: #333; /* Default color */
+        transition: color 0.3s ease; /* Smooth color transition for text */  
+        font-weight: normal;
+    }
+    
+    
+    .icon-logo:hover .icon-text {
+        color: linear-gradient( #F9AD1F, #EB362D);
+    }
+    .icon-container {
+        display: flex;
+        justify-content: center; /* Center all icons horizontally */
+        gap: 10px; 
+    }
+    
+        /* Submenu */
+        .submenu {
+            display: none;
+            margin: 10px 0;
+            padding: 10px;
+        
+            border: 1px solid #ccc;
+            position: absolute; /* Absolute positioning for placement */
+            margin-top: -10px; /* Align with the parent item vertically */
+            left: 100%; /* Position to the right of the parent item */
+            z-index: 1000; /* Ensure it's above other elements */
+            font-family: 'FontStyle6', Arial, sans-serif;
+            font-size: 14px;
+           
+        }
+        
+        /* Submenu Columns */
+        .submenu-columns {
+            display: flex;
+            margin-left:10px;
+            gap: 60px;
+            font-family: 'FontStyle6', Arial, sans-serif;
+            background-color: #F5F6F7;
+            text-align: justify;
+        }
+        
+        /* Column */
+        .column {
+            list-style: none;
+            padding: 0;
+            width: 220px;
+          
+        }
+        
+        /* Column Links */
+        .column li a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .column li a:hover {
+           
+            color:  #E35D20;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        
+        
+        /* Dropdown Hover Effect */
+        .dropdown:hover > .submenu {
+            display: block; /* Show submenu on hover */
+        }
+        .current-location{
+            width:25px;
+        }
+    
+
+        @media (max-width: 480px) {
+            .search-box {
+                margin-top: 105px;
+                margin-left: -230px;
+            }
+        }
+        .allcities{
+            padding-left:5px;
+            margin-bottom:5px;
+            font-family: 'FontStyle6', Arial, sans-serif;font-size:13px;
+            background : none; 
+            border: none;  
+            cursor: pointer;"
+        }
+        .allcities:hover {
+            background-color: #f0f0f0; /* Change the background color on hover */
+            cursor: pointer;
+            color: #E35D20;
+        }
+    
+    </style>
+
+
+
+
+<!-- page wrapper -->
+<body>
+
+    <div class="boxed_wrapper">
+
+
+
+        <!-- main header -->
+        <header class="main-header">
+            
+            <!-- header-lower -->
+            <div class="header-lower1">
+                <div class="auto-container">
+                    <div class="outer-box">
+                        
+
+                            <!-- Logo Section -->
+    
+                            
+                                <div class="logo-box">
+                                    <figure class="logo">
+                                        <a href="{% url 'index' %}">
+                                            <img src="{% static 'assets/images/logo.png' %}" style="height:50px;" alt="Oman">
+                                        </a>
+                                    </figure>
+                                </div>
+                                <div class="col-md-3 col-12" style="margin-right: -180px;">
+                                    <div class="search-box" style="position: relative;">
+                                        <img src="{% static 'assets/images/Icons-03.png' %}" alt="Location Icon" class="location-icon">
+                                        <div class="search-input" onclick="toggleDropdown()" style="padding-top:6px;padding-left:30px; cursor: pointer; background: #f9f9f9;">
+                                            {% if selected_cities|length > 1 %}
+                                                {{ selected_cities.0 }} +{{ selected_cities|length|add:"-1" }}
+                                            {% elif selected_city %}
+                                                {{ selected_city }}
+                                            {% elif selected_region %}
+                                                {{ selected_region }}
+                                            {% else %}
+                                                All Cities
+                                            {% endif %}
+                                            <i class="fas fa-chevron-down dropdown-icon"></i>
+                                        </div>
+                                        
+                                        <ul id="regions-list" class="regions-list" style="display: none;  border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; background: white; padding: 10px;">
+                                            <li>
+                                                <input type="text" id="region-search" placeholder="Search for Location" oninput="filterRegionsAndCities()" style="width: 100%; padding: 4px; font-size:12px; margin-bottom: 10px; border: 1px solid #7ECAB6; border-radius: 7px;">
+                                            </li>
+                                            <li>
+                                                <img src="{% static 'assets/images/2-02.png' %}" alt="Location Icon" class="current-location">
+                                                <button style="background : none; border: none; color:rgb(218, 16, 16); cursor: pointer;font-size:15px;font-weight:bold">Use current location</button>
+                                            </li>
+                                            <li>
+                                               <p class="text-dark p-2" style=" font-family: 'FontStyle6', Arial, sans-serif;font-size:13px;margin-bottom:-5px;">Search for Location</p>
+                                            </li>
+                                            <li onclick="selectCity('All Cities', '')" class="allcities">All Cities</li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="MS" onclick="selectRegion('MS')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Muscat
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-MS" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="DH" onclick="selectRegion('DH')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Dhofar
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-DH" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="BT" onclick="selectRegion('BT')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                   Al Batinah
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-BT" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="DA" onclick="selectRegion('DA')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Al Dakhiliya
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-DA" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="SH" onclick="selectRegion('SH')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Al Sharqiya
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-SH" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="BZ" onclick="selectRegion('BZ')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Al Buraimi
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-BZ" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="DZ" onclick="selectRegion('DZ')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                   Musandam
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-DZ" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="WT" onclick="selectRegion('WT')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Al Wusta
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-WT" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            <li class="region-item">
+                                                <div class="region-header" data-region-id="ZU" onclick="selectRegion('ZU')" style="padding-left:5px; cursor: pointer;font-size:13.5px;">
+                                                    Al Dhahirah
+                                                    <i class="fas fa-chevron-right arrow-icon" id="arrow-ZU" style="float: right;background: linear-gradient(45deg, red, orange); -webkit-background-clip: text; -webkit-text-fill-color: transparent;font-size:13px;"></i>
+                                                </div>
+                                            </li>
+                                            
+                                        </ul>
+                                       <!-- Cities container moved outside regions-list -->
+<div class="cities-container" id="cities-container-MS" style="display: none;max-height: 280px;overflow-y: auto;">
+    <ul class="cities-list" id="cities-MS" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Amarat', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Amarat</button></li>
+        <li><button onclick="selectCity('Al Bustan', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Bustan</button></li>
+        <li><button onclick="selectCity('Al Ghubrah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Ghubrah</button></li>
+        <li><button onclick="selectCity('Al Hail', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Hail</button></li>
+        <li><button onclick="selectCity('Al Hamriyah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Hamriyah</button></li>
+        <li><button onclick="selectCity('Al Khoud', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Khoud</button></li>
+        <li><button onclick="selectCity('Al Khuwair', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Khuwair</button></li>
+        <li><button onclick="selectCity('Al Maabilah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Maabilah</button></li>
+        <li><button onclick="selectCity('Al Mawaleh', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Mawaleh</button></li>
+        <li><button onclick="selectCity('Al Rusayl', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Rusayl</button></li>
+        <li><button onclick="selectCity('Al Seeb', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Seeb</button></li>
+        <li><button onclick="selectCity('Al Sifah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Sifah</button></li>
+        <li><button onclick="selectCity('Al Wadi Al Kabir', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Wadi Al Kabir</button></li>
+        <li><button onclick="selectCity('Ansab', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ansab</button></li>
+        <li><button onclick="selectCity('Azaiba', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Azaiba</button></li>
+        <li><button onclick="selectCity('Barr Al Jissah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Barr Al Jissah</button></li>
+        <li><button onclick="selectCity('Bosher', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Bosher</button></li>
+        <li><button onclick="selectCity('Darsait', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Darsait</button></li>
+        <li><button onclick="selectCity('Ghala', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ghala</button></li>
+        <li><button onclick="selectCity('Madinat Al Sultan Qaboos', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Madinat Al Sultan Qaboos</button></li>
+        <li><button onclick="selectCity('Misfah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Misfah</button></li>
+        <li><button onclick="selectCity('Muscat - Other', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Muscat - Other</button></li>
+        <li><button onclick="selectCity('Muscat Hills', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Muscat Hills</button></li>
+        <li><button onclick="selectCity('Mutrah', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Mutrah</button></li>
+        <li><button onclick="selectCity('Qantab', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Qantab</button></li>
+        <li><button onclick="selectCity('Qurayyat', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Qurayyat</button></li>
+        <li><button onclick="selectCity('Qurum', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Qurum</button></li>
+        <li><button onclick="selectCity('Ruwi', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ruwi</button></li>
+        <li><button onclick="selectCity('Sadab', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sadab</button></li>
+        <li><button onclick="selectCity('Sultan Haitham City', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sultan Haitham City</button></li>
+        <li><button onclick="selectCity('The Wave (Almouj)', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">The Wave (Almouj)</button></li>
+        <li><button onclick="selectCity('Yiti', 'MS')" style="background: none; border: none; cursor: pointer;font-size:13px;">Yiti</button></li>
+    </ul>
+</div>
+
+                                       <div class="cities-container" id="cities-container-DH" style="display: none;">
+    <ul class="cities-list" id="cities-DH" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Mazyona', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Mazyona</button></li>
+        <li><button onclick="selectCity('Dhalkut', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Dhalkut</button></li>
+        <li><button onclick="selectCity('Mirbat', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Mirbat</button></li>
+        <li><button onclick="selectCity('Muqshin', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Muqshin</button></li>
+        <li><button onclick="selectCity('Rakhyut', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Rakhyut</button></li>
+        <li><button onclick="selectCity('Sadah', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sadah</button></li>
+        <li><button onclick="selectCity('Salalah', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Salalah</button></li>
+        <li><button onclick="selectCity('Shalim and The Hallaniyat Island', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Shalim and The Hallaniyat Island</button></li>
+        <li><button onclick="selectCity('Taqah', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Taqah</button></li>
+        <li><button onclick="selectCity('Thumrait', 'DH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Thumrait</button></li>
+    </ul>
+</div>
+
+                                       
+                                      <!-- Al Batinah -->
+<div class="cities-container" id="cities-container-BT" style="display: none;">
+    <ul class="cities-list" id="cities-BT" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Awabi', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al 'Awabi</button></li>
+        <li><button onclick="selectCity('Al Khaboura', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Khaboura</button></li>
+        <li><button onclick="selectCity('Al Masna', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Masn'a</button></li>
+        <li><button onclick="selectCity('Al Rustaq', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Rustaq</button></li>
+        <li><button onclick="selectCity('Barka', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Barka</button></li>
+        <li><button onclick="selectCity('Liwa', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Liwa</button></li>
+        <li><button onclick="selectCity('Nakhl', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Nakhl</button></li>
+        <li><button onclick="selectCity('Saham', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Saham</button></li>
+        <li><button onclick="selectCity('Shinas', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Shinas</button></li>
+        <li><button onclick="selectCity('Sohar', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sohar</button></li>
+        <li><button onclick="selectCity('Suwaiq', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Suwaiq</button></li>
+        <li><button onclick="selectCity('Wadi Al Maawal', 'BT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Wadi Al Ma'awal</button></li>
+    </ul>
+</div>
+
+
+<!-- Al Dakhiliyah -->
+<div class="cities-container" id="cities-container-DA" style="display: none;">
+    <ul class="cities-list" id="cities-DA" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Adam', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Adam</button></li>
+        <li><button onclick="selectCity('Bahla', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Bahla</button></li>
+        <li><button onclick="selectCity('Bidbid', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Bidbid</button></li>
+        <li><button onclick="selectCity('Hamra', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Hamra</button></li>
+        <li><button onclick="selectCity('Izki', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Izki</button></li>
+        <li><button onclick="selectCity('Manah', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Manah</button></li>
+        <li><button onclick="selectCity('Nizwa', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Nizwa</button></li>
+        <li><button onclick="selectCity('Sumail', 'DA')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sumail</button></li>
+    </ul>
+</div>
+
+<!-- Al Dhahirah -->
+<div class="cities-container" id="cities-container-ZU" style="display: none;margin-top: -90px;">
+    <ul class="cities-list" id="cities-DH" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Dhank', 'ZU')" style="background: none; border: none; cursor: pointer;font-size:13px;">Dhank</button></li>
+        <li><button onclick="selectCity('Ibri', 'ZU')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ibri</button></li>
+        <li><button onclick="selectCity('Yunqul', 'ZU')" style="background: none; border: none; cursor: pointer;font-size:13px;">Yunqul</button></li>
+    </ul>
+</div>  
+<!-- Al Wusta -->
+<div class="cities-container" id="cities-container-AW" style="display: none;">
+    <ul class="cities-list" id="cities-AW" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Duqum', 'AW')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Duqum</button></li>
+        <li><button onclick="selectCity('Al Jazur', 'AW')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Jazur</button></li>
+        <li><button onclick="selectCity('Haima', 'AW')" style="background: none; border: none; cursor: pointer;font-size:13px;">Haima</button></li>
+        <li><button onclick="selectCity('Mahut', 'AW')" style="background: none; border: none; cursor: pointer;font-size:13px;">Mahut</button></li>
+    </ul>
+</div>
+
+<!-- Ash Sharqiyah North -->
+<div class="cities-container" id="cities-container-SH" style="display: none;max-height: 157px;overflow-y: auto;">
+    <ul class="cities-list" id="cities-SH" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Kamil and Al Waafi', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Kamil and Al Waafi</button></li>
+        <li><button onclick="selectCity('Al Mudaibi', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Mudaibi</button></li>
+        <li><button onclick="selectCity('Al Qabil', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Qabil</button></li>
+        <li><button onclick="selectCity('Bidiya', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Bidiya</button></li>
+        <li><button onclick="selectCity('Dima and Al Taaiyin', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Dima and Al Taaiyin</button></li>
+        <li><button onclick="selectCity('Ibra', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ibra</button></li>
+        <li><button onclick="selectCity('Ja\'alan Bani Bu Ali', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Ja'alan Bani Bu Ali</button></li>
+        <li><button onclick="selectCity('Jalan Bani Buhassan', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Jalan Bani Buhassan</button></li>
+        <li><button onclick="selectCity('Masira', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Masira</button></li>
+        <li><button onclick="selectCity('Sur', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Sur</button></li>
+        <li><button onclick="selectCity('Wadi Bani Khalid', 'SH')" style="background: none; border: none; cursor: pointer;font-size:13px;">Wadi Bani Khalid</button></li>
+    </ul>
+</div>
+
+
+<!-- Al Buraimi -->
+<div class="cities-container" id="cities-container-BZ" style="display: none;">
+    <ul class="cities-list" id="cities-BR" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Buraimi', 'BZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Buraimi</button></li>
+        <li><button onclick="selectCity('Al Sinainah', 'BZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Sinainah</button></li>
+        <li><button onclick="selectCity('Mahdhah', 'BZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Mahdhah</button></li>
+    </ul>
+</div>
+
+<!-- Al Wusta Cities -->
+<div class="cities-container" id="cities-container-WT" style="display: none;">
+    <ul class="cities-list" id="cities-WT" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Al Duqum', 'WT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Duqum</button></li>
+        <li><button onclick="selectCity('Al Jazur', 'WT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Al Jazur</button></li>
+        <li><button onclick="selectCity('Haima', 'WT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Haima</button></li>
+        <li><button onclick="selectCity('Mahut', 'WT')" style="background: none; border: none; cursor: pointer;font-size:13px;">Mahut</button></li>
+    </ul>
+</div>
+
+<!-- Masandam Cities -->
+<div class="cities-container" id="cities-container-DZ" style="display: none;">
+    <ul class="cities-list" id="cities-DZ" style="padding-left: 20px;">
+        <li><button onclick="selectCity('Bukha', 'DZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Bukha</button></li>
+        <li><button onclick="selectCity('Dibba', 'DZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Dibba</button></li>
+        <li><button onclick="selectCity('Khasab', 'DZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Khasab</button></li>
+        <li><button onclick="selectCity('Madha', 'DZ')" style="background: none; border: none; cursor: pointer;font-size:13px;">Madha</button></li>
+    </ul>
+</div>
+
+
+
+                                        <div class="lang1" style="position: relative; cursor: pointer;" onclick="translateText()">عربي</div>
+
+<script>
+    function translateText() {
+        // Add your translation logic here
+        alert(' language triggered!');
+}
+</script>
+                                    </div>
+                                </div>
+                                
+                                <script>
+                                    // Toggle the visibility of the region dropdown
+                                  function toggleDropdown() {
+                                      const regionsList = document.getElementById('regions-list');
+                                      const dropdownIcon = document.querySelector('.dropdown-icon');
+                                  
+                                      if (regionsList.style.display === 'none' || regionsList.style.display === '') {
+                                          regionsList.style.display = 'block';
+                                          dropdownIcon.classList.remove('fa-chevron-down');
+                                          dropdownIcon.classList.add('fa-chevron-up');
+                                      } else {
+                                          regionsList.style.display = 'none';
+                                          dropdownIcon.classList.remove('fa-chevron-up');
+                                          dropdownIcon.classList.add('fa-chevron-down');
+                                      }
+                                  }
+                                  // In your selectCity function:
+function selectCity(city, region) {
+    const url = new URL(window.location.href);
+    
+    // Skip if city is "null" or empty
+    if (city === 'null' || !city.trim()) {
+        return;
+    }
+    
+    // Get existing cities from URL
+    const existingCities = url.searchParams.getAll('city');
+    
+    // Remove "null" values if any exist
+    const filteredCities = existingCities.filter(c => c !== 'null');
+    
+    // If city already exists, remove it (toggle behavior)
+    if (filteredCities.includes(city)) {
+        const updatedCities = filteredCities.filter(c => c !== city);
+        url.searchParams.delete('city');
+        updatedCities.forEach(c => url.searchParams.append('city', c));
+    } else {
+        // Add new city
+        url.searchParams.append('city', city);
+    }
+    
+    // Set the region if not already set
+    if (!url.searchParams.has('region')) {
+        url.searchParams.set('region', region);
+    }
+    
+    window.location.href = url;
+}
+
+// Update the display function to ignore "null" values
+function updateCityDisplay() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cities = urlParams.getAll('city').filter(c => c !== 'null'); // Filter out "null" values
+    const region = urlParams.get('region');
+    const searchInput = document.querySelector('.search-input');
+    
+    if (cities.length > 0) {
+        if (cities.length === 1) {
+            // Single city selected
+            searchInput.innerHTML = `${cities[0]} <i class="fas fa-chevron-down dropdown-icon"></i>`;
+        } else {
+            // Multiple cities selected - show first city + count
+            searchInput.innerHTML = `${cities[0]} +${cities.length - 1} <i class="fas fa-chevron-down dropdown-icon"></i>`;
+        }
+    } else if (region) {
+        // Only region selected
+        const regionName = document.querySelector(`.region-header[data-region-id="${region}"]`)?.innerText || region;
+        searchInput.innerHTML = `${regionName} <i class="fas fa-chevron-down dropdown-icon"></i>`;
+    } else {
+        // Default case
+        searchInput.innerHTML = `All Cities <i class="fas fa-chevron-down dropdown-icon"></i>`;
+    }
+}
+                                  
+                                  // Call this function when the page loads
+                                  document.addEventListener('DOMContentLoaded', function() {
+                                      updateCityDisplay();
+                                      
+                                      // Also update when the dropdown is toggled
+                                      const searchBox = document.querySelector('.search-box');
+                                      searchBox.addEventListener('click', updateCityDisplay);
+                                  });
+                                  function selectRegion(region) {
+                                      const url = new URL(window.location.href);
+                                  
+                                      // Set the selected region
+                                      url.searchParams.set('region', region);
+                                  
+                                      // Remove the city parameter if it exists
+                                      url.searchParams.delete('city');
+                                  
+                                      // Get the region name from the corresponding element
+                                      const regionNameElement = document.querySelector(`.region-header[data-region-id="${region}"]`);
+                                      const regionName = regionNameElement ? regionNameElement.innerText : '';
+                                  
+                                      // Update the search input to show the selected region name
+                                      const searchInput = document.querySelector('.search-input');
+                                      searchInput.innerHTML = `${regionName} <i class="fas fa-chevron-down dropdown-icon"></i>`;
+                                  
+                                      // Hide all cities containers
+                                      const citiesContainers = document.querySelectorAll('.cities-container');
+                                      citiesContainers.forEach(container => {
+                                          container.style.display = 'none';  // Hide all cities containers
+                                      });
+                                  
+                                      // Redirect to the updated URL with the region name
+                                      window.location.href = url;
+                                  }
+                                  
+                                  // Close the dropdown or cities container if clicked outside
+                                  document.addEventListener('click', function(event) {
+                                      const regionsList = document.getElementById('regions-list');
+                                      const citiesContainers = document.querySelectorAll('.cities-container');
+                                      const searchBox = document.querySelector('.search-box');
+                                  
+                                      const isClickInsideSearchBox = searchBox.contains(event.target);
+                                      const isClickInsideRegionsList = regionsList.contains(event.target);
+                                      const isClickInsideCities = Array.from(citiesContainers).some(container => container.contains(event.target));
+                                  
+                                      // Close the regions list and cities containers if clicked outside of both
+                                      if (!isClickInsideSearchBox && !isClickInsideRegionsList && !isClickInsideCities) {
+                                          regionsList.style.display = 'none';  // Close the regions list
+                                          const dropdownIcon = document.querySelector('.dropdown-icon');
+                                          dropdownIcon.classList.remove('fa-chevron-up');
+                                          dropdownIcon.classList.add('fa-chevron-down');
+                                  
+                                          citiesContainers.forEach(container => {
+                                              container.style.display = 'none';  // Close all cities containers
+                                          });
+                                      }
+                                  });
+                                  function filterRegionsAndCities() {
+                                      const searchInput = document.getElementById('region-search').value.toLowerCase();
+                                      const regionItems = document.querySelectorAll('.region-item');
+                                  
+                                      // If the search input is empty, show all regions and hide all cities
+                                      if (searchInput === '') {
+                                          regionItems.forEach(regionItem => {
+                                              const citiesContainer = document.getElementById(`cities-container-${regionItem.querySelector('.region-header').dataset.regionId}`);
+                                              regionItem.style.display = 'block'; // Show the region
+                                              citiesContainer.style.display = 'none'; // Hide the cities container
+                                          });
+                                          return; // Exit the function early
+                                      }
+                                  
+                                      // Filter regions based on search
+                                      regionItems.forEach(regionItem => {
+                                          const regionHeader = regionItem.querySelector('.region-header').innerText.toLowerCase();
+                                          const regionId = regionItem.querySelector('.region-header').dataset.regionId;
+                                          const citiesContainer = document.getElementById(`cities-container-${regionId}`);
+                                          const cityButtons = citiesContainer.querySelectorAll('li');
+                                  
+                                          // Check if the region matches the search input
+                                          let regionMatches = regionHeader.includes(searchInput);
+                                          let cityMatches = false;
+                                  
+                                          // Check if any city matches the search input
+                                          cityButtons.forEach(cityButton => {
+                                              const cityName = cityButton.innerText.toLowerCase();
+                                              if (cityName.includes(searchInput)) {
+                                                  cityButton.style.display = 'block'; // Show the city
+                                                  cityMatches = true; // Set cityMatches to true if a city matches
+                                              } else {
+                                                  cityButton.style.display = 'none'; // Hide the city
+                                              }
+                                          });
+                                  
+                                          // Display the region if it matches or if any city matches
+                                          if (regionMatches) {
+                                              regionItem.style.display = 'block'; // Show the region
+                                              citiesContainer.style.display = 'none'; // Keep cities container hidden
+                                          } else if (cityMatches) {
+                                              regionItem.style.display = 'block'; // Show the region
+                                              citiesContainer.style.display = 'none'; // Keep cities container hidden
+                                          } else {
+                                              regionItem.style.display = 'none'; // Hide the region
+                                              citiesContainer.style.display = 'none'; // Hide the cities container
+                                          }
+                                      });
+                                  }
+                                  function toggleCitiesOnHover(region, isClicked = false) {
+                                      // Hide all cities containers first (only if it's not clicked)
+                                      if (!isClicked) {
+                                          const citiesContainers = document.querySelectorAll('.cities-container');
+                                          citiesContainers.forEach(container => {
+                                              container.style.display = 'none';  // Hide all cities containers
+                                          });
+                                      }
+                                  
+                                      // Show the cities for the hovered or clicked region
+                                      const citiesContainer = document.getElementById(`cities-container-${region}`);
+                                      const arrowIcon = document.getElementById(`arrow-${region}`);
+                                      const regionItem = document.querySelector(`.region-header[data-region-id="${region}"]`);
+                                  
+                                      // Calculate the position of the cities container
+                                      const regionItemRect = regionItem.getBoundingClientRect();
+                                      const offsetTop = regionItemRect.bottom + window.scrollY; // Get the bottom position of the region item
+                                  
+                                      citiesContainer.style.top = `${offsetTop}px`; // Set the top position of the cities container
+                                      citiesContainer.style.display = 'block';  // Show cities for this region
+                                      arrowIcon.classList.remove('fa-chevron-right');
+                                      arrowIcon.classList.add('fa-chevron-left');
+                                  }
+                                  
+                                  // Hide cities when mouse leaves region
+                                  function hideCitiesOnMouseOut(region) {
+                                      const citiesContainer = document.getElementById(`cities-container-${region}`);
+                                      const arrowIcon = document.getElementById(`arrow-${region}`);
+                                  
+                                      // Hide cities when mouse leaves (only if it's not clicked)
+                                      if (!citiesContainer.classList.contains('clicked')) {
+                                          citiesContainer.style.display = 'none';
+                                          arrowIcon.classList.remove('fa-chevron-left');
+                                          arrowIcon.classList.add('fa-chevron-right');
+                                      }
+                                  }
+                                  
+                                  // Handle clicking on a region to keep cities visible
+                                  function handleRegionClick(region) {
+                                      const citiesContainer = document.getElementById(`cities-container-${region}`);
+                                      
+                                      // Toggle the clicked state
+                                      citiesContainer.classList.toggle('clicked');  // Adds or removes 'clicked' class
+                                  
+                                      // If clicked, keep the cities visible
+                                      if (citiesContainer.classList.contains('clicked')) {
+                                          toggleCitiesOnHover(region, true);  // Pass `true` to indicate this is a click
+                                      } else {
+                                          citiesContainer.style.display = 'none';  // Hide cities when clicked again
+                                      }
+                                  }
+                                  
+                                  // Ensure the cities containers are hidden by default when the page loads
+                                  window.addEventListener('DOMContentLoaded', () => {
+                                      const regionItems = document.querySelectorAll('.region-item');
+                                      regionItems.forEach(item => {
+                                          const regionId = item.querySelector('.region-header').dataset.regionId;
+                                          
+                                          // Show cities on mouseover (hover effect)
+                                          item.addEventListener('mouseover', () => {
+                                              toggleCitiesOnHover(regionId);
+                                          });
+                                  
+                                          // Hide cities on mouseout (only if it's not clicked)
+                                          item.addEventListener('mouseout', () => {
+                                              hideCitiesOnMouseOut(regionId);
+                                          });
+                                  
+                                          // Add click effect to regions
+                                          item.addEventListener('click', () => {
+                                              handleRegionClick(regionId);
+                                          });
+                                  
+                                          // Add mouseover and mouseout events to cities container
+                                          const citiesContainer = document.getElementById(`cities-container-${regionId}`);
+                                          citiesContainer.addEventListener('mouseover', () => {
+                                              citiesContainer.style.display = 'block'; // Keep cities visible on hover
+                                          });
+                                  
+                                          citiesContainer.addEventListener('mouseout', () => {
+                                              hideCitiesOnMouseOut(regionId); // Hide cities when mouse leaves
+                                          });
+                                      });
+                                  });
+                                                                  </script>
+                                 <style>
+                                    /* Mobile responsiveness */
+                            @media (max-width: 768px) {
+                                .icon-container {
+                                    display: none;
+                                }}
+                            
+                               
+                            @media (max-width: 480px) {
+                                .icon-container {
+                                    display: none;
+                                }
+                            
+                               
+                            
+                                .separator {
+                                    display: none;
+                                }
+                            }
+                                </style>
+                                
+    
+    
+    
+                            <!-- Right Section: Icons, Login, and Add Post -->
+    
+                            <div class="col-md-6 col-12 d-flex justify-content-end align-items-center flex-wrap">
+    
+                                <div class="d-flex align-items-center justify-content-center flex-wrapn mx-3">
+    
+                                    <div class="icon-container">
+                                        <div class="icon-logo">
+                                            <a href="{% if user.is_authenticated %}{% url 'favorites' user.id %}{% else %}{% url 'login' %}{% endif %}">
+                                                <img src="{% static 'assets/images/Icons-05.png' %}" alt="Logo 1">
+                                            </a>
+                                            <p>Favorites</p>
+                                        </div>
+                                    
+                                        <div class="icon-logo">
+                                            <a href="{% if user.is_authenticated %}{% url 'user_chat' %}{% else %}{% url 'login' %}{% endif %}">
+                                                <img src="{% static 'assets/images/Icons-06.png' %}" alt="Logo 2">
+                                            </a>
+                                            <p>Chat</p>
+                                        </div>
+                                    
+                                        <div class="icon-logo">
+                                            <a href="{% if user.is_authenticated %}{% url 'adss1' user.id %}{% else %}{% url 'login' %}{% endif %}">
+                                                <img src="{% static 'assets/images/Icons-07.png' %}" alt="Logo 3">
+                                            </a>
+                                            <p>My Ads</p>
+                                        </div>
+                                    </div>
+
+    
+                                    <div class="separator"></div>
+    
+    
+                                    <!-- Login Section -->
+                                    <nav class="navbar navbar-expand-lg navbar-light">
+                                        <div class="ml-auto current dropdown">
+                                            {% if user.is_authenticated %}
+                                                {% if not user.is_superuser and not user.is_staff %}
+                                                    <!-- Regular user dropdown -->
+                                                    <span class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
+                                                        {% if user.image %}
+                                                            <img src="{{ user.image.url }}" alt="{{ user.username }}" class="user-image" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 8px;">
+                                                        {% else %}
+                                                            <img src="{% static 'assets/images/resource/author-1.png' %}" alt="{{ user.username }}" class="user-image" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 8px;">
+                                                        {% endif %}
+                                                        {{ user.username|title }}
+                                                    </span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                        <a class="dropdown-item" href="{% url 'userprofile' user.id %}">My Profile</a>
+                                                        <a class="dropdown-item" href="{% url 'jobapplication' user.id %}">My Job Application</a>
+                                                        <a class="dropdown-item" href="{% url 'adss1' user.id %}">My Ads</a>
+                                                        <a class="dropdown-item" href="{% url 'user_chat' %}">Chat</a>
+                                                        <a class="dropdown-item" href="{% url 'account_settings' user.id %}">Account Settings</a>
+                                                        <a class="dropdown-item" href="{% url 'favorites' user.id %}">Favorites</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item" href="{% url 'logout' %}">Sign out</a>
+                                                    </div>
+                                                {% elif user.is_superuser %}
+                                                    <!-- Admin user content -->
+                                                    <span class="navbar-text">Admin</span>
+                                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                        <a class="dropdown-item" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item" href="{% url 'adminlogout' %}">Sign out</a>
+                                                    </div>
+                                                {% endif %}
+                                            {% else %}
+                                            <div class="sign-in">
+    
+                                                <a href="{% url 'login1' %}" class="login-link">
+        
+                                                    Log in or sign up
+        
+                                                </a>
+        
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </nav>
+                                    
+    
+    
+                                    <div class="separator"></div>
+                                    <div class="btn-box">
+                                        {% if user.is_authenticated %}
+                                            {% if not user.is_superuser and not user.is_staff %}
+                                                <a href="{% url 'listingads' %}" class="theme-btn-one mt-2">
+                                                   </i>Add Post
+                                                </a>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="{% url 'sign' %}" class="theme-btn-one mt-2">
+                                               </i>Add Post
+                                            </a>
+                                        {% endif %}
+                                     </div>
+                                    <!-- Add Post Button -->
+
+    
+                                </div>
+    
+                            </div>
+    
+                        
+                       
+                        
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+          
+            <hr style="margin-top: -20px;">
+           {% include 'navbar.html' %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }function showCitiesDropdown() {
+        var region = document.getElementById('region-dropdown').value;
+        var citiesDropdown = document.getElementById('cities-dropdown');
+        var citiesList = document.getElementById('cities-list');
+        
+        var cities = {
+            'MS': ['Muscat City', 'Qurum', 'Seeb'],
+            'DH': ['Salalah', 'Mirbat', 'Taqah'],
+            'BT': ['Sohar', 'Barka', 'Ibri'],
+            'DA': ['Nizwa', 'Izki', 'Manah'],
+            'SH': ['Sur', 'Ibra', 'Bahla'],
+            'BR': ['Buraimi', 'Mahda'],
+            'ZU': ['Salalah', 'Mirbat'],
+            'DZ': ['Khasab', 'Diba'],
+            'WT': ['Haima', 'Shinas']
+        };
+    
+        citiesList.innerHTML = ''; // Clear previous cities
+    
+        if (region && cities[region]) {
+            cities[region].forEach(function(city) {
+                var cityOption = document.createElement('div');
+                cityOption.textContent = city;
+                cityOption.onclick = function() {
+                    alert('You selected ' + city + '!');
+                    citiesDropdown.style.display = 'none'; // Hide cities dropdown after selection
+                };
+                citiesList.appendChild(cityOption);
+            });
+    
+            citiesDropdown.style.display = 'block'; // Show cities dropdown
+        } else {
+            citiesDropdown.style.display = 'none'; // Hide cities dropdown if no region is selected
+        }
+    }
+    
+    
+    /* Dropdown styles for regions and categories */
+.form-group select {
+    position: relative; /* Ensure the dropdown is positioned relative to the form */
+    z-index: 10; /* Ensure it appears above other elements */
+}
+
+/* Adjust the dropdown list */
+.region-list, .categories-list {
+    position: absolute; /* Position the dropdown absolutely */
+    top: 100%; /* Position it directly below the select input */
+    left: 0; /* Align it to the left */
+    background: white; /* Background color */
+    border: 1px solid #ccc; /* Border */
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 100%; /* Match the width of the select input */
+    max-height: 200px; /* Limit height */
+    overflow-y: auto; /* Scroll if too many items */
+    display: none; /* Initially hidden */
+    margin-top: 5px; /* Add margin to create space below the input */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow for better visibility */
+}
+
+/* Ensure the form container has enough space */
+.custom-form {
+   
+    position: relative; /* Ensure it is positioned relative for dropdowns */
+}
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+      
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+                   
+            <!-- banner-section -->
+            <section id="banner-section" class="banner-section centred">
+                <div class="auto-container">
+                    <div class="content-column">
+                        <div class="content-box">
+                            <div class="custom-form">
+                                <form action="{% url 'apartment' %}" method="get" autocomplete="off">
+                                    {% csrf_token %}
+                                    <div class="form-group-row">
+                                        <!-- Search Input -->
+                                         <div class="form-group oval-container">
+    <img src="{% static 'assets/images/Icons-02.png' %}" alt="Location Icon" class="location-icon3">
+    <div class="search-autocomplete">
+        <input class="input" type="search" name="name" id="search-input" 
+               placeholder="Search for Everything" value="{{ name_query }}"
+               autocomplete="off">
+        <button type="button" id="clear-search" aria-label="Clear search">×</button>
+        <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
+    </div>
+</div>
+
+<style>
+.search-autocomplete {
+    position: relative;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.search-autocomplete input {
+    width: 100%;
+    
+}
+
+#clear-search {
+    position: absolute;
+    top: 70%;
+    right: 10px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    color: #999;
+    display: none; /* hidden initially */
+    padding: 0;
+    line-height: 1;
+}
+
+#clear-search:hover {
+    color: #555;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 640px; /* Increased width */
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    display: none;
+    max-height: 400px; /* Increased height */
+    overflow-y: hidden;
+    padding: 6px 0;
+    transition: all 0.2s ease-in-out;
+    margin-top: 20px;
+  
+}
+
+.autocomplete-item {
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #2d3748;
+    transition: background 0.2s ease, color 0.2s ease;
+    border-radius: 6px;
+    margin: 2px 8px;
+    text-align: left;       /* <-- Force text alignment to the left */
+    display: block;         /* <-- Ensure full width alignment */
+    width: calc(100% - 16px); /* Align with margin, keeping item full width */
+}
+
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background-color: #f0f4f8;
+    color: #1a202c;
+}
+
+.suggestion-text strong {
+    font-weight: 600;
+    color: #1a73e8;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const dropdown = document.getElementById('autocomplete-dropdown');
+    const clearBtn = document.getElementById('clear-search');
+
+    const propertySuggestions = [
+        // Real estate suggestions
+        { text: 'Real Estate Villa for Sale', type: 'sell', category: 'villas' },
+        { text: 'Real Estate Villa for Rent', type: 'rent', category: 'villas' },
+        { text: 'Real Estate Apartment for Sale', type: 'sell', category: 'apartment' },
+        { text: 'Real Estate Apartment for Rent', type: 'rent', category: 'apartment' },
+        { text: 'Real Estate Showroom for Sale', type: 'sell', category: 'showrooms' },
+        { text: 'Real Estate Showroom for Rent', type: 'rent', category: 'showrooms' },
+        { text: 'Real Estate Commercial Villa for Sale', type: 'sell', category: 'commercial' },
+        { text: 'Real Estate Commercial Villa for Rent', type: 'rent', category: 'commercial' },
+        { text: 'Real Estate Farm and Chalets for Sale', type: 'sell', category: 'farm' },
+        { text: 'Real Estate Farm and Chalets for Rent', type: 'rent', category: 'farm' },
+        { text: 'Real Estate Land for Sale', type: 'sell', category: 'land' },
+        { text: 'Real Estate Land for Rent', type: 'rent', category: 'land' },
+        { text: 'Real Estate Restaurants and Cafes for Sale', type: 'sell', category: 'cafe' },
+        { text: 'Real Estate Restaurants and Cafes for Rent', type: 'rent', category: 'cafe' },
+        { text: 'Real Estate Clinic for Sale', type: 'sell', category: 'clinic' },
+        { text: 'Real Estate Clinic for Rent', type: 'rent', category: 'clinic' },
+        { text: 'Real Estate Factory for Sale', type: 'sell', category: 'factory' },
+        { text: 'Real Estate Factory for Rent', type: 'rent', category: 'factory' },
+        { text: 'Real Estate Townhouse for Sale', type: 'sell', category: 'townhouse' },
+        { text: 'Real Estate Townhouse for Rent', type: 'rent', category: 'townhouse' },
+        { text: 'Real Estate Full Floor for Sale', type: 'sell', category: 'fullfloors' },
+        { text: 'Real Estate Full Floor for Rent', type: 'rent', category: 'fullfloors' },
+        { text: 'Real Estate Shop for Sale', type: 'sell', category: 'shop' },
+        { text: 'Real Estate Shop for Rent', type: 'rent', category: 'shop' },
+        { text: 'Real Estate Staff Housing for Sale', type: 'sell', category: 'staff' },
+        { text: 'Real Estate Staff Housing for Rent', type: 'rent', category: 'staff' },
+        { text: 'Real Estate Warehouse for Sale', type: 'sell', category: 'warehouse' },
+        { text: 'Real Estate Warehouse for Rent', type: 'rent', category: 'warehouse' },
+        { text: 'Real Estate Whole Building for Sale', type: 'sell', category: 'wholebuilding' },
+        { text: 'Real Estate Whole Building for Rent', type: 'rent', category: 'wholebuilding' },
+        { text: 'Real Estate Complex for Sale', type: 'sell', category: 'complex' },
+        { text: 'Real Estate Complex for Rent', type: 'rent', category: 'complex' },
+        { text: 'Real Estate Office Space for Sale', type: 'sell', category: 'office' },
+        { text: 'Real Estate Office Space for Rent', type: 'rent', category: 'office' },
+        { text: 'Real Estate Hotel for Sale', type: 'sell', category: 'hostel' },
+        { text: 'Real Estate Hotel for Rent', type: 'rent', category: 'hostel' },
+        { text: 'Real Estate Supermarket for Sale', type: 'sell', category: 'supermarket' },
+        { text: 'Real Estate Supermarket for Rent', type: 'rent', category: 'supermarket' },
+        { text: 'Real Estate Foreign Property for Sale', type: 'sell', category: 'foreign' },
+        { text: 'Real Estate Foreign Property for Rent', type: 'rent', category: 'foreign' },
+        { text: 'Real Estate Shared Rooms for Rent', type: 'rent', category: 'shared' },
+        { text: 'Real Estate Hotel Apartments and Suites for Rent', type: 'rent', category: 'suits' },
+        { text: 'Real Estate Office for Sale', type: 'sell', category: 'office' },
+        { text: 'Real Estate Office for Rent', type: 'rent', category: 'office' },
+
+        // Motors suggestions
+        { text: 'Motors Car for Sale', type: 'sell', category: 'car', base: '/car' },
+        { text: 'Motors Car for Rent', type: 'rent', category: 'car', base: '/car' }
+    ];
+
+    let activeSuggestionIndex = -1;
+
+    function toggleClearButton() {
+        clearBtn.style.display = searchInput.value.length > 0 ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        dropdown.innerHTML = '';
+        activeSuggestionIndex = -1;
+        toggleClearButton();
+
+        if (query.length > 0) {
+            const filtered = propertySuggestions
+                .filter(item => item.text.toLowerCase().includes(query))
+                .sort((a, b) => a.text.toLowerCase().indexOf(query) - b.text.toLowerCase().indexOf(query));
+
+            if (filtered.length > 0) {
+                dropdown.style.display = 'block';
+
+                filtered.forEach((item, index) => {
+                    const option = document.createElement('div');
+                    option.className = 'autocomplete-item';
+
+                    // Format the text as bold main part + prefix near it
+                    if (item.text.startsWith("Real Estate ")) {
+                        // Remove "Real Estate " prefix
+                        let mainText = item.text.substring(12);
+                        const saleOrRent = mainText.endsWith(" for Sale") ? "for Sale" :
+                                           mainText.endsWith(" for Rent") ? "for Rent" : "";
+
+                        // Extract property part (without sale/rent)
+                        let propertyPart = saleOrRent ? mainText.substring(0, mainText.length - saleOrRent.length - 1) : mainText;
+
+                        // Prefix text
+                        const prefix = `Real Estate ${saleOrRent}`;
+
+                        option.innerHTML = `
+                            <span class="property-bold"><strong>${propertyPart} ${saleOrRent}</strong></span>
+                            <span class="prefix-text" style="margin-left:8px; color:#666; font-size:0.9em;">${prefix}</span>
+                        `;
+                    } else {
+                        // For other entries like motors, highlight normally
+                        option.innerHTML = `<span class="suggestion-text">${highlightMatch(item.text, query)}</span>`;
+                    }
+
+                    option.addEventListener('click', () => selectSuggestion(item));
+                    option.addEventListener('mouseover', () => setActiveSuggestion(index));
+                    dropdown.appendChild(option);
+                });
+
+                if (query.length > 2) {
+                    setTimeout(() => autoFillBestMatch(filtered[0]), 300);
+                }
+            } else {
+                dropdown.style.display = 'none';
+            }
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    searchInput.addEventListener('keydown', function(e) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveSuggestion(Math.min(activeSuggestionIndex + 1, items.length - 1));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveSuggestion(Math.max(activeSuggestionIndex - 1, -1));
+        } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
+            e.preventDefault();
+            const selectedText = items[activeSuggestionIndex].querySelector('.property-bold strong, .suggestion-text').textContent;
+            // Find suggestion by matching the original full text (ignore the split parts)
+            const selectedItem = propertySuggestions.find(p => p.text.toLowerCase().includes(selectedText.toLowerCase()));
+            if (selectedItem) selectSuggestion(selectedItem);
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        dropdown.style.display = 'none';
+        clearBtn.style.display = 'none';
+        window.location.href = window.location.pathname;
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    function highlightMatch(text, query) {
+        const index = text.toLowerCase().indexOf(query);
+        if (index >= 0) {
+            return text.substring(0, index) +
+                `<strong>${text.substring(index, index + query.length)}</strong>` +
+                text.substring(index + query.length);
+        }
+        return text;
+    }
+
+    function setActiveSuggestion(index) {
+        const items = dropdown.querySelectorAll('.autocomplete-item');
+        items.forEach(item => item.classList.remove('active'));
+
+        activeSuggestionIndex = index;
+        if (index >= 0 && index < items.length) {
+            items[index].classList.add('active');
+            items[index].scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function autoFillBestMatch(suggestion) {
+        const currentValue = searchInput.value.toLowerCase();
+        const suggestionStart = suggestion.text.toLowerCase().indexOf(currentValue);
+
+        if (suggestionStart >= 0) {
+            const toFill = suggestion.text.substring(suggestionStart + currentValue.length);
+            if (toFill) {
+                searchInput.value += toFill;
+                searchInput.setSelectionRange(currentValue.length, searchInput.value.length);
+            }
+        }
+    }
+
+    function selectSuggestion(suggestion) {
+        searchInput.value = suggestion.text;
+        dropdown.style.display = 'none';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('listing_type', suggestion.type);
+        if (suggestion.condition) {
+            urlParams.set('condition', suggestion.condition);
+        }
+
+        const basePath = suggestion.base || `/${suggestion.category}`;
+        window.location.href = `${basePath}?${urlParams.toString()}`;
+    }
+
+    toggleClearButton();
+});
+</script>
+
+<script>
+    window.addEventListener('pageshow', function(event) {
+        // Reload if page is restored from cache (back/forward navigation)
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            window.location.reload();
+        }
+    });
+    </script>
+
+
+
+
+
+
+                                        <style>
+                                            /* Remove default clear (×) button in search inputs */
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+}
+
+input[type="search"]::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+                                        </style>
+                                
+                                      
+                                
+                                        <!-- Submit Button -->
+                                        <div class="btn-box oval-container">
+                                            <button type="submit" class="theme-btn-one">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                               <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const dropdownInputs = document.querySelectorAll('.chosen-value');
+                                        const dropdownLists = document.querySelectorAll('.value-list');
+                                    
+                                        dropdownInputs.forEach(input => {
+                                            const dropdownId = input.getAttribute('data-dropdown');
+                                            const dropdown = document.getElementById(dropdownId);
+                                    
+                                            // Toggle dropdown visibility on click
+                                            input.addEventListener('click', (event) => {
+                                                event.stopPropagation(); // Prevent the click from propagating to the document
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open')); // Close other dropdowns
+                                                dropdown.classList.toggle('open');
+                                            });
+                                     // Handle clicks on category items
+                                     dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                                            // Prevent dropdown from closing when clicking inside
+                                            dropdown.addEventListener('mousedown', (event) => {
+                                                event.stopPropagation();
+                                            });
+                       // Handle clicks on region items
+dropdown.querySelectorAll('.main-menu1[data-region]').forEach(item => {
+    item.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document
+        const region = item.getAttribute('data-region');
+        selectRegion(region); // Call the selectRegion function
+
+        // Update the input field with the selected region only
+        input.value = regionName; // Update the input with the selected region
+
+        // Create a new URL object based on the current URL
+        const url = new URL(window.location.href);
+        url.searchParams.set('region', region); // Set the region parameter
+        
+        // Clear the city parameter if it exists
+        url.searchParams.delete('city'); // Remove the city parameter if it exists
+        
+        window.location.href = url; // Redirect to the updated URL
+
+        // Close the dropdown after selection
+        dropdown.classList.remove('open');
+    });
+
+    // Handle clicks on submenu items (cities)
+    item.querySelectorAll('ul li').forEach(subItem => {
+        subItem.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent the click from propagating to the document
+            const city = subItem.textContent; // Get the city name from the text content
+            const region = item.getAttribute('data-region'); // Get the region from the parent item
+
+            selectCity(city); // Call the selectCity function
+
+            // Update the input field with the selected city and region
+            input.value = city; // Update the input with city and region
+
+            // Create a new URL object based on the current URL
+            const url = new URL(window.location.href);
+            url.searchParams.set('region', region); // Set the region parameter
+            url.searchParams.set('city', city); // Set the city parameter
+            window.location.href = url; // Redirect to the updated URL
+
+            // Close the dropdown after selection
+            dropdown.classList.remove('open');
+        });
+    });
+});                 
+                                           // Filter dropdown items based on input
+// Filter dropdown items based on input
+input.addEventListener('input', () => {
+    const filter = input.value.toLowerCase();
+    const items = dropdown.querySelectorAll('li');
+
+    items.forEach(item => {
+        const text = item.firstChild.textContent.toLowerCase();
+        let matchFound = text.includes(filter);
+
+        // Check submenu items if the main item doesn't match
+        if (!matchFound && item.querySelector('.submenus')) {
+            const subItems = item.querySelectorAll('.submenus ul li');
+            subItems.forEach(subItem => {
+                const subText = subItem.textContent.toLowerCase();
+                if (subText.includes(filter)) {
+                    matchFound = true;
+                }
+            });
+        }
+
+        // Show the main menu item if it or any of its submenu items match
+        if (matchFound) {
+            item.style.display = 'block';
+            // Expand the main menu item if it has submenus
+            if (item.classList.contains('main-menu1') && item.querySelector('.submenus')) {
+                item.classList.add('open'); // Add a class to expand the main menu
+                item.querySelector('.submenus').style.display = 'block'; // Show submenus
+            }
+        } else {
+            item.style.display = 'none';
+            // Hide submenus if the main menu item is not matched
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none';
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        }
+    });
+
+    // If the input is empty, show all main menu items and hide all submenus
+    if (filter === '') {
+        items.forEach(item => {
+            item.style.display = 'block'; // Show all main menu items
+            if (item.querySelector('.submenus')) {
+                item.querySelector('.submenus').style.display = 'none'; // Hide all submenus
+                item.classList.remove('open'); // Optionally remove the class to indicate submenus are hidden
+            }
+        });
+    }
+});                       
+                                            // Show submenus on hover
+                                            dropdown.querySelectorAll('.main-menu1').forEach(item => {
+                                                item.addEventListener('mouseenter', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'block';
+                                                    }
+                                                });
+                                
+                                                item.addEventListener('mouseleave', () => {
+                                                    if (item.querySelector('.submenus')) {
+                                                        item.querySelector('.submenus').style.display = 'none';
+                                                    }
+                                                });
+                                            });
+                                            // Close dropdown when mouse leaves the dropdown container
+                                            dropdown.addEventListener('mouseout', (event) => {
+                                                // Check if the mouse is leaving the dropdown container
+                                                if (!dropdown.contains(event.relatedTarget)) {
+                                                    dropdown.classList.remove('open');
+                                                }
+                                            });
+                                        });
+                                    
+                                        // Close dropdown if clicking outside
+                                        document.addEventListener('click', (event) => {
+                                            if (!event.target.matches('.chosen-value')) {
+                                                dropdownLists.forEach(dropdown => dropdown.classList.remove('open'));
+                                            }
+                                        });
+                                    });
+                                    // Handle clicks on category items
+                                    dropdown.querySelectorAll('.main-menu1[data-url]').forEach(item => {
+                                        item.addEventListener('click', (event) => {
+                                            const url = item.getAttribute('data-url');
+                                            if (url) {
+                                                window.location.href = url;
+                                            }
+                                        });
+                                    });
+                            
+                                   
+                          
+                                </script>
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        width: 38%;
+        margin-top: -75px;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon3{
+        position: absolute;
+        left: 36px;
+        height: 15px;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+
+
+
+
+
+            <style>
+                /* Mobile Responsive Styling */
+            @media (max-width: 768px) {
+                .job-listing-container {
+                    padding: 12px;
+                }
+            
+                .list-group-item {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 12px;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+            
+                .job-logo {
+                    width: 70px;
+                    height: 70px;
+                    margin-bottom: 10px;
+                }
+            
+                .job-logo img {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 10px;
+                    object-fit: cover;
+                }
+            
+                .job-details h5 {
+                    font-size: 16px;
+                    margin-bottom: 5px;
+                }
+            
+                .job-details p {
+                    font-size: 14px;
+                    margin-bottom: 5px;
+                    color: #555;
+                }
+            
+                .job-actions {
+                    text-align: left;
+                    width: 100%;
+                    margin-top: 8px;
+                }
+            
+                .job-actions .theme-btn-one {
+                    width: 100%;
+                    padding: 8px;
+                    text-align: center;
+                    font-size: 14px;
+                    border-radius: 6px;
+                    background-color: #007bff;
+                    color: #fff;
+                    border: none;
+                }
+            
+                .job-actions .theme-btn-one:hover {
+                    background-color: #0056b3;
+                }
+            }
+            
+            </style>
+
+
+
+
+
+
+
+
+
+<!-- -------------------- -->
+
+
+<!-- Job Listing Section -->
+
+
+
+<div class="col-lg-12 col-md-10">
+  <div class="job-listing-container p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+      <h4 class="fw-bold text-primary">Job Listings</h4>
+    </div>
+
+    <!-- List view container -->
+    <div class="list-group">
+      {% for job in job_posts %}
+      <div class="list-group-item d-flex align-items-center p-4 border rounded mb-3 bg-white shadow-sm">
+        <div class="job-logo me-4">
+          <img src="{{ job.company.logo.url|default:'https://placehold.co/120x120' }}" alt="{{ job.company.company_name|default:'Company' }} logo" class="img-fluid" style="width: 120px; height: 120px; border-radius: 12px;">
+        </div>
+        <div class="job-details flex-grow-1"  style="margin-left: 20px;">
+          <h5 class="mb-2">
+            {% if user.is_authenticated %}
+              <a href="{% url 'jobdetails' request.user.id job.id %}" class="text-decoration-none text-dark fw-bold">
+                {{ job.title|default:"Untitled Job" }}
+              </a>
+            {% else %}
+              <a href="{% url 'jobdetailsnon' job.id %}" class="text-decoration-none text-dark fw-bold">
+                {{ job.title|default:"Untitled Job" }}
+              </a>
+            {% endif %}
+          </h5>
+          <p class="mb-2 text-muted"> <strong>{{ job.company.company_name|default:'Anonymous' }}</strong> - {{ job.job_type|default:"Full-Time" }}</p>
+          <p class="mb-2 text-muted"><i class="fas fa-tags me-1 text-primary"></i> {{ job.job_category.name }}</p>
+          <p class="text-secondary small"><i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ job.work_location|default:"Not Specified" }} &nbsp;|&nbsp; <i class="far fa-clock me-1 text-warning"></i> Posted {{ job.posted_on|timesince }} ago</p>
+        </div>
+        <div class="job-actions text-end">
+          <p class="text-muted mb-2 small">Deadline: <span class="fw-bold text-danger">{{ job.application_deadline|default:"Open" }}</span></p>
+          <div class="d-flex align-items-center">
+            <a href="#" class="favorite-link me-3 text-danger fs-5" 
+               data-product-id="{{ job.id }}" 
+               data-product-type="jobpost" 
+               data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+            </a>
+            {% if user.is_authenticated %}
+              <a href="{% url 'jobdetails' request.user.id job.id %}" class="theme-btn-one">View More</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="theme-btn-one">View More</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-muted">No jobs available for the selected filters.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Display message if no jobs are available -->
+{% if job_posts|length == 0 %}
+  <p class="text-muted text-center">No job listings are currently available.</p>
+{% endif %}
+</div>
+</div>
+</body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+     const favoriteLinks = document.querySelectorAll('.favorite-link');
+ 
+     favoriteLinks.forEach(link => {
+         const favoriteIcon = link.querySelector('.icon-22');
+         const productId = link.getAttribute('data-product-id');
+         const productType = link.getAttribute('data-product-type');
+         const isAuthenticated = link.getAttribute('data-is-authenticated') === 'true';
+ 
+         // Check if the product is in favorites on page load
+         if (localStorage.getItem(`favorite_${productType}_${productId}`) === 'true') {
+             favoriteIcon.classList.add('filled');
+         }
+ 
+         link.addEventListener('click', function (event) {
+             event.preventDefault();
+ 
+             if (isAuthenticated) {
+                 const isFavorite = !favoriteIcon.classList.contains('filled');
+                 const action = isFavorite ? 'add' : 'remove';
+ 
+                 // Toggle the icon state
+                 favoriteIcon.classList.toggle('filled');
+ 
+                 // Update localStorage
+                 localStorage.setItem(`favorite_${productType}_${productId}`, isFavorite);
+ 
+                 // Send AJAX request to update the server
+                 fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+                     method: 'GET',
+                     headers: {
+                         'X-Requested-With': 'XMLHttpRequest',
+                     },
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.status === 'added') {
+                         console.log(data.message);
+                     } else if (data.status === 'removed') {
+                         console.log(data.message);
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error:', error);
+                 });
+             } else {
+                 window.location.href = '/login/';
+             }
+         });
+     });
+ });
+ 
+ 
+ </script>
+ 
+ 
+ <!-- Add some CSS to handle the filled state -->
+ <style>
+     .icon-22 {
+         transition: color 0.3s ease; /* For smooth transition */
+     }
+     
+     .icon-22.filled {
+     color: red;  /* Change color when the icon is filled */
+     font-weight: bold;  /* Make the icon bold */
+ }
+ 
+ </style>      
+{% include 'footer.html' %}

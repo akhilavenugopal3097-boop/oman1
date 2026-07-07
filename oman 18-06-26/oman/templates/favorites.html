@@ -1,0 +1,2088 @@
+{% load static %}
+{% include 'header.html' %}
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load humanize %}
+
+
+  <style>
+    .favorites-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 10px;
+    }
+
+    .favorites-container h2 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 25px;
+      font-family: 'FontStyle6';
+    }
+
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    @media(max-width: 768px) {
+      .favorites-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .favorite-card {
+      display: flex;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+      overflow: hidden;
+      position: relative;
+      transition: 0.25s;
+      cursor: pointer;
+    }
+
+    .favorite-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .fav-image-container {
+      width: 45%;
+      height: 210px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fav-slider {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .fav-slides-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .fav-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 1;
+    }
+
+    .fav-slide.active {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .fav-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Slider Controls */
+    .fav-slider-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .fav-slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 35px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      color: white;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+      z-index: 4;
+    }
+
+    .fav-slider:hover .fav-slider-btn {
+      opacity: 1;
+    }
+
+    .fav-prev {
+      left: 6px;
+    }
+
+    .fav-next {
+      right: 6px;
+    }
+
+    .fav-slider-btn:hover {
+      background: rgba(0, 0, 0, 0.8);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Dots Indicator */
+    .fav-slider-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      z-index: 4;
+      pointer-events: auto;
+    }
+
+    .fav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .fav-dot.active {
+      background: white;
+      transform: scale(1.2);
+    }
+
+    .fav-dot:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .fav-content {
+      padding: 16px 18px;
+      width: 55%;
+      position: relative;
+    }
+
+    .fav-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fav-price {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #e60023;
+      font-family: 'FontStyle1';
+    }
+
+    .favorite-badge {
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      color: #d32f2f;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      z-index: 5;
+      position: relative;
+    }
+
+    .favorite-badge:hover {
+      background: #ffe5e5;
+    }
+
+    .fav-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      font-family: 'FontStyle6';
+    }
+
+    .fav-category {
+      color: #0d0d0e;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-family: 'FontStyle6';
+    }
+
+    .fav-icons {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+      margin: 10px 0;
+      font-size: 1rem;
+      color: #555;
+      flex-wrap: wrap;
+      margin-left: -9px;
+      font-family: 'FontStyle6';
+    }
+
+    .fav-icons span {
+      display: flex;
+      align-items: center;
+      font-family: 'FontStyle6';
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      
+    }
+
+    .fav-icons img {
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+      margin-top: -6px;
+    }
+
+    .fav-location {
+      margin-top: 10px;
+      font-size: 0.85em;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .empty-state{
+    max-width: 550px;
+    margin: 60px auto;
+    padding: 50px 35px;
+    text-align: center;
+
+    background: linear-gradient(135deg,#ffffff,#f8f9ff);
+    border-radius: 30px;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+
+    border: 1px solid rgba(255,255,255,0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.empty-state::before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    background:rgba(235,54,45,0.08);
+    border-radius:50%;
+    top:-60px;
+    right:-60px;
+}
+
+.empty-state::after{
+    content:"";
+    position:absolute;
+    width:140px;
+    height:140px;
+    background:rgba(0,123,255,0.05);
+    border-radius:50%;
+    bottom:-50px;
+    left:-50px;
+}
+
+.empty-state i{
+    width:110px;
+    height:110px;
+    line-height:110px;
+    font-size:42px;
+    border-radius:50%;
+    color:#EB362D;
+    background:#fff;
+    box-shadow:0 10px 25px rgba(235,54,45,.15);
+    margin-bottom:25px;
+    position:relative;
+    z-index:2;
+}
+
+.empty-state h4{
+    font-size:28px;
+    font-weight:700;
+    color:#222;
+    margin-bottom:10px;
+    position:relative;
+    z-index:2;
+}
+
+.empty-state p{
+    color:#777;
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:25px;
+    position:relative;
+    z-index:2;
+}
+
+.empty-state .btn{
+    background:#EB362D;
+    border:none;
+    border-radius:50px;
+    padding:12px 35px;
+    font-size:15px;
+    font-weight:600;
+    transition:.3s;
+    position:relative;
+    z-index:2;
+}
+
+.empty-state .btn:hover{
+    transform:translateY(-4px);
+}
+
+   /* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+/* Pagination List */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Page Item */
+.page-item {
+  margin: 0;
+}
+
+/* Page Link */
+.page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: transparent;
+  color: #333;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  box-shadow: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Hover */
+.page-link:hover {
+  background: #f2f2f2;
+  color: #000;
+}
+
+/* Active Page */
+.page-item.active .page-link {
+  background: #f36c21; /* orange */
+  color: #fff;
+}
+
+/* Disabled */
+.page-item.disabled .page-link {
+  color: #bdbdbd;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* Arrow Icons */
+.page-link i {
+  font-size: 14px;
+}
+
+    /* No image placeholder */
+    .no-image-placeholder {
+      width: 100%;
+      height: 100%;
+      background: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .no-image-placeholder .fav-image {
+      width: 50%;
+      height: auto;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="favorites-container">
+  <h2>Favorites</h2>
+
+  {% if favorite_products %}
+  <div class="favorites-grid" id="favorites-list">
+
+    {% for product in favorite_products %}
+    <div class="favorite-card" id="favorite-item-{{ product.model_name }}-{{ product.id }}">
+
+      <a href="/{{ product.model_name }}/{{ product.id }}/" style="display:flex;width:100%;text-decoration:none;color:inherit;" target="_new">
+
+        <!-- Image Container with Slider -->
+        <div class="fav-image-container">
+    <!-- Number Plate Display -->
+    {% if product.model_name == 'numberplate' %}
+        <div class="plate-wrapper">
+            {% if product.plate_type == 'motorcycle' %}
+                <!-- Motorcycle Plate -->
+                <div class="motorcycle-plate {% if product.status|lower == 'commercial' %}commercial{% else %}private{% endif %}">
+                    <div class="motorcycle-section arabic-section">
+                        <div class="arabic-letters">{{ product.letter_arabic }}</div>
+                        <div class="english-letters">{{ product.letter_english }}</div>
+                    </div>
+                    <div class="motorcycle-section number-section">
+                        <div class="region">عُمان</div>
+                        <div class="number" data-length="{{ product.number|length }}">{{ product.number }}</div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Standard Car Plate -->
+                <div class="plate {% if product.status|lower == 'commercial' %}commercial{% endif %}">
+                    <div class="section number" data-length="{{ product.number|length }}">{{ product.number }}</div>
+                    <div class="section letters">
+                        <span class="arabic">{{ product.letter_arabic }}</span>
+                        <span class="english">{{ product.letter_english }}</span>
+                    </div>
+                    <div class="section country">عمان</div>
+                </div>
+            {% endif %}
+            <div class="base"></div>
+        </div>
+
+    <!-- Mobile SIM Display -->
+    {% elif product.model_name == 'mobilesim' %}
+        <div class="simcard-wrapper">
+            <div class="sim-plate">
+                <div class="sim-number">{{ product.oman_number|default:'XXXXXXXX' }}</div>
+            </div>
+            <div class="base"></div>
+        </div>
+
+    <!-- Regular Image Slider for Other Products -->
+    {% elif product.images.all %}
+        <div class="fav-slider" data-product-id="{{ product.id }}">
+            <div class="fav-slides-wrapper">
+                {% for image in product.images.all %}
+                <div class="fav-slide {% if forloop.first %}active{% endif %}">
+                    <img class="fav-image" 
+                         src="{{ image.image.url }}" 
+                         alt="{{ product.title|default:'Favorite item' }}"
+                         loading="lazy">
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if product.images.all.count > 1 %}
+            <div class="fav-slider-controls">
+                <button class="fav-slider-btn fav-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="fav-slider-btn fav-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <div class="fav-slider-dots">
+                    {% for image in product.images.all %}
+                    <span class="fav-dot {% if forloop.first %}active{% endif %}" 
+                          data-slide="{{ forloop.counter0 }}"></span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    <!-- No Image Placeholder -->
+    {% else %}
+        <div class="no-image-placeholder">
+            <img class="fav-image" src="{% static 'images/no-image.png' %}" alt="No image">
+        </div>
+    {% endif %}
+</div>
+<style>
+    /* ========================================
+       NUMBER PLATE STYLES FOR FAVORITES
+    ========================================= */
+
+    /* Plate Wrapper */
+    .plate-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        background: #f8f9fa;
+    }
+
+    /* Yellow Private Car Plate */
+    .plate {
+        display: flex;
+        align-items: center;
+        background: #FFD700;
+        border-radius: 8px;
+        padding: 6px 10px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        width: 260px;
+        height: 55px;
+        border: 3px solid black;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Black Vertical Lines */
+    .plate::before,
+    .plate::after {
+        content: "";
+        position: absolute;
+        width: 2px;
+        height: 80%;
+        background: black;
+        top: 10%;
+    }
+
+    .plate::before {
+        left: 36.33%;
+    }
+
+    .plate::after {
+        right: 33.33%;
+    }
+
+    /* Plate Sections */
+    .plate .section {
+        width: 31.33%;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Car Number */
+    .plate .number {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+        margin-right: 10px;
+    }
+
+    /* Long Number */
+    .plate .number[data-length="5"] {
+        font-size: 24px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Letters Container */
+    .letters {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Arabic Letters */
+    .letters .arabic {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        direction: rtl;
+        letter-spacing: 10px;
+        line-height: 1;
+    }
+
+    /* English Letters */
+    .letters .english {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 20px;
+        letter-spacing: 5px;
+        line-height: 1;
+        margin-left: 5px;
+    }
+
+    /* Country Name */
+    .plate .country {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    /* Red Commercial Plate */
+    .plate.commercial {
+        background: #DC3545;
+        color: white;
+    }
+
+    .plate.commercial::before,
+    .plate.commercial::after {
+        background: white;
+    }
+
+    .plate.commercial .section {
+        color: white;
+    }
+
+    /* Motorcycle Plate */
+    .motorcycle-plate {
+        display: flex;
+        width: 180px;
+        height: 55px;
+        border: 3px solid #000;
+        border-radius: 4px;
+        overflow: hidden;
+        font-weight: bold;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Yellow Private Motorcycle */
+    .motorcycle-plate.private {
+        background-color: #FFD700;
+    }
+
+    /* Red Commercial Motorcycle */
+    .motorcycle-plate.commercial {
+        background-color: #DC3545;
+        color: white;
+    }
+
+    .motorcycle-plate.commercial .arabic-letters,
+    .motorcycle-plate.commercial .english-letters,
+    .motorcycle-plate.commercial .region,
+    .motorcycle-plate.commercial .number {
+        color: white;
+    }
+
+    .motorcycle-plate.commercial .motorcycle-section {
+        border-left: 1px solid white;
+    }
+
+    .motorcycle-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid #000;
+        padding: 4px;
+    }
+
+    .motorcycle-section:first-child {
+        border-left: none;
+    }
+
+    /* Motorcycle Arabic Letters */
+    .arabic-section .arabic-letters {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        direction: rtl;
+        line-height: 1;
+        letter-spacing: 10px;
+    }
+
+    /* Motorcycle English Letters */
+    .arabic-section .english-letters {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 20px;
+        line-height: 1;
+        margin-top: 3px;
+        letter-spacing: 5px;
+        margin-left: 5px;
+    }
+
+    /* Motorcycle Region */
+    .number-section .region {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    /* Motorcycle Number */
+    .number-section .number {
+        font-family: 'Roboto Condensed', sans-serif;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        line-height: 1;
+    }
+
+    /* Long Motorcycle Number */
+    .number-section .number[data-length="5"] {
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+
+    /* 3D Shadow Base */
+    .base {
+        width: 70px;
+        height: 6px;
+        background: #ddd;
+        border-radius: 50%;
+        margin-top: 6px;
+        box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================
+       MOBILE SIM STYLES FOR FAVORITES
+    ========================================= */
+
+    /* SIM Card Wrapper */
+    .simcard-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        background: #f8f9fa;
+    }
+
+    /* Blue SIM Plate */
+    .sim-plate {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(120deg, #15818E 60%, #116c79 80%);
+        border: 3px solid #121212;
+        border-radius: 8px;
+        padding: 0 15px;
+        width: 140px;
+        height: 55px;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        position: relative;
+    }
+
+    /* White SIM Number */
+    .sim-plate .sim-number {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        letter-spacing: 2px;
+        font-family: monospace;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Floating Animation */
+    @keyframes floating {
+        from { transform: translateY(0); }
+        to { transform: translateY(6px); }
+    }
+
+    .plate, .motorcycle-plate, .sim-plate {
+        animation: floating 2s infinite alternate ease-in-out;
+    }
+
+    /* ========================================
+       RESPONSIVE STYLES
+    ========================================= */
+
+    @media (max-width: 768px) {
+        .plate {
+            width: 220px;
+            height: 48px;
+        }
+        
+        .plate .number {
+            font-size: 24px;
+        }
+        
+        .letters .arabic {
+            font-size: 22px;
+            letter-spacing: 8px;
+        }
+        
+        .letters .english {
+            font-size: 18px;
+            letter-spacing: 4px;
+        }
+        
+        .plate .country {
+            font-size: 18px;
+        }
+        
+        .motorcycle-plate {
+            width: 160px;
+            height: 48px;
+        }
+        
+        .arabic-section .arabic-letters {
+            font-size: 22px;
+            letter-spacing: 8px;
+        }
+        
+        .arabic-section .english-letters {
+            font-size: 18px;
+            letter-spacing: 4px;
+        }
+        
+        .number-section .region {
+            font-size: 18px;
+        }
+        
+        .number-section .number {
+            font-size: 22px;
+        }
+        
+        .sim-plate {
+            width: 120px;
+            height: 48px;
+        }
+        
+        .sim-plate .sim-number {
+            font-size: 20px;
+        }
+        
+        .base {
+            width: 60px;
+            height: 5px;
+        }
+    }
+</style>
+
+        <div class="fav-content">
+
+          <!-- Price + Favorite icon -->
+          <div class="fav-top">
+            <span class="fav-price">{{ product.price|floatformat:0|intcomma }} <span style="color:#EB362D;font-size:0.8em;">OMR</span></span>
+
+            <div class="favorite-badge favorite-remove"
+                data-product-id="{{ product.id }}"
+                data-product-type="{{ product.model_name }}"
+                data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}">
+              <i class="fas fa-heart"></i>
+            </div>
+          </div>
+
+          <div class="fav-title"></div>
+
+          <div class="listing-title" style="color: black; font-size: 16px;">
+            {% if product.model_name == 'car' %}
+                {{ product.name }}, {{ product.kilometers|format_kilometers }},
+                {{ product.condition|title }}, {{ product.body_type|format_body_type }},
+                {{ product.exterior_color|title }}
+
+            {% elif product.model_name == 'motorcycle' %}
+                {{ product.model|title }}, {{ product.kilometers|format_kilometers }},
+                {{ product.condition|title }}, {{ product.body_type|format_body_type }}
+
+            {% elif product.model_name == 'scooter' %}
+                {{ product.model|title }}, {{ product.kilometers|format_kilometers }},
+                {{ product.condition|title }}
+
+            {% elif product.model_name == 'quadbikes' %}
+                {% if product.types == 'quadbikes' %}
+                    Quad Bikes
+                {% elif product.types == 'buggies' %}
+                    Buggies
+                {% else %}
+                    ATV
+                {% endif %}
+
+            {% elif product.model_name == 'heavyvehicle' %}
+                {{ product.main_type|title }}
+
+            {% elif product.model_name == 'helmetclothes' %}
+                {% if product.helmetcloth_type == 'helmet' %}
+                    Helmet
+                {% else %}
+                    Cloth
+                {% endif %}
+
+            {% elif product.model_name == 'boat' %}
+                {{ product.boat_type|format_boat_type|title }}
+
+            {% elif product.model_name == 'numberplate' %}
+                Number Plate
+
+            {% elif product.model_name == 'junkcars' %}
+                Junk Cars
+
+            {% elif product.model_name == 'accessoriesparts' %}
+                {{ product.get_main_category_display|title }}
+
+            {% elif product.model_name == 'tiresandcaps' %}
+                {{ product.tire_type|title }}
+
+            {% elif product.model_name == 'driving' %}
+                Driving Training
+
+            {% elif product.model_name == 'land' %}
+                Land
+
+            {% elif product.model_name == 'showrooms' %}
+                Show Rooms
+
+            {% elif product.model_name == 'apartment' %}
+                Apartments
+
+            {% elif product.model_name == 'clinic' %}
+                Clinic
+
+            {% elif product.model_name == 'villa' %}
+                Villa
+
+            {% elif product.model_name == 'factory' %}
+                Factory
+
+            {% elif product.model_name == 'townhouse' %}
+                Town House
+
+            {% elif product.model_name == 'fullfloors' %}
+                Full Floors
+
+            {% elif product.model_name == 'shop' %}
+                Shop
+            
+            {% elif product.model_name == 'staff' %}
+                Staff Housing
+
+            {% elif product.model_name == 'farm' %}
+                Farm & Chalet
+
+            {% elif product.model_name == 'warehouse' %}
+                Warehouse
+
+            {% elif product.model_name == 'cafe' %}
+                Restaurant and cafe
+
+            {% elif product.model_name == 'commercial' %}
+                Commercial Villa
+
+            {% elif product.model_name == 'cover' %}
+                Cover & Protectors
+                 
+            {% elif product.model_name == 'headset' %}
+                Headsets
+
+            {% elif product.model_name == 'wholebuilding' %}
+                Whole Building
+
+            {% elif product.model_name == 'complex' %}
+                Complex
+
+            {% elif product.model_name == 'office' %}
+                Office
+
+            {% elif product.model_name == 'hostel' %}
+                Hotel
+
+            {% elif product.model_name == 'supermarket' %}
+                Super Market
+
+            {% elif product.model_name == 'foreign' %}
+                Foreign Real Estate
+            
+            {% elif product.model_name == 'shared' %}
+                Shared Room
+
+            {% elif product.model_name == 'suits' %}
+                Hotel Apartment and Suite
+
+            {% elif product.model_name == 'mobilesim' %}
+                VIP Phone Numbers
+
+            {% elif product.model_name == 'electronics' %}
+                {{ product.subcategory|upper }}
+                {% if product.brand %}, {{ product.brand|capfirst }}{% endif %}
+                {% if product.tv_model %}, {{ product.tv_model|capfirst }}{% endif %}
+                {% if product.tv_screen_size %}, {{ product.tv_screen_size }}{% endif %}
+
+            {% elif product.model_name == 'computer' %}
+                {% if product.category %}
+                    {{ product.category|format_category:'product' }}{% if product.brand or product.condition %},{% endif %}
+                {% endif %}
+                {% if product.brand %}
+                    {{ product.brand|title }}{% if product.condition %},{% endif %}
+                {% endif %}
+                {% if product.condition %}
+                    {{ product.condition|format_condition }}
+                {% endif %}
+            
+            {% elif product.model_name == 'homeappliance' %}
+                {{ product.subcategory|upper }}
+
+            {% elif product.model_name == 'sports' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'clothing' %}
+                {{ product.title|title }}
+
+            {% elif product.model_name == 'camera' %}
+                {{ product.brand|title  }}
+
+            {% elif product.model_name == 'jewelry' %}
+                {{ product.sub_category|format_subcategory }}
+
+            {% elif product.model_name == 'pet' %}
+                {% if product.pet_type %}
+                    {{ product.pet_type|capfirst }}
+                {% else %}
+                    {{ product.accessory_type|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'musical' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+            
+            {% elif product.model_name == 'gaming' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|format_subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'babyitem' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+            
+            {% elif product.model_name == 'toys' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'ticket' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'collectible' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|format_subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'book' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|format_subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'music' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|format_subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'lostfound' %}
+                {{ product.category|format_category:'lostfound'}}
+
+            {% elif product.model_name == 'dvd' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|format_subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'furniture' %}
+                {% if product.subcategory %}
+                    {{ product.subcategory|capfirst }}
+                {% else %}
+                    {{ product.condition|capfirst }}
+                {% endif %}
+
+            {% elif product.model_name == 'mobiles' %}
+                {{ product.brand|title }}, {{ product.color|title }}, {{ product.accompaniments|title }}, {{ product.get_condition_display }}
+
+            {% elif product.model_name == 'tablets' %}
+                {{ product.brand|title }}, {{ product.color|title }}, {{ product.accompaniments|title }}, {{ product.get_age_display}}, {{ product.get_screen_size_display }}
+
+            {% elif product.model_name == 'smartwatch' %}
+                {{ product.brand }}, {{ product.get_condition_display }}
+
+            {% elif product.model_name == 'accessory' %}
+                {% if product.type == "charger" %}
+                    Chargers & Cables
+                {% elif product.type == "sparepart" %}
+                    Mobile-Tablet Spare Parts
+                {% else %}
+                    Accessories
+                {% endif %}
+
+
+                {% elif product.model_name == 'autoservices' %}
+               {{ product.service_type|format_service_type:'autoservice'}} 
+
+                {% elif product.model_name == 'consultancy' %}
+               {{ product.service_type|format_service_type:'consultancy'}} 
+                {% elif product.model_name == 'domestic' %}
+               {{ product.service_type|format_service_type:'domestic'}} 
+                {% elif product.model_name == 'events' %}
+               {{ product.service_type|format_service_type:'events'}} 
+                {% elif product.model_name == 'freelancer' %}
+               {{ product.service_type|format_service_type:'freelancer'}} 
+                {% elif product.model_name == 'health' %}
+               {{ product.service_type|format_service_type:'health'}} 
+                {% elif product.model_name == 'homemaintenance' %}
+               {{ product.service_type|format_service_type:'homemaintenance'}} 
+                {% elif product.model_name == 'movers' %}
+               {{ product.service_type|format_service_type:'movers'}} 
+                {% elif product.model_name == 'restoration' %}
+               {{ product.service_type|format_service_type:'restoration'}} 
+                {% elif product.model_name == 'tutor' %}
+               {{ product.service_type|format_service_type:'tutor'}} 
+                {% elif product.model_name == 'webservice' %}
+               {{ product.service_type|format_service_type:'webservice'}} 
+                {% elif product.model_name == 'otherservices' %}
+               {{ product.service_type|format_service_type:'autoservice'}} 
+
+
+            {% else %}
+                {{ product.title_value }}
+            {% endif %}
+          </div>
+
+          <!-- Dynamic icons row -->
+          <div class="fav-icons">
+            {% include 'favorites_dynamic_icons.html' with product=product %}
+          </div>
+
+          <div class="details-icons2">
+            {% if product.model_name == 'land' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ product.facade|title }}</b></span>
+            
+            {% elif product.model_name == 'villa' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ product.facade|title }}</b></span>
+            
+            {% elif product.model_name == 'apartment' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Facade: <b>{{ product.facade|title }}</b></span>
+            
+            {% elif product.model_name == 'showrooms' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+            
+            {% elif product.model_name == 'clinic' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'factory' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'townhouse' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'fullfloors' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'shop' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+            
+            {% elif product.model_name == 'staff' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'farm' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'warehouse' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'cafe' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'commercial' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'wholebuilding' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'complex' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'office' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+            
+            {% elif product.model_name == 'hostel' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'supermarket' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            {% elif product.model_name == 'foreign' %}
+                <span>Lister Type: <b>{{ product.lister_type|title }}</b></span>
+                <span>Payment Method: <b>{{ product.payment_method|title }}</b></span>
+
+            
+            {% endif %}
+          </div>
+
+          <div class="fav-category" style="font-size: 14px;">
+            {% if product.model_name == 'car' %}
+                {{ product.make|truncatechars:25|title }}
+
+            {% elif product.model_name == 'motorcycle' %}
+                {{ product.make|truncatechars:25|title }}
+
+            {% elif product.model_name == 'scooter' %}
+                {{ product.make|truncatechars:25|title }}
+
+            {% elif product.model_name == 'quadbikes' %}
+                {{ product.description|truncatechars:25|title }} 
+
+            {% elif product.model_name == 'heavyvehicle' %}
+                {{ product.model|truncatechars:25|title }}
+
+            {% elif product.model_name == 'helmetclothes' %}
+                {{ product.description|truncatechars:25|title }}
+
+            {% elif product.model_name == 'boat' %}
+                {{ product.description|truncatechars:25|title }}
+
+            {% elif product.model_name == 'numberplate' %}
+                {{ product.plate_type|truncatechars:25|title  }}
+
+            {% elif product.model_name == 'junkcars' %}
+                {{ product.name|truncatechars:25|title }}
+
+            {% elif product.model_name == 'accessoriesparts' %}
+                {{ product.name|truncatechars:25|title }}
+
+            {% elif product.model_name == 'tiresandcaps' %}
+                {{ product.description|truncatechars:25|title }}
+
+            {% elif product.model_name == 'driving' %}
+                {{ product.trainer_name|title}}
+
+            {% elif product.model_name == 'land' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'showrooms' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'apartment' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'clinic' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'villa' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'factory' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'townhouse' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'fullfloors' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'shop' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'staff' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'farm' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'warehouse' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'commercial' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'wholebuilding' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'cafe' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'complex' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'office' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'hostel' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'supermarket' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'foreign' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'shared' %}
+                {{ product.property_title|title}}
+            
+            {% elif product.model_name == 'suits' %}
+                {{ product.property_title|title}}
+
+            {% elif product.model_name == 'electronics' %}
+                {{ product.main_category|truncatechars:25|title }}
+            
+            {% elif product.model_name == 'computer' %}
+                {{ product.listing_type|truncatechars:25|title }}
+            
+            {% elif product.model_name == 'business' %}
+                {{ product.category|format_category|truncatechars:25|title }}
+
+            {% elif product.model_name == 'homeappliance' %}
+                {{ product.main_category|format_main_category:'homeappliance' }}
+
+            {% elif product.model_name == 'sports' %}
+                {{ product.get_category_display }}
+
+            {% elif product.model_name == 'clothing' %}
+                {{ product.main_category|format_main_category|truncatechars:25|title }}
+
+            {% elif product.model_name == 'camera' %}
+                {{ product.main_category|format_main_category|truncatechars:25|title }}
+
+            {% elif product.model_name == 'jewelry' %}
+                {{ product.main_category|format_main_category:"jewelry" }}
+
+            {% elif product.model_name == 'pet' %}
+                {% if product.breed %}
+                    {{ product.breed|truncatechars:25|title }}
+                {% else %}
+                    {{ product.condition|truncatechars:25|title }}
+                {% endif %}
+
+            {% elif product.model_name == 'musical' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'gaming' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'babyitem' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'toys' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'ticket' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'collectible' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'book' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'music' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'lostfound' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'dvd' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'furniture' %}
+                {{ product.category|format_category|title }}
+
+            {% elif product.model_name == 'mobiles' %}
+                {{ product.model_number|truncatechars:25|title}}
+
+            {% elif product.model_name == 'tablets' %}
+                {{ product.model_number|truncatechars:25|title}}
+
+            {% elif product.model_name == 'smartwatch' %}
+                {{ product.title|truncatechars:40|title}}
+
+            {% elif product.model_name == 'headset' %}
+                {{ product.title|truncatechars:40|title}}
+
+            {% elif product.model_name == 'cover' %}
+                {{ product.title|truncatechars:40|title}}
+
+            {% elif product.model_name == 'accessory' %}
+                {{ product.title|truncatechars:40|title}}
+
+            {% elif product.model_name == 'mobilesim' %}
+                {{ product.title|truncatechars:40|title}}
+
+            {% elif product.model_name == 'autoservices' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'consultancy' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'domestic' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'freelancer' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'otherservices' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'tutor' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'webservice' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'homemaintenance' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'movers' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'events' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'health' %}
+                {{ product.title|truncatechars:40}}
+                 {% elif product.model_name == 'restoration' %}
+                {{ product.title|truncatechars:40}}
+
+
+            
+
+            {% else %}
+                {{ product.model_name|capfirst|default:"Model" }}
+            {% endif %}
+          </div>
+
+          <div class="fav-location">
+            <i class="fas fa-map-marker-alt"></i> {{ product.city|clean_city_name|truncatechars:25 }}, {{ product.city.district.name }}, {{product.city.district.governate.name }}
+          </div>
+
+        </div>
+      </a>
+
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- Pagination -->
+  {% if favorite_products.paginator.num_pages > 1 %}
+  <div class="pagination-container">
+    <nav aria-label="Page navigation">
+      <ul class="pagination">
+        {% if favorite_products.has_previous %}
+          <!-- <li class="page-item">
+            <a class="page-link" href="?page=1" aria-label="First">
+              <i class="fas fa-angle-double-left"></i>
+            </a>
+          </li> -->
+          <li class="page-item">
+            <a class="page-link" href="?page={{ favorite_products.previous_page_number }}" aria-label="Previous">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+        {% else %}
+          <!-- <li class="page-item disabled">
+            <span class="page-link">
+              <i class="fas fa-angle-double-left"></i>
+            </span>
+          </li> -->
+          <li class="page-item disabled">
+            <span class="page-link">
+              <i class="fas fa-chevron-left"></i>
+            </span>
+          </li>
+        {% endif %}
+
+        {% for num in favorite_products.paginator.page_range %}
+          {% if num == favorite_products.number %}
+            <li class="page-item active">
+              <span class="page-link">{{ num }}</span>
+            </li>
+          {% elif num > favorite_products.number|add:'-3' and num < favorite_products.number|add:'3' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if favorite_products.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ favorite_products.next_page_number }}" aria-label="Next">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+          <!-- <li class="page-item">
+            <a class="page-link" href="?page={{ favorite_products.paginator.num_pages }}" aria-label="Last">
+              <i class="fas fa-angle-double-right"></i>
+            </a>
+          </li> -->
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">
+              <i class="fas fa-chevron-right"></i>
+            </span>
+          </li>
+          <!-- <li class="page-item disabled">
+            <span class="page-link">
+              <i class="fas fa-angle-double-right"></i>
+            </span> -->
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+  {% endif %}
+
+  {% else %}
+
+  <div class="empty-state">
+    <i class="far fa-heart"></i>
+    <h4>No Favorites Yet</h4>
+    <p>Looks a little quiet here. Save listings you like and they’ll appear here.</p>
+
+    <a href="{% url 'index' %}" class="btn btn-primary">
+        Browse Listings
+    </a>
+</div>
+
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Store all sliders data globally for easier management
+    const slidersData = new Map();
+    
+    // Initialize all favorite sliders
+    function initFavoriteSliders() {
+        document.querySelectorAll('.fav-slider').forEach((slider, sliderIndex) => {
+            const slides = slider.querySelectorAll('.fav-slide');
+            const dots = slider.querySelectorAll('.fav-dot');
+            const prevBtn = slider.querySelector('.fav-prev');
+            const nextBtn = slider.querySelector('.fav-next');
+            const sliderId = `slider-${sliderIndex}`;
+            
+            // Store slider data
+            slidersData.set(sliderId, {
+                currentIndex: 0,
+                slides: slides,
+                totalSlides: slides.length,
+                isLooping: true
+            });
+            
+            // If only one image, hide navigation
+            if (slides.length <= 1) {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                const dotsContainer = slider.querySelector('.fav-slider-dots');
+                if (dotsContainer) dotsContainer.style.display = 'none';
+                return;
+            }
+            
+            // Function to update button visibility
+            function updateButtonVisibility() {
+                if (prevBtn) {
+                    prevBtn.style.display = 'flex';
+                    prevBtn.classList.add('active-btn');
+                }
+                if (nextBtn) {
+                    nextBtn.style.display = 'flex';
+                    nextBtn.classList.add('active-btn');
+                }
+            }
+            
+            // Function to show slide with loop
+            function showSlide(index, animate = true) {
+                const data = slidersData.get(sliderId);
+                const slides = data.slides;
+                const total = data.totalSlides;
+                
+                if (index < 0) {
+                    index = total - 1;
+                } else if (index >= total) {
+                    index = 0;
+                }
+                
+                data.currentIndex = index;
+                
+                slides.forEach((slide, i) => {
+                    if (animate) {
+                        slide.style.transition = 'opacity 0.3s ease';
+                    }
+                    slide.classList.toggle('active', i === index);
+                });
+                
+                if (dots.length > 0) {
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === index);
+                    });
+                }
+                
+                updateButtonVisibility();
+            }
+            
+            function nextSlide() {
+                const data = slidersData.get(sliderId);
+                showSlide(data.currentIndex + 1);
+            }
+            
+            function prevSlide() {
+                const data = slidersData.get(sliderId);
+                showSlide(data.currentIndex - 1);
+            }
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    prevSlide();
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    nextSlide();
+                });
+            }
+            
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSlide(index);
+                });
+            });
+            
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let isScrolling = false;
+            
+            slider.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isScrolling = false;
+            });
+            
+            slider.addEventListener('touchmove', function(e) {
+                if (!touchStartX) return;
+                
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                const diffY = Math.abs(touchY - touchStartY);
+                const diffX = Math.abs(touchX - touchStartX);
+                
+                if (diffY > diffX) {
+                    isScrolling = true;
+                }
+            });
+            
+            slider.addEventListener('touchend', function(e) {
+                if (!touchStartX || isScrolling) return;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                }
+                
+                touchStartX = 0;
+                isScrolling = false;
+            });
+            
+            slider.addEventListener('mouseenter', function() {
+                updateButtonVisibility();
+            });
+            
+            slider.addEventListener('mouseleave', function() {
+                if (prevBtn) {
+                    prevBtn.style.display = 'none';
+                    prevBtn.classList.remove('active-btn');
+                }
+                if (nextBtn) {
+                    nextBtn.style.display = 'none';
+                    nextBtn.classList.remove('active-btn');
+                }
+            });
+            
+            showSlide(0, false);
+            updateButtonVisibility();
+        });
+    }
+    
+    // Reinitialize a specific slider after removal
+    function reinitializeSlider(slider) {
+        const slides = slider.querySelectorAll('.fav-slide');
+        const dots = slider.querySelectorAll('.fav-dot');
+        const prevBtn = slider.querySelector('.fav-prev');
+        const nextBtn = slider.querySelector('.fav-next');
+        
+        slides.forEach((slide, index) => {
+            slide.classList.toggle('active', index === 0);
+        });
+        
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === 0);
+        });
+        
+        if (slides.length <= 1) {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            const dotsContainer = slider.querySelector('.fav-slider-dots');
+            if (dotsContainer) dotsContainer.style.display = 'none';
+        } else {
+            if (prevBtn) {
+                prevBtn.style.display = 'flex';
+                prevBtn.classList.add('active-btn');
+            }
+            if (nextBtn) {
+                nextBtn.style.display = 'flex';
+                nextBtn.classList.add('active-btn');
+            }
+        }
+    }
+    
+    // Map plural product types to singular for API call
+    function getSingularProductType(type) {
+        const typeMapping = {
+            'mobiles': 'mobile',
+            'tablets': 'tablet',
+            'accessoriesparts': 'autoaccessorypart',
+            'autoservices': 'autoservice',
+            'consultancy': 'consultancy',
+            'domestic': 'domestic',
+            'events': 'events',
+            'freelancer': 'freelancer',
+            'health': 'health',
+            'homemaintenance': 'homemaintenance',
+            'movers': 'movers',
+            'restoration': 'restoration',
+            'tutor': 'tutor',
+            'webservice': 'webservice',
+            'otherservices': 'otherservices',
+            'junkcars': 'junkcar',
+            'tiresandcaps': 'tiresandcaps',
+            'carrepairmaintenance': 'item',
+            'drivingtraining': 'driving',
+            'jobpost': 'job'
+        };
+        return typeMapping[type] || type;
+    }
+    
+    // Function to update favorite buttons across all open tabs
+    function broadcastFavoriteUpdate(productId, productType, isFavorited) {
+        // Store in localStorage
+        const storageKey = `favorite_${productType}_${productId}`;
+        localStorage.setItem(storageKey, isFavorited ? 'true' : 'false');
+        
+        // Broadcast to other tabs
+        localStorage.setItem('favorite_update', JSON.stringify({
+            productId: productId,
+            productType: productType,
+            isFavorited: isFavorited,
+            timestamp: Date.now()
+        }));
+        
+        // Remove the broadcast key after a short delay
+        setTimeout(() => {
+            localStorage.removeItem('favorite_update');
+        }, 500);
+    }
+    
+    // Listen for favorite updates from other tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'favorite_update' && e.newValue) {
+            try {
+                const update = JSON.parse(e.newValue);
+                // Update buttons in this tab
+                updateFavoriteButtons(update.productId, update.productType, update.isFavorited);
+            } catch (error) {
+                console.error('Error parsing favorite update:', error);
+            }
+        }
+    });
+    
+    // Function to update favorite buttons in the current page
+    function updateFavoriteButtons(productId, productType, isFavorited) {
+        const apiProductType = getSingularProductType(productType);
+        
+        // Update .favorite-badge buttons
+        document.querySelectorAll(`.favorite-badge[data-product-id="${productId}"]`).forEach(btn => {
+            const btnProductType = btn.getAttribute('data-product-type');
+            if (btnProductType === productType || getSingularProductType(btnProductType) === apiProductType) {
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    if (isFavorited) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-danger');
+                    } else {
+                        icon.classList.remove('fas', 'text-danger');
+                        icon.classList.add('far');
+                    }
+                }
+                
+                // If unfavorited and on favorites page, remove the card
+                if (!isFavorited) {
+                    const card = document.getElementById(`favorite-item-${btnProductType}-${productId}`);
+                    if (card) {
+                        animateAndRemoveCard(card);
+                    }
+                }
+            }
+        });
+        
+        // Update .favorite-btn buttons (on listing and detail pages)
+        document.querySelectorAll(`.favorite-btn[data-product-id="${productId}"]`).forEach(btn => {
+            const btnProductType = btn.getAttribute('data-product-type');
+            if (btnProductType === apiProductType || btnProductType === productType || 
+                getSingularProductType(btnProductType) === apiProductType) {
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    if (isFavorited) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-danger');
+                    } else {
+                        icon.classList.remove('fas', 'text-danger');
+                        icon.classList.add('far');
+                    }
+                }
+                btn.setAttribute('data-favorited', isFavorited ? 'true' : 'false');
+                if (isFavorited) {
+                    btn.classList.remove('not-favorited');
+                    btn.classList.add('favorited');
+                } else {
+                    btn.classList.remove('favorited');
+                    btn.classList.add('not-favorited');
+                }
+            }
+        });
+        
+        // Update buttons with singular product type
+        document.querySelectorAll(`.favorite-btn[data-product-type="${apiProductType}"][data-product-id="${productId}"]`).forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (icon) {
+                if (isFavorited) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-danger');
+                } else {
+                    icon.classList.remove('fas', 'text-danger');
+                    icon.classList.add('far');
+                }
+            }
+            btn.setAttribute('data-favorited', isFavorited ? 'true' : 'false');
+            if (isFavorited) {
+                btn.classList.remove('not-favorited');
+                btn.classList.add('favorited');
+            } else {
+                btn.classList.remove('favorited');
+                btn.classList.add('not-favorited');
+            }
+        });
+    }
+    
+    // Helper function to animate and remove card
+    function animateAndRemoveCard(card) {
+        if (!card) return;
+        
+        card.style.transition = 'all 0.3s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+            card.remove();
+            
+            document.querySelectorAll('.fav-slider').forEach(slider => {
+                reinitializeSlider(slider);
+            });
+            
+            const favoritesList = document.getElementById('favorites-list');
+            if (favoritesList && !favoritesList.querySelector('.favorite-card')) {
+                favoritesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="far fa-heart"></i>
+                        <p style="margin-bottom: 15px;">No favorites yet</p>
+                        <a href="/" class="btn btn-primary">Browse Listings</a>
+                    </div>`;
+            }
+        }, 300);
+    }
+    
+    // Remove favorite function
+    function removeFavorite(productId, productType, element) {
+        const isAuthenticated = element.getAttribute('data-is-authenticated') === 'true';
+        
+        if (!isAuthenticated) {
+            window.location.href = '/login/';
+            return;
+        }
+        
+        const apiProductType = getSingularProductType(productType);
+        
+        let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (!csrfToken) {
+            csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
+        }
+        
+        fetch(`/add-to-favorites/${apiProductType}/${productId}/remove/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken || ''
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'removed') {
+                // Broadcast to other tabs
+                broadcastFavoriteUpdate(productId, productType, false);
+                
+                // Update buttons in current page
+                updateFavoriteButtons(productId, productType, false);
+                
+                showNotification('Item removed from favorites', 'success');
+            } else {
+                showNotification(data.message || 'Error removing favorite', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error. Please try again.', 'error');
+        });
+    }
+    
+    // Add event listeners to remove buttons
+    document.querySelectorAll('.favorite-badge').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const productId = this.getAttribute('data-product-id');
+            const productType = this.getAttribute('data-product-type');
+            
+            removeFavorite(productId, productType, this);
+        });
+    });
+    
+    // Initialize all sliders on page load
+    initFavoriteSliders();
+    
+    // Function to show notifications
+    function showNotification(message, type = 'info') {
+        let notificationContainer = document.getElementById('notification-container');
+        if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.id = 'notification-container';
+            notificationContainer.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+            `;
+            document.body.appendChild(notificationContainer);
+        }
+        
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            background: ${type === 'success' ? '#4CAF50' : (type === 'error' ? '#f44336' : '#2196F3')};
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            animation: slideIn 0.3s ease;
+            cursor: pointer;
+        `;
+        notification.textContent = message;
+        
+        notificationContainer.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+        
+        notification.addEventListener('click', () => {
+            notification.remove();
+        });
+    }
+    
+    // Add animations for notifications
+    if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+});
+</script>
+
+{% include 'footer.html' %}
+</body>
+</html>

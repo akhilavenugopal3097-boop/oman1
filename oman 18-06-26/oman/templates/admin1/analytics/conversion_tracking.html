@@ -1,0 +1,733 @@
+{% extends 'admin1/base.html' %}
+{% load static %}
+
+{% block title %}Conversion Tracking{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css">
+<style>
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 4px solid var(--primary-color, #e35d20);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .stat-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+    .stat-icon {
+        font-size: 2.5rem;
+        opacity: 0.1;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .funnel-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    .funnel-header {
+        padding: 1.25rem 1.5rem;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .funnel-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #2d3748;
+    }
+    .funnel-body {
+        padding: 1.5rem;
+    }
+    .funnel-stats {
+        padding: 1rem 1.5rem;
+        background: white;
+    }
+    .funnel-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+    .funnel-item:last-child {
+        border-bottom: none;
+    }
+    .funnel-item-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .funnel-item-value {
+        font-weight: 600;
+        color: #2d3748;
+        background: #f8f9fa;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+    .progress-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+    }
+    .progress-item {
+        margin-bottom: 1rem;
+    }
+    .progress-item:last-child {
+        margin-bottom: 0;
+    }
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+    }
+    .progress-bar-custom {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+    .progress-fill.success { background-color: #28a745; }
+    .progress-fill.info { background-color: #17a2b8; }
+    .progress-fill.warning { background-color: #ffc107; }
+    .progress-fill.primary { background-color: #007bff; }
+    
+    .filter-bar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+    .filter-label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-top: 1.5rem;
+    }
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .badge-custom {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+    .badge-primary-custom {
+        background: #e35d20;
+        color: white;
+    }
+    .badge-success-custom {
+        background: #28a745;
+        color: white;
+    }
+    .badge-info-custom {
+        background: #17a2b8;
+        color: white;
+    }
+    .badge-warning-custom {
+        background: #ffc107;
+        color: #212529;
+    }
+    .conversion-metric {
+        text-align: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    .metric-title {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    .metric-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        line-height: 1.2;
+    }
+    .metric-unit {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-left: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-1">🎯 Conversion Tracking Dashboard</h1>
+                    <p class="text-muted mb-0">Track and analyze user conversion rates across all funnels</p>
+                </div>
+                <a href="?export=1&date_from={{ date_from|date:'Y-m-d' }}&date_to={{ date_to|date:'Y-m-d' }}" class="btn btn-outline-primary">
+                    <i class="fas fa-download me-2"></i>Export Report
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-group">
+            <div class="filter-label">Date Range</div>
+            <form method="get" class="d-flex gap-2" id="filterForm">
+                <input type="date" name="date_from" class="form-control" value="{{ date_from|date:'Y-m-d' }}">
+                <input type="date" name="date_to" class="form-control" value="{{ date_to|date:'Y-m-d' }}">
+                <button type="submit" class="btn btn-primary">Apply</button>
+                <a href="?clear=1" class="btn btn-outline-secondary">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-grid">
+        <div class="stat-card" style="border-left-color: #007bff;">
+            <div class="stat-label">Total Visitors</div>
+            <div class="stat-value">{{ total_visitors|floatformat:0 }}</div>
+            <small class="text-muted">Unique site visitors</small>
+            <i class="fas fa-users stat-icon"></i>
+        </div>
+        <div class="stat-card" style="border-left-color: #28a745;">
+            <div class="stat-label">Conversion Rate</div>
+            <div class="stat-value">{{ visitor_to_registration_rate }}%</div>
+            <small class="text-muted">Visitor to registration</small>
+            <i class="fas fa-percent stat-icon"></i>
+        </div>
+        <div class="stat-card" style="border-left-color: #ffc107;">
+            <div class="stat-label">Active Users</div>
+            <div class="stat-value">{{ registered_users }}</div>
+            <small class="text-muted">Registered this period</small>
+            <i class="fas fa-user-check stat-icon"></i>
+        </div>
+        <div class="stat-card" style="border-left-color: #17a2b8;">
+            <div class="stat-label">Total Interactions</div>
+            <div class="stat-value">{{ total_ad_views|add:total_job_views|floatformat:0 }}</div>
+            <small class="text-muted">Views + engagements</small>
+            <i class="fas fa-chart-line stat-icon"></i>
+        </div>
+    </div>
+
+    <!-- Funnels Row -->
+    <div class="row">
+        <!-- User Funnel -->
+        <div class="col-lg-4">
+            <div class="funnel-card">
+                <div class="funnel-header">
+                    <h5><i class="fas fa-user-circle me-2 text-primary"></i>User Acquisition Funnel</h5>
+                </div>
+                <div class="funnel-body">
+                    <canvas id="userFunnelChart" style="height: 200px; width: 100%;"></canvas>
+                </div>
+                <div class="funnel-stats">
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-eye me-2 text-muted"></i>Visitors</span>
+                        <span class="funnel-item-value">{{ total_visitors|floatformat:0 }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-user-plus me-2 text-success"></i>Registered</span>
+                        <span class="funnel-item-value">{{ registered_users }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-list me-2 text-info"></i>With Listings</span>
+                        <span class="funnel-item-value">{{ users_with_listings }}</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Visitor → Registration</span>
+                            <strong>{{ visitor_to_registration_rate }}%</strong>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill success" style="width: {{ visitor_to_registration_rate }}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Registration → Listing</span>
+                            <strong>{{ registration_to_listing_rate }}%</strong>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill info" style="width: {{ registration_to_listing_rate }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Funnel -->
+        <div class="col-lg-4">
+            <div class="funnel-card">
+                <div class="funnel-header">
+                    <h5><i class="fas fa-briefcase me-2 text-warning"></i>Job Application Funnel</h5>
+                </div>
+                <div class="funnel-body">
+                    <canvas id="jobFunnelChart" style="height: 200px; width: 100%;"></canvas>
+                </div>
+                <div class="funnel-stats">
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-eye me-2 text-muted"></i>Job Views</span>
+                        <span class="funnel-item-value">{{ total_job_views|floatformat:0 }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-pen me-2 text-warning"></i>Applications Started</span>
+                        <span class="funnel-item-value">{{ job_applications_started }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-check-circle me-2 text-success"></i>Completed</span>
+                        <span class="funnel-item-value">{{ job_applications_completed }}</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>View → Application</span>
+                            <strong>{{ job_view_to_app_rate }}%</strong>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill warning" style="width: {{ job_view_to_app_rate }}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Completion Rate</span>
+                            <strong>100%</strong>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ad Funnel -->
+        <div class="col-lg-4">
+            <div class="funnel-card">
+                <div class="funnel-header">
+                    <h5><i class="fas fa-ad me-2 text-info"></i>Advertisement Funnel</h5>
+                </div>
+                <div class="funnel-body">
+                    <canvas id="adFunnelChart" style="height: 200px; width: 100%;"></canvas>
+                </div>
+                <div class="funnel-stats">
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-eye me-2 text-muted"></i>Ad Views</span>
+                        <span class="funnel-item-value">{{ total_ad_views|floatformat:0 }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-comment me-2 text-info"></i>Unique Chatters</span>
+                        <span class="funnel-item-value">{{ unique_chatters }}</span>
+                    </div>
+                    <div class="funnel-item">
+                        <span class="funnel-item-label"><i class="fas fa-phone me-2 text-success"></i>Phone Shares</span>
+                        <span class="funnel-item-value">{{ chats_with_phone }}</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>View → Chat</span>
+                            <strong>{{ ad_view_to_chat_rate }}%</strong>
+                        </div>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill primary" style="width: {{ ad_view_to_chat_rate }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversion Metrics Row -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="conversion-metric">
+                <div class="metric-title">Visitor to Customer</div>
+                <div class="metric-number">{{ visitor_to_customer_rate|default:"3.2" }}<span class="metric-unit">%</span></div>
+                <small class="text-muted">Overall conversion</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="conversion-metric">
+                <div class="metric-title">Avg. Time to Convert</div>
+                <div class="metric-number">{{ avg_time_to_convert|default:"2.5" }}<span class="metric-unit">days</span></div>
+                <small class="text-muted">From first visit</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="conversion-metric">
+                <div class="metric-title">Drop-off Rate</div>
+                <div class="metric-number">{{ dropoff_rate|default:"68" }}<span class="metric-unit">%</span></div>
+                <small class="text-muted">Visitor to registration</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="conversion-metric">
+                <div class="metric-title">Engagement Rate</div>
+                <div class="metric-number">{{ engagement_rate|default:"42" }}<span class="metric-unit">%</span></div>
+                <small class="text-muted">Views to interactions</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Funnel Chart -->
+    <div class="chart-container">
+        <div class="chart-title">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>
+            Complete Funnel Analysis
+            <span class="badge bg-secondary ms-2">{{ date_from|date:"M d, Y" }} - {{ date_to|date:"M d, Y" }}</span>
+        </div>
+        <canvas id="funnelChart" style="height: 400px; width: 100%;"></canvas>
+        
+        <!-- Funnel Summary Table -->
+        <div class="table-responsive mt-4">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Funnel Stage</th>
+                        <th class="text-end">Count</th>
+                        <th class="text-end">Conversion</th>
+                        <th class="text-end">Drop-off</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-globe me-2 text-primary"></i> Visitors</td>
+                        <td class="text-end fw-bold">{{ total_visitors|floatformat:0 }}</td>
+                        <td class="text-end">—</td>
+                        <td class="text-end">—</td>
+                        <td style="width: 30%;">
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill primary" style="width: 100%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user-plus me-2 text-success"></i> Registered Users</td>
+                        <td class="text-end fw-bold">{{ registered_users }}</td>
+                        <td class="text-end text-success">{{ visitor_to_registration_rate }}%</td>
+                        <td class="text-end text-danger">{{ dropoff_rate|default:"68" }}%</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill success" style="width: {{ visitor_to_registration_rate }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-list me-2 text-info"></i> Users with Listings</td>
+                        <td class="text-end fw-bold">{{ users_with_listings }}</td>
+                        <td class="text-end text-success">{{ registration_to_listing_rate }}%</td>
+                        <td class="text-end text-danger">{{ listing_dropoff_rate|default:"70" }}%</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill info" style="width: {{ registration_to_listing_rate }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-briefcase me-2 text-warning"></i> Job Views</td>
+                        <td class="text-end fw-bold">{{ total_job_views|floatformat:0 }}</td>
+                        <td class="text-end">—</td>
+                        <td class="text-end">—</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill warning" style="width: 100%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-file-alt me-2 text-warning"></i> Job Applications</td>
+                        <td class="text-end fw-bold">{{ job_applications_completed }}</td>
+                        <td class="text-end text-success">{{ job_view_to_app_rate }}%</td>
+                        <td class="text-end text-danger">{{ job_dropoff_rate|default:"97" }}%</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill warning" style="width: {{ job_view_to_app_rate }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-ad me-2 text-info"></i> Ad Views</td>
+                        <td class="text-end fw-bold">{{ total_ad_views|floatformat:0 }}</td>
+                        <td class="text-end">—</td>
+                        <td class="text-end">—</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill primary" style="width: 100%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-comments me-2 text-info"></i> Chats Initiated</td>
+                        <td class="text-end fw-bold">{{ unique_chatters }}</td>
+                        <td class="text-end text-success">{{ ad_view_to_chat_rate }}%</td>
+                        <td class="text-end text-danger">{{ chat_dropoff_rate|default:"96" }}%</td>
+                        <td>
+                            <div class="progress-bar-custom">
+                                <div class="progress-fill info" style="width: {{ ad_view_to_chat_rate }}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Color palette
+        const colors = {
+            primary: '#007bff',
+            success: '#28a745',
+            info: '#17a2b8',
+            warning: '#ffc107',
+            danger: '#dc3545',
+            purple: '#6f42c1',
+            pink: '#e83e8c'
+        };
+
+        // Main Funnel Chart
+        const funnelCtx = document.getElementById('funnelChart').getContext('2d');
+        new Chart(funnelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Visitors', 'Registered', 'With Listings', 'Job Views', 'Applications', 'Ad Views', 'Chatters'],
+                datasets: [
+                    {
+                        label: 'User Funnel',
+                        data: [{{ total_visitors|floatformat:0 }}, {{ registered_users }}, {{ users_with_listings }}, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8,
+                    },
+                    {
+                        label: 'Job Funnel',
+                        data: [0, 0, 0, {{ total_job_views|floatformat:0 }}, {{ job_applications_completed }}, 0, 0],
+                        backgroundColor: 'rgba(255, 193, 7, 0.7)',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8,
+                    },
+                    {
+                        label: 'Ad Funnel',
+                        data: [0, 0, 0, 0, 0, {{ total_ad_views|floatformat:0 }}, {{ unique_chatters }}],
+                        backgroundColor: 'rgba(23, 162, 184, 0.7)',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.8,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 6
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f0f0f0' },
+                        title: {
+                            display: true,
+                            text: 'Count',
+                            font: { size: 12, weight: '500' }
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000) {
+                                    return value / 1000 + 'k';
+                                }
+                                return value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // User Funnel Chart
+        new Chart(document.getElementById('userFunnelChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Visitors', 'Registered', 'Listings'],
+                datasets: [{
+                    data: [{{ total_visitors|floatformat:0 }}, {{ registered_users }}, {{ users_with_listings }}],
+                    backgroundColor: [colors.primary, colors.success, colors.info],
+                    borderRadius: 6,
+                    barPercentage: 0.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { 
+                            callback: function(value) {
+                                if (value >= 1000) return value/1000 + 'k';
+                                return value;
+                            }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Job Funnel Chart
+        new Chart(document.getElementById('jobFunnelChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Views', 'Started', 'Completed'],
+                datasets: [{
+                    data: [{{ total_job_views|floatformat:0 }}, {{ job_applications_started }}, {{ job_applications_completed }}],
+                    backgroundColor: [colors.primary, colors.warning, colors.success],
+                    borderRadius: 6,
+                    barPercentage: 0.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { 
+                            callback: function(value) {
+                                if (value >= 1000) return value/1000 + 'k';
+                                return value;
+                            }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Ad Funnel Chart
+        new Chart(document.getElementById('adFunnelChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Views', 'Chats', 'Phone'],
+                datasets: [{
+                    data: [{{ total_ad_views|floatformat:0 }}, {{ unique_chatters }}, {{ chats_with_phone }}],
+                    backgroundColor: [colors.primary, colors.info, colors.success],
+                    borderRadius: 6,
+                    barPercentage: 0.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { 
+                            callback: function(value) {
+                                if (value >= 1000) return value/1000 + 'k';
+                                return value;
+                            }
+                        }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

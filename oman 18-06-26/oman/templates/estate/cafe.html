@@ -1,0 +1,4006 @@
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load static %}
+{% load humanize %}
+
+
+{% load automobile_filters %}
+
+
+
+           
+            {% include 'header2.html' %}
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+        
+     <style>
+           .multi-column-dropdown {
+    width: 400px; /* Adjust width */
+    padding: 15px;margin-left: 230px;
+}
+
+.multi-column-dropdown .row {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.multi-column-dropdown .col-6 {
+    flex: 1;
+    padding: 10px;
+}
+.multi-column-dropdown li a:hover {
+           
+           color:  #E35D20;
+           padding: 5px;
+           border-radius: 4px;
+           transition: background-color 0.2s;
+       }
+        /* Base styles for larger screens (default) */
+    .custom-form {
+       
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+     </style>
+
+
+     <style>
+      
+    
+        .categories-container {
+            display: none; /* Hide icons by default (for desktop) */
+        }
+    
+        .category-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff; /* White background for the icon container */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Add scaling effect */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .category-icon i {
+            font-size: 36px;
+            background: linear-gradient(45deg, #F9AD1F, #EB362D); /* Gradient background on the icon */
+            -webkit-background-clip: text; /* Apply the gradient to the text */
+            color: transparent; /* Make the text color transparent to show the gradient */
+            margin-bottom: 10px;
+            transition: transform 0.3s ease; /* Add scaling effect on hover */
+        }
+    
+        .category-icon span {
+            font-size: 14px;
+            color: #333; /* Regular text color */
+        }
+    
+        .category-icon:hover {
+            transform: scale(1.1); /* Scaling effect on hover */
+            cursor: pointer;
+        }
+    
+        .category-icon:hover i {
+            transform: scale(1.2); /* Zoom effect on icon */
+        }
+    
+        /* Mobile view: Show icons and adjust layout */
+        @media screen and (max-width: 768px) {
+            .categories-container {
+                display: flex; /* Show icons on mobile */
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px;
+                margin-top: -60px;
+                margin-bottom: 10px;
+            }
+    
+            .category-icon {
+                width: calc(50% - 20px); /* Two per row */
+                height: 120px;
+            }
+    
+            .category-icon i {
+                font-size: 40px;
+            }
+    
+            .category-icon span {
+                font-size: 12px;
+            }
+        }
+    </style>
+    
+    <style>
+        
+        @media screen and (max-width: 768px) {
+            .categories-section h2{
+                display: none; /* Hide "Popular Categories" on mobile */
+            }
+    
+            .app-section h2{
+                display: block; /* Show "Download Our App" on mobile */
+            }
+        }
+    </style>
+    <style>
+        /* Base styles for larger screens (default) */
+    .custom-form {
+        margin-left: 140px;
+        {% comment %} margin-top:5px; {% endcomment %}
+       width:825px;
+    }
+    
+    .input-inner {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .form-group {
+        flex: 1;
+        margin-right: 10px;
+    }
+    
+    
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .custom-form {
+            margin-left: 0; /* Remove left margin on mobile */
+            margin-right: 20px; /* Optional: Add some right margin */
+        }
+        
+        .input-inner {
+            flex-direction: column; /* Stack input fields on mobile */
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 0;
+        }
+        
+        .btn-box {
+            text-align: center;
+        }
+    }
+    
+     </style>
+        <style>
+            /* Banner Section */
+            #banner-section {
+                background-size: cover;
+                background-position: center;
+                /* height:10px; */
+                position: relative;
+                transition: background-image 1s ease-in-out;
+            }
+            .banner-section{
+      position: relative;
+      padding: 17px 0px 18px 0px;
+      width: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+        
+            #banner-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            -webkit-mask-composite: destination-in;
+            mask: linear-gradient(60deg, #F9AD1F, #EB362D);
+            mask-composite: intersect;
+            z-index: 1;
+            opacity: 0.8; /* Reduce opacity for a lighter masking effect */
+            pointer-events: none; /* Ensure the mask does not block interactions */
+        }
+        
+            #banner-section .content-column {
+                position: relative;
+                z-index: 2;
+            }
+        
+            #banner-section .image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                position: relative;
+                margin-top: 35px;
+                background:#E6F0F9;
+                color: #fff;
+                height: 133px; /* Adjust as needed for the container's content */
+                font-family: 'FontStyle1', Arial, sans-serif;
+                font-size:14px;
+            }
+            
+            /* Image Container */
+            .image-container {
+                position: relative;
+                width: 300px;
+                text-align: center; /* Center the image inside the container */
+                margin-top: -280px;
+                z-index: 1;
+                margin-left:-20px;
+            
+            }
+            
+            .image-container .image {
+                width: 300px;
+                height: 414px; /* Maintain aspect ratio */
+              
+                
+            }
+            
+            /* Content Section */
+            .content-section {
+                text-align:left;
+            }
+            
+            .content-section h2 {
+                {% comment %} font-size: 2rem; {% endcomment %}
+                margin-top: 10px;
+                color:black;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                margin-left:-40px;
+                
+            }
+            
+            .content-section p {
+                {% comment %} font-size: 1rem; {% endcomment %}
+                line-height: 1.1;
+                color: black;
+                margin-left:-40px;
+                font-size:12px;
+                font-family: 'FontStyle6', Arial, sans-serif;
+                word-wrap: break-word; /* Ensure text breaks appropriately */
+            }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            /* Exclusive Offers Section */
+            #exclusive-offers {
+                height: auto; /* Adjust height to fit content */
+                padding: 20px;
+                margin-top: 10px;
+            }
+            .image-container .image {
+                height: 50%;
+              
+                
+            }
+        
+            /* Image Section */
+            .image-container {
+                margin-top: -150px; /* Adjust margin for smaller screens */
+                right: 0;
+                transform: none; /* Remove transform for better alignment */
+                width: 60%; /* Reduce image size */
+                margin: 0 auto; /* Center the image */
+            }
+        
+            /* Content Section */
+            .content-section {
+                margin: 0 auto; /* Center the content section */
+                padding: 10px;
+                margin-top: 20px;
+                text-align: center; /* Center-align text for mobile */
+            }
+        
+            .content-section h2 {
+                font-size: 1.5rem; /* Adjust heading size */
+                text-align: center; /* Center heading */
+            }
+        
+            .content-section p {
+                font-size: 0.9rem; /* Adjust font size for readability */
+                text-align: center; /* Center-align paragraph text */
+                margin-left: 0; /* Remove unnecessary margin */
+                max-width: 100%; /* Use full width */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Further adjustments for very small screens */
+            .image-container {
+                margin-top: -45px;
+                width: 80%; /* Reduce image size further */
+            }
+        
+            .content-section h2 {
+                font-size: 1.2rem;
+            }
+        
+            .content-section p {
+                font-size: 0.8rem;
+            }
+        }
+        .about-paragraph{
+            color:black;
+        }
+        .input{
+            margin-top:3px;
+        }
+       
+        
+        </style>
+    
+    
+    
+    
+    
+    
+    
+    
+           
+        <div class="auto-container">
+
+            {% include 'search.html' %}
+                                <style>
+                                    .form-group-row {
+                                        display: flex;
+                                        align-items: center;
+                                        background-color: rgb(255, 255, 255);
+                                        padding: 10px;
+                                        border-radius: 50px;
+                                        border: 1px solid #ccc;
+                                    }
+                                
+                                    .oval-container {
+                                        flex: 1;
+                                        position: relative;
+                                        padding: 10px;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 10px;
+                                        height: 20px;
+                                    }
+                                
+                                   .chosen-value {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 12px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+                                    
+                                    .input {
+                                        width: 100%;
+                                        padding-left: 27px;
+                                        padding-top:15px;
+                                        font-size: 13px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        border: none;
+                                        background: transparent;
+                                        outline: none;
+                                    }
+           
+                                    .location-icon2 {
+                                        position: absolute;
+                                        margin-top:6px;
+                                        z-index: 1;
+                                       
+                                    }
+                                    .location-icon1 {
+                                        position: absolute;
+                                        margin-left:4px;
+                                        z-index: 1;
+                                        height:23px;
+                                       
+                                    }
+                                    .location-icon3 {
+                                        position: absolute;
+                                        margin-left:-40px;
+                                       
+                                    }
+                                
+                                    .value-list {
+                                        position: absolute;
+                                        top: 45px;
+                                        left: 0;
+                                        width: 225px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        border: 1px solid #ccc;
+                                        border-top: none;
+                                        list-style: none;
+                                        margin-left:-10px;
+                                        z-index: 1000;
+                                        display: none;
+                                    }
+                                
+                                    .value-list.open {
+                                        display: block;
+                                    }
+                                
+                                    .value-list li {
+                                        padding: 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        position: relative;
+                                    }
+                                
+                                    .value-list li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    /* Submenu Styles */
+                                    .submenus {
+                                        display: none;
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 0px;
+                                        font-family: 'FontStyle6', Arial, sans-serif;
+                                        font-size: 13px;
+                                        background-color: #fff;
+                                        {% comment %} border: 1px solid #ccc; {% endcomment %}
+                                        padding: 10px;
+                                        width: 400px;
+                                        z-index: 1001;
+                                    }
+                                
+                                    .value-list li:hover .submenus {
+                                        display: block;
+                                    }
+                                
+                                    .submenus ul {
+                                        list-style: none;
+                                        padding: 0;
+                                        margin: 0;
+                                    }
+                                
+                                    .submenus li {
+                                        padding: 5px 10px;
+                                        cursor: pointer;
+                                        transition: background-color 0.3s;
+                                        color: black;
+                                    }
+                                    .main-menu1 .submenus {
+                                        display: none; /* Hide submenus by default */
+                                    }
+                                    
+                                    .main-menu1.open .submenus {
+                                        display: block; /* Show submenus when the main menu item is open */
+                                    }
+                                    .submenus li:hover {
+                                        background-color: #f0f0f0;
+                                        color: #E35D20;
+                                    }
+                                
+                                    .vertical-divider {
+                                        width: 1px;
+                                        height: 40px;
+                                        background-color: #ccc;
+                                        margin: 0 10px;
+                                    }
+                                
+                                    .btn-box {
+                                        flex: 0 0 auto;
+                                    }
+                                
+                                    .theme-btn-one {
+                                     
+                                        color: #fff;
+                                        border: none;
+                                        border-radius: 50px;
+                                        cursor: pointer;
+                                        width: 130px;
+                                      
+                                    }
+                                     /* Mobile Responsive Styling */
+
+@media (max-width: 768px) {
+    .form-group-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background-color: #fff;
+        padding: 6px;
+        border-radius: 52px;
+        border: 1px solid #ccc;
+        width: 36%;
+        margin-top: 5px ;
+    }
+
+    .oval-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px;
+        width: 100%;
+        position: relative;
+    }
+
+  
+     .location-icon5{
+        position: absolute;
+        left: 14px !important;
+        height: 20px !important;
+        margin-top: 10px;
+
+
+     }
+
+    .location-icon1, .location-icon2 {
+        position: absolute;
+        left: 5px;
+        height: 15px;
+    }
+
+    .value-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        list-style: none;
+        z-index: 1000;
+        display: none;
+    }
+
+    .value-list.open {
+        display: block;
+    }
+
+    .value-list li {
+        padding: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .value-list li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+    .submenus {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        background-color: #fff;
+        padding: 6px;
+        width: 100%;
+        z-index: 1001;
+    }
+
+    .value-list li:hover .submenus {
+        display: block;
+    }
+
+    .submenus li {
+        padding: 4px 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: black;
+    }
+
+    .submenus li:hover {
+        background-color: #f0f0f0;
+        color: #E35D20;
+    }
+
+   
+
+    .theme-btn-one {
+        color: #fff;
+       
+        cursor: pointer;
+       
+       
+        text-align: center;
+        margin-top: -10px;
+      
+    }
+.vertical-divider{
+    display: none;
+}
+}
+
+                                   
+                            </style>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+<style>
+.price-container,
+.property-container,
+.location-list-container,
+.mortgage-container,
+.additional-filters-container,
+.surface-container {
+     padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+    margin-left: -10px;
+    z-index: 2;
+    display: none;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.main-amenities-container {
+    height: 300px;
+    overflow-y: auto;   /* Enables vertical scrolling */
+    overflow-x: hidden; /* Hides any horizontal overflow */
+}
+
+.price-container {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    font-size:14px;
+    gap: 5px;
+}
+
+.price-inputs label {
+    font-weight: 500;
+}
+
+.price-inputs input {
+    padding: 5px 5px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+}
+
+.location-list-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    width:345px;
+    margin-left: -10px;
+    margin-top:56px;
+     z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-container {
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    right: 0; 
+    margin-left: -120px;
+}
+.additional-filters-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+    position: sticky;
+    bottom: -12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.additional-filters-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.additional-filters-inputs input,
+.additional-filters-inputs select {
+    padding: 5px;
+    border-radius: 25px;
+    border: 1px solid #aaa9a9;
+    width: 100px;
+    flex: 1;
+}
+
+/* Normal Checkbox Styles for Location Filter */
+.location-checkbox {
+    position: relative;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+.location-checkbox:checked + .location-label {
+    background-color: #e8f4fd;
+    color: #0066cc;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #0066cc;
+    border-color: #0066cc;
+}
+
+/* Chevron for navigation levels */
+.location-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+}
+
+.oval-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.oval-checkbox,
+.oval-radio {
+    position: fixed;   /* 🔥 key fix */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.oval-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.oval-checkbox:checked + .oval-button,
+.oval-radio:checked + .oval-button {
+    background-color: #E35D20;
+    color: white;
+    border-color: #E35D20;
+}
+
+.oval-button:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    background-color: #d35400;
+}
+
+.dropdown-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icons2 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+    z-index: 2038;
+    transition: all 0.3s ease;
+}
+
+.filter-form.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    
+    padding: 15px 0; /* Reduced padding when sticky */
+    animation: slideDown 0.3s ease;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    border: 1px solid #5d5b5b;
+    padding: 10px;
+    border-radius: 20px;
+    width: 1120px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+}
+.filter-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width:5px;
+    position:relative;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    margin-bottom: -5px;
+}
+
+
+
+.input-value {
+    font-size: 14px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #555555;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+#region_search, #city_search {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+/* List Styles */
+.regions-lists {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.region-item {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.city-list {
+    list-style: none;
+    padding-left: 15px;
+    display: none;
+}
+
+.city-list li {
+    cursor: pointer;
+    color: #333;
+}
+
+#back-to-oman,
+#clear-selected-city {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#clear-selected-city {
+    margin-top: 10px;
+}
+
+#back-to-oman:hover {
+    background: #E35D20;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.loading-indicator {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+.price-label, .year-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Navigation Buttons */
+.location-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.back-button, .clear-button {
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.back-button:hover, .clear-button:hover {
+    background-color: #e0e0e0;
+}
+
+.clear-button {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border: none;
+}
+
+/* Search Inputs */
+.search-container input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: -10px;
+    box-sizing: border-box;
+}
+
+/* Lists Container */
+.location-lists {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.location-lists ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.location-option {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+/* Normal checkbox styling */
+.location-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.location-checkbox + .location-label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #E35D20;
+    border-color: #E35D20;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+}
+
+.location-checkbox:checked + .location-label {
+    color: #E35D20;
+    font-weight: 500;
+}
+
+/* Fallback for native checkboxes */
+input[type="checkbox"]:checked {
+    accent-color: #E35D20;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+/* Miscellaneous */
+.loading {
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.empty {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    padding: 10px;
+    text-align: center;
+    color: red;
+}
+
+.location-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.location-lists {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.location-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.location-item {
+  cursor: pointer;
+}
+
+.location-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.hidden-checkbox:checked + .oval-button {
+  background-color: #E35D20;
+  color: white;
+  border-color: #E35D20;
+}
+
+.select-all-container {
+  padding: 5px 15px;
+  margin-bottom: 5px;
+}
+
+.location-list-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.location-item {
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.nested-list {
+  margin-left: 20px;
+  padding-left: 10px;
+  display: none;
+}
+
+.label-item {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 3px 0;
+}
+
+.nested-label {
+  display: block;
+  background-color: #f0f0f0;
+  text-transform: uppercase; 
+  padding: 3px 8px;
+  margin: 5px 0 3px 5px;
+  border-radius: 4px;
+}
+
+#select-all-governates + label {
+  background: none;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+.all {
+    margin-left: 7px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+</style>
+
+
+<div class="auto-container">
+    <div class="row clearfix">
+        <form action="{% url 'cafe' %}" method="GET" autocomplete="off">
+            <div class="filter-form">
+                <div class="filter-box">
+<!-- Location Filter Trigger -->
+<div class="filter-item" id="toggle-location-filter">
+  <label for="location" class="mx-3">Location</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" name="location" id="selected-location" class="input-value" style="margin-left:15px;" placeholder="Select Location" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Location Dropdown -->
+<div id="location-list-container" class="location-list-container" style="display:none;">
+  <!-- Search Box -->
+  <div class="location-search-container">
+    <input type="text" id="location-search" placeholder="Search for governate, district, or city..." class="location-search-input">
+    <i class="fas fa-search location-search-icon"></i>
+  </div>
+  
+  <ul id="location-list">
+    <!-- Governate label with background -->
+    <li class="label-item governate-label">GOVERNORATE</li>
+    <!-- All checkbox without background -->
+    <li class="all">
+      <input type="checkbox" id="select-all-governates">
+      <label for="select-all-governates">All</label>
+    </li>
+
+    {% for governate in governates %}
+    <li class="location-item" data-id="{{ governate.id }}" data-type="governate" data-name="{{ governate.name|lower }}">
+      <div class="location-item-header">
+        <input type="checkbox" name="governate" value="{{ governate.id }}">
+        <label>{{ governate.name }}</label>
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+      </div>
+      <ul class="nested-list"></ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+   <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-location-filter">Clear</button>
+  </div>
+</div>
+
+<style>
+.location-search-container {
+  position: relative;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-search-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.location-search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.district-dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.district-dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Search related styles */
+.search-hidden {
+  display: none !important;
+}
+
+.location-item, .nested-label, .label-item, .all {
+  transition: all 0.3s ease;
+}
+
+.nested-list {
+  transition: all 0.3s ease;
+}
+
+.loading-nested {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.search-highlight {
+  background-color: #fff3cd;
+  font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleLocation = document.getElementById('toggle-location-filter');
+  const locationContainer = document.getElementById('location-list-container');
+  const locationList = document.getElementById('location-list');
+  const selectAllGov = document.getElementById('select-all-governates');
+  const clearBtn = document.getElementById('clear-location-filter');
+  const selectedInput = document.getElementById('selected-location');
+  const locationSearch = document.getElementById('location-search');
+
+  // Store fetched data to avoid duplicate API calls
+  const fetchedDistricts = new Map();
+  const fetchedCities = new Map();
+
+  // Toggle dropdown
+  toggleLocation.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const wasVisible = locationContainer.style.display === 'block';
+    closeAllFilterContainers();
+    locationContainer.style.display = wasVisible ? 'none' : 'block';
+    
+    // Focus on search when dropdown opens
+    if (locationContainer.style.display === 'block') {
+      setTimeout(() => {
+        locationSearch.focus();
+        locationSearch.select();
+      }, 100);
+    }
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#location-list-container') && !e.target.closest('#toggle-location-filter')) {
+      locationContainer.style.display = 'none';
+    }
+  });
+
+  // Search functionality - SIMPLIFIED and WORKING version
+  locationSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    performSearch(searchTerm);
+  });
+
+  // Main search function
+  async function performSearch(searchTerm) {
+    const allItems = locationList.querySelectorAll('.location-item, .nested-label, .label-item, .all');
+    
+    if (!searchTerm) {
+      // Reset everything when search is cleared
+      allItems.forEach(item => {
+        item.classList.remove('search-hidden');
+        // Reset expanded state for non-user-expanded items
+        if (item.classList.contains('location-item') && !item.classList.contains('user-expanded')) {
+          const nestedList = item.querySelector('.nested-list');
+          const arrow = item.querySelector('.dropdown-arrow, .district-dropdown-arrow');
+          if (nestedList && nestedList.children.length > 0) {
+            nestedList.style.display = 'none';
+            if (arrow) arrow.classList.remove('rotated');
+          }
+        }
+      });
+      return;
+    }
+
+    // First hide everything
+    allItems.forEach(item => {
+      item.classList.add('search-hidden');
+    });
+
+    const governateItems = locationList.querySelectorAll('.location-item[data-type="governate"]');
+
+for (const governateItem of governateItems) {
+  const governateName = governateItem.querySelector('label').textContent.toLowerCase();
+
+  // 🔹 Always load districts first
+  await expandAndLoadGovernate(governateItem, searchTerm);
+
+  // 🔹 Now check district & city matches
+  const hasMatch =
+    governateName.includes(searchTerm) ||
+    await checkDistrictsForMatch(governateItem, searchTerm);
+
+  if (hasMatch) {
+    governateItem.classList.remove('search-hidden');
+  } else {
+    governateItem.classList.add('search-hidden');
+  }
+}
+
+
+    // Show labels if any items are visible
+    const visibleItems = locationList.querySelectorAll('.location-item:not(.search-hidden)');
+    if (visibleItems.length > 0) {
+      document.querySelectorAll('.label-item, .all').forEach(label => {
+        label.classList.remove('search-hidden');
+      });
+    }
+  }
+
+  // Expand and load governate data
+  async function expandAndLoadGovernate(governateItem, searchTerm) {
+    const nestedList = governateItem.querySelector('.nested-list');
+    const arrow = governateItem.querySelector('.dropdown-arrow');
+    
+    // Ensure districts are loaded
+    if (nestedList.children.length === 0) {
+      const governateId = governateItem.dataset.id;
+      await fetchDistricts(governateId, nestedList, searchTerm);
+    }
+    
+    // Expand the governate
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+    if (arrow) arrow.classList.add('rotated');
+    
+    // Apply search to loaded districts
+    if (searchTerm) {
+      const districtItems = nestedList.querySelectorAll('.location-item[data-type="district"]');
+      districtItems.forEach(districtItem => {
+        const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+        if (districtName.includes(searchTerm)) {
+          districtItem.classList.remove('search-hidden');
+        } else {
+          districtItem.classList.add('search-hidden');
+        }
+      });
+    }
+  }
+async function checkDistrictsForMatch(governateItem, searchTerm) {
+  const nestedList = governateItem.querySelector('.nested-list');
+  const districts = nestedList.querySelectorAll('.location-item[data-type="district"]');
+  let hasMatch = false;
+
+  for (const districtItem of districts) {
+    const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+    const districtNested = districtItem.querySelector('.nested-list');
+    const arrow = districtItem.querySelector('.district-dropdown-arrow');
+
+    // Always load cities
+    if (districtNested.children.length === 0) {
+      await fetchCities(districtItem.dataset.id, districtNested);
+    }
+
+    const cityMatched = await checkCitiesForMatch(districtItem, searchTerm);
+
+    if (districtName.includes(searchTerm) || cityMatched) {
+      districtItem.classList.remove('search-hidden');
+
+      // ✅ FORCE EXPAND DISTRICT
+      districtNested.style.display = 'block';
+      districtNested.classList.add('expanded');
+      if (arrow) arrow.classList.add('rotated');
+
+      hasMatch = true;
+    } else {
+      districtItem.classList.add('search-hidden');
+    }
+  }
+
+  return hasMatch;
+}
+async function checkCitiesForMatch(districtItem, searchTerm) {
+  const nestedList = districtItem.querySelector('.nested-list');
+  const cities = nestedList.querySelectorAll('.location-item[data-type="city"]');
+  let hasMatch = false;
+
+  cities.forEach(cityItem => {
+    const cityName = cityItem.querySelector('label').textContent.toLowerCase();
+
+    if (cityName.includes(searchTerm)) {
+      cityItem.classList.remove('search-hidden');
+      hasMatch = true;
+    } else {
+      cityItem.classList.add('search-hidden');
+    }
+  });
+
+  // ✅ FORCE SHOW city container
+  if (hasMatch) {
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+  }
+
+  return hasMatch;
+}
+
+
+  // Enhanced fetchDistricts with caching
+  function fetchDistricts(governateId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedDistricts.has(governateId)) {
+      const districts = fetchedDistricts.get(governateId);
+      renderDistricts(districts, nestedContainer, searchTerm);
+      return Promise.resolve(districts);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading districts...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-districts/?governate_id=${governateId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedDistricts.set(governateId, data.districts);
+      renderDistricts(data.districts, nestedContainer, searchTerm);
+      return data.districts;
+    })
+    .catch(error => {
+      console.error('Error fetching districts:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading districts</div>';
+    });
+  }
+
+  function renderDistricts(districts, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">WILAYATS(DISTRICTS)</div>
+      ${districts.map(d => `
+        <li class="location-item" data-id="${d.id}" data-type="district" data-name="${d.name.toLowerCase()}">
+          <div class="district-item-header">
+            <input type="checkbox" name="district" value="${d.id}" data-governate="${d.governate_id || ''}">
+            <label>${d.name}</label>
+            <i class="fas fa-chevron-down district-dropdown-arrow"></i>
+          </div>
+          <ul class="nested-list"></ul>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Enhanced fetchCities with caching
+  function fetchCities(districtId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedCities.has(districtId)) {
+      const cities = fetchedCities.get(districtId);
+      renderCities(cities, nestedContainer, searchTerm);
+      return Promise.resolve(cities);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading cities...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-cities/?district_id=${districtId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedCities.set(districtId, data.cities);
+      renderCities(data.cities, nestedContainer, searchTerm);
+      return data.cities;
+    })
+    .catch(error => {
+      console.error('Error fetching cities:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading cities</div>';
+    });
+  }
+
+  function renderCities(cities, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">CITIES</div>
+      ${cities.map(c => `
+        <li class="location-item city-item" data-id="${c.id}" data-type="city" data-name="${c.name.toLowerCase()}">
+          <input type="checkbox" name="city" value="${c.id}" data-district="${c.district_id || ''}">
+          <label>${c.name}</label>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Toggle governate dropdown with user-expanded marker
+  locationList.addEventListener('click', function(e) {
+    const arrow = e.target.closest('.dropdown-arrow');
+    const districtArrow = e.target.closest('.district-dropdown-arrow');
+    
+    if (arrow) {
+      e.stopPropagation();
+      const header = arrow.closest('.location-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        arrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch districts
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="governate"]');
+          if (checkbox) {
+            fetchDistricts(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          arrow.classList.add('rotated');
+        }
+      }
+    }
+    
+    if (districtArrow) {
+      e.stopPropagation();
+      const header = districtArrow.closest('.district-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        districtArrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch cities
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="district"]');
+          if (checkbox) {
+            fetchCities(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          districtArrow.classList.add('rotated');
+        }
+      }
+    }
+  });
+
+  // Handle checkbox changes
+  locationList.addEventListener('change', function(e) {
+    const checkbox = e.target;
+    const li = checkbox.closest('li');
+    if (!li) return;
+
+    if (checkbox.id === 'select-all-governates') {
+      handleSelectAllGovernates(checkbox.checked);
+    } 
+    else if (li.dataset.type === 'governate') {
+      handleGovernateChange(checkbox);
+    }
+    else if (li.dataset.type === 'district') {
+      handleDistrictChange(checkbox);
+    }
+    else if (li.dataset.type === 'city') {
+      updateSelectedLocation();
+      updateURL();
+    }
+
+    updateSelectAllState();
+  });
+
+  // Handle Select All Governates
+  function handleSelectAllGovernates(isChecked) {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    
+    allGovCheckboxes.forEach(cb => {
+      cb.checked = isChecked;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      
+      if (isChecked) {
+        // Expand and load districts for this governate
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.add('rotated');
+        }
+        li.classList.add('user-expanded');
+        fetchDistricts(cb.value, nested);
+      } else {
+        // Clear all nested content and collapse
+        clearNestedContent(nested);
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.remove('rotated');
+        }
+        li.classList.remove('user-expanded');
+      }
+    });
+
+    // If selecting all, also automatically select all districts and cities
+    if (isChecked) {
+      // Wait for districts to load, then select all districts and cities
+      setTimeout(() => {
+        selectAllDistrictsAndCities();
+      }, 500);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual governate change
+  function handleGovernateChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load districts
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchDistricts(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child districts and cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual district change
+  function handleDistrictChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.district-dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load cities
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Select all districts and cities (for "All" functionality)
+  function selectAllDistrictsAndCities() {
+    const districtCheckboxes = locationList.querySelectorAll('input[name="district"]');
+    districtCheckboxes.forEach(cb => {
+      cb.checked = true;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      const arrow = li.querySelector('.district-dropdown-arrow');
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(cb.value, nested);
+    });
+
+    // Wait for cities to load, then select all cities
+    setTimeout(() => {
+      const cityCheckboxes = locationList.querySelectorAll('input[name="city"]');
+      cityCheckboxes.forEach(cb => cb.checked = true);
+      updateSelectedLocation();
+      updateURL();
+    }, 1000);
+  }
+
+  // Clear nested content
+  function clearNestedContent(container) {
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      container.classList.remove('expanded');
+    }
+  }
+
+  // Update Select All state
+  function updateSelectAllState() {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    const checkedGovCheckboxes = locationList.querySelectorAll('input[name="governate"]:checked');
+    
+    selectAllGov.checked = allGovCheckboxes.length > 0 && allGovCheckboxes.length === checkedGovCheckboxes.length;
+    selectAllGov.indeterminate = checkedGovCheckboxes.length > 0 && checkedGovCheckboxes.length < allGovCheckboxes.length;
+  }
+
+  // Clear button
+  clearBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    locationList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.indeterminate = false;
+    });
+    locationList.querySelectorAll('ul.nested-list').forEach(u => { 
+      u.innerHTML = ''; 
+      u.style.display = 'none';
+      u.classList.remove('expanded');
+    });
+    // Reset all arrows and user-expanded markers
+    locationList.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+      arrow.classList.remove('rotated');
+    });
+    locationList.querySelectorAll('.user-expanded').forEach(item => {
+      item.classList.remove('user-expanded');
+    });
+    locationList.querySelectorAll('.search-hidden').forEach(item => {
+      item.classList.remove('search-hidden');
+    });
+    selectedInput.value = "Select Location";
+    locationSearch.value = ''; // Clear search
+    updateURL();
+    locationContainer.style.display = 'none';
+  });
+
+  function updateSelectedLocation() {
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+    
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+    
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.nextElementSibling.textContent);
+
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+
+    selectedInput.value = text || "Select Location";
+  }
+function updateURL() {
+    // FIXED: Get CURRENT URL parameters to preserve ALL existing filters
+    const currentParams = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
+    
+    // Copy ALL existing parameters except location ones
+    for (const [key, value] of currentParams) {
+        if (!['governate', 'district', 'city'].includes(key)) {
+            params.append(key, value);
+        }
+    }
+    
+    // Get selected governates
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.value);
+    selectedGovs.forEach(gov => params.append('governate', gov));
+    
+    // Get selected districts
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.value);
+    selectedDistricts.forEach(dist => params.append('district', dist));
+    
+    // Get selected cities
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.value);
+    selectedCities.forEach(city => params.append('city', city));
+
+    window.history.replaceState(null, '', '?' + params.toString());
+
+    // Refresh the results - FIXED: Use the proper URL with all parameters
+    const container = document.getElementById('cafe-list-container');
+    if (container) {
+        container.innerHTML = '<div class="loading">Loading...</div>';
+        fetch(`{% url 'cafe' %}?${params.toString()}`, { 
+            headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+        })
+        .then(r => r.text())
+        .then(html => { 
+            container.innerHTML = html; 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results</div>';
+        });
+    }
+}
+
+  // Initialize selected location from URL params
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Set governates
+    const govParams = urlParams.getAll('governate');
+    govParams.forEach(govId => {
+      const govCheckbox = locationList.querySelector(`input[name="governate"][value="${govId}"]`);
+      if (govCheckbox) {
+        govCheckbox.checked = true;
+        handleGovernateChange(govCheckbox);
+      }
+    });
+    
+    // Set districts
+    const districtParams = urlParams.getAll('district');
+    districtParams.forEach(distId => {
+      const distCheckbox = locationList.querySelector(`input[name="district"][value="${distId}"]`);
+      if (distCheckbox) {
+        distCheckbox.checked = true;
+        handleDistrictChange(distCheckbox);
+      }
+    });
+    
+    // Set cities
+    const cityParams = urlParams.getAll('city');
+    cityParams.forEach(cityId => {
+      const cityCheckbox = locationList.querySelector(`input[name="city"][value="${cityId}"]`);
+      if (cityCheckbox) {
+        cityCheckbox.checked = true;
+      }
+    });
+
+    updateSelectedLocation();
+    updateSelectAllState();
+  }
+
+ 
+
+  // Initialize from URL on page load
+  initializeFromURL();
+});
+</script>
+<div class="filter-item" id="toggle-surface">
+  <label for="surface-range">Surface Area</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-surface" class="input-value" placeholder="Select Surface Area" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="surface-container" id="surface-container" style="display: none;">
+  <div class="price-inputs">
+    <label>From</label>
+    <input type="number" id="surface_area_from" placeholder="Min Area (Sqm)">
+    <label>To</label>
+    <input type="number" id="surface_area_to" placeholder="Max Area (Sqm)">
+  </div>
+  <hr>
+  <button type="button" class="btn-apply" id="apply-surface-filter">Apply</button>
+  <button type="button" class="btn-apply" id="clear-surface-filter">Clear</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // --- Toggle Surface Area dropdown
+  document.getElementById('toggle-surface').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const container = document.getElementById('surface-container');
+    const wasVisible = container.style.display === 'block';
+    closeAllFilterContainers();
+    if (!wasVisible) {
+      const rect = this.getBoundingClientRect();
+      
+      container.style.left = `${rect.left + window.scrollX}px`;
+      container.style.display = 'block';
+    }
+  });
+
+  // --- Apply Surface Filter
+  document.getElementById('apply-surface-filter').addEventListener('click', function () {
+    const surfaceFromVal = document.getElementById('surface_area_from').value;
+    const surfaceToVal = document.getElementById('surface_area_to').value;
+
+    // Check if both fields are empty
+    if (!surfaceFromVal && !surfaceToVal) {
+      alert("⚠️ Please enter both From and To values for Surface Area filter.");
+      return;
+    }
+
+    // Check if only one field is filled
+    if ((surfaceFromVal && !surfaceToVal) || (!surfaceFromVal && surfaceToVal)) {
+      alert("⚠️ Both From and To values are required for Surface Area filter.");
+      return;
+    }
+
+    const surfaceFrom = parseFloat(surfaceFromVal);
+    const surfaceTo = parseFloat(surfaceToVal);
+
+    // Check if From is less than To
+    if (surfaceFrom >= surfaceTo) {
+      alert("⚠️ From value must be less than To value.");
+      return;
+    }
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('surface_area_from', surfaceFromVal);
+    queryParams.set('surface_area_to', surfaceToVal);
+
+    // Update input display
+    const selectedSurfaceText = `${surfaceFromVal} - ${surfaceToVal} sqm`;
+    document.getElementById('selected-surface').value = selectedSurfaceText;
+
+    // --- Fetch filtered cafe results
+    fetchFilteredcafe(queryParams);
+
+    document.getElementById('surface-container').style.display = 'none';
+  });
+
+  // --- Clear Filter
+  document.getElementById('clear-surface-filter').addEventListener('click', function () {
+    document.getElementById('surface_area_from').value = '';
+    document.getElementById('surface_area_to').value = '';
+    document.getElementById('selected-surface').value = "Select Surface Area";
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('surface_area_from');
+    queryParams.delete('surface_area_to');
+
+    fetchFilteredcafe(queryParams);
+    document.getElementById('surface-container').style.display = 'none';
+  });
+
+  // --- Prevent closing when clicking inside container
+  document.getElementById('surface-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  // --- Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#surface-container') && !e.target.closest('#toggle-surface')) {
+      closeAllFilterContainers();
+    }
+  });
+
+  // --- Initialize values from URL
+  const params = new URLSearchParams(window.location.search);
+  const fromVal = params.get('surface_area_from');
+  const toVal = params.get('surface_area_to');
+  if (fromVal && toVal) {
+    document.getElementById('surface_area_from').value = fromVal;
+    document.getElementById('surface_area_to').value = toVal;
+    document.getElementById('selected-surface').value = `${fromVal} - ${toVal} sqm`;
+  }
+});
+
+// --- Global fetch function for AJAX filter
+function fetchFilteredcafe(queryParams) {
+  const container = document.getElementById('cafe-list-container'); // Adjust this to your container ID
+  if (!container) {
+    console.error('List container not found');
+    return;
+  }
+
+  container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+  fetch(`{% url 'cafe' %}?${queryParams.toString()}`, {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.text();
+  })
+  .then(html => {
+    container.innerHTML = html;
+    window.history.replaceState(null, '', `?${queryParams.toString()}`);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+  });
+}
+</script>
+<!-- Property Status Filter Toggle -->
+<div class="filter-item" id="toggle-property">
+  <label for="property">Property Status</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-property" class="input-value" placeholder="Select Property Status" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Property Status Filter Container -->
+<div class="property-container" id="property-container" style="display: none;">
+  <div class="oval-button-group">
+    <div class="checkbox-row">
+      <input type="radio" name="property" id="property_complete" value="complete" class="oval-radio">
+      <label for="property_complete" class="oval-button">Ready to Occupy</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" name="property" id="property_under_construction" value="under_construction" class="oval-radio">
+      <label for="property_under_construction" class="oval-button">Under Construction</label>
+    </div>
+  </div>
+  <div class="additional-filters-footer mt-3">
+    <button type="button" class="btn-apply" id="clear-property-filter">Clear</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown
+    document.getElementById('toggle-property').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('property-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Handle selection toggle
+    document.querySelectorAll('input[name="property"]').forEach(radio => {
+        radio.addEventListener('click', function() {
+            if (this.dataset.waschecked === 'true') {
+                this.checked = false;
+                this.dataset.waschecked = 'false';
+                clearPropertyFilter();
+            } else {
+                document.querySelectorAll('input[name="property"]').forEach(r => r.dataset.waschecked = 'false');
+                this.dataset.waschecked = 'true';
+                updatePropertyFilter();
+            }
+            document.getElementById('property-container').style.display = 'none';
+        });
+    });
+
+    // Clear button
+    document.getElementById('clear-property-filter').addEventListener('click', clearPropertyFilter);
+
+    // Initialize from URL
+    initPropertyFilterFromURL();
+});
+
+// ✅ Update filter + URL
+function updatePropertyFilter() {
+    const selected = document.querySelector('input[name="property"]:checked');
+    const displayText = selected ? 
+        (selected.value === 'complete' ? 'Ready to Occupy' : 'Under Construction') : 
+        'Select Property Status';
+    document.getElementById('selected-property').value = displayText;
+
+    const params = new URLSearchParams(window.location.search);
+    if (selected) {
+        params.set('property', selected.value);
+    } else {
+        params.delete('property');
+    }
+    updatecafeFilters(params);
+}
+
+// ✅ Clear selection
+function clearPropertyFilter() {
+    document.querySelectorAll('input[name="property"]').forEach(radio => {
+        radio.checked = false;
+        radio.dataset.waschecked = 'false';
+    });
+    document.getElementById('selected-property').value = 'Select Property Status';
+    const params = new URLSearchParams(window.location.search);
+    params.delete('property');
+    updatecafeFilters(params);
+    document.getElementById('property-container').style.display = 'none';
+}
+
+// ✅ Load from URL (keep state)
+function initPropertyFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const propertyParam = params.get('property');
+    if (propertyParam) {
+        const radio = document.querySelector(`input[name="property"][value="${propertyParam}"]`);
+        if (radio) {
+            radio.checked = true;
+            radio.dataset.waschecked = 'true';
+        }
+        document.getElementById('selected-property').value =
+            propertyParam === 'complete' ? 'Complete' : 'Under Construction';
+    }
+}
+
+// ✅ AJAX refresh
+function updatecafeFilters(params) {
+    const container = document.getElementById('cafe-list-container');
+    if (!container) return;
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    fetch(`{% url 'cafe' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(() => container.innerHTML = '<div class="error-message">Error loading results</div>');
+}
+
+
+// ✅ Close on outside click
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#property-container') && !e.target.closest('#toggle-property')) {
+        document.getElementById('property-container').style.display = 'none';
+    }
+});
+</script>
+
+<!-- Mortgage Filter Toggle -->
+<div class="filter-item" id="toggle-mortgage">
+  <label for="property_mortgage">Mortgage</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-mortgage" class="input-value" placeholder="Select Mortgage Type" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Mortgage Filter Container -->
+<div class="mortgage-container" id="mortgage-container" style="display: none;">
+  <div class="oval-button-group">
+    <div class="checkbox-row">
+      <input type="radio" name="property_mortgage" id="mortgage_yes" value="yes" class="oval-radio">
+      <label for="mortgage_yes" class="oval-button">Yes</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" name="property_mortgage" id="mortgage_no" value="no" class="oval-radio">
+      <label for="mortgage_no" class="oval-button">No</label>
+    </div>
+  </div>
+  <div class="additional-filters-footer mt-3">
+    <button type="button" class="btn-apply" id="clear-mortgage-filter">Clear</button>
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle Mortgage Filter Container
+    document.getElementById('toggle-mortgage').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('mortgage-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Handle radio selection (toggleable)
+    document.querySelectorAll('input[name="property_mortgage"]').forEach(radio => {
+        radio.addEventListener('click', function(e) {
+            // 👇 If already selected, unselect (toggle off)
+            if (this.dataset.waschecked === 'true') {
+                this.checked = false;
+                this.dataset.waschecked = 'false';
+                clearMortgageFilter(); // remove filter
+            } else {
+                document.querySelectorAll('input[name="property_mortgage"]').forEach(r => r.dataset.waschecked = 'false');
+                this.dataset.waschecked = 'true';
+                updateMortgageFilter();
+            }
+            // Close dropdown after selection
+            document.getElementById('mortgage-container').style.display = 'none';
+        });
+    });
+
+    // Clear button
+    document.getElementById('clear-mortgage-filter').addEventListener('click', clearMortgageFilter);
+
+    // Initialize from URL
+    initMortgageFilterFromURL();
+});
+
+// ✅ Update filter display + URL
+function updateMortgageFilter() {
+    const selected = document.querySelector('input[name="property_mortgage"]:checked');
+    const displayText = selected ? (selected.value === 'yes' ? 'Yes' : 'No') : 'Select Mortgage Type';
+    document.getElementById('selected-mortgage').value = displayText;
+
+    const params = new URLSearchParams(window.location.search);
+    if (selected) {
+        params.set('property_mortgage', selected.value);
+    } else {
+        params.delete('property_mortgage');
+    }
+    updatecafeFilters(params);
+}
+
+// ✅ Clear selected Mortgage option
+function clearMortgageFilter() {
+    document.querySelectorAll('input[name="property_mortgage"]').forEach(radio => {
+        radio.checked = false;
+        radio.dataset.waschecked = 'false';
+    });
+    document.getElementById('selected-mortgage').value = 'Select Mortgage Type';
+    const params = new URLSearchParams(window.location.search);
+    params.delete('property_mortgage');
+    updatecafeFilters(params);
+    document.getElementById('mortgage-container').style.display = 'none';
+}
+
+// ✅ Initialize from URL params
+function initMortgageFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const mortgageParam = params.get('property_mortgage');
+    if (mortgageParam) {
+        const radio = document.querySelector(`input[name="property_mortgage"][value="${mortgageParam}"]`);
+        if (radio) {
+            radio.checked = true;
+            radio.dataset.waschecked = 'true';
+        }
+        document.getElementById('selected-mortgage').value = mortgageParam === 'yes' ? 'Yes' : 'No';
+    }
+}
+
+// ✅ AJAX update (same as other filters)
+function updatecafeFilters(params) {
+    const container = document.getElementById('cafe-list-container');
+    if (!container) return;
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    fetch(`{% url 'cafe' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
+    })
+    .then(response => response.text())
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(() => container.innerHTML = '<div class="error-message">Error loading results</div>');
+}
+
+
+
+// ✅ Close when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#mortgage-container') && !e.target.closest('#toggle-mortgage')) {
+        document.getElementById('mortgage-container').style.display = 'none';
+    }
+});
+</script>
+<div class="filter-item" id="toggle-price">
+  <label for="price-range">Price Range</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-price" class="input-value" placeholder="Select Price Range" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="price-container" id="price-container" style="display: none;">
+  <div class="price-inputs">
+    <label>From</label>
+    <input type="number" id="price_from" placeholder="Min Price">
+    <label>To</label>
+    <input type="number" id="price_to" placeholder="Max Price">
+  </div>
+  <hr>
+  <button type="button" class="btn-apply" id="apply-price-filter">Apply</button>
+  <button type="button" class="btn-apply" id="clear-price-filter">Clear</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+
+  // ✅ Toggle dropdown
+  document.getElementById('toggle-price').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const container = document.getElementById('price-container');
+    const wasVisible = container.style.display === 'block';
+    closeAllFilterContainers();
+    if (!wasVisible) {
+      const rect = this.getBoundingClientRect();
+      
+      container.style.left = `${rect.left + window.scrollX}px`;
+      container.style.display = 'block';
+    }
+  });
+
+
+  // ✅ Apply Price Filter
+  document.getElementById('apply-price-filter').addEventListener('click', function () {
+    const priceFromVal = document.getElementById('price_from').value.trim();
+    const priceToVal = document.getElementById('price_to').value.trim();
+
+    // Check if both fields are filled
+    if (!priceFromVal || !priceToVal) {
+      alert("⚠️ Please fill both Minimum and Maximum price fields.");
+      return;
+    }
+
+    const priceFrom = parseInt(priceFromVal);
+    const priceTo = parseInt(priceToVal);
+
+    // Validate numeric values
+    if (isNaN(priceFrom) || isNaN(priceTo)) {
+      alert("⚠️ Please enter valid numbers for both price fields.");
+      return;
+    }
+
+    // Validate price range
+    if (priceFrom > priceTo) {
+      alert("⚠️ Minimum price cannot be greater than Maximum price.");
+      return;
+    }
+
+    // Ensure minimum price is not negative
+    if (priceFrom < 0 || priceTo < 0) {
+      alert("⚠️ Price cannot be negative.");
+      return;
+    }
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('price_from', priceFrom);
+    queryParams.set('price_to', priceTo);
+
+    // Update input display
+    document.getElementById('selected-price').value = `${priceFrom} - ${priceTo}`;
+
+    // ✅ Fetch filtered results
+    fetchFilteredcafe(queryParams);
+
+    document.getElementById('price-container').style.display = 'none';
+  });
+
+  // ✅ Clear Filter
+  document.getElementById('clear-price-filter').addEventListener('click', function () {
+    document.getElementById('price_from').value = '';
+    document.getElementById('price_to').value = '';
+    document.getElementById('selected-price').value = "Select Price Range";
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('price_from');
+    queryParams.delete('price_to');
+
+    fetchFilteredcafe(queryParams);
+
+    document.getElementById('price-container').style.display = 'none';
+  });
+
+  // ✅ Prevent clicks inside the price container from closing it
+  document.getElementById('price-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  // ✅ Close dropdown when clicking outside (but not inside the container)
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#price-container') && !e.target.closest('#toggle-price')) {
+      closeAllFilterContainers();
+    }
+  });
+
+  // ✅ Initialize values from URL (when page reloads)
+  const params = new URLSearchParams(window.location.search);
+  const fromVal = params.get('price_from');
+  const toVal = params.get('price_to');
+  if (fromVal) document.getElementById('price_from').value = fromVal;
+  if (toVal) document.getElementById('price_to').value = toVal;
+  if (fromVal && toVal) {
+    document.getElementById('selected-price').value = `${fromVal} - ${toVal}`;
+  } else if (fromVal || toVal) {
+    // If only one value exists in URL, clear it for consistency
+    document.getElementById('selected-price').value = "Select Price Range";
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('price_from');
+    queryParams.delete('price_to');
+    window.history.replaceState(null, '', `?${queryParams.toString()}`);
+  }
+});
+
+// Make sure this function is defined globally
+function fetchFilteredcafe(queryParams) {
+    const container = document.getElementById('cafe-list-container'); // Adjust this ID to match your container
+    if (!container) {
+        console.error('List container not found');
+        return;
+    }
+    
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    fetch(`{% url 'cafe' %}?${queryParams.toString()}`, { // Adjust URL to your endpoint
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', `?${queryParams.toString()}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+    });
+}
+</script>
+<!-- Additional Filters Container -->
+<div class="filter-item" id="toggle-additional-filters">
+    <label for="additional_filters">Additional Filters</label>
+    <i class="fas fa-chevron-down dropdown-icons2"></i>
+    <input type="text" id="selected-additional-filters" class="input-value" placeholder="Select Filters" readonly>
+</div>
+<div class="additional-filters-container" id="additional-filters-container" style="display: none;">
+    <div class="additional-filters-inputs">
+        
+        {% if request.GET.listing_type == "rent" %}
+            <!-- Rental Period (Checkbox Buttons) -->
+            <label>Rental Period</label>
+            <div class="oval-button-group">
+                <input type="checkbox" name="rental_period" id="rental_daily" value="daily" class="oval-checkbox">
+                <label for="rental_daily" class="oval-button">Daily</label>
+                
+                <input type="checkbox" name="rental_period" id="rental_weekly" value="weekly" class="oval-checkbox">
+                <label for="rental_weekly" class="oval-button">Weekly</label>
+                
+                <input type="checkbox" name="rental_period" id="rental_monthly" value="monthly" class="oval-checkbox">
+                <label for="rental_monthly" class="oval-button">Monthly</label>
+                
+                <input type="checkbox" name="rental_period" id="rental_yearly" value="yearly" class="oval-checkbox">
+                <label for="rental_yearly" class="oval-button">Yearly</label>
+            </div>
+        {% else %}
+            <label>Payment Method</label>
+            <div class="oval-button-group">
+                <input type="radio" name="payment_method" id="payment_method_cash" value="cash" class="oval-radio">
+                <label for="payment_method_cash" class="oval-button">Cash</label>
+                
+                <input type="radio" name="payment_method" id="payment_method_installments" value="installments" class="oval-radio">
+                <label for="payment_method_installments" class="oval-button">Installments</label>
+            </div>
+        {% endif %}
+
+        <label>Lister Type</label>
+        <div class="oval-button-group">
+            <input type="radio" name="lister_type" id="lister_agent" value="agent" class="oval-radio">
+            <label for="lister_agent" class="oval-button">Agent</label>
+            
+            <input type="radio" name="lister_type" id="lister_landlord" value="landlord" class="oval-radio">
+            <label for="lister_landlord" class="oval-button">Landlord</label>
+        </div>
+
+        
+        <!-- Main Amenities (Checkbox Buttons) -->
+        <label>Main Amenities</label>
+        <div class="oval-button-group">
+            {% for amenity in main_amenities_list %}
+            <input type="checkbox" name="main_amenity" id="amenity_{{ amenity.id }}" value="{{ amenity.name }}" class="oval-checkbox">
+            <label for="amenity_{{ amenity.id }}" class="oval-button">{{ amenity.name }}</label>
+            {% endfor %}
+        </div>
+        
+        <!-- Additional Amenities (Checkbox Buttons) -->
+        <label>Additional Amenities</label>
+        <div class="oval-button-group">
+            {% for amenity in additional_amenities_list %}
+            <input type="checkbox" name="additional_amenity" id="additional_amenity_{{ amenity.id }}" value="{{ amenity.name }}" class="oval-checkbox">
+            <label for="additional_amenity_{{ amenity.id }}" class="oval-button">{{ amenity.name }}</label>
+            {% endfor %}
+        </div>
+
+        <!-- Nearby (Checkbox Buttons) -->
+        <label>Nearby</label>
+        <div class="oval-button-group">
+            {% for location in nearby_locations_list %}
+            <input type="checkbox" name="nearby" id="nearby_{{ location.id }}" value="{{ location.name }}" class="oval-checkbox">
+            <label for="nearby_{{ location.id }}" class="oval-button">{{ location.name }}</label>
+            {% endfor %}
+        </div>
+    </div>
+   
+    <div class="additional-filters-footer mt-3">
+        <button type="button" class="btn-apply" id="clear-additional-filters">Clear</button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('toggle-additional-filters').addEventListener('click', function (e) {
+        e.stopPropagation();
+        const container = document.getElementById('additional-filters-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // === CLOSE WHEN CLICKING OUTSIDE ===
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#additional-filters-container') &&
+            !e.target.closest('#toggle-additional-filters')) {
+            document.getElementById('additional-filters-container').style.display = 'none';
+            document.querySelector('.dropdown-icons2')?.classList.remove('rotated');
+        }
+    });
+
+
+    // === TOGGLE-ABLE RADIO BUTTONS ===
+    document.querySelectorAll('.additional-filters-inputs .oval-radio').forEach(radio => {
+        radio.dataset.wasChecked = 'false';
+        radio.addEventListener('click', function() {
+            const group = document.querySelectorAll(`input[name="${this.name}"]`);
+            if (this.checked && this.dataset.wasChecked === 'true') {
+                group.forEach(r => {
+                    r.checked = false;
+                    r.dataset.wasChecked = 'false';
+                });
+            } else {
+                group.forEach(r => {
+                    r.checked = (r === this);
+                    r.dataset.wasChecked = (r === this).toString();
+                });
+            }
+            updateSelectedFiltersDisplay();
+            // Auto-apply when changed
+            updatePropertyResults();
+        });
+    });
+
+    // === CHECKBOX BEHAVIOR ===
+    document.querySelectorAll('.additional-filters-inputs .oval-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            updateSelectedFiltersDisplay();
+            // Auto-apply when changed
+            updatePropertyResults();
+        });
+    });
+
+    // === CLEAR BUTTON ===
+    document.getElementById('clear-additional-filters')?.addEventListener('click', function() {
+        document.querySelectorAll('.additional-filters-inputs input').forEach(el => {
+            el.checked = false;
+            el.dataset.wasChecked = 'false';
+        });
+        
+        const params = new URLSearchParams(window.location.search);
+        [
+            'payment_method', 'rental_period', 'lister_type', 'additional_amenity', 'main_amenity',
+            'nearby'
+        ].forEach(param => params.delete(param));
+
+        window.history.replaceState(null, '', `?${params.toString()}`);
+        updateSelectedFiltersDisplay();
+        updatePropertyResults();
+    });
+
+    // === UPDATE DISPLAY OF SELECTED FILTERS ===
+    function updateSelectedFiltersDisplay() {
+        const selectedFilters = [];
+
+        function addCheckedInputs(selector, labelPrefix) {
+            const checked = Array.from(document.querySelectorAll(selector))
+                .filter(el => el.checked)
+                .map(el => el.nextElementSibling.textContent.trim());
+            if (checked.length) selectedFilters.push(`${labelPrefix}: ${checked.join(', ')}`);
+        }
+
+        // Add all active filters
+        addCheckedInputs('input[name="rental_period"]:checked', 'Rental');
+        addCheckedInputs('input[name="payment_method"]:checked', 'Payment');
+        addCheckedInputs('input[name="lister_type"]:checked', 'Lister');
+        addCheckedInputs('input[name="main_amenity"]:checked', 'Main Amenities');
+        addCheckedInputs('input[name="additional_amenity"]:checked', 'Extra Amenities');
+        addCheckedInputs('input[name="nearby"]:checked', 'Nearby');
+
+        const display = document.getElementById('selected-additional-filters');
+        display.value = selectedFilters.join(' | ');
+        const filterItem = document.getElementById('toggle-additional-filters');
+        if (selectedFilters.length) filterItem.classList.add('active');
+        else filterItem.classList.remove('active');
+    }
+
+    function updatePropertyResults() {
+        const container = document.getElementById('property-list-container') || document.getElementById('cafe-list-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+        const params = new URLSearchParams(window.location.search);
+
+        // --- Only clear params related to this filter section ---
+        const additionalFilterParams = [
+            'payment_method', 'rental_period', 'lister_type',
+            'main_amenity', 'additional_amenity', 'nearby'
+        ];
+        additionalFilterParams.forEach(param => params.delete(param));
+
+        // --- Rebuild URL params for Additional Filters only ---
+        document.querySelectorAll('.additional-filters-inputs input').forEach(el => {
+            const name = el.name;
+
+            if (el.type === 'radio' && el.checked) {
+                params.set(name, el.value);
+            } 
+            else if (el.type === 'checkbox' && el.checked) {
+                params.append(name, el.value);
+            }
+        });
+
+        fetch(`{% url 'cafe' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.ok ? res.text() : Promise.reject(res))
+        .then(html => {
+            container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+        })
+        .catch(() => {
+            container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+        });
+    }
+      
+    // === INITIALIZE STATE FROM URL ===
+    function initializeFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        params.forEach((value, key) => {
+            if (value.includes(',')) {
+                const values = value.split(',');
+                values.forEach(v => {
+                    const el = document.querySelector(`input[name="${key}"][value="${v}"]`);
+                    if (el) {
+                        el.checked = true;
+                        if (el.type === 'radio') el.dataset.wasChecked = 'true';
+                    }
+                });
+            } else {
+                const el = document.querySelector(`input[name="${key}"]`);
+                if (el) {
+                    el.checked = true;
+                    if (el.type === 'radio') el.dataset.wasChecked = 'true';
+                }
+            }
+        });
+        updateSelectedFiltersDisplay();
+    }
+
+    initializeFromURL();
+
+});
+</script>
+<script>
+    function closeAllFilterContainers() {
+        document.getElementById('location-list-container').style.display = 'none';
+        document.getElementById('price-container').style.display = 'none';
+        document.getElementById('additional-filters-container').style.display = 'none';
+        document.getElementById('property-container').style.display = 'none';
+        document.getElementById('mortgage-container').style.display = 'none';
+        document.getElementById('surface-container').style.display = 'none';
+    }
+    
+    document.addEventListener("click", function (event) {
+        var locationContainer = document.getElementById('location-list-container');
+        var priceContainer = document.getElementById('price-container');
+        var additionalFiltersContainer = document.getElementById('additional-filters-container');
+        var propertyContainer = document.getElementById('property-container');
+        var mortgageContainer = document.getElementById('mortgage-container');
+        var surfaceContainer = document.getElementById('surface-container');
+    
+        var locationToggle = document.getElementById('toggle-location-filter');
+        var priceToggle = document.getElementById('toggle-price');
+        var additionalFiltersToggle = document.getElementById('toggle-additional-filters');
+        var propertyToggle = document.getElementById('toggle-property');
+        var mortgageToggle = document.getElementById('toggle-mortgage');
+        var surfaceToggle = document.getElementById('toggle-surface');
+    
+        if (!locationContainer.contains(event.target) && !locationToggle.contains(event.target)) {
+            locationContainer.style.display = 'none';
+        }
+        if (!priceContainer.contains(event.target) && !priceToggle.contains(event.target)) {
+            priceContainer.style.display = 'none';
+        }
+        
+        if (!additionalFiltersContainer.contains(event.target) && !additionalFiltersToggle.contains(event.target)) {
+            additionalFiltersContainer.style.display = 'none';
+        }
+       
+        if (!propertyContainer.contains(event.target) && !propertyToggle.contains(event.target)) {
+            propertyContainer.style.display = 'none';
+        }
+        if (!mortgageContainer.contains(event.target) && !mortgageToggle.contains(event.target)) {
+            mortgageContainer.style.display = 'none';
+        }
+        if (!surfaceContainer.contains(event.target) && !surfaceToggle.contains(event.target)) {
+            surfaceContainer.style.display = 'none';
+        }
+    });
+    
+    // Close all containers when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.filter-item') && 
+            !event.target.closest('#location-list-container') && 
+            !event.target.closest('#price-container') && 
+            
+            !event.target.closest('#additional-filters-container') && 
+            
+            !event.target.closest('#property-container') && 
+            !event.target.closest('#mortgage-container') && 
+            !event.target.closest('#surface-container')) {
+            closeAllFilterContainers();
+        }
+    });
+    
+    // Prevent containers from closing when clicking inside them
+    document.getElementById('location-list-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('price-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+   
+    document.getElementById('additional-filters-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+   
+    document.getElementById('property-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('mortgage-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    document.getElementById('surface-container').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+</script>
+                </div>
+            </div>
+        </form>
+      
+    </div>
+</div>
+
+  <style>
+                                    .breadcrumb {
+                            list-style: none;
+                            padding: 10px;
+                            background-color: #ffffff;
+                            border-radius: 5px;
+                            }
+                            
+                            .breadcrumb li {
+                            display: inline;
+                            font-size: 16px;
+                            }
+                            
+                            .breadcrumb li + li:before {
+                            content: ">";
+                            padding: 0 8px;
+                            color: #999;
+                            }
+                            
+                            .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+                            
+                            .breadcrumb li a:hover {
+                            text-decoration: underline;
+                            }
+                            
+                            .breadcrumb li[aria-current="page"] {
+                            color: #666;
+                            }
+                                  </style>
+
+                         <!-- Content Section -->
+                         <div class="col-lg-16 col-md-12 col-sm-12 content-side" style="margin-top: 10px;">
+                             <div class="category-details-content">
+                                
+                                  
+             
+                                 <!-- Sorting and View Options -->
+                                 <!-- Sorting and View Options -->
+<div class="item-shorting clearfix">
+    <div class="right-column pull-right clearfix">
+        <div class="select-box">
+            <!-- You can add a select dropdown here if needed -->
+        </div>
+        
+        
+    </div>
+</div>
+
+             
+                              
+             
+                                <!-- Replace your existing list view section with this: -->
+<div class="category-block wrapper list-view-active" id="list-view">
+    
+    <div class="list-item feature-style2-three pd-0" id="cafe-list-container" style="margin-top: -40px;">
+        {% include 'estate/cafe_list_partial.html' %}
+    </div>
+    
+</div>
+                                                             <script>
+// Favorite toggle function
+function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const productId = button.getAttribute('data-product-id');
+    const productType = button.getAttribute('data-product-type');
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = '/login/';
+        return;
+    }
+    
+    const isCurrentlyFavorite = icon.classList.contains('filled');
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    
+    // Toggle visual state immediately for better UX
+    if (isCurrentlyFavorite) {
+        icon.classList.remove('fas', 'filled');
+        icon.classList.add('far');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas', 'filled');
+    }
+
+    // Update localStorage
+    localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+    
+    // Send AJAX request
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: 'GET',
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            // Revert visual state if there was an error
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+            console.error("Error updating favorite:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error updating favorite:", error);
+        // Revert visual state on error
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize favorite icons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn i').forEach(icon => {
+        const button = icon.closest('.favorite-btn');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        // Check localStorage for favorite status
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+});
+</script>
+                                
+                                
+                                
+                                <!-- Add some CSS to handle the filled state -->
+                                <style>
+                                .far.fa-heart {
+                                transition: color 0.3s ease; /* For smooth transition */
+                                }
+                                
+                                .far.fa-heart.filled {
+                                color: red;  /* Change color when the icon is filled */
+                                font-weight: bold;  /* Make the icon bold */
+                                }
+                                
+                                
+                                </style> 
+                                 
+                               
+                                 <style>
+                                     .gradient1-text {
+       background: #EB362D;
+       -webkit-background-clip: text; /* Clips the background to the text */
+       -webkit-text-fill-color: transparent; /* Makes the text transparent to show the gradient */
+       font-weight: bold; /* Optional */
+     }                         .slide-image{
+        height:200px;
+        border-radius:8px 8px 8px 8px;
+     }
+  
+                                 </style>
+                                 
+    
+                                                                         
+                                 </div>
+                                
+                                    
+        
+                                 
+                                    <style>
+                               
+                                        /* General Styles for Mobile */
+                                        @media (max-width: 768px) {
+                                          .category-block .feature-style2-three {
+                                            width: 90%; /* Adjust width for mobile responsiveness */
+                                            margin: 0 auto; /* Center the container */
+                                           
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one {
+                                            margin-bottom: 20px;
+                                            width: 100%;
+                                            border: 1px solid #ddd; /* Border around the container */
+                                            border-radius: 8px; /* Rounded corners */
+                                            padding: 20px; /* Space between content and border */
+                                            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                                            background: #fff; /* White background for contrast */
+                                            height: 450px; /* Allow the container to expand with content */
+                                          }
+                                        
+                                          
+                                          .feature-style2-three .feature-block-one .inner-box {
+                                            display: flex;
+                                            flex-direction: column;
+                                            padding: 0;
+                                            width: 100%;
+                                           
+                                            border-radius: 8px;
+                                            background-color: #fff;
+                                          }
+                                        
+                                          /* Image Box */
+                                          .feature-style2-three .feature-block-one .inner-box .image-box {
+                                            width: 100%;
+                                            margin-bottom: 15px;
+                                            text-align: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .inner-box .image-box img {
+                                            width: 100%;
+                                           
+                                            border-radius: 8px 8px 0 0; /* Rounded corners on the top */
+                                          }
+                                        
+                                          /* Content Section (below and outside the inner box) */
+                                          .feature-style2-three .feature-block-one .lower-content {
+                                            padding: 20px; /* Add padding around the content */
+                                            margin-top: 250px; /* Add space between image and content */
+                                            border-top: 1px solid #ddd; /* Optional: Add border between image and content */
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content h4 {
+                                            margin-bottom: 10px;
+                                            font-size: 18px;
+                                            font-weight: bold;
+                                            color: #333;
+                                          }
+                                        
+                                          /* Action Buttons */
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons {
+                                            display: flex;
+                                            flex-direction: row;
+                                            gap: 10px; /* Space between buttons */
+                                            justify-content: center;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li {
+                                            list-style: none;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a {
+                                            display: inline-block;
+                                            padding: 12px 20px;
+                                            font-size: 16px;
+                                            color: #fff;
+                                            background: #EB362D;
+                                            border-radius: 5px;
+                                            text-decoration: none;
+                                            transition: background 0.3s ease;
+                                            margin-left: -9px;
+                                          }
+                                        
+                                          .feature-style2-three .feature-block-one .lower-content .action-buttons li a:hover {
+                                            background: #F9AD1F; /* Hover effect */
+                                          }
+                                        }
+                                        
+                                            </style>
+                                 
+        
+    
+    
+            </div>
+
+             <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+                                        
+                                                                        <style>
+                                                                        .loading-indicator {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #666;
+                                                                        }
+                                                                        
+                                                                        .error-message {
+                                                                            padding: 20px;
+                                                                            text-align: center;
+                                                                            font-size: 18px;
+                                                                            color: #EB362D;
+                                                                        }
+                                                                        </style>      
+                                                                        
+                                                                        
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        const params = new URLSearchParams(window.location.search);
+        
+        // Price Range
+        const priceFromInput = document.querySelector('#price_from');
+        const priceToInput = document.querySelector('#price_to');
+        const priceFrom = params.get('price_from');
+        const priceTo = params.get('price_to');
+
+        if (priceFromInput) priceFromInput.value = priceFrom || '';
+        if (priceToInput) priceToInput.value = priceTo || '';
+
+        const priceField = document.querySelector('#selected-price');
+        if (priceField) {
+            if (priceFrom && priceTo) {
+                priceField.value = `${priceFrom} - ${priceTo}`;
+            } else if (priceFrom) {
+                priceField.value = `From ${priceFrom}`;
+            } else if (priceTo) {
+                priceField.value = `Up to ${priceTo}`;
+            } else {
+                priceField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = params.get('year_from');
+        const yearTo = params.get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // Surface Area Range
+        const saFrom = params.get('surface_area_from');
+        const saTo = params.get('surface_area_to');
+        const saFromInput = document.querySelector('#surface_area_from');
+        const saToInput = document.querySelector('#surface_area_to');
+        if (saFromInput) saFromInput.value = saFrom || '';
+        if (saToInput) saToInput.value = saTo || '';
+        const saField = document.querySelector('#selected-surface');
+        if (saField) {
+            if (saFrom && saTo) saField.value = `${saFrom} - ${saTo} sqm`;
+            else if (saFrom) saField.value = `From ${saFrom} sqm`;
+            else if (saTo) saField.value = `Up to ${saTo} sqm`;
+            else saField.value = '';
+        }
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = params.get('kilometers_from');
+        const kmTo = params.get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters - UPDATED with proper breadcrumb logic
+        updateLocationBreadcrumbs();
+
+        // 🔁 Additional Filters Display
+        const additionalFiltersField = document.querySelector('#selected-additional-filters');
+        if (additionalFiltersField) {
+            const selectedFilters = [];
+
+            // ✅ Delivery
+            const provide = params.get('provide');
+            if (provide) {
+                selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+            }
+
+            // ✅ Usage
+            const usage = params.getAll('usage');
+            if (usage.length > 0) {
+                selectedFilters.push(`Usage: ${usage.join(', ')}`);
+            }
+
+            // ✅ Service Type (map values to labels)
+            const service_type = params.getAll('service_type');
+            if (service_type.length > 0) {
+                const accLabels = service_type.map(a => {
+                    switch (a) {
+                        case 'box': return 'Original Box';
+                        case 'charger': return 'Charger';
+                        case 'headset': return 'Headset';
+                        default: return a;
+                    }
+                });
+                selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+            }
+
+            const multiKeys = {
+                payment_method: 'Payment Method',
+                lister_type: 'Lister Type', 
+                additional_amenity: 'Additional Amenities',
+                main_amenity: 'Main Amenities',
+                nearby: 'Nearby',
+                rental_period: 'Rental Period'
+            };
+
+            Object.entries(multiKeys).forEach(([key, label]) => {
+                const values = params.getAll(key).flatMap(v => v.split(','));
+                if (values.length > 0) {
+                    selectedFilters.push(`${label}: ${values.join(', ')}`);
+                }
+            });
+
+            // Update field
+            additionalFiltersField.value = selectedFilters.join(' | ');
+
+            // Toggle active class
+            const toggleEl = document.getElementById('toggle-additional-filters');
+            if (toggleEl) {
+                toggleEl.classList.toggle('active', selectedFilters.length > 0);
+            }
+        }
+
+        // Other Filters
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            priceFrom && priceTo ? `Price: ${priceFrom} - ${priceTo}` : 
+                priceFrom ? `Price from ${priceFrom}` : 
+                priceTo ? `Price to ${priceTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : '',
+            saFrom && saTo ? `Surface Area: ${saFrom} - ${saTo}` :
+                saFrom ? `Surface Area from ${saFrom}` :
+                saTo ? `Surface Area to ${saTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+
+        // Update active filter badges
+        updateActiveFilterBadges();
+    }
+
+    // FIXED: Function to update location breadcrumbs with proper name handling
+    function updateLocationBreadcrumbs() {
+        const params = new URLSearchParams(window.location.search);
+        const governateIds = params.getAll('governate');
+        const districtIds = params.getAll('district');
+        const cityIds = params.getAll('city');
+
+        const governateField = document.querySelector('#selected-governate');
+        const districtField = document.querySelector('#selected-district');
+        const cityField = document.querySelector('#selected-city');
+        const locationField = document.querySelector('#selected-location');
+
+        // Get location names from DOM or use a more reliable approach
+        const selectedGovs = getLocationNames(governateIds, 'governate');
+        const selectedDistricts = getLocationNames(districtIds, 'district');
+        const selectedCities = getLocationNames(cityIds, 'city');
+        
+        // Update individual fields
+        if (governateField) governateField.value = selectedGovs.join(', ') || '';
+        if (districtField) districtField.value = selectedDistricts.join(', ') || '';
+        if (cityField) cityField.value = selectedCities.join(', ') || '';
+        
+        // Build location breadcrumb text - show actual selected locations, not "All Governates"
+        let locationText = '';
+        if (selectedGovs.length > 0) {
+            locationText = selectedGovs.join(', ');
+        }
+        if (selectedDistricts.length > 0) {
+            locationText += (locationText ? ' > ' : '') + selectedDistricts.join(', ');
+        }
+        if (selectedCities.length > 0) {
+            locationText += (locationText ? ' > ' : '') + selectedCities.join(', ');
+        }
+        
+        // Only show "Select Location" if nothing is selected
+        if (locationField) {
+            locationField.value = locationText || "Select Location";
+        }
+
+        // Update the "All Governates" checkbox state based on actual selection
+        const allCheckbox = document.querySelector('#select-all-governates');
+        if (allCheckbox) {
+            // "All" should only be checked if specifically selected, not when individual locations are selected
+            allCheckbox.checked = false;
+        }
+    }
+
+    // NEW: Helper function to get location names reliably
+    function getLocationNames(ids, type) {
+        if (!ids || ids.length === 0) return [];
+        
+        const names = [];
+        
+        ids.forEach(id => {
+            let name = id; // Default to ID if name not found
+            
+            // Try to find the element in the DOM
+            const element = document.querySelector(`.location-item[data-type="${type}"][data-id="${id}"]`);
+            if (element) {
+                const label = element.querySelector('label');
+                if (label) {
+                    name = label.textContent.trim();
+                }
+            } else {
+                // If element not found in DOM, try to get from data-name attribute or cached data
+                // This handles cases where the location dropdown isn't fully expanded
+                const cachedElement = document.querySelector(`[data-id="${id}"]`);
+                if (cachedElement && cachedElement.dataset.name) {
+                    name = cachedElement.dataset.name;
+                }
+            }
+            
+            names.push(name);
+        });
+        
+        return names;
+    }
+
+    // UPDATED: Improved location filter removal with proper hierarchy
+    function handleLocationRemoval(key, value, params) {
+        console.log('Removing location:', key, value); // Debug log
+        
+        if (key === 'city') {
+            // Remove only the specific city
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(v => v && v !== value);
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck only this city
+            const cityCheckbox = document.querySelector(`input[name="city"][value="${value}"]`);
+            if (cityCheckbox) cityCheckbox.checked = false;
+            
+        } else if (key === 'district') {
+            // Remove district and all its cities
+            const currentDistricts = params.getAll('district').flatMap(v => v.split(','));
+            const updatedDistricts = currentDistricts.filter(v => v && v !== value);
+            
+            params.delete('district');
+            if (updatedDistricts.length > 0) {
+                updatedDistricts.forEach(v => params.append('district', v));
+            }
+            
+            // Get all cities under this district and remove them
+            const citiesToRemove = getCitiesForDistrict(value);
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(cityId => !citiesToRemove.includes(cityId));
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck the district and all its cities
+            const districtCheckbox = document.querySelector(`input[name="district"][value="${value}"]`);
+            if (districtCheckbox) districtCheckbox.checked = false;
+            
+            citiesToRemove.forEach(cityId => {
+                const cityCheckbox = document.querySelector(`input[name="city"][value="${cityId}"]`);
+                if (cityCheckbox) cityCheckbox.checked = false;
+            });
+            
+        } else if (key === 'governate') {
+            // Remove governate and all its districts and cities
+            const currentGovernates = params.getAll('governate').flatMap(v => v.split(','));
+            const updatedGovernates = currentGovernates.filter(v => v && v !== value);
+            
+            params.delete('governate');
+            if (updatedGovernates.length > 0) {
+                updatedGovernates.forEach(v => params.append('governate', v));
+            }
+            
+            // Get all districts and cities under this governate and remove them
+            const { districts: districtsToRemove, cities: citiesToRemove } = getDistrictsAndCitiesForGovernate(value);
+            
+            // Remove districts
+            const currentDistricts = params.getAll('district').flatMap(v => v.split(','));
+            const updatedDistricts = currentDistricts.filter(districtId => !districtsToRemove.includes(districtId));
+            
+            params.delete('district');
+            if (updatedDistricts.length > 0) {
+                updatedDistricts.forEach(v => params.append('district', v));
+            }
+            
+            // Remove cities
+            const currentCities = params.getAll('city').flatMap(v => v.split(','));
+            const updatedCities = currentCities.filter(cityId => !citiesToRemove.includes(cityId));
+            
+            params.delete('city');
+            if (updatedCities.length > 0) {
+                updatedCities.forEach(v => params.append('city', v));
+            }
+            
+            // Uncheck the governate and all its districts and cities
+            const governateCheckbox = document.querySelector(`input[name="governate"][value="${value}"]`);
+            if (governateCheckbox) governateCheckbox.checked = false;
+            
+            districtsToRemove.forEach(districtId => {
+                const districtCheckbox = document.querySelector(`input[name="district"][value="${districtId}"]`);
+                if (districtCheckbox) districtCheckbox.checked = false;
+            });
+            
+            citiesToRemove.forEach(cityId => {
+                const cityCheckbox = document.querySelector(`input[name="city"][value="${cityId}"]`);
+                if (cityCheckbox) cityCheckbox.checked = false;
+            });
+        }
+        
+        // Update location display fields
+        updateLocationBreadcrumbs();
+        
+        // Reset location dropdown lists when items are removed
+        resetLocationDropdownLists();
+    }
+
+    // Helper function to get cities for a district
+    function getCitiesForDistrict(districtId) {
+        const districtItem = document.querySelector(`.location-item[data-type="district"][data-id="${districtId}"]`);
+        if (!districtItem) return [];
+        
+        const cityItems = districtItem.querySelectorAll('.location-item[data-type="city"]');
+        return Array.from(cityItems).map(city => city.dataset.id);
+    }
+
+    // Helper function to get districts and cities for a governate
+    function getDistrictsAndCitiesForGovernate(governateId) {
+        const governateItem = document.querySelector(`.location-item[data-type="governate"][data-id="${governateId}"]`);
+        if (!governateItem) return { districts: [], cities: [] };
+        
+        const districtItems = governateItem.querySelectorAll('.location-item[data-type="district"]');
+        const districts = Array.from(districtItems).map(district => district.dataset.id);
+        
+        const cities = [];
+        districtItems.forEach(districtItem => {
+            const cityItems = districtItem.querySelectorAll('.location-item[data-type="city"]');
+            cities.push(...Array.from(cityItems).map(city => city.dataset.id));
+        });
+        
+        return { districts, cities };
+    }
+
+    // Function to reset location dropdown lists when items are removed
+    function resetLocationDropdownLists() {
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        // If no locations are selected, ensure all lists are visible and reset
+        if (governates.length === 0 && districts.length === 0 && cities.length === 0) {
+            // Reset "All" checkbox
+            const allCheckbox = document.querySelector('#select-all-governates');
+            if (allCheckbox) allCheckbox.checked = false;
+            
+            // Show all governates
+            document.querySelectorAll('.location-item[data-type="governate"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Show all districts (they might be hidden due to search)
+            document.querySelectorAll('.location-item[data-type="district"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Show all cities (they might be hidden due to search)
+            document.querySelectorAll('.location-item[data-type="city"]').forEach(item => {
+                item.style.display = '';
+            });
+            
+            // Reset any search
+            const locationSearch = document.getElementById('location-search');
+            if (locationSearch) locationSearch.value = '';
+        }
+    }
+
+    // NEW: Function to update active filter badges
+    function updateActiveFilterBadges() {
+        const params = new URLSearchParams(window.location.search);
+        const activeFiltersContainer = document.querySelector('.active-filters');
+        
+        if (!activeFiltersContainer) return;
+        
+        // Clear existing badges
+        activeFiltersContainer.innerHTML = '';
+        
+        // Add badges for each active filter
+        params.forEach((value, key) => {
+            if (key === 'governate') {
+                value.split(',').forEach(governate => {
+                    if (governate.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'governate', governate, `Governate: ${governate}`);
+                    }
+                });
+            } else if (key === 'district') {
+                value.split(',').forEach(district => {
+                    if (district.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'district', district, `District: ${district}`);
+                    }
+                });
+            } else if (key === 'city') {
+                value.split(',').forEach(city => {
+                    if (city.trim()) {
+                        addFilterBadge(activeFiltersContainer, 'city', city, `City: ${city}`);
+                    }
+                });
+            } else if (key === 'price_from' || key === 'price_to') {
+                const priceFrom = params.get('price_from');
+                const priceTo = params.get('price_to');
+                if ((key === 'price_from' && priceFrom) || (key === 'price_to' && priceTo)) {
+                    // Only add once
+                    if (key === 'price_from') {
+                        const priceText = priceTo ? `${priceFrom} - ${priceTo}` : `From ${priceFrom}`;
+                        addFilterBadge(activeFiltersContainer, 'price_range', `${priceFrom}-${priceTo || ''}`, `Price: ${priceText}`);
+                    }
+                }
+            } else if (key === 'year_from' || key === 'year_to') {
+                const yearFrom = params.get('year_from');
+                const yearTo = params.get('year_to');
+                if ((key === 'year_from' && yearFrom) || (key === 'year_to' && yearTo)) {
+                    // Only add once
+                    if (key === 'year_from') {
+                        const yearText = yearTo ? `${yearFrom} - ${yearTo}` : `From ${yearFrom}`;
+                        addFilterBadge(activeFiltersContainer, 'year_range', `${yearFrom}-${yearTo || ''}`, `Year: ${yearText}`);
+                    }
+                }
+            } else if (key === 'kilometers_from' || key === 'kilometers_to') {
+                const kmFrom = params.get('kilometers_from');
+                const kmTo = params.get('kilometers_to');
+                if ((key === 'kilometers_from' && kmFrom) || (key === 'kilometers_to' && kmTo)) {
+                    // Only add once
+                    if (key === 'kilometers_from') {
+                        const kmText = kmTo ? `${kmFrom} - ${kmTo} km` : `From ${kmFrom} km`;
+                        addFilterBadge(activeFiltersContainer, 'kilometer_range', `${kmFrom}-${kmTo || ''}`, `KM: ${kmText}`);
+                    }
+                }
+            } else if (key === 'surface_area_from' || key === 'surface_area_to') {
+                const saFrom = params.get('surface_area_from');
+                const saTo = params.get('surface_area_to');
+                if ((key === 'surface_area_from' && saFrom) || (key === 'surface_area_to' && saTo)) {
+                    // Only add once
+                    if (key === 'surface_area_from') {
+                        const saText = saTo ? `${saFrom} - ${saTo} sqm` : `From ${saFrom} sqm`;
+                        addFilterBadge(activeFiltersContainer, 'surface_area_range', `${saFrom}-${saTo || ''}`, `Surface Area: ${saText}`);
+                    }
+                }
+            }
+            // Add more filter types as needed...
+        });
+    }
+
+    // NEW: Function to add individual filter badge
+    function addFilterBadge(container, key, value, displayText) {
+        const badge = document.createElement('div');
+        badge.className = 'filter-badge';
+        badge.innerHTML = `
+            <span>${displayText}</span>
+            <button class="remove-filter" data-key="${key}" data-value="${value}">×</button>
+        `;
+        container.appendChild(badge);
+    }
+
+    // UPDATED: Unified function to handle filter removal - FIXED VERSION
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        console.log('Removing filter:', key, value); // Debug log
+        
+        if (['governate', 'district', 'city'].includes(key)) {
+            // Handle hierarchical location removal
+            handleLocationRemoval(key, value, params);
+            
+        } else if (['payment_method', 'lister_type', 'additional_amenity', 'main_amenity', 'nearby', 'rental_period'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+        } else if (['property', 'property_mortgage', 'size'].includes(key)) {
+            // Multi-value parameters for cafe filters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-${key === 'property_mortgage' ? 'mortgage' : key}`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+            
+        } else if (key === 'price_range') {
+            const [from, to] = value.split('-');
+            params.delete('price_from');
+            params.delete('price_to');
+            const fromInput = document.querySelector('#price_from');
+            const toInput = document.querySelector('#price_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            const displayField = document.querySelector('#selected-price');
+            if (displayField) displayField.value = '';
+            
+        } else if (key === 'surface_area_range') {
+            const [from, to] = value.split('-');
+            params.delete('surface_area_from');
+            params.delete('surface_area_to');
+            const fromInput = document.querySelector('#surface_area_from');
+            const toInput = document.querySelector('#surface_area_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            const displayField = document.querySelector('#selected-surface');
+            if (displayField) displayField.value = '';
+            
+        } else if (key === 'year_range') {
+            const [from, to] = value.split('-');
+            params.delete('year_from');
+            params.delete('year_to');
+            const fromInput = document.querySelector('#year_from');
+            const toInput = document.querySelector('#year_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            
+        } else if (key === 'kilometer_range') {
+            const [from, to] = value.split('-');
+            params.delete('kilometers_from');
+            params.delete('kilometers_to');
+            const fromInput = document.querySelector('#kilometers_from');
+            const toInput = document.querySelector('#kilometers_to');
+            if (fromInput) fromInput.value = '';
+            if (toInput) toInput.value = '';
+            
+        } else if (key === 'sort') {
+            params.delete('sort');
+        } else if (key === 'provide') {
+            params.delete('provide');
+            const provideInputs = document.querySelectorAll('input[name="provide"]');
+            provideInputs.forEach(input => input.checked = false);
+        } else if (key === 'usage') {
+            const currentValues = params.getAll('usage').flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            params.delete('usage');
+            if (updatedValues.length > 0) {
+                updatedValues.forEach(v => params.append('usage', v));
+            }
+            const checkbox = document.querySelector(`input[name="usage"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+        } else if (key === 'service_type') {
+            const currentValues = params.getAll('service_type').flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            params.delete('service_type');
+            if (updatedValues.length > 0) {
+                updatedValues.forEach(v => params.append('service_type', v));
+            }
+            const checkbox = document.querySelector(`input[name="service_type"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    // Function to update content via AJAX
+    function updateContent(params) {
+        fetch(`{% url 'cafe' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById('cafe-list-container');
+            if (container) container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+            updateFilterDisplay(); // Update filter display after content loads
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+
+    // Clear all filters
+    document.body.addEventListener('click', function(e) {
+        if (e.target.matches('#clear-all-filters')) {
+            e.preventDefault();
+
+            // Store the current listing type value before clearing
+            const listingTypeInput = document.querySelector('#selected-listing-type');
+            const currentListingType = listingTypeInput ? listingTypeInput.value : '';
+
+            // Clear all checkboxes and radios
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+
+            // Clear all input fields
+            document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+                if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                    input.value = '';
+                }
+            });
+
+            // Clear all hidden/selected fields (except listing type)
+            const filterFields = [
+                '#selected-price', '#selected-year', '#selected-kilometer',
+                '#selected-governate', '#selected-district', '#selected-city',
+                '#selected-all-filters', '#selected-additional-filters',
+                '#selected-category', '#selected-age', '#selected-subcategory','#selected-property',
+                '#selected-mortgage', '#selected-size', '#selected-surface'
+            ];
+            filterFields.forEach(id => {
+                const el = document.querySelector(id);
+                if (el) el.value = '';
+            });
+
+            // Clear active filter badges
+            const activeFiltersContainer = document.querySelector('.active-filters');
+            if (activeFiltersContainer) activeFiltersContainer.innerHTML = '';
+
+            // Restore the listing type value
+            if (listingTypeInput && currentListingType) {
+                listingTypeInput.value = currentListingType;
+            }
+
+            // Clear URL params and refresh (preserve listing type in URL if needed)
+            const url = new URL(window.location.href);
+            const currentUrlListingType = url.searchParams.get('listing_type');
+            url.search = '';
+            
+            // Re-add listing type to URL if it existed
+            if (currentListingType || currentUrlListingType) {
+                const listingTypeToPreserve = currentListingType || currentUrlListingType;
+                url.searchParams.set('listing_type', listingTypeToPreserve);
+            }
+
+            fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.querySelector('#cafe-list-container');
+                    if (container) container.innerHTML = html;
+                    history.pushState(null, '', url.toString());
+                    updateFilterDisplay();
+                })
+                .catch(err => console.error('Error:', err));
+        }
+    });
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script>                                                     
+            </div>                                                  
+{% include 'footer.html' %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+

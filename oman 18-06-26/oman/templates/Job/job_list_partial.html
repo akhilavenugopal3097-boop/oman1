@@ -1,0 +1,1419 @@
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load static %}
+{% load humanize %}
+<nav aria-label="Breadcrumb" style="margin-bottom: 30px;">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <!-- Breadcrumb Trail -->
+       <ol class="breadcrumb mb-0">
+    <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+    <li><a href="{% url 'job_home' %}">Jobs</a></li>
+    <li class="active">All Jobs</li>
+   
+</ol>
+
+<style>
+    .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        color:#15818E;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color:#15818E;
+        }
+              </style>
+<div class="job-categories-badges">
+    {% for category in categories %}
+        <a href="javascript:void(0);"
+           onclick="toggleCategoryFilter('{{ category.id }}')"
+           class="badge badge-category {% if category.id|stringformat:'s' in selected_categories %}active{% endif %}"
+           data-category-id="{{ category.id }}">
+            {{ category.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<script>
+function toggleCategoryFilter(categoryId) {
+    let url = new URL(window.location.href);
+    let params = url.searchParams;
+    let categories = params.get('job_category');
+
+    let selected = categories ? categories.split(',') : [];
+
+    if (selected.includes(categoryId)) {
+        selected = selected.filter(id => id !== categoryId);
+    } else {
+        selected.push(categoryId);
+    }
+
+    if (selected.length > 0) {
+        params.set('job_category', selected.join(','));
+    } else {
+        params.delete('job_category');
+    }
+
+    let newUrl = url.toString();
+
+    // Update browser URL without reload
+    window.history.pushState({}, '', newUrl);
+
+    // Fetch updated results
+    fetch(newUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+    .then(response => response.text())
+    .then(data => {
+        document.querySelector('#job-list-container').innerHTML = data;
+        updateBadgeStates(selected);
+    })
+    .catch(err => console.error("AJAX Category Filter Error:", err));
+}
+
+function updateBadgeStates(selectedCategories) {
+    document.querySelectorAll('.badge-category').forEach(badge => {
+        let id = badge.dataset.categoryId;
+        if (selectedCategories.includes(id)) {
+            badge.classList.add('active');
+        } else {
+            badge.classList.remove('active');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    let url = new URL(window.location.href);
+    let categories = url.searchParams.get('job_category');
+    let selected = categories ? categories.split(',') : [];
+    
+    // Also include single 'category' param from navbar links
+    let singleCat = url.searchParams.get('category');
+    if (singleCat && !selected.includes(singleCat)) {
+        selected.push(singleCat);
+    }
+
+    updateBadgeStates(selected);
+});
+
+</script>
+
+
+<style>
+    .job-categories-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-left:10px;
+        padding: 10px 0;
+    }
+    
+    .badge-category {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border-radius: 15px;
+        text-decoration: none;
+        background: #f5f5f5;
+        color: #333;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+        transition: all 0.2s ease;
+    }
+    
+    .badge-category:hover {
+       transform: translateY(-2px);
+       color: #333;
+       background-color: #ebebeb;
+    }
+    
+   .badge-category.active {
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    {% comment %} padding: 10px 20px; {% endcomment %}
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    
+    border: none; /* optional: clean look */
+}
+
+
+    
+    .badge-count {
+        margin-left: 5px;
+        background: rgba(255,255,255,0.2);
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    @media (max-width: 768px) {
+    .job-categories-badges {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+        margin-left: 0;
+        padding: 8px 10px;
+        max-width: 100%;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .job-categories-badges::-webkit-scrollbar {
+        display: none;
+    }
+
+    .badge-category {
+        flex: 0 0 auto;
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .badge-category.active {
+        font-size: 0.8rem;
+        margin-right: 0;
+    }
+
+    .filter-scroll-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .badge-category {
+        padding: 5px 12px;
+        font-size: 0.75rem;
+    }
+}
+    
+</style>
+<style>
+    .filter-container{
+        border: 1px solid black;
+    }
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #333;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background-color: #f0f0f0;
+    border-radius: 50rem; 
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+}
+
+.filter-badge:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-badge .remove-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.filter-badge .remove-filter:hover {
+    color: #fff;
+   
+}
+
+/* For the active/highlighted state */
+.filter-badge.active {
+    background-color: #e0f7fa;
+    border-color: #b2ebf2;
+    color: #006064;
+}
+
+/* Clear filters link style */
+.clear-filters-link {
+    color: #d32f2f;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    transition: color 0.2s;
+}
+
+.clear-filters-link:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.property-count {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+.clear-filters-link {
+    color: #e01919;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    margin-right: 20px;
+}
+
+.clear-filters-link:hover {
+    color: #c01010;
+    text-decoration: none;
+}
+/* Sorting Dropdown Styles */
+.sort-dropdown {
+    min-width: 180px;
+}
+
+.sort-dropdown select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-dropdown select:hover {
+    border-color: #aaa;
+}
+
+.sort-dropdown select:focus {
+    outline: none;
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+</style>
+
+       <!-- Section Heading -->
+<div class="d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+        <h5 class="mb-0">
+     Job Listing
+        </h5>
+        <span class="property-count">
+    {{ total_count }} Ad{{ total_count|pluralize }}
+</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        {% if request.GET and request.GET|length > 0 %}
+            <a href="{% url request.resolver_match.url_name %}"
+               id="clear-all-filters"
+               class="clear-filters-link">
+                Clear Filters
+            </a>
+        {% endif %}
+        
+       <div class="custom-sort-dropdown">
+        <div class="sort-trigger" onclick="toggleSortDropdown()">
+            <svg class="sort-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 9l4-4 4 4"></path>
+    <path d="M16 15l-4 4-4-4"></path> 
+</svg>
+            <span class="sort-text">Sort:{% if current_sort == '-id' %}Latest{% elif current_sort == 'oldest' %}Oldest{% elif current_sort == 'price_asc' %}Price: Low to High{% elif current_sort == 'price_desc' %}Price: High to Low{% else %}Latest{% endif %}</span>
+            
+        </div>
+        <div class="sort-dropdown-menu">
+            <div class="sort-option {% if current_sort == '-id' %}active{% endif %}" onclick="updateSort('-id')">Latest</div>
+            <div class="sort-option {% if current_sort == 'oldest' %}active{% endif %}" onclick="updateSort('oldest')">Oldest</div>
+            <!-- <div class="sort-option {% if current_sort == 'price_asc' %}active{% endif %}" onclick="updateSort('price_asc')">Price: Low to High</div>
+            <div class="sort-option {% if current_sort == 'price_desc' %}active{% endif %}" onclick="updateSort('price_desc')">Price: High to Low</div> -->
+        </div>
+    </div>
+
+
+<script>
+// Toggle dropdown visibility
+function toggleSortDropdown() {
+    const dropdown = document.querySelector('.sort-dropdown-menu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.custom-sort-dropdown')) {
+        document.querySelector('.sort-dropdown-menu').style.display = 'none';
+    }
+});
+
+// Update sort parameter with AJAX
+function updateSort(value) {
+    const newUrl = updateQueryStringParameter(window.location.href, 'sort', value);
+
+    // Update browser URL without reload
+    window.history.pushState({}, '', newUrl);
+
+    // AJAX fetch new sorted content
+    fetch(newUrl, {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Replace listing content
+        document.querySelector('#job-list-container').innerHTML = data;
+    })
+    .catch(err => console.error("AJAX Sort Error:", err));
+}
+
+// Helper function to update URL parameters
+function updateQueryStringParameter(uri, key, value) {
+    const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    const separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    return uri + separator + key + "=" + value;
+}
+</script>
+<style>
+    .custom-sort-dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 1;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        margin-right: -20px;
+    }
+    
+    .sort-trigger {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-trigger:hover {
+        border-color: #E35D20;
+    }
+    
+    .sort-text {
+        margin-right: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .sort-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .sort-dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 180px;
+        margin-top: 5px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 100;
+    }
+    
+    .custom-sort-dropdown:hover .sort-icon {
+        transform: rotate(180deg);
+    }
+    
+    .sort-option {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .sort-option:hover {
+        background-color: #f8f8f8;
+        color: #E35D20;
+    }
+    
+    .sort-option.active {
+        color: #E35D20;
+        background-color: #f8f8f8;
+        font-weight: 500;
+    }
+    
+    .vertical-divider {
+        display: inline-block;
+        height: 20px;
+        width: 1px;
+        background-color: #ddd;
+        margin: 0 10px;
+    }
+    @media (max-width: 768px) {
+    /* sort dropdown — compact pill */
+    .custom-sort-dropdown {
+        position: relative !important;
+        margin-right: 0 !important;
+    }
+
+    .sort-trigger {
+        padding: 5px 10px !important;
+        border-radius: 999px !important;
+        font-size: 11px !important;
+        gap: 4px !important;
+    }
+
+    .sort-text {
+        font-size: 11px !important;
+        margin-right: 0 !important;
+    }
+
+    .sort-icon {
+        width: 12px !important;
+        height: 12px !important;
+    }
+
+    /* sort menu — drops directly below button */
+    .sort-dropdown-menu {
+        position: absolute !important;
+        top: 100% !important;
+        right: 0 !important;
+        left: auto !important;
+        bottom: auto !important;
+        width: 160px !important;
+        min-width: unset !important;
+        margin: 5px 0 0 !important;
+        border-radius: 10px !important;
+        border: 1px solid #eee !important;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
+        background: #fff !important;
+        z-index: 999999 !important;
+        padding: 4px 0 8px !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+    }
+
+    .sort-dropdown-menu::before {
+        display: none !important;
+        content: none !important;
+    }
+
+    .sort-option {
+        padding: 9px 14px !important;
+        font-size: 12px !important;
+        border-bottom: 1px solid #f5f5f5 !important;
+    }
+
+    .sort-option:last-child {
+        border-bottom: none !important;
+    }
+}
+
+</style>
+    </div>
+</div>
+        <style>
+            h5 {
+                font-size: 1.25rem;
+                margin: 0.5rem 0;
+                color: #333;
+                font-weight: 600;
+                margin-left: 13px;
+            }
+            
+        </style>
+{% if request.GET %}
+<div id="filters-container" class="mt-2">
+    <div class="filter-scroll-wrapper" style="max-height: 7.8rem;margin-left:10px;width: 1115px; overflow-y: auto; scrollbar-width: thin;
+        {% for key, values in request.GET.lists %}
+            {% if key != 'page' and key != 'listing_type' %}
+                {% for value in values %}
+                    {% if value and value != 'null' and value != 'None' %}
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        padding:10px;
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    ">
+      <div class="d-flex flex-wrap gap-2">
+    {% for key, values in request.GET.lists %}
+        {% if key != 'page' and key != 'listing_type' %}
+        {% if key == 'governate' %}
+    {% for governate_id in values %}
+        {% if governate_id and governate_id != 'null' and governate_id != 'None' %}
+            {% for gov_obj in selected_governate_objs %}
+                {% if gov_obj.id|stringformat:"s" == governate_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ gov_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="governate"
+                           data-value="{{ governate_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% elif key == 'district' %}
+    {% for district_id in values %}
+        {% if district_id and district_id != 'null' and district_id != 'None' %}
+            {% for dist_obj in selected_district_objs %}
+                {% if dist_obj.id|stringformat:"s" == district_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ dist_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="district"
+                           data-value="{{ district_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+           {% elif key == 'city' %}
+                {% for city_id in values %}
+                    {% if city_id and city_id != 'null' and city_id != 'None' %}
+                        {% for city_obj in selected_city_objs %}
+                            {% if city_obj.id|stringformat:"s" == city_id %}
+                                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                    {{ city_obj.name }}
+                                    <a href="#"
+                                       class="remove-filter"
+                                       data-key="city"
+                                       data-value="{{ city_id }}">
+                                       ×
+                                    </a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% elif key == 'sort' %}
+                {% for value in values %}
+                    {% if value == 'price_desc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            High to Low
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_desc">
+                               ×
+                            </a>
+                        </span>
+
+                    {% elif value == 'price_asc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Low to High
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_asc">
+                               ×
+                            </a>
+                        </span>
+                    {% elif value == '-id' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Latest
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="-id">
+                               ×
+                            </a>
+                        </span>
+                    {% else %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            {{ value|title }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="{{ value }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            
+            {% elif key == 'salary_from' or key == 'salary_to' %}
+                {% if request.GET.salary_from and request.GET.salary_to %}
+                    {% if key == 'salary_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            salary: {{ request.GET.salary_from }} - {{ request.GET.salary_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="salary_range"
+                               data-value="{{ request.GET.salary_from }}-{{ request.GET.salary_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'salary_from' and request.GET.salary_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            salary from {{ request.GET.salary_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="salary_from"
+                               data-value="{{ request.GET.salary_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'salary_to' and request.GET.salary_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            salary to {{ request.GET.salary_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="salary_to"
+                               data-value="{{ request.GET.salary_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'year_from' or key == 'year_to' %}
+                {% if request.GET.year_from and request.GET.year_to %}
+                    {% if key == 'year_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year: {{ request.GET.year_from }} - {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_range"
+                               data-value="{{ request.GET.year_from }}-{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'year_from' and request.GET.year_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year from {{ request.GET.year_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_from"
+                               data-value="{{ request.GET.year_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'year_to' and request.GET.year_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year to {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_to"
+                               data-value="{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'kilometers_from' or key == 'kilometers_to' %}
+                {% if request.GET.kilometers_from and request.GET.kilometers_to %}
+                    {% if key == 'kilometers_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM: {{ request.GET.kilometers_from }} - {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometer_range"
+                               data-value="{{ request.GET.kilometers_from }}-{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'kilometers_from' and request.GET.kilometers_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM from {{ request.GET.kilometers_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_from"
+                               data-value="{{ request.GET.kilometers_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'kilometers_to' and request.GET.kilometers_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM to {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_to"
+                               data-value="{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+                {% elif key == 'experience' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_experience }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+     {% elif key == 'qualifications' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_qualifications }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'working_days' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_working_days }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'job_category' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_job_category }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+     {% elif key == 'category' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_job_category }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    {% elif key == 'working_hours' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_working_hours }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'number_of_vacancies' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   Number of Vacancies : {{ v }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    
+            {% elif key == 'condition' %}
+    {% for value in values %}
+        {% if value and value != 'null' and value != 'None' %}
+            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                {{ value|capfirst }}
+                <a href="?{% param_replace request condition=value %}"
+                   class="remove-filter"
+                   data-key="{{ key }}"
+                   data-value="{{ value }}">
+                   ×
+                </a>
+            </span>
+        {% endif %}
+    {% endfor %}
+            {% elif key == 'usage' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v|format_usage }}
+                                  <a href="?{% param_replace request usage=value %}"
+                   class="remove-filter"
+                   data-key="{{ key }}"
+                   data-value="{{ value }}">
+                   ×
+                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% elif key == 'service_type' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v|format_service_type:'babyitem' }}
+                                <a href="#"
+   class="remove-filter"
+   data-key="{{ key }}"
+   data-value="{{ v }}">
+   ×
+</a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                               {{ v|title }}
+                                <a href="#"
+                                   class="remove-filter"
+                                   data-key="{{ key }}"
+                                   data-value="{{ v }}">
+                                   ×
+                                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+    </div>
+    
+</div>
+{% endif %}
+    </div>
+</nav>
+<div class="listings-container">
+        <div class="container-fluid">
+  <div class="row">
+    <!-- Job Listing Column (8) -->
+    <div class="col-md-9">
+  <!-- Job List Container -->
+  <div class="list-group">
+    {% for job in page_obj %}
+    <a 
+      {% if user.is_authenticated %}
+        href="{% url 'jobdetails' user_id=user.id job_id=job.id %}"
+      {% else %}
+        href="{% url 'login' %}"
+      {% endif %}
+      class="text-decoration-none job-card-link"
+    >
+      <div class="job-card p-3 mb-3 bg-white shadow-sm rounded border position-relative">
+
+        <!-- Featured Badge -->
+        {% comment %} {% if job.is_featured %}
+        <span class="badge bg-primary position-absolute top-0 end-0 m-2 px-2 py-1" style="font-size: 11px;">
+          FEATURED
+        </span>
+        {% endif %} {% endcomment %}
+
+        <!-- Job Title and Company -->
+        <h6 class="fw-bold text-dark mb-1" style="font-size: 1.1rem;">{{ job.title|capfirst }}</h6>
+        <p class="text-primary small mb-2" style="color:#15818E !important;">{{ job.company.company_name|default:"Confidential" }}</p>
+
+       <!-- Salary -->
+{% if job.salary_range %}
+  <p class="fw-bold text-dark mb-3" style="font-size: 1.1rem;">
+    OMR {{ job.salary_range|floatformat:0 }}
+    <span class="text-muted" style="font-size: 1rem;">per month</span>
+  </p>
+{% else %}
+  <p class="fw-bold text-dark mb-3" style="font-size: 1.1rem;">
+    <span class="text-muted" style="font-size: 1rem;">Salary: Confidential</span>
+  </p>
+{% endif %}
+
+
+
+        <!-- Info Row -->
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <div class="info-box">
+            <small class="text-secondary d-block">EMPLOYMENT TYPE</small>
+            <strong>{{ job.get_job_type_display }}</strong>
+          </div>
+          <div class="info-box">
+            <small class="text-secondary d-block">WORK EXPERIENCE</small>
+            <strong>{{ job.get_experience_required_display|default:"N/A" }}</strong>
+          </div>
+          <div class="info-box">
+            <small class="text-secondary d-block">EDUCATION LEVEL</small>
+            <strong>{{ job.get_qualifications_display|default:"N/A" }}</strong>
+          </div>
+        </div>
+
+      
+<!-- Footer Info (Time | Location) -->
+<div class="d-flex align-items-center mt-2 text-muted small">
+    <!-- Posted time -->
+    <span class="text-success me-2">Posted {{ job.posted_on|timesince }} ago</span>
+    <span class="mx-2 text-secondary">|</span> 
+
+    <!-- Company city image -->
+    <img src="{% static 'assets/images/Icons-03.png' %}" alt="Location" class="me-2" style="width: 18px; height: 20px;">
+    <span>{{ job.company.city }}</span>
+</div>
+
+
+      </div>
+    </a>
+    {% empty %}
+      <p class="text-center text-muted">No jobs available for the selected filters.</p>
+    {% endfor %}
+  </div>
+</div>
+<style>
+    .job-card-link {
+  display: block;
+  text-decoration: none;
+}
+
+.job-card {
+  transition: all 0.25s ease-in-out;
+  border: 1px solid #eaeaea;
+  cursor: pointer;
+  
+}
+
+.job-card:hover {
+  transform: translateY(-2px);
+  border-color: #15818E;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.job-card h6 {
+  font-size: 16px;
+  
+}
+
+.job-card p {
+  margin-bottom: 4px;
+}
+
+.job-card .info-box {
+  background: #f8f9fa;
+  padding: 6px 10px;
+  border-radius: 10px;
+  min-width: 130px;
+  text-align: left;
+}
+
+.job-card .info-box small {
+  font-size: 11px;
+  color: #888;
+}
+
+.job-card .info-box strong {
+  font-size: 13px;
+  color: #000;
+}
+
+.job-card small {
+  font-size: 12px;
+}
+/* ============================================
+   MOBILE RESPONSIVE
+   Sort centered · Listing full-width · Ad hidden
+   Place AFTER all other styles.
+   ============================================ */
+@media (max-width: 768px) {
+
+    /* ---------- LISTING CONTAINER ---------- */
+    .listings-container .container-fluid {
+        padding: 0 12px !important;
+    }
+
+    .listings-container .row {
+        margin: 0 !important;
+        row-gap: 18px !important;
+    }
+
+    /* job column takes the full width now that the ad is gone */
+    .listings-container .col-md-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 !important;
+    }
+
+    .list-group {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .job-card {
+        padding: 16px !important;
+        border-radius: 14px !important;
+        border: 1px solid #ececec !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .job-card .info-box {
+        flex: 1 1 calc(50% - 6px) !important;
+        min-width: calc(50% - 6px) !important;
+        background: #f7f8fa !important;
+        border-radius: 12px !important;
+        padding: 10px 12px !important;
+    }
+
+    /* ---------- SORT (centered) ---------- */
+    .d-flex.align-items-center.justify-content-between.w-100 {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 14px !important;
+    }
+
+    .d-flex.align-items-center.justify-content-between.w-100 > div {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .property-count {
+        border-left: none !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    .custom-sort-dropdown {
+        display: flex !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
+    }
+
+    .sort-trigger {
+        margin: 0 auto !important;
+        padding: 8px 18px !important;
+        border-radius: 999px !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .sort-dropdown-menu {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;   /* beats the `none` rule */
+        width: 200px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    /* ---------- VERTICAL AD — HIDDEN ---------- */
+    .listings-container .col-md-3,
+    .ad-column,
+    .vertical-ad {
+        display: none !important;
+    }
+}
+
+</style>
+
+    <!-- Advertisement Column (4) -->
+    <div class="col-md-3">
+      <div class="ad-column mb-3">
+        <div class="vertical-ad text-center">
+          <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement" class="img-fluid rounded shadow-sm">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<style>
+  
+    /* Vertical ad styling */
+    .vertical-ad {
+        width: 280px;
+        height: 500px; /* Adjust height as needed */
+        border-radius: 25px;
+        border:5px solid gray;
+       
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .vertical-ad img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+{% if page_obj.paginator.count > 0 %}
+  <ul class="page">
+    {% if page_obj.has_previous %}
+      <li class="page__btn active">
+        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">
+          <span class="material-icons">chevron_left</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page__btn">
+        <span class="material-icons">chevron_left</span>
+      </li>
+    {% endif %}
+
+    {% if page_obj.number > 3 %}
+      <li class="page__numbers">
+        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">1</a>
+      </li>
+      {% if page_obj.number > 4 %}
+        <li class="page__dots">...</li>
+      {% endif %}
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+        <li class="page__numbers {% if num == page_obj.number %}active{% endif %}">
+          <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
+      {% if page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+        <li class="page__dots">...</li>
+      {% endif %}
+      <li class="page__numbers">
+        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+      </li>
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <li class="page__btn active">
+        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">
+          <span class="material-icons">chevron_right</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page__btn">
+        <span class="material-icons">chevron_right</span>
+      </li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+
+
+<style>
+    /* Mobile Responsive Styling */
+@media (max-width: 768px) {
+    .job-listing-container {
+        padding: 12px;
+    }
+
+    .list-group-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-logo {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 10px;
+    }
+
+    .job-logo img {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .job-details h5 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .job-details p {
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .job-actions {
+        text-align: left;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .job-actions .theme-btn-one {
+        width: 100%;
+        padding: 8px;
+        text-align: center;
+        font-size: 14px;
+        border-radius: 6px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+    }
+
+    .job-actions .theme-btn-one:hover {
+        background-color: #0056b3;
+    }
+}
+
+</style>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+     const favoriteLinks = document.querySelectorAll('.favorite-link');
+ 
+     favoriteLinks.forEach(link => {
+         const favoriteIcon = link.querySelector('.icon-22');
+         const productId = link.getAttribute('data-product-id');
+         const productType = link.getAttribute('data-product-type');
+         const isAuthenticated = link.getAttribute('data-is-authenticated') === 'true';
+ 
+         // Check if the product is in favorites on page load
+         if (localStorage.getItem(`favorite_${productType}_${productId}`) === 'true') {
+             favoriteIcon.classList.add('filled');
+         }
+ 
+         link.addEventListener('click', function (event) {
+             event.preventDefault();
+ 
+             if (isAuthenticated) {
+                 const isFavorite = !favoriteIcon.classList.contains('filled');
+                 const action = isFavorite ? 'add' : 'remove';
+ 
+                 // Toggle the icon state
+                 favoriteIcon.classList.toggle('filled');
+ 
+                 // Update localStorage
+                 localStorage.setItem(`favorite_${productType}_${productId}`, isFavorite);
+ 
+                 // Send AJAX request to update the server
+                 fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+                     method: 'GET',
+                     headers: {
+                         'X-Requested-With': 'XMLHttpRequest',
+                     },
+                 })
+                 .then(response => response.json())
+                 .then(data => {
+                     if (data.status === 'added') {
+                         console.log(data.message);
+                     } else if (data.status === 'removed') {
+                         console.log(data.message);
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error:', error);
+                 });
+             } else {
+                 window.location.href = '/login/';
+             }
+         });
+     });
+ });
+ 
+ 
+ </script>

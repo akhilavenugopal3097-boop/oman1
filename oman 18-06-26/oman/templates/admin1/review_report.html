@@ -1,0 +1,374 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+   .toolbar {
+        background: #15818E;
+        margin-bottom: 20px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        color: white;
+   }
+   .detail-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+   }
+   .info-label {
+        font-weight: 600;
+        color: #495057;
+        width: 140px;
+   }
+   .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-block;
+   }
+   .status-pending { background: #ffc107; color: #000; }
+   .status-in_review { background: #17a2b8; color: #fff; }
+   .status-reviewed { background: #28a745; color: #fff; }
+   .status-dismissed { background: #6c757d; color: #fff; }
+   .status-action_taken { background: #dc3545; color: #fff; }
+   
+   .action-history {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 5px;
+   }
+   .history-item {
+        padding: 12px;
+        border-left: 3px solid #15818E;
+        background: #f8f9fa;
+        margin-bottom: 10px;
+        border-radius: 0 8px 8px 0;
+   }
+   .similar-report-item {
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+   }
+   .similar-report-item:hover {
+        background: #f8f9fa;
+        border-color: #15818E;
+   }
+   .btn-action {
+        width: 100%;
+        margin-bottom: 10px;
+   }
+   .divider {
+        border-top: 1px solid #dee2e6;
+        margin: 20px 0;
+   }
+</style>
+
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <div>
+            <h3 class="text-white fw-bolder fs-2qx me-5">Review Report #{{ report.id }}</h3>
+            <div class="text-white-50 mt-2">
+                <a href="{% url 'product_reports_admin' %}" class="text-white-50 text-hover-white">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Reports
+                </a>
+            </div>
+        </div>
+        <div>
+            <span class="status-badge status-{{ report.status }} fs-6">
+                {{ report.get_status_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        
+        <div class="row">
+            <!-- Left Column - Report Details -->
+            <div class="col-lg-8">
+                <!-- Main Report Details Card -->
+                <div class="detail-card">
+                    <h4 class="mb-4" style="color: #15818E;">
+                        <i class="fas fa-flag me-2"></i>Report Details
+                    </h4>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Report ID:</div>
+                        <div class="col-md-9">
+                            <strong>#{{ report.id }}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Reporter:</div>
+                        <div class="col-md-9">
+                            {% if report.reporter %}
+                                <strong>{{ report.reporter.get_full_name|default:report.reporter.username }}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-envelope me-1"></i>{{ report.reporter.email }}<br>
+                                    <i class="fas fa-calendar me-1"></i>Joined: {{ report.reporter.date_joined|date:"M d, Y" }}
+                                </small>
+                            {% else %}
+                                <em class="text-muted">Anonymous User</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Reported Item:</div>
+                        <div class="col-md-9">
+                            <strong>{{ report.content_type.name|title }}</strong>
+                            <br>
+                            <small class="text-muted">ID: {{ report.object_id }}</small>
+                            <div class="mt-2">
+                                <a href="{% url 'property_detail_view' report.content_type.model report.object_id %}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-external-link-alt me-1"></i> View Full Listing
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Reason:</div>
+                        <div class="col-md-9">
+                            <span class="badge bg-warning text-dark p-2">{{ report.get_reason_display }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Reported On:</div>
+                        <div class="col-md-9">
+                            {{ report.created_at|date:"F j, Y H:i" }}
+                            <br>
+                            <small class="text-muted">{{ report.created_at|timesince }} ago</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Description:</div>
+                        <div class="col-md-9">
+                            <div class="p-3 bg-light rounded">
+                                {% if report.description %}
+                                    {{ report.description|linebreaks }}
+                                {% else %}
+                                    <em class="text-muted">No description provided</em>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if report.reviewed_by %}
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Last Review:</div>
+                        <div class="col-md-9">
+                            <strong>{{ report.reviewed_by.get_full_name|default:report.reviewed_by.username }}</strong>
+                            <br>
+                            <small class="text-muted">{{ report.reviewed_at|date:"F j, Y H:i" }}</small>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if report.review_notes %}
+                    <div class="row mb-3">
+                        <div class="col-md-3 info-label">Review Notes:</div>
+                        <div class="col-md-9">
+                            <div class="p-3 bg-light rounded">
+                                {{ report.review_notes|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Similar Reports Card -->
+                {% if similar_reports %}
+                <div class="detail-card">
+                    <h5 class="mb-3" style="color: #15818E;">
+                        <i class="fas fa-clone me-2"></i>Similar Reports for This Item
+                    </h5>
+                    <div class="row">
+                        {% for sim in similar_reports %}
+                        <div class="col-md-6">
+                            <div class="similar-report-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>Report #{{ sim.id }}</strong>
+                                        <span class="badge bg-secondary ms-2">{{ sim.get_reason_display }}</span>
+                                    </div>
+                                    <span class="status-badge status-{{ sim.status }}">{{ sim.get_status_display }}</span>
+                                </div>
+                                <div class="small text-muted mt-2">
+                                    <i class="fas fa-user me-1"></i> {{ sim.reporter|default:"Anonymous" }}
+                                    <br>
+                                    <i class="fas fa-calendar me-1"></i> {{ sim.created_at|date:"Y-m-d" }}
+                                </div>
+                                {% if sim.description %}
+                                <div class="mt-2 small">
+                                    <em>"{{ sim.description|truncatechars:60 }}"</em>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Action History Card -->
+                {% if action_history %}
+                <div class="detail-card">
+                    <h5 class="mb-3" style="color: #15818E;">
+                        <i class="fas fa-history me-2"></i>Action History
+                    </h5>
+                    <div class="action-history">
+                        {% for action in action_history %}
+                        <div class="history-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <strong>{{ action.get_action_display }}</strong>
+                                <small class="text-muted">{{ action.created_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            <div class="small">
+                                By <strong>{{ action.moderator.get_full_name|default:action.moderator.username }}</strong>
+                            </div>
+                            {% if action.notes %}
+                            <div class="mt-2 small text-muted">
+                                <i class="fas fa-comment me-1"></i> {{ action.notes }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Right Column - Actions -->
+            <div class="col-lg-4">
+                <!-- Status Update Form -->
+                <div class="detail-card">
+                    <h5 class="mb-3" style="color: #15818E;">
+                        <i class="fas fa-edit me-2"></i>Update Status
+                    </h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_status">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Change Status</label>
+                            <select name="status" class="form-select">
+                                {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if report.status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Review Notes</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Add notes about this review...">{{ report.review_notes }}</textarea>
+                            <small class="text-muted">Internal notes for moderators</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 btn-action">
+                            <i class="fas fa-save me-2"></i> Update Status
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Moderation Actions Card -->
+                <div class="detail-card">
+                    <h5 class="mb-3" style="color: #15818E;">
+                        <i class="fas fa-gavel me-2"></i>Take Action
+                    </h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="take_action">
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Action</label>
+                            <select name="mod_action" class="form-select" required>
+                                <option value="">Choose action...</option>
+                                {% for value, label in action_types %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Action Notes</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Explain why this action is being taken..." required></textarea>
+                        </div>
+                        
+                        <div class="alert alert-warning small">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            This action will be logged and may affect the listing or user.
+                        </div>
+                        
+                        <button type="submit" class="btn btn-danger w-100 btn-action" onclick="return confirm('Are you sure you want to take this action?')">
+                            <i class="fas fa-check-circle me-2"></i> Execute Action
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Quick Info Card -->
+                <div class="detail-card">
+                    <h5 class="mb-3" style="color: #15818E;">
+                        <i class="fas fa-info-circle me-2"></i>Quick Info
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-clock text-muted me-2"></i>
+                            <strong>Report Age:</strong> {{ report.created_at|timesince }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-tag text-muted me-2"></i>
+                            <strong>Reason Code:</strong> {{ report.reason }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-hashtag text-muted me-2"></i>
+                            <strong>Content Type:</strong> {{ report.content_type.name }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-globe text-muted me-2"></i>
+                            <strong>Object ID:</strong> {{ report.object_id }}
+                        </li>
+                    </ul>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="d-grid">
+                        <a href="{% url 'product_reports_admin' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Reports List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add confirmation for status changes
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const action = this.querySelector('input[name="action"]')?.value;
+            
+            if (action === 'take_action') {
+                const modAction = this.querySelector('select[name="mod_action"]')?.value;
+                if (modAction && !confirm(`Are you sure you want to ${modAction} this report?`)) {
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+</script>
+
+{% include 'admin1/footeradmin.html' %}

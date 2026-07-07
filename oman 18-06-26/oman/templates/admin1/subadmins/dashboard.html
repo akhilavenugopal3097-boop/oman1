@@ -1,0 +1,1208 @@
+{% include 'admin1/headeradmin.html' %}
+{% load static %}
+
+{% block title %}Sub-Admin Dashboard{% endblock %}
+
+{% block main %}
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    <div class="toolbar" id="kt_toolbar" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+        <div class="container-fluid d-flex flex-stack flex-wrap flex-sm-nowrap py-4">
+            <div class="d-flex flex-column align-items-start justify-content-center flex-wrap me-2">
+                <h1 class="text-white fw-bolder my-1 fs-2">Sub-Admin Dashboard</h1>
+                <ul class="breadcrumb fw-semibold fs-base my-1">
+                    <li class="breadcrumb-item text-white opacity-75">
+                        <a href="{% url 'subadmin_dashboard' %}" class="text-white opacity-75">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item text-white">Home</li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="badge bg-white text-dark fs-7 p-3 shadow-sm">
+                    <i class="fas fa-user-shield me-2" style="color: #15818E;"></i>{{ request.user.username }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <!--end::Toolbar-->
+
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <div class="container-fluid py-6">
+            
+            <!-- Display Django Messages -->
+            {% if messages %}
+            <div class="messages mb-5">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert" style="border-left: 4px solid #15818E;">
+                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %} me-2" style="color: #15818E;"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Welcome Card -->
+            <div class="card card-flush shadow-sm mb-8 border-0 rounded-4 overflow-hidden">
+                <div class="card-body p-5" style="background: linear-gradient(145deg, #ffffff 0%, #f8fcff 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="symbol symbol-60px me-5">
+                            <div class="symbol-label rounded-3" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                                <i class="fas fa-user-shield text-white fs-2x"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h2 class="fw-bold mb-1" style="color: #1e293b;">Welcome back, {{ request.user.username }}!</h2>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-clock me-2" style="color: #15818E;"></i>Last login: {{ request.user.last_login|date:"F j, Y, g:i a"|default:"First time login" }}
+                            </p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge fs-7 p-3" style="background: #15818E; color: white;">
+                                <i class="fas fa-check-circle me-2"></i>Active Sub-Admin
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards - Show only sections with permissions -->
+            <div class="row g-5 g-xl-8 mb-8">
+                <!-- Location Management Stats -->
+                {% if has_location_permission %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-map-marker-alt fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Locations</h4>
+                                    <small class="text-muted">
+                                        G:{{ stats.governates_count|default:"0" }} D:{{ stats.districts_count|default:"0" }} C:{{ stats.cities_count|default:"0" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Amenities Stats -->
+                {% if subadmin_permissions.amenities.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-couch fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Amenities</h4>
+                                    <small class="text-muted">{{ stats.total_amenities|default:"0" }} total</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Motors Options Stats -->
+                {% if has_motors_options_permission %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-cog fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Motor Options</h4>
+                                    <small class="text-muted">{{ stats.motors_options_total|default:"0" }} options</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Content Management Stats -->
+                {% if has_content_permission %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-file-alt fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Content</h4>
+                                    <small class="text-muted">
+                                        FAQ:{{ stats.faq_total|default:"0" }} Blog:{{ stats.blog_total|default:"0" }} Banner:{{ stats.banner_total|default:"0" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Advertisement Stats -->
+                {% if subadmin_permissions.advertisement.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-ad fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Advertisements</h4>
+                                    <small class="text-muted">{{ stats.advertisement_count|default:"0" }} ads</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Companies Stats -->
+                {% if has_companies_permission %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-building fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Companies</h4>
+                                    <small class="text-muted">{{ stats.companies_count|default:"0" }} companies</small>
+                                    {% if stats.pending_companies and stats.pending_companies > 0 %}
+                                    <span class="badge ms-2" style="background: #15818E; color: white;">{{ stats.pending_companies }} pending</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Jobs Stats -->
+                {% if has_jobs_permission %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-briefcase fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Jobs</h4>
+                                    <small class="text-muted">{{ stats.job_posts_count|default:"0" }} posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Job Categories Stats -->
+                {% if subadmin_permissions.job_categories.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-tags fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Job Categories</h4>
+                                    <small class="text-muted">{{ stats.job_categories_count|default:"0" }} categories</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Reported Ads Stats -->
+                {% if subadmin_permissions.reported_ads.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-flag fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Reported Ads</h4>
+                                    <small class="text-muted">{{ stats.reported_ads_count|default:"0" }} reports</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Users Stats -->
+                {% if subadmin_permissions.users_view.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-users fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Users</h4>
+                                    <small class="text-muted">{{ stats.users_count|default:"0" }} total</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- User Reports Stats -->
+                {% if subadmin_permissions.user_reports.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-flag fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">User Reports</h4>
+                                    <small class="text-muted">{{ stats.user_reports_count|default:"0" }} reports</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- User Activity Stats -->
+                {% if subadmin_permissions.user_activity.view %}
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-flush border-0 shadow-sm h-100 rounded-4 stats-card" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="symbol symbol-45px me-4">
+                                    <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                        <i class="fas fa-chart-line fs-2" style="color: #15818E;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 class="fw-bold mb-1" style="color: #1e293b;">Activity</h4>
+                                    <small class="text-muted">{{ stats.activity_count_24h|default:"0" }} today</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- NEW: Ads Approval Section - 5 Categories -->
+            <div class="row mb-8">
+                <div class="col-12">
+                    <div class="card card-flush shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-check-double me-2"></i>Ads Approval Dashboard
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <!-- Properties Approval Card -->
+                                {% if has_properties_approval %}
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="approval-card properties h-100 p-4 rounded-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border: 1px solid rgba(21, 129, 142, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="symbol symbol-50px">
+                                                <div class="symbol-label rounded-3" style="background: rgba(21, 129, 142, 0.1);">
+                                                    <i class="fas fa-building fs-2" style="color: #15818E;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fs-1 fw-bold" style="color: #15818E;">{{ pending_properties_count|default:"0" }}</div>
+                                                <small class="text-muted">Pending</small>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold mb-2" style="color: #1e293b;">Properties</h5>
+                                        <p class="text-muted small mb-3">Land, Villa, Commercial, Farm, Apartment, Factory, Complex, Clinic, Hostel, Office, Shop, Cafe, Staff, Warehouse, Townhouse, Fullfloors, Showrooms, Wholebuilding, Supermarket, Foreign, Shared, Suits</p>
+                                        {% if pending_properties_count > 0 %}
+                                        <a href="{% url 'admin_dashboard' %}?category=properties" class="btn btn-sm w-100 py-2 rounded-3" style="background: #15818E; color: white;">
+                                            <i class="fas fa-eye me-2"></i>Review {{ pending_properties_count }} Pending
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-sm w-100 py-2 rounded-3" disabled style="background: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                                            <i class="fas fa-check-circle me-2"></i>All Approved
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Vehicles Approval Card -->
+                                {% if has_vehicles_approval %}
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="approval-card vehicles h-100 p-4 rounded-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border: 1px solid rgba(249, 173, 31, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="symbol symbol-50px">
+                                                <div class="symbol-label rounded-3" style="background: rgba(249, 173, 31, 0.1);">
+                                                    <i class="fas fa-car fs-2" style="color: #F9AD1F;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fs-1 fw-bold" style="color: #F9AD1F;">{{ pending_vehicles_count|default:"0" }}</div>
+                                                <small class="text-muted">Pending</small>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold mb-2" style="color: #1e293b;">Vehicles</h5>
+                                        <p class="text-muted small mb-3">Automobile, Motorcycle, Scooter, HelmetClothes, Quadbikes, HeavyVehicle, Boat, AutoAccessoryPart, NumberPlate, Part, SportsCar, TiresAndCaps, JunkCar, CarRepairMaintenance, DrivingTraining</p>
+                                        {% if pending_vehicles_count > 0 %}
+                                        <a href="{% url 'admin_dashboard' %}?category=vehicles" class="btn btn-sm w-100 py-2 rounded-3" style="background: #F9AD1F; color: white;">
+                                            <i class="fas fa-eye me-2"></i>Review {{ pending_vehicles_count }} Pending
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-sm w-100 py-2 rounded-3" disabled style="background: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                                            <i class="fas fa-check-circle me-2"></i>All Approved
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Electronics & Mobile Approval Card -->
+                                {% if has_electronics_approval %}
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="approval-card electronics h-100 p-4 rounded-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border: 1px solid rgba(79, 70, 229, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="symbol symbol-50px">
+                                                <div class="symbol-label rounded-3" style="background: rgba(79, 70, 229, 0.1);">
+                                                    <i class="fas fa-mobile-alt fs-2" style="color: #4f46e5;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fs-1 fw-bold" style="color: #4f46e5;">{{ pending_electronics_count|default:"0" }}</div>
+                                                <small class="text-muted">Pending</small>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold mb-2" style="color: #1e293b;">Electronics & Mobile</h5>
+                                        <p class="text-muted small mb-3">Mobile, Tablet, SmartWatch, Headset, Cover, Accessory, MobileSIM, Computer, Sound, ComputerListing, ElectronicsListing</p>
+                                        {% if pending_electronics_count > 0 %}
+                                        <a href="{% url 'admin_dashboard' %}?category=electronics" class="btn btn-sm w-100 py-2 rounded-3" style="background: #4f46e5; color: white;">
+                                            <i class="fas fa-eye me-2"></i>Review {{ pending_electronics_count }} Pending
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-sm w-100 py-2 rounded-3" disabled style="background: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                                            <i class="fas fa-check-circle me-2"></i>All Approved
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Classifieds & Listings Approval Card -->
+                                {% if has_classifieds_approval %}
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="approval-card classifieds h-100 p-4 rounded-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border: 1px solid rgba(16, 185, 129, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="symbol symbol-50px">
+                                                <div class="symbol-label rounded-3" style="background: rgba(16, 185, 129, 0.1);">
+                                                    <i class="fas fa-tags fs-2" style="color: #10b981;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fs-1 fw-bold" style="color: #10b981;">{{ pending_classifieds_count|default:"0" }}</div>
+                                                <small class="text-muted">Pending</small>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold mb-2" style="color: #1e293b;">Classifieds & Listings</h5>
+                                        <p class="text-muted small mb-3">Fashion, Toys, Food, Fitness, Pet, Book, Appliance, Business, Education, Service, BusinessIndustrialListing, PetListing, SportsListing, MusicalListing, GamingListing, TicketVoucherListing, CollectibleListing, BooksListing, MusicListing, DVDsMoviesListing, FurnitureHomeGardenListing, BabyItemsListing, ToysListing, LostFoundListing, CameraListing, JewelryListing, HomeApplianceListing, ClothingAccessoriesListing</p>
+                                        {% if pending_classifieds_count > 0 %}
+                                        <a href="{% url 'admin_dashboard' %}?category=classifieds" class="btn btn-sm w-100 py-2 rounded-3" style="background: #10b981; color: white;">
+                                            <i class="fas fa-eye me-2"></i>Review {{ pending_classifieds_count }} Pending
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-sm w-100 py-2 rounded-3" disabled style="background: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                                            <i class="fas fa-check-circle me-2"></i>All Approved
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Services Approval Card -->
+                                {% if has_services_approval %}
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="approval-card services h-100 p-4 rounded-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa); border: 1px solid rgba(245, 158, 11, 0.2);">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="symbol symbol-50px">
+                                                <div class="symbol-label rounded-3" style="background: rgba(245, 158, 11, 0.1);">
+                                                    <i class="fas fa-concierge-bell fs-2" style="color: #f59e0b;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="fs-1 fw-bold" style="color: #f59e0b;">{{ pending_services_count|default:"0" }}</div>
+                                                <small class="text-muted">Pending</small>
+                                            </div>
+                                        </div>
+                                        <h5 class="fw-bold mb-2" style="color: #1e293b;">Services</h5>
+                                        <p class="text-muted small mb-3">AutoServiceListing, ConsultancyServiceListing, DomesticServiceListing, EventEntertainmentServiceListing, HealthWellbeingServiceListing, HomeMaintenanceServiceListing, MoversServiceListing, RestorationServiceListing, TutorsServiceListing, WebComputerServiceListing, FreelancersServiceListing, OtherServiceListing</p>
+                                        {% if pending_services_count > 0 %}
+                                        <a href="{% url 'admin_dashboard' %}?category=services" class="btn btn-sm w-100 py-2 rounded-3" style="background: #f59e0b; color: white;">
+                                            <i class="fas fa-eye me-2"></i>Review {{ pending_services_count }} Pending
+                                        </a>
+                                        {% else %}
+                                        <button class="btn btn-sm w-100 py-2 rounded-3" disabled style="background: #e9ecef; color: #6c757d; cursor: not-allowed;">
+                                            <i class="fas fa-check-circle me-2"></i>All Approved
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permission Summary -->
+            <div class="row mb-8">
+                <div class="col-12">
+                    <div class="card card-flush border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-6">
+                            <h3 class="card-title fw-bold" style="color: #1e293b;">
+                                <i class="fas fa-key me-2" style="color: #15818E;"></i>
+                                Your Permissions
+                            </h3>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="d-flex flex-wrap gap-2">
+                                <!-- Location Permissions -->
+                                {% if subadmin_permissions.governates.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-building me-1"></i> Governates
+                                    {% if subadmin_permissions.governates.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.governates.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.governates.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.districts.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-map me-1"></i> Districts
+                                    {% if subadmin_permissions.districts.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.districts.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.districts.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.cities.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-city me-1"></i> Cities
+                                    {% if subadmin_permissions.cities.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.cities.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.cities.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Amenities Permissions -->
+                                {% if subadmin_permissions.amenities.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-couch me-1"></i> Amenities
+                                    {% if subadmin_permissions.amenities.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.amenities.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.amenities.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Motors Options Permissions -->
+                                {% if subadmin_permissions.interior_options.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-car me-1"></i> Interior
+                                    {% if subadmin_permissions.interior_options.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.interior_options.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.interior_options.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.exterior_options.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-car-side me-1"></i> Exterior
+                                    {% if subadmin_permissions.exterior_options.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.exterior_options.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.exterior_options.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.technology_options.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-microchip me-1"></i> Technology
+                                    {% if subadmin_permissions.technology_options.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.technology_options.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.technology_options.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Content Permissions -->
+                                {% if subadmin_permissions.faq.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-question-circle me-1"></i> FAQ
+                                    {% if subadmin_permissions.faq.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.faq.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.faq.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.blog.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-blog me-1"></i> Blog
+                                    {% if subadmin_permissions.blog.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.blog.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.blog.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.banner.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-images me-1"></i> Banner
+                                    {% if subadmin_permissions.banner.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.banner.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.banner.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Advertisement Permissions -->
+                                {% if subadmin_permissions.advertisement.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-ad me-1"></i> Advertisement
+                                    {% if subadmin_permissions.advertisement.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.advertisement.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.advertisement.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Companies Permissions -->
+                                {% if subadmin_permissions.companies.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-building me-1"></i> Companies
+                                    {% if subadmin_permissions.companies.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.companies.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.companies.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.company_approval.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-check-circle me-1"></i> Company Approval
+                                    {% if subadmin_permissions.company_approval.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Jobs Permissions -->
+                                {% if subadmin_permissions.job_posts.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-briefcase me-1"></i> Job Posts
+                                    {% if subadmin_permissions.job_posts.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.job_posts.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.job_posts.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.job_categories.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-tags me-1"></i> Job Categories
+                                    {% if subadmin_permissions.job_categories.create %}<i class="fas fa-plus-circle ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.job_categories.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.job_categories.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- Reported Ads Permissions -->
+                                {% if subadmin_permissions.reported_ads.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-flag me-1"></i> Reported Ads
+                                    {% if subadmin_permissions.reported_ads.edit %}<i class="fas fa-edit ms-1"></i>{% endif %}
+                                    {% if subadmin_permissions.reported_ads.delete %}<i class="fas fa-trash ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- NEW: Ads Approval Permissions - 5 Categories -->
+                                {% if subadmin_permissions.ads_approval_properties.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-building me-1"></i> Properties Approval
+                                    {% if subadmin_permissions.ads_approval_properties.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.ads_approval_vehicles.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(249, 173, 31, 0.1); color: #F9AD1F;">
+                                    <i class="fas fa-car me-1"></i> Vehicles Approval
+                                    {% if subadmin_permissions.ads_approval_vehicles.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.ads_approval_electronics.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5;">
+                                    <i class="fas fa-mobile-alt me-1"></i> Electronics Approval
+                                    {% if subadmin_permissions.ads_approval_electronics.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.ads_approval_classifieds.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                    <i class="fas fa-tags me-1"></i> Classifieds Approval
+                                    {% if subadmin_permissions.ads_approval_classifieds.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                {% if subadmin_permissions.ads_approval_services.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                    <i class="fas fa-concierge-bell me-1"></i> Services Approval
+                                    {% if subadmin_permissions.ads_approval_services.approve %}<i class="fas fa-check ms-1"></i>{% endif %}
+                                </span>
+                                {% endif %}
+
+                                <!-- User Permissions -->
+                                {% if subadmin_permissions.users_view.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-users me-1"></i> View Users
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.user_reports.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-flag me-1"></i> User Reports
+                                </span>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.user_activity.view %}
+                                <span class="badge p-3 m-1 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">
+                                    <i class="fas fa-chart-line me-1"></i> Activity Log
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Menu Cards - Organized by Permission -->
+            <div class="row g-5 g-xl-8">
+                <!-- Location Management Card -->
+                {% if has_location_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-map-marker-alt me-2"></i>Location Management
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.governates.view %}
+                                <a href="{% url 'governate' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-building me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Governates</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.governates_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.districts.view %}
+                                <a href="{% url 'districts' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-map me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Districts</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.districts_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.cities.view %}
+                                <a href="{% url 'cities' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-city me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Cities</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.cities_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Amenities Card -->
+                {% if subadmin_permissions.amenities.view %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-couch me-2"></i>Amenities Management
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <a href="{% url 'mainamenities' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-check-circle me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Main Amenities</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.main_amenities_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                <a href="{% url 'additionalamenities' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-plus-circle me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Additional Amenities</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.additional_amenities_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                <a href="{% url 'nearbylocation' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-map-pin me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Nearby Locations</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.nearby_locations_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Motors Options Card -->
+                {% if has_motors_options_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-cog me-2"></i>Motors Options
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.interior_options.view %}
+                                <a href="{% url 'interioroptions' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-chair me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Interior Options</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.interior_options_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.exterior_options.view %}
+                                <a href="{% url 'exterioroptions' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-car-side me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Exterior Options</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.exterior_options_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.technology_options.view %}
+                                <a href="{% url 'technologyoptions' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-microchip me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Technology Options</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.technology_options_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Content Management Card -->
+                {% if has_content_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-file-alt me-2"></i>Content Management
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.faq.view %}
+                                <a href="{% url 'faq_list' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-question-circle me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">FAQ Management</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.faq_total|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.blog.view %}
+                                <a href="{% url 'blog_list' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-blog me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Blog Management</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.blog_total|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.banner.view %}
+                                <a href="{% url 'banner_list' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-images me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Banner Management</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.banner_total|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Advertisement Card -->
+                {% if subadmin_permissions.advertisement.view %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-ad me-2"></i>Advertisement Management
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <a href="{% url 'advertisement' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-ad me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">All Advertisements</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.advertisement_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Companies Card -->
+                {% if has_companies_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-building me-2"></i>Companies
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.companies.view %}
+                                <a href="{% url 'company_list' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-building me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">All Companies</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.companies_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.company_approval.view %}
+                                <a href="{% url 'company_list' %}?status=pending" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-clock me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Pending Approval</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.pending_companies|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Jobs Card -->
+                {% if has_jobs_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-briefcase me-2"></i>Jobs
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.job_posts.view %}
+                                <a href="{% url 'jobpost' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-briefcase me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Job Posts</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.job_posts_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.job_categories.view %}
+                                <a href="{% url 'jobcategory' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-tags me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Job Categories</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.job_categories_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Reported Ads Card -->
+                {% if subadmin_permissions.reported_ads.view %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-flag me-2"></i>Reported Ads
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                <a href="{% url 'product_reports_admin' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-flag me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">All Reports</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.reported_ads_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Users Card -->
+                {% if has_user_permission %}
+                <div class="col-md-4 mb-8">
+                    <div class="card card-flush h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="card-header border-0" style="background: linear-gradient(135deg, #15818E 0%, #1a9fb0 100%);">
+                            <h3 class="card-title fs-4 fw-bold text-white">
+                                <i class="fas fa-users me-2"></i>User Management
+                            </h3>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if subadmin_permissions.users_view.view %}
+                                <a href="{% url 'user' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-users me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">View Users</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.users_count|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if subadmin_permissions.user_activity.view %}
+                                <a href="{% url 'user_activity_log' %}" class="list-group-item list-group-item-action d-flex align-items-center py-3 border-0 hover-bg">
+                                    <i class="fas fa-chart-line me-3" style="color: #15818E;"></i>
+                                    <span class="flex-grow-1" style="color: #1e293b;">Activity Log</span>
+                                    <span class="badge me-2" style="background: rgba(21, 129, 142, 0.1); color: #15818E;">{{ stats.activity_count_24h|default:"0" }}</span>
+                                    <i class="fas fa-chevron-right" style="color: #15818E;"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-8">
+                <div class="col-12">
+                    <div class="card card-flush border-0 shadow-sm rounded-4">
+                        <div class="card-header bg-transparent border-0 pt-6">
+                            <h3 class="card-title fw-bold" style="color: #1e293b;">
+                                <i class="fas fa-bolt me-2" style="color: #15818E;"></i>
+                                Quick Actions
+                            </h3>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn px-5 py-3 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E; border: none;" onclick="window.location.href='{% url 'subadmin_dashboard' %}'">
+                                    <i class="fas fa-sync-alt me-2"></i>Refresh Dashboard
+                                </button>
+                                <button class="btn px-5 py-3 rounded-3" style="background: rgba(21, 129, 142, 0.1); color: #15818E; border: none;" onclick="window.open('mailto:{{ admin_email|default:'admin@example.com' }}')">
+                                    <i class="fas fa-envelope me-2"></i>Contact Super-Admin
+                                </button>
+                                <a href="{% url 'adminlogout' %}" class="btn px-5 py-3 rounded-3" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; border: none;">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--end::Post-->
+</div>
+
+<style>
+    :root {
+        --primary-color: #15818E;
+        --primary-dark: #0e5f69;
+        --primary-light: #1a9fb0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(21, 129, 142, 0.15);
+    }
+    
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        transition: all 0.2s;
+        padding: 1rem 1.5rem;
+    }
+    
+    .list-group-item:first-child {
+        border-top: none;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .hover-bg:hover {
+        background-color: rgba(21, 129, 142, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .stats-card {
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(21, 129, 142, 0.1);
+    }
+    
+    .badge {
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .symbol-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+    }
+    
+    .shadow-sm {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 10px 30px rgba(21, 129, 142, 0.1);
+    }
+    
+    .card-header {
+        border-bottom: none;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .rounded-4 {
+        border-radius: 1rem;
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(21, 129, 142, 0.2);
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #15818E;
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #0e5f69;
+    }
+    
+    /* Toolbar gradient */
+    .toolbar {
+        margin: -25px -25px 0 -25px;
+        padding: 25px 25px 0 25px;
+    }
+    
+    /* Approval card animations */
+    .approval-card {
+        transition: all 0.3s ease;
+    }
+    
+    .approval-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script>
+    // Log user permissions for debugging
+    console.log('Sub-Admin Dashboard Loaded');
+    console.log('Approval Categories:', {
+        properties: {{ has_properties_approval|yesno:"true,false" }},
+        vehicles: {{ has_vehicles_approval|yesno:"true,false" }},
+        electronics: {{ has_electronics_approval|yesno:"true,false" }},
+        classifieds: {{ has_classifieds_approval|yesno:"true,false" }},
+        services: {{ has_services_approval|yesno:"true,false" }}
+    });
+</script>
+{% endblock %}

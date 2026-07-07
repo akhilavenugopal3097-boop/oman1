@@ -1,0 +1,3624 @@
+{% load static %}
+{% load automobile_filters %}
+{% load dict_filters %}
+{% load humanize %}
+ {% include 'header2.html' %}
+
+    
+           
+        <div class="auto-container">
+                   
+        
+            
+              <section class="dual-ad-loop-box">
+                <style>
+                    .dual-ad-loop-box {
+                        width: 100%;
+                        padding: 15px 0;
+                        box-sizing: border-box;
+                        display: flex;
+                        justify-content: center;
+                        margin: 0 auto;
+                    }
+            
+                    .dual-ad-loop-box .swiper-container {
+                        width: 100%;
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        height: 250px;
+                        padding: 0; /* Further reduced padding */
+                    }
+            
+                    .dual-ad-loop-box .swiper-wrapper {
+                        align-items: center;
+                    }
+            
+                    .dual-ad-loop-box .swiper-slide {
+                        width: calc(50% - 3px) !important; /* Reduced gap to just 3px */
+                        height: 230px;
+                        transition: all 0.4s ease;
+                        opacity: 1;
+                    }
+            
+                    .dual-ad-loop-box .swiper-slide:not(.swiper-slide-visible) {
+                        opacity: 0;
+                        pointer-events: none;
+                    }
+            
+                    .dual-ad-loop-box .ad-box {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                        border: 1px solid #eee;
+                        background: white;
+                        transition: all 0.3s ease;
+                    }
+            
+                    .dual-ad-loop-box .ad-box:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    }
+            
+                    .dual-ad-loop-box .ad-box img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+            
+                    @media (max-width: 768px) {
+                        .dual-ad-loop-box .swiper-container {
+                            height: 220px;
+                            padding: 0 5px; /* Minimal padding on mobile */
+                        }
+            
+                        .dual-ad-loop-box .swiper-slide {
+                            height: 200px;
+                            width: calc(50% - 2px) !important; /* Nearly touching on mobile */
+                        }
+                    }
+                </style>
+            
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        {% for advertisement in advertisement %}
+                        <div class="swiper-slide">
+                            <div class="ad-box">
+                                <a href="{{ advertisement.url }}" target="_blank" {% if not advertisement.url %}onclick="return false;"{% endif %}>
+                                    <img src="{{ advertisement.image.url }}" alt="Advertisement">
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            
+                <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const swiper = new Swiper('.dual-ad-loop-box .swiper-container', {
+                            slidesPerView: 2,
+                            spaceBetween: 6, /* Very small gap - 6px */
+                            loop: true,
+                            autoplay: {
+                                delay: 3000,
+                                disableOnInteraction: false,
+                            },
+                            breakpoints: {
+                                320: {
+                                    spaceBetween: 3 /* Almost touching on mobile */
+                                },
+                                768: {
+                                    spaceBetween: 6 
+                                }
+                            },
+                            on: {
+                                init: function () {
+                                    updateVisibleSlides(this);
+                                },
+                                slideChange: function () {
+                                    updateVisibleSlides(this);
+                                }
+                            }
+                        });
+            
+                        function updateVisibleSlides(swiperInstance) {
+                            const slides = swiperInstance.slides;
+                            slides.forEach(slide => {
+                                slide.classList.remove('swiper-slide-visible');
+                            });
+            
+                            const visibleIndices = [swiperInstance.activeIndex, swiperInstance.activeIndex + 1];
+                            visibleIndices.forEach(index => {
+                                const slide = slides[index % slides.length];
+                                if (slide) {
+                                    slide.classList.add('swiper-slide-visible');
+                                }
+                            });
+                        }
+                    });
+                </script>
+            </section>
+
+            <!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+           
+
+
+
+
+            <nav aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                  <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+                  <li><a href="{% url 'index2' %}">Motors</a></li>
+           {% if is_car and ad.listing_type == 'sell' %}
+<li>
+    <a href="{% url 'car' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">
+        Cars for Sale
+    </a>
+</li>
+{% endif %}
+
+ {% if is_motorcycle or is_scooter or is_quadbike or is_helmetclothes %}
+        <!-- Motorcycles & Accessories -->
+        <li>
+           
+               <a  href="{% url 'motorcyclemain' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Motorcycles & Accessories</a></span>
+                <!-- Sub-menu for Motorcycle & Accessories -->
+                <ul class="submenu submenu-right two-column">
+                    <div class="submenu-columns">
+                        <div class="column">
+                            {% if is_motorcycle %}
+                                <li><a href="{% url 'motorcycle' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Motorcycles</a></li>
+                            {% endif %}
+                            {% if is_scooter %}
+                                <li><a href="{% url 'scooter' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Scooters</a></li>
+                            {% endif %}
+                            {% if is_quadbike %}
+                                <li><a href="{% url 'quadbikes' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Quad Bikes, Buggies and ATV</a></li>
+                            {% endif %}
+                        </div>
+                        <div class="column">
+                            {% if is_helmetclothes %}
+                                <li><a href="{% url 'helmetclothes' %}?helmetcloth_type=helmet{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Motorcycle Helmets</a></li>
+                                <li><a href="{% url 'helmetclothes' %}?helmetcloth_type=clothes{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Motorcycle Clothes</a></li>
+                            {% endif %}
+                        </div>
+                    </div>
+                </ul>
+           
+        </li>
+         {% endif %}
+  {% if is_car and ad.listing_type == 'rent' %}
+        <!-- Vehicles for Rent -->
+        <li>
+                <a href="{% url 'vehiclerent' %}?listing_type=rent{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Vehicles for Rent</a>   
+        </li>
+{% endif %}
+        <!-- Heavy Vehicles -->
+          {% if is_heavyvehicle %}
+         <li>
+        
+          <a  href="{% url 'heavyvehicle' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Heavy Vehicles</a>
+           
+        </li>
+ {% endif %}
+        <!-- Boats & Jet Skis -->
+         {% if is_boat %}
+        <li>
+        
+          <a href="{% url 'boat' %}?listing_type=sell{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Boats & Jet Skis</a>
+           
+        </li>
+ {% endif %}
+        <!-- Plate Numbers -->
+          {% if is_numberplate %}
+         <li>
+        
+          <a href="{% url 'numberplate' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Plate Numbers</a>
+           
+        </li>
+ {% endif %}
+  {% if is_tiresandcaps %}
+        <!-- Tires, Wheels & Rims -->
+        <li>
+        
+          <a  href="{% url 'tiresandcaps' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Tires, Wheels & Rims</a>
+           
+        </li>
+ {% endif %}
+        <!-- Auto Accessories & Parts -->
+           {% if is_accessory %}
+        <li>
+        
+          <a  href="{% url 'accessoriesparts' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Auto Accessories & Parts</a>
+           
+        </li>
+ {% endif %}
+  {% if is_junkcars %}
+        <!-- Junk Cars - Other Vehicles -->
+         <li>
+        
+          <a  href="{% url 'junkcars' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Junk Cars - Other Vehicles</a>
+           
+        </li>
+ {% endif %}
+ {% if is_car_repair %}
+        <!-- Car Maintenance and Repair -->
+         <li>
+        
+          <a href="{% url 'car_repair' %}?{% if selected_governate_param %}&governate={{ selected_governate_param }}{% endif %}">Car Maintenance and Repair</a>
+           
+        </li>
+         {% endif %}
+  {% if is_driving_training %}
+        <!-- Driving Training -->
+        <li>
+        
+          <a href="{% url 'driving_training' %}">Driving Training</a>
+           
+        </li>
+         {% endif %}
+  
+
+                </ol>
+              </nav>
+              <style>
+                .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color: #15818E;
+        }
+              </style>
+         
+    <!-- Image Gallery Section (keep this part the same) -->
+<div class="image-section">
+    <div class="main-image-container">
+      {% if ad.images.all %}
+        <img id="main-image" src="{{ ad.images.first.image.url }}" alt="ad Image" class="main-image" onclick="openModal(0)">
+      {% else %}
+        <img src="path/to/default/image.jpg" alt="Default Image" class="main-image">
+      {% endif %}
+    </div>
+    
+    <div class="side-thumbnails">
+      {% for img in ad.images.all|slice:"1:3" %}
+        <div class="thumbnail-container">
+          <img src="{{ img.image.url }}" alt="Thumbnail {{ forloop.counter }}" class="thumbnail" onclick="openModal({{ forloop.counter0|add:1 }})">
+          {% if forloop.last %}
+            {% if ad.images.all %}
+              <div class="see-more" onclick="openModal(0)">
+                <i class="fas fa-image"></i> {{ ad.images.all|length }}
+              </div>
+            {% endif %}
+            {% if ad.videos.all %}
+              <div class="video-icon">
+                <i class="fas fa-video"></i>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+</div>
+
+<style>
+  /* Keep all your existing styles for the image-section */
+  .image-section {
+    display: flex;
+    gap: 10px;
+    flex: 2;
+  }
+  
+  .main-image-container {
+    position: relative;
+  }
+  
+  .main-image {
+    width: 1100px;
+    max-height: 380px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  
+  .side-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .thumbnail-container {
+    position: relative;
+  }
+  
+  .thumbnail {
+    width: 440px;
+    height: 185px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+  }
+  
+  .see-more {
+    position: absolute;
+    bottom: 10px;
+    margin-right: 30px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .video-icon {
+    position: absolute;
+    top: 148px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 5px;
+    width: 27px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   
+  .video-icon i {
+    color: white;
+    font-size: 12px;
+  }
+</style>
+<div id="galleryModal" class="gallery-modal" onclick="handleOutsideClick(event)">
+  <div class="gallery-container" onclick="event.stopPropagation()">
+    <!-- Left Gallery Section -->
+    <div class="gallery-section">
+      <div class="main-gallery-view">
+        {% for img in ad.images.all %}
+          <div class="gallery-item">
+            <img src="{{ img.image.url }}" alt="Image {{ forloop.counter }}" class="gallery-image">
+          </div>
+        {% endfor %}
+        {% for vid in ad.videos.all %}
+          <div class="gallery-item">
+            <video class="gallery-video" controls poster="{{ vid.thumbnail.url }}">
+              <source src="{{ vid.video.url }}" type="video/mp4">
+              Your browser doesn't support HTML5 video.
+            </video>
+          </div>
+        {% endfor %}
+        <div class="navigation prev" onclick="navigateGallery(-1)">&#10094;</div>
+        <div class="navigation next" onclick="navigateGallery(1)">&#10095;</div>
+      </div>
+      
+      <div class="gallery-controls">
+        <div class="image-counter">
+  <i class="fas fa-image"></i> <!-- Image icon added -->
+  <span id="currentIndex">1</span>/<span id="totalCount">
+    {% if ad.videos %}
+        {{ ad.images.all.count|add:ad.videos.all.count }}
+    {% else %}
+        {{ ad.images.all.count }}
+    {% endif %}
+</span>
+
+</div>
+        <!-- Close button for normal view -->
+        <div class="close-btn" onclick="closeGalleryModal()">
+          <i class="fas fa-times"></i>
+        </div>
+        
+        <div class="fullscreen-toggle" onclick="toggleFullscreen()">
+          <i class="fas fa-expand"></i>
+        </div>
+        
+        <div class="thumbnail-gallery">
+          {% for img in ad.images.all %}
+            <div class="thumbnail-item" onclick="goToImage({{ forloop.counter0 }})">
+              <img src="{{ img.image.url }}" alt="Thumbnail {{ forloop.counter }}" class="modal-thumbnail">
+            </div>
+          {% endfor %}
+          {% for vid in ad.videos.all %}
+           <div class="thumbnail-item border bg-secondary" onclick="goToImage({{ forloop.counter0|add:ad.images.all.count }})">
+              <div class="video-thumbnail-icon">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Contact Card Section -->
+  <div class="contact-section">
+      <div class="contact-card">
+        <div class="contact-header">
+          <h2 class="property-price">
+            {{ ad.price|floatformat:0|intcomma }} OMR
+           
+          </h2>
+        </div>
+        <div class="notify">
+        <a href="">Notify me if price drops</a>
+        </div>
+       <div class="contact-buttons-container">
+        <button onclick="window.location.href='https://wa.me/{{ ad.data.user.whatsapp }}'" class="btn-whatsapp">
+      <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+    </button>
+  <button onclick="event.stopPropagation(); showPhonePopup('{{ ad.user.phone }}')"  class="btn-call">
+  <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button> 
+
+  
+</div>
+<div class="contact-buttons-container">
+   <button class="btn-chat" onclick="{% if request.user.is_authenticated %}window.location.href='/chat/{{ ad.user.id }}/'{% else %}window.location.href='{% url 'login' %}?next=/chat/{{ ad.user.id }}/'{% endif %}">
+          <img src="{% static '\assets\images\chaticon.png' %}" alt="Call" style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;"> Chat
+        </button>
+    <button class="btn-save" onclick="showContactPopup('{{ ad.id }}', '{{ ad.user.id }}', '{{ ad.user.whatsapp|default:"" }}', '{{ ad.user.phone|default:"" }}', '{{ request.user.is_authenticated|yesno:"true,false" }}')">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+</div>
+       <div class="contact-info">
+  <ul class="safety-tips">
+    <li class="info-item">
+      <img src="/static/assets/images/icons/location.svg" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Only meet in public places</span>
+    </li>
+    <li class="info-item">
+       <img src="/static/assets/images/icons/clock.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Never pay or transfer money in advance</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/search.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Inspect the product before you buy it</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/user.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Bring a friend when possible</span>
+    </li>
+    <li class="info-item">
+      <img src="/static/assets/images/icons/phone.png" alt="Location" class="location-icons" style="vertical-align: middle;height:14px;margin-top:3px;margin-right: 5px;">
+      <span>Keep your phone charged and with you</span>
+    </li>
+  </ul>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  /* Base Modal Styles */
+  .gallery-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    overflow: hidden;
+  }
+  
+  .gallery-modal.fullscreen .contact-section {
+    display: none;
+  }
+  
+  .gallery-modal.fullscreen .gallery-container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .gallery-modal.fullscreen .gallery-section {
+    width: 100%;
+  }
+  
+  /* Split View Container */
+  .gallery-container {
+    display: flex;
+    width: 90%;
+    height: 80%;
+    margin: 5% auto;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* Left Gallery Section */
+  .gallery-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .main-gallery-view {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f5f5;
+  }
+  
+  /* Right Contact Section */
+  .contact-section {
+    flex: 1;
+    width: 400px;
+    border-left: 1px solid #eee;
+    padding: 20px;
+    background: #fafafa;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    overflow-y: auto;
+  }
+  
+  /* Gallery Items */
+  .gallery-item {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .gallery-item.active {
+    opacity: 1;
+  }
+  
+  .gallery-image {
+    width: 100%;
+    height: 80%;
+    object-fit: contain;
+  }
+  
+  .gallery-video {
+    width: 100%;
+   height: 100%;
+    object-fit: contain;
+  }
+  
+ 
+  
+  /* Gallery Controls */
+  .gallery-controls {
+    padding: 15px;
+    background: #fff;
+  }
+  
+  .image-counter {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    z-index: 10;
+  }
+  
+  /* Close button styles */
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    /* background: rgba(0,0,0,0.7); */
+    color: rgb(77, 75, 75);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .gallery-modal.fullscreen .close-btn {
+    display: none;
+  }
+  
+  .fullscreen-toggle {
+    position: absolute;
+    bottom: 80px;
+    right: 15px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  /* Thumbnails */
+  .thumbnail-gallery {
+    height: 80px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px 0;
+  }
+  
+  .thumbnail-item {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .thumbnail-item.active {
+    border-color:#15818E;
+  }
+  
+  .modal-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .video-thumbnail-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background: rgba(0,0,0,0.5);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+  }
+  
+  /* Contact Card */
+  .contact-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 50px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .contact-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .contact-header h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .rating {
+    color: #FFA41C;
+    font-size: 14px;
+  }
+  .contact-buttons-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.contact-buttons-container button{
+  height:50px;
+  width:300px;
+  border-radius: 8px;
+}
+.call-btn, .message-btn {
+  flex: 1; /* This makes both buttons equal width */
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.call-btn {
+  background: #15818E;
+  color: white;
+}
+
+.message-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+ .safety-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.icon-fixed-width {
+  width: 20px;
+  text-align: center; 
+  margin-right: 8px; 
+}
+
+.info-item span {
+  flex: 1; 
+}
+
+.info-item i {
+  margin-top: 5px; 
+  flex-shrink: 0; 
+  margin-right: 10px;
+}
+
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .gallery-container {
+      flex-direction: column;
+      height: 90%;
+    }
+    
+    .contact-section {
+      max-width: 100%;
+      border-left: none;
+      border-top: 1px solid #eee;
+      padding: 15px;
+    }
+    
+    .fullscreen-toggle {
+      bottom: 100px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .gallery-container {
+      width: 95%;
+      height: 95%;
+    }
+    
+    .contact-buttons {
+      flex-direction: column;
+    }
+    
+    .thumbnail-item {
+      width: 50px;
+      height: 50px;
+    }
+  }
+</style>
+<script>
+  let currentGalleryIndex = 0;
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const thumbnailItems = document.querySelectorAll('.thumbnail-item');
+  const totalCount = galleryItems.length;
+  const galleryModal = document.getElementById('galleryModal');
+  
+  function openModal(index) {
+    currentGalleryIndex = index;
+    updateGallery();
+    galleryModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeGalleryModal() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().then(() => {
+        galleryModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        pauseAllVideos();
+      });
+    } else {
+      galleryModal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      pauseAllVideos();
+    }
+  }
+  
+  function handleOutsideClick(event) {
+    if (event.target === galleryModal) {
+      closeGalleryModal();
+    }
+  }
+  
+  function navigateGallery(direction) {
+    currentGalleryIndex += direction;
+    if (currentGalleryIndex < 0) {
+      currentGalleryIndex = totalCount - 1;
+    } else if (currentGalleryIndex >= totalCount) {
+      currentGalleryIndex = 0;
+    }
+    updateGallery();
+  }
+  
+  function goToImage(index) {
+    currentGalleryIndex = index;
+    updateGallery();
+  }
+  
+  function toggleFullscreen() {
+    const modal = document.getElementById('galleryModal');
+    if (!document.fullscreenElement) {
+      modal.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+      modal.classList.add('fullscreen');
+    } else {
+      document.exitFullscreen();
+      modal.classList.remove('fullscreen');
+    }
+  }
+  
+  function updateGallery() {
+    galleryItems.forEach((item, index) => {
+      item.classList.toggle('active', index === currentGalleryIndex);
+    });
+    
+    thumbnailItems.forEach((item, index) => {
+      item.classList.toggle('active', index === currentGalleryIndex);
+      if (index === currentGalleryIndex) {
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+    
+    document.getElementById('currentIndex').textContent = currentGalleryIndex + 1;
+    
+    const activeItem = galleryItems[currentGalleryIndex];
+    if (activeItem.querySelector('.gallery-video')) {
+      const video = activeItem.querySelector('.gallery-video');
+      video.currentTime = 0;
+      video.play();
+    }
+  }
+  
+  function pauseAllVideos() {
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+  }
+  
+  document.addEventListener('fullscreenchange', function() {
+    if (!document.fullscreenElement) {
+      galleryModal.classList.remove('fullscreen');
+    }
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (galleryModal.style.display === 'block') {
+      if (e.key === 'ArrowLeft') {
+        navigateGallery(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigateGallery(1);
+      } else if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          closeGalleryModal();
+        }
+      }
+    }
+  });
+</script>
+<style>
+    /* Contact Popup Styles */
+    .contact-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .contact-popup-inner {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .contact-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+    }
+    
+    .contact-popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .contact-popup-close {
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    
+    .contact-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        color: #333;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    
+    .contact-option:hover {
+        background-color: #efefef;
+    }
+    
+    .contact-option i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+    
+
+  /* Two Column Layout */
+  .property-details-container {
+    display: flex;
+    gap: 20px;
+   width: 1300px; /* Adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .property-info-column {
+    flex: 1;
+    /* Existing styles remain the same */
+  }
+  
+  .advertisement-column {
+    width: 200px;
+    margin-left: 200px;
+    margin-top: -15px;
+  }
+  
+  .vertical-ad {
+    position: relative;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: #f5f5f5;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 5px solid gray;
+    margin-left:-280px;
+    width:300px;
+    margin-top:20px;
+  
+  }
+  /* User Profile Styles */
+  .user-profile {
+    background: white;
+    border-radius: 2px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    padding: 20px;
+    margin-left:-280px;
+    margin-top:20px;
+   
+    width:300px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .default-avatar {
+    color: #999;
+    font-size: 24px;
+  }
+
+  .profile-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+  }
+
+  .rating {
+   
+    font-size: 14px;
+  }
+
+  
+
+  .profile-details {
+    margin: 15px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .detail-item i {
+    margin-right: 8px;
+    color: #4CAF50;
+  }
+
+  .contact-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .contact-actions button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-call {
+   background-color: #fff3f3;
+   text-decoration: none;
+   color: #1A73E8;
+  }
+.btn-whatsapp{
+    background-color: #e9f7ef;
+    color: #128C7E;
+}
+
+  .btn-chat {
+    background-color: #f0f6ff;
+    color: #063e71;
+   
+    text-decoration: none;
+  }
+
+  .btn-save {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .contact-actions button i {
+    margin-right: 5px;
+  }
+
+  .contact-actions button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  .ad-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .ad-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+  }
+  
+  /* Adjust existing styles to account for the new layout */
+  .line {
+    width: 100%; /* Now takes full width of its column */
+  }
+  
+  .columns-container {
+    width: 100%; /* Adjust width to fit column */
+  }
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1; /* Takes available space */
+  min-width: 200px /* Prevents overflow */
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px; /* Space between action buttons */
+  flex-shrink: 0; /* Prevents shrinking */
+  margin-right: -190px;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle1', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  
+}
+
+.property-actions a {
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle1', Arial, sans-serif;
+}
+</style>
+<style>
+  /* ===== IMAGE GALLERY STYLES ===== */
+  .image-section {
+    display: flex;
+    gap: 10px;
+    flex: 2;
+  }
+  
+  .main-image-container {
+    position: relative;
+  }
+  
+  .main-image {
+    width: 1100px;
+    max-height: 380px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  
+  .see-more {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .side-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .thumbnail {
+    width: 440px;
+    height: 185px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+  }
+  
+  /* ===== MODAL STYLES ===== */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: auto;
+  }
+ 
+  .modal-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    width: 100%;
+    
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .modal-image {
+    width: 1500px;
+    height: 600px;
+    object-fit: fill;
+    border-radius: 8px;
+  }
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .close:hover {
+    color: #000;
+  }
+  
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .prev:hover, .next:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-50%) scale(1.05);
+    border-color: #bbb;
+    color: #111;
+  }
+  
+  .prev { left: 12px; }
+  .next { right: 12px; }
+  
+  
+  </style>
+
+
+   
+   
+<script>
+  let currentIndex = 0;
+  let galleryItems = [];
+  
+  function openModal(startIndex = 0) {
+    const modal = document.getElementById("galleryModal");
+    modal.style.display = "block";
+    
+    galleryItems = document.querySelectorAll('.gallery-item');
+    currentIndex = startIndex;
+    
+    updateGallery();
+    
+    // Pause all videos when modal opens
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.addEventListener("keydown", handleKeydown);
+  }
+  
+  function closeGalleryModal() {
+    document.getElementById("galleryModal").style.display = "none";
+    
+    // Pause all videos when closing
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.removeEventListener("keydown", handleKeydown);
+  }
+  
+  function navigateGallery(direction) {
+    currentIndex += direction;
+    
+    // Wrap around if at beginning or end
+    if (currentIndex < 0) {
+      currentIndex = galleryItems.length - 1;
+    } else if (currentIndex >= galleryItems.length) {
+      currentIndex = 0;
+    }
+    
+    updateGallery();
+  }
+  
+  function updateGallery() {
+    // Hide all items
+    galleryItems.forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Show current item
+    if (galleryItems[currentIndex]) {
+      galleryItems[currentIndex].classList.add('active');
+    }
+    
+    // Update counter
+    document.getElementById('currentIndex').textContent = currentIndex + 1;
+    
+    // Pause any playing videos when changing items
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+  }
+  
+  function handleKeydown(e) {
+    if (e.key === "Escape") {
+      closeGalleryModal();
+    } else if (e.key === "ArrowLeft") {
+      navigateGallery(-1);
+    } else if (e.key === "ArrowRight") {
+      navigateGallery(1);
+    }
+  }
+  
+  // Auto-pause other videos when one plays
+  document.addEventListener('play', function(e) {
+    if (e.target.classList.contains('gallery-video')) {
+      document.querySelectorAll('.gallery-video').forEach(video => {
+        if (video !== e.target) video.pause();
+      });
+    }
+  }, true);
+</script>
+<style>
+    /* Contact Popup Styles */
+    .contact-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .contact-popup-inner {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .contact-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+    }
+    
+    .contact-popup-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+    
+    .contact-popup-close {
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+    
+    .contact-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .contact-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        color: #333;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.3s;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+    
+    
+    
+    .contact-option i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+    }
+    
+
+  /* Two Column Layout */
+  .property-details-container {
+    display: flex;
+    gap: 20px;
+   width: 1300px; /* Adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .property-info-column {
+    flex: 1;
+    /* Existing styles remain the same */
+  }
+  
+  .advertisement-column {
+    width: 200px;
+    margin-left: 200px;
+    margin-top: -15px;
+  }
+  
+  .vertical-ad {
+    position: relative;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    background: #f5f5f5;
+    border-radius: 25px;
+    overflow: hidden;
+    border: 5px solid gray;
+    margin-left:-280px;
+    width:300px;
+    margin-top:20px;
+  
+  }
+  /* User Profile Styles */
+  .user-profile {
+    background: white;
+    border-radius: 2px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    padding: 20px;
+    margin-left:-280px;
+    margin-top:20px;
+   
+    width:300px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 15px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .default-avatar {
+    color: #999;
+    font-size: 24px;
+  }
+
+  .profile-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+  }
+
+  .rating {
+   
+    font-size: 14px;
+  }
+
+  
+
+  .profile-details {
+    margin: 15px 0;
+   
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .detail-item i {
+    margin-right: 8px;
+    color: #4CAF50;
+  }
+
+  .contact-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .contact-actions button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-call {
+   background-color: #fff3f3;
+   text-decoration: none;
+   color: #1A73E8;
+  }
+.btn-whatsapp{
+    background-color: #e9f7ef;
+    color: #128C7E;
+}
+
+  .btn-chat {
+    background-color: #f0f6ff;
+    color: #063e71;
+   
+    text-decoration: none;
+  }
+
+  .btn-save {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .contact-actions button i {
+    margin-right: 5px;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .ad-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+  }
+  
+  /* Adjust existing styles to account for the new layout */
+  .line {
+    width: 100%; /* Now takes full width of its column */
+  }
+  
+  .columns-container {
+    width: 100%; /* Adjust width to fit column */
+  }
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1; /* Takes available space */
+  min-width: 200px /* Prevents overflow */
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px; /* Space between action buttons */
+  flex-shrink: 0; /* Prevents shrinking */
+  margin-right: -190px;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  
+}
+.post-actions {
+  display: inline-flex; /* or 'flex' if you want it to stay block-level but shrink-to-fit */
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  margin-top: 10px;
+  /* Remove width: 200px */
+}
+
+.property-actions a {
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+.icon-buttons{
+    font-family: 'FontStyle6', Arial, sans-serif;
+}
+</style>
+<style>
+  /* ===== IMAGE GALLERY STYLES ===== */
+  .image-section {
+    display: flex;
+    gap: 10px;
+    flex: 2;
+  }
+  
+  .main-image-container {
+    position: relative;
+  }
+  
+  .main-image {
+    width: 1100px;
+    max-height: 380px;
+    border-radius: 10px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  
+  .see-more {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .side-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .thumbnail {
+    width: 440px;
+    height: 185px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  
+  .thumbnail:hover {
+    transform: scale(1.05);
+  }
+  
+  /* ===== MODAL STYLES ===== */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: auto;
+  }
+ 
+  .modal-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    width: 100%;
+    
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .modal-image {
+    width: 1500px;
+    height: 600px;
+    object-fit: fill;
+    border-radius: 8px;
+  }
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  
+  .prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .prev:hover, .next:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-50%) scale(1.05);
+    border-color: #bbb;
+    color: #111;
+  }
+  
+  .prev { left: 12px; }
+  .next { right: 12px; }
+  
+  
+  </style>
+
+
+   
+   
+<script>
+  let currentIndex = 0;
+  let galleryItems = [];
+  
+  function openModal(startIndex = 0) {
+    const modal = document.getElementById("galleryModal");
+    modal.style.display = "block";
+    
+    galleryItems = document.querySelectorAll('.gallery-item');
+    currentIndex = startIndex;
+    
+    updateGallery();
+    
+    // Pause all videos when modal opens
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.addEventListener("keydown", handleKeydown);
+  }
+  
+  function closeGalleryModal() {
+    document.getElementById("galleryModal").style.display = "none";
+    
+    // Pause all videos when closing
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+    
+    document.removeEventListener("keydown", handleKeydown);
+  }
+  
+  function navigateGallery(direction) {
+    currentIndex += direction;
+    
+    // Wrap around if at beginning or end
+    if (currentIndex < 0) {
+      currentIndex = galleryItems.length - 1;
+    } else if (currentIndex >= galleryItems.length) {
+      currentIndex = 0;
+    }
+    
+    updateGallery();
+  }
+  
+  function updateGallery() {
+    // Hide all items
+    galleryItems.forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Show current item
+    if (galleryItems[currentIndex]) {
+      galleryItems[currentIndex].classList.add('active');
+    }
+    
+    // Update counter
+    document.getElementById('currentIndex').textContent = currentIndex + 1;
+    
+    // Pause any playing videos when changing items
+    document.querySelectorAll('.gallery-video').forEach(video => {
+      video.pause();
+    });
+  }
+  
+  function handleKeydown(e) {
+    if (e.key === "Escape") {
+      closeGalleryModal();
+    } else if (e.key === "ArrowLeft") {
+      navigateGallery(-1);
+    } else if (e.key === "ArrowRight") {
+      navigateGallery(1);
+    }
+  }
+  
+  // Auto-pause other videos when one plays
+  document.addEventListener('play', function(e) {
+    if (e.target.classList.contains('gallery-video')) {
+      document.querySelectorAll('.gallery-video').forEach(video => {
+        if (video !== e.target) video.pause();
+      });
+    }
+  }, true);
+</script>
+ <style>
+/* ===== BASE STYLES ===== */
+.property-price-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.price-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.property-price {
+  font-size: 26px;
+  color: #EB362D;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions-column {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.property-actions {
+  display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+}
+
+.property-actions a {
+  text-decoration: none;
+  color: black;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+/* ===== LAYOUT STRUCTURE ===== */
+.property-details-container {
+  display: flex;
+  gap: 20px;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.property-info-column {
+  flex: 1;
+}
+
+.advertisement-column {
+  width: 300px;
+}
+
+/* ===== DESCRIPTION SECTION ===== */
+.product-description {
+  margin-top: 20px;
+  max-width: 800px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  
+}
+.product-description span {
+    font-size: 15px;  
+    line-height: 1.4; 
+    color: #333;     
+    margin: 0 0 8px 0; 
+  }
+.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #000;
+}
+
+.read-more-btn {
+  /* Your button styling */
+  display: none; /* Initial state - JS will override if needed */
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+
+/* ===== FEATURES SECTION ===== */
+.features-container {
+  margin: 30px 0 40px 0;
+  padding-top: 20px;
+  font-family: 'FontStyle6', Arial, sans-serif;
+ 
+}
+
+.features-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.features-list {
+  columns: 2;
+  column-gap: 40px;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  list-style: none;
+}
+
+.features-list li {
+  margin-bottom: 10px;
+  break-inside: avoid;
+  padding-left: 20px;
+  position: relative;
+}
+
+.features-list li:before {
+  content: "•";
+  color: #EB362D;
+  position: absolute;
+  left: 0;
+}
+
+/* ===== NEARBY LOCATIONS ===== */
+.nearby-section {
+  margin: 50px 0 30px 0;
+  clear: both;
+  width:800px;
+  margin-top: 5px;
+}
+
+.nearby-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  
+}
+
+.nearby-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 0;
+  list-style: none;
+  font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.nearby-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #f8f6f6;
+  border-radius: 8px;
+}
+.nearbyimg {
+  height: 60px;
+  width: 60px;
+  margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .property-details-container {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 15px;
+  }
+  
+  .advertisement-column {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  .features-list {
+    columns: 1;
+  }
+  
+  .nearby-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+
+</style>
+
+<style>
+    
+   .columns-container {
+    display: flex;
+    margin-top: -20px;
+    margin-left:-20px;
+    width:900px;
+    margin-bottom:20px;
+}
+
+.column {
+    flex: 1;
+    padding: 10px;
+}
+
+.left-column {
+    border-right: 1px solid #ccc; /* Separator line */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+    
+}
+
+.right-column {
+    /* No border needed */
+    font-size:14px;
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+
+.info-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.info-table td {
+    padding: 5px 10px;
+    vertical-align: top;
+    
+    border: none; /* Ensures no borders */
+}
+
+.details-location{
+    margin-top:-10px;
+    font-size:14px;
+   
+      font-family: 'FontStyle6', Arial, sans-serif;
+}
+.details-location span{
+    
+    font-size:14px;
+}
+     .property-title {
+    font-size: 20px;
+    margin-top:20px;
+    
+     margin-bottom:20px;
+    font-weight: 300;
+   
+  }
+    .line{
+        width:750px;
+        margin-top:20px;
+    }
+    .details-icons{
+        font-size:14px;
+        padding-bottom:15px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+    }
+    .details-icons span{
+        padding-right:18px;
+    }
+    .property-price-row {
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  
+}
+.property-actions{
+    display: flex;
+  align-items: center;
+  padding: 2px 16px;
+  border: 1px solid #ccc;
+  font-family: 'FontStyle6', Arial, sans-serif;
+  border-radius: 6px;
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.property-actions a{
+    text-decoration:none;
+    color:black;
+    font-family: 'FontStyle6', Arial, sans-serif;
+
+}
+.bottom-line{
+    width: 800px;
+    color: #333;
+}
+.report-text{
+  padding-left:10px ;
+  font-weight: 600;
+}
+.report{
+  margin-left:500px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+</style>  
+<div class="property-details-container mt-3">
+  <!-- Main Property Details Column -->
+  <div class="property-info-column">
+    <div class="property-info">
+      <!-- Price and actions section -->
+      <div class="property-price-container">
+        <div class="price-column">
+          <h2 class="property-price">
+            {{ ad.price|floatformat:0|intcomma }} <span>OMR</span>
+            {% if ad.listing_type == "rent" and ad.rental_period %}
+              - {{ ad.rental_period|capfirst }}
+            {% endif %}
+          </h2>
+        </div>
+        <div class="actions-column">
+          <!-- Favorite and Share buttons -->
+          <div class="property-actions">
+               <a href="#"
+   class="favorite-link icon-button"
+   data-product-id="{{ ad.id }}"
+   data-product-type="ad"
+   data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+   title="{% if ad in user.favorites.all %}Remove from{% else %}Add to{% endif %} Favorites"
+   style="padding-right:10px;">
+   <i class="far fa-heart {% if ad in user.favorites.all %}fas filled{% endif %}" 
+      id="favorite-icon-{{ ad.id }}" 
+      data-favorite="{% if ad in user.favorites.all %}true{% else %}false{% endif %}">
+      <span class="fav-font">Favorite</span>
+   </i>
+</a>
+
+<script>
+// CSRF Token function
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Use event delegation for dynamically loaded content
+    document.addEventListener('click', function(e) {
+        const icon = e.target.closest('.favorite-link');
+        if (!icon) return;
+
+        const iconElement = icon.querySelector('i');
+        const productId = icon.dataset.productId;
+        const productType = icon.dataset.productType;
+        const isAuthenticated = icon.dataset.isAuthenticated === 'true';
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!isAuthenticated) {
+            window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname);
+            return;
+        }
+
+        const isFavorite = iconElement.classList.contains('far'); // Check if not favorited
+        const action = isFavorite ? 'add' : 'remove';
+
+        // Toggle between far (outline) and fas (solid) for Font Awesome
+        iconElement.classList.toggle('far');
+        iconElement.classList.toggle('fas');
+        iconElement.classList.toggle('filled');
+        iconElement.dataset.favorite = isFavorite ? 'true' : 'false';
+
+        fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+            method: 'POST', // Changed to POST for security
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'error') throw new Error(data.message);
+            localStorage.setItem(`favorite_${productType}_${productId}`, isFavorite);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            // Revert UI changes on error
+            iconElement.classList.toggle('far');
+            iconElement.classList.toggle('fas');
+            iconElement.classList.toggle('filled');
+            iconElement.dataset.favorite = !isFavorite;
+        });
+    });
+
+    // Initialize from localStorage
+    document.querySelectorAll('.favorite-link').forEach(icon => {
+        const iconElement = icon.querySelector('i');
+        const productId = icon.dataset.productId;
+        const productType = icon.dataset.productType;
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            iconElement.classList.replace('far', 'fas');
+            iconElement.classList.add('filled');
+            iconElement.dataset.favorite = 'true';
+        }
+    });
+});
+</script>
+          </div>
+          <div class="property-actions" style="margin-right:280px;">
+            <a href="#" onclick="shareProperty('{{ request.build_absolute_uri }}'); return false;" title="Share" class="icon-button">
+              <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:16px;" alt="icon"><span class="fav-font">Share</span> 
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic info icons -->
+      <!-- Car -->
+{% if is_car %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/calendar.svg'%}" style="margin-top:-3px;"> {{ ad.year }}</span>
+  <span><img src="{% static 'assets/images/icons/regional-specs.svg'%}" style="margin-top:-2px;"> {{ ad.get_regional_spec_display }}</span>
+  <span><img src="{% static 'assets/images/icons/Fuel.svg'%}" style="margin-top:-3px;margin-right:-6px; height: 17px;"> {{ ad.get_fuel_type_display }}</span>
+</div>
+{% endif %}
+{% if is_driving_training %}
+<div class="details-icons mt-1">
+ <span><img src="{% static 'assets/images/icons/lister.svg'%}" style="margin-top:-2px;margin-right:-6px; height: 17px;" alt="Bedrooms">{{ ad.trainer_gender|title }}</span>
+        <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-2px;margin-right:-6px; height: 17px;" alt="Bathrooms"> {{ ad.body_type|title }}</span>
+       </div>
+{% endif %}
+{% if is_car_repair %}
+<div class="details-icons mt-1">
+ {% if ad.model_type == 'motorcycle' or ad.model_type == 'scooter' %}
+                                        {% if ad.year %}
+                                            <span><img src="{% static 'assets/images/icons/calendar.svg'%}"> {{ ad.year }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    {% if ad.model_type == 'motorcycle' %}
+                                        <span><img src="{% static 'assets/images/icons/motorcycle.svg'%}"> {{ ad.body_type|title }}</span>
+                                    {% elif ad.condition %}
+                                        <span><img src="{% static 'assets/images/icons/condition.svg'%}"> {{ ad.condition|title }}</span>
+                                    {% endif %}
+                                    
+                                    {% if ad.model_type == 'motorcycle' or ad.model_type == 'scooter' %}
+                                        {% if ad.engine_capacity %}
+                                            <span><img src="{% static 'assets/images/icons/car-engine.svg'%}"> {{ ad.engine_capacity }} cc</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    {% if ad.model_type == 'helmetclothes' and ad.lister_type %}
+                                        <span><img src="{% static 'assets/images/icons/condition.svg'%}"> {{ ad.lister_type|title }}</span>
+                                    {% endif %}
+       </div>
+{% endif %}
+<!-- Motorcycle -->
+{% if is_motorcycle %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/calendar.svg'%}" style="margin-top:-3px;"> {{ ad.year }}</span>
+  <span><img src="{% static 'assets/images/icons/motorcycle.svg'%}" style="margin-top:-2px;" alt="Bathrooms"> {{ ad.body_type|title }}</span> 
+       <span><img src="{% static 'assets/images/icons/car-engine.svg'%}" style="margin-top:-3px;margin-right:-6px; height: 17px;"alt="Area"> {{ ad.engine_capacity }} cc </span>
+</div>
+{% endif %}
+
+<!-- Scooter -->
+{% if is_scooter %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/calendar.svg'%}" style="margin-top:-3px;"> {{ ad.year }}</span>
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-2px;" alt="Bathrooms"> {{ ad.condition|title }}</span> 
+       <span><img src="{% static 'assets/images/icons/car-engine.svg'%}" style="margin-top:-3px;margin-right:-6px; height: 17px;"alt="Area"> {{ ad.engine_capacity }} cc </span>
+</div>
+{% endif %}
+
+<!-- Accessories -->
+{% if is_accessory %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-3px;"> {{ ad.condition|capfirst }}</span>
+  <span>
+    <img src="{% static 'assets/images/icons/delivery.svg' %}" style="margin-top:-3px;margin-right:-6px; height: 17px;">
+    {% if ad.provide|lower == "yes" %}
+      Delivery Available
+    {% else %}
+      Delivery Unavailable
+    {% endif %}
+  </span>
+</div>
+{% endif %}
+
+<!-- Boat -->
+{% if is_boat %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/lister.svg'%}" style="margin-top:-3px;"> {{ ad.lister_type|title }}</span>
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-2px;"> {{ ad.condition|title }}</span>
+</div>
+{% endif %}
+
+<!-- Heavy Vehicle -->
+{% if is_heavyvehicle %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/calendar.svg'%}" style="margin-top:-3px;"> {{ ad.year }}</span>
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-2px;"> {{ ad.condition|title }}</span>
+  <span><img src="{% static 'assets/images/icons/subtype.svg'%}" style="margin-top:-3px;margin-right:-6px; height: 17px;"> {{ ad.sub_type|title }}</span>
+</div>
+{% endif %}
+
+<!-- Helmet & Clothes -->
+{% if is_helmetclothes %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-3px;"> {{ ad.lister_type|title }}</span>
+</div>
+{% endif %}
+
+<!-- Quad Bikes -->
+{% if is_quadbike %}
+<div class="details-location mt-1">
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-3px;"> {{ ad.lister_type|title }}</span>
+</div>
+{% endif %}
+
+<!-- Number Plate -->
+{% if is_numberplate %}
+<div class="details-icons mt-1">
+  <span><img src="{% static 'assets/images/icons/condition.svg'%}" style="margin-top:-3px;"> {{ ad.number|title }}</span>
+</div>
+{% endif %}
+
+<!-- Junk Cars -->
+{% if is_junkcars %}
+<div class="details-icons mt-1">
+    <span>
+        <img src="{% static 'assets/images/icons/payment.svg' %}" alt="Payment"> 
+        {{ ad.payment_method|title }}
+    </span>
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> 
+        {{ ad.condition|title|cut:"_" }}
+    </span>
+</div>
+{% endif %}
+
+<!-- Tires & Caps -->
+{% if is_tiresandcaps %}
+<div class="details-icons mt-1">
+    <span>
+        <img src="{% static 'assets/images/icons/size.svg' %}" alt="Size"> 
+        {{ ad.size|title }} inches
+    </span>
+    <span>
+        <img src="{% static 'assets/images/icons/condition.svg' %}" alt="Condition"> 
+        {{ ad.condition|title }}
+    </span>
+    <span>
+        <img src="{% static 'assets/images/icons/delivery.svg' %}" alt="Delivery">
+        {% if ad.provide|lower == "yes" %}
+            Delivery Available
+        {% else %}
+            {{ ad.provide|title }}
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+      
+           <!-- Location -->
+      <div class="details-location">
+        <span class="location"><i class="fas fa-map-marker-alt"></i> {{ ad.city|clean_city_name|truncatechars:25 }}, {{ ad.city.district.name }}, {{ ad.city.district.governate.name }}</span>
+      </div>
+
+      <!-- <div class="post-actions">
+           <span>Post ID:{{ad.id}}</span>
+          </div> -->
+    </div>
+    <hr class="bottom-line">
+   <style>
+    .details{
+        margin-top: 30px;
+    }
+   </style>
+    <!-- Property details tables -->
+    <div class="details">
+      <h2 class="property-title">{{ ad.name|title }}</h2>
+      <div class="columns-container">
+        <div class="column left-column">
+          <table class="info-table">
+            <tr>
+    <tr>
+    <td>Type</td>
+
+    {% if is_car %}
+        <td class="tr1">Car</td>
+
+    {% elif is_motorcycle %}
+        <td class="tr1">Motorcycle</td>
+
+    {% elif is_scooter %}
+        <td class="tr1">Scooter</td>
+
+    {% elif is_quadbike %}
+        <td class="tr1">Quad Bikes / ATV</td>
+
+    {% elif is_boat %}
+        <td class="tr1">Boat / Jet Ski</td>
+
+    {% elif is_heavyvehicle %}
+        <td class="tr1">Heavy Vehicle</td>
+
+    {% elif is_helmetclothes %}
+        <td class="tr1">Helmet & Clothes</td>
+
+    {% elif is_tiresandcaps %}
+        <td class="tr1">Tires, Wheels & Rims</td>
+
+    {% elif is_accessory %}
+        <td class="tr1">Auto Accessories & Parts</td>
+
+    {% elif is_numberplate %}
+        <td class="tr1">Plate Number</td>
+
+    {% elif is_junkcars %}
+        <td class="tr1">Junk Car / Other Vehicle</td>
+
+    {% elif is_car_repair %}
+        <td class="tr1">Car Maintenance & Repair</td>
+
+    {% elif is_driving_training %}
+        <td class="tr1">Driving Training</td>
+
+    {% else %}
+        <td class="tr1">—</td>
+    {% endif %}
+</tr>
+
+
+            {% if ad.listing_type %}
+<tr>
+    <td>Purpose</td>
+    <td class="tr1">{{ ad.listing_type|title }}</td>
+</tr>
+{% endif %}
+
+            
+          </table>
+        </div>
+        <div class="column right-column">
+          <table class="info-table">
+            <tr>
+              <td>Payment Method</td>
+              <td class="tr1">{{ad.payment_method|title}}</td>
+            </tr>
+            <tr>
+              <td>Posted</td>
+              <td class="tr1">{{ ad.created_at|display_registered_time }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  <div class="product-description">
+     <h2 class="property-title">Description</h2>
+  <span id="descriptionText" class="clamped">
+    {{ ad.description|capfirst }}
+  </span>
+  <button id="readMoreBtn" class="read-more-btn" style="display: none;">Read More</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const desc = document.getElementById('descriptionText');
+  const readMoreBtn = document.getElementById('readMoreBtn');
+  
+  // Check if text is clamped (overflowing)
+  function checkTextOverflow() {
+    // Only hide the button if text is clamped AND we're not in expanded state
+    if (desc.classList.contains('clamped')) {
+      const isOverflowing = desc.scrollHeight > desc.clientHeight;
+      readMoreBtn.style.display = isOverflowing ? 'block' : 'none';
+    }
+    // If text is expanded (not clamped), we always show the "Show Less" button
+  }
+  
+  // Initial check
+  checkTextOverflow();
+  
+  // Check on resize
+  window.addEventListener('resize', checkTextOverflow);
+  document.fonts?.ready?.then(checkTextOverflow);
+  
+  // Read More/Less Toggle
+  readMoreBtn.addEventListener('click', function() {
+    desc.classList.toggle('clamped');
+    this.textContent = desc.classList.contains('clamped') ? 'Read More' : 'Show Less';
+    
+    // Always show the button when expanded ("Show Less" state)
+    if (!desc.classList.contains('clamped')) {
+      readMoreBtn.style.display = 'block';
+    } else {
+      // When collapsed, check if we still need the button
+      checkTextOverflow();
+    }
+  });
+});
+
+// Your other functions...
+function shareProperty(url) {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      url: url
+    }).catch(console.error);
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      alert("Link copied to clipboard!");
+    });
+  }
+}
+</script>
+    <!-- Features Section -->
+{% if is_car %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.make }}</li>
+        <li>{{ ad.kilometers }} km</li>        
+        <li>{{ ad.body_type|format_body_type }}</li>
+        <li>Exterior Color: {{ ad.exterior_color|capfirst }}</li>
+        <li>Interior Color: {{ ad.interior_color|capfirst }}</li>
+        <li>{{ ad.get_condition_display|capfirst }}</li>
+        <li>{{ ad.engine_capacity }} CC</li>
+        <li>{{ ad.get_transmission_display|title }}</li>
+  </ul>
+</div>
+{% endif %}
+
+{% if is_motorcycle %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.make }}</li>        
+   <li>{{ ad.body_type|format_body_type }}</li>
+    <li>{{ ad.exterior_color|capfirst }}</li>
+    <li>{{ ad.get_condition_display|capfirst }}</li>
+    <li>{{ ad.engine_capacity|floatformat:0 }} CC</li>
+  </ul>
+</div>
+{% endif %}
+
+{% if is_scooter %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.make }}</li>        
+   <li>{{ ad.body_type|format_body_type }}</li>
+    <li>{{ ad.exterior_color|capfirst }}</li>
+    <li>{{ ad.get_condition_display|capfirst }}</li>
+    <li>{{ ad.engine_capacity|floatformat:0 }} CC</li>
+  </ul>
+</div>
+{% endif %}
+
+{% if is_boat %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.boat_type }}</li>        
+    <li>{{ ad.condition|capfirst }}</li>
+    {% if ad.listing_type == "sell" %}
+      <li>{{ ad.payment_method|capfirst }}</li>
+    {% else %}
+      <li>{{ ad.rental_period|capfirst }}</li>
+    {% endif %} 
+  </ul>
+</div>
+{% endif %}
+
+{% if is_heavyvehicle %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.sub_type }}</li>        
+    <li>{{ ad.condition|capfirst }}</li>
+    <li>{{ ad.model|capfirst }}</li>
+    {% if ad.listing_type == "sell" %}
+      <li>{{ ad.payment_method|capfirst }}</li>
+    {% else %}
+      <li>{{ ad.rental_period|capfirst }}</li>
+    {% endif %} 
+  </ul>
+</div>
+{% endif %}
+
+{% if is_helmetclothes %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.get_condition_display|capfirst }}</li>
+    <li>{{ ad.lister_type|capfirst }}</li>
+  </ul>
+</div>
+{% endif %}
+
+{% if is_quadbike %}
+<div class="features-container">
+  <div class="features-title">Features</div>
+  <ul class="features-list"> 
+    <li>{{ ad.get_condition_display|capfirst }}</li>
+    <li>{{ ad.lister_type|capfirst }}</li>
+  </ul>
+</div>
+{% endif %}
+
+    <!-- Nearby Locations Section -->
+    {% if ad.nearby_location.all %}
+     <hr class="bottom-line">
+    <div class="nearby-section">
+      <h3 class="nearby-title">Nearby Locations</h3>
+      <ul class="nearby-list">
+        {% for location in ad.nearby_location.all %}
+        <li class="nearby-item p-3">
+          <div>
+            {% if "atm" in location.name|lower %}
+              <img src="{% static '\assets\images\atm.png' %}" alt="Bank/ATM" class="nearbyimg">
+            {% elif "bus" in location.name|lower %}
+              <img src="{% static '\assets\images\bus-stop.png' %}" alt="Bus Station" class="nearbyimg">
+            {% elif "dry" in location.name|lower %}
+              <img src="{% static '\assets\images\dry-cleaning.png' %}" alt="Dry Clean" class="nearbyimg">
+            {% elif "gym" in location.name|lower %}
+              <img src="{% static '\assets\images\gym.png' %}" alt="Gym" class="nearbyimg">
+            {% elif "hospital" in location.name|lower or "clinic" in location.name|lower %}
+              <img src="{% static '\assets\images\hospital.png' %}" alt="Hospital" class="nearbyimg">
+            {% elif "mall/shopping" in location.name|lower  %}
+              <img src="{% static '\assets\images\mall.png' %}" alt="Mall/Shopping" class="nearbyimg"> 
+            {% elif "mosque" in location.name|lower  %}
+              <img src="{% static '\assets\images\mosque.png' %}" alt="Mosque" class="nearbyimg">  
+            {% elif "parking" in location.name|lower %}
+              <img src="{% static '\assets\images\parking.png' %}" alt="Parking" class="nearbyimg">
+            {% elif "pharmacy" in location.name|lower %}
+              <img src="{% static '\assets\images\pharmacy.png' %}" alt="Pharmacy" class="nearbyimg">
+            {% elif "restaurant" in location.name|lower or "cafe" in location.name|lower %}
+              <img src="{% static '\assets\images\restaurant.png' %}" alt="Restaurant" class="nearbyimg">
+            {% elif "school" in location.name|lower %}
+              <img src="{% static '\assets\images\school.png' %}" alt="School" class="nearbyimg">
+            {% elif "supermarket" in location.name|lower %}
+              <img src="{% static '\assets\images\supermarket.png' %}" alt="Supermarket" class="nearbyimg">
+            {% else %}
+              <img src="/static/images/location-icon.png" alt="Location" class="nearbyimg">
+            {% endif %}
+          </div>
+          <span>{{ location.name }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <hr class="bottom-line">
+   <!-- Map Section -->
+<div class="content-four single-box">
+  <div class="text">
+    <h3 class="nearby-title">Location</h3>
+  </div>
+  <div class="contact-map" style="position: relative; width: 100%; margin: 0 auto;">
+    {% if ad %}
+      <iframe
+        src="https://www.google.com/maps?q={{ ad.latitude }},{{ ad.longitude }}&hl=en&z=15&output=embed"
+        allowfullscreen=""
+        loading="lazy"
+        style="width: 90%; height: 400px; border: none; border-radius: 8px;">
+      </iframe>
+      </div>
+      <div class="map-buttons" style="position: absolute;margin-top: -460px;margin-left: 680px;"> 
+        <a 
+          href="https://www.google.com/maps/dir/?api=1&destination={{ ad.latitude }},{{ ad.longitude }}" 
+          target="_blank"
+          class="btn border"
+          style="padding: 8px 16px; border-radius: 4px; text-decoration: none; color: white; border: none; font-weight: 500;">
+         <img src="{% static '/assets/images/icons/traffic-sign.png' %}" style="height:24px;" alt="icon">
+        </a>
+        
+        <button 
+          onclick="shareLocation()"
+          class="btn border"
+          style="padding: 8px 16px; border-radius: 4px; cursor: pointer;  color: white; border: none; font-weight: 500;">
+          <img src="{% static 'assets/images/icons/share-2.svg' %}" style="height:24px;" alt="icon">
+        </button>
+      </div>
+      
+      <script>
+        function shareLocation() {
+          const url = `https://www.google.com/maps?q={{ ad.latitude }},{{ ad.longitude }}`;
+          
+          if (navigator.share) {
+            navigator.share({
+              title: 'Property Location',
+              text: 'Check out this property location',
+              url: url
+            }).catch(err => {
+              console.log('Error sharing:', err);
+              copyToClipboard(url);
+            });
+          } else {
+            copyToClipboard(url);
+          }
+        }
+        
+        function copyToClipboard(url) {
+          navigator.clipboard.writeText(url).then(() => {
+            alert('Location link copied to clipboard!');
+          }).catch(err => {
+            console.log('Failed to copy:', err);
+            prompt('Copy this link:', url);
+          });
+        }
+      </script>
+      </div>
+    {% else %}
+      <p>Location data is not available.</p>
+    {% endif %}
+ 
+
+    <div class="product-report-container" >
+  <!-- Product Info and Report Button Row -->
+  <div class="product-report-row">
+    <div class="product-id-box" >
+      <span class="product-id-label">Post ID:</span>
+      <span class="product-id-value">#{{ad.id}}</span>
+    </div>
+    
+    <div class="report-trigger">
+      <span class="report-btn">
+        <img src="{% static 'assets/images/icons/flag (1).svg' %}" alt="Report Icon">
+        <strong>Report this Listing</strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- Report Listing Modal -->
+  <div class="report-modal" id="reportModal">
+    <div class="modal-container">
+      <div class="modal-content">
+        <!-- Report Form -->
+        <form method="post" class="report-form">
+          {% csrf_token %}
+          <input type="hidden" name="report_submit" value="1">
+          <input type="hidden" name="reason" id="reasonInput" required>
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h3 class="modal-title">
+              <i class="bi bi-flag-fill"></i> Report This Listing
+            </h3>
+            <button type="button" class="close-btn" aria-label="Close">&times;</button>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <!-- Reason List -->
+            <div class="form-group">
+              <label class="form-label">Select a Reason <span class="required">*</span></label>
+              <div class="reason-list">
+                <div class="reason-item" data-value="abuse">Report Abuse</div>
+                <div class="reason-item" data-value="sold">Listing Sold</div>
+                <div class="reason-item" data-value="duplicate">Duplicate Listing</div>
+                <div class="reason-item" data-value="inappropriate">Inappropriate Content</div>
+                <div class="reason-item" data-value="wrong_category">Wrong Category</div>
+                <div class="reason-item" data-value="incorrect_pictures">Incorrect Pictures</div>
+                <div class="reason-item" data-value="incorrect_pricing">Incorrect Pricing</div>
+                <div class="reason-item" data-value="fraud">Suspected Fraud</div>
+                <div class="reason-item" data-value="other">Other Reason</div>
+              </div>
+              <div class="error-message" id="reasonError">Please select a reason.</div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+              <label for="description" class="form-label">Additional Details</label>
+              <textarea name="description" id="description" rows="3" placeholder="Please provide any helpful information..."></textarea>
+              <div class="form-hint">Optional, but helps us review better</div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button type="button" class="cancel-btn">Cancel</button>
+            <button type="submit" class="submit-btn">
+              <i class="bi bi-send-fill"></i> Submit Report
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Main Container */
+  .product-report-container {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    max-width: 795px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    padding: 15px 20px;
+    margin-left: -2px;
+  }
+
+  /* Product and Report Row */
+  .product-report-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  /* Product ID Box */
+  .product-id-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+  }
+
+  .product-id-label {
+    font-weight: 500;
+    color: #495057;
+  }
+
+  .product-id-value {
+    font-weight: 600;
+    color: #212529;
+  }
+
+  /* Trigger Button */
+  .report-trigger {
+    margin-left: auto;
+  }
+
+  .report-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc3545;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background: #fff;
+    border: 1px solid #dc3545;
+  }
+
+  .report-btn:hover {
+    background-color: #f8d7da;
+  }
+
+  .report-btn img {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Modal Backdrop */
+  .report-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  /* Modal Container */
+  .modal-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 0 20px;
+  }
+
+  /* Modal Content */
+  .modal-content {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  /* Modal Header */
+  .modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .modal-title i {
+    color: #dc3545;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s;
+  }
+
+  .close-btn:hover {
+    color: #333;
+  }
+
+  /* Modal Body */
+  .modal-body {
+    padding: 20px;
+  }
+
+  /* Form Elements */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #444;
+  }
+
+  .required {
+    color: #dc3545;
+  }
+
+  /* Reason List */
+  .reason-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+  }
+
+  .reason-item {
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .reason-item:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+  }
+
+  .reason-item.selected {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: #999;
+  }
+
+  .form-hint {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 5px;
+    padding-left: 5px;
+  }
+
+  /* Error Message */
+  .error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: none;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+  }
+
+  .cancel-btn, .submit-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .cancel-btn {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+
+  .cancel-btn:hover {
+    background-color: #e2e2e2;
+  }
+
+  .submit-btn {
+    background-color: #dc3545;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .submit-btn:hover {
+    background-color: #c82333;
+  }
+
+  /* Scrollbar */
+  .reason-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .reason-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Get elements
+    const reportBtn = document.querySelector('.report-btn');
+    const modal = document.querySelector('.report-modal');
+    const closeBtn = document.querySelector('.close-btn');
+    const cancelBtn = document.querySelector('.cancel-btn');
+    const reasonItems = document.querySelectorAll('.reason-item');
+    const reasonInput = document.getElementById('reasonInput');
+    const reasonError = document.getElementById('reasonError');
+    const form = document.querySelector('.report-form');
+
+    // Toggle modal
+    reportBtn.addEventListener('click', () => {
+      modal.style.display = 'flex';
+    });
+
+    // Close modal
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Click outside modal to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Reason selection
+    reasonItems.forEach(item => {
+      item.addEventListener('click', () => {
+        reasonItems.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        reasonInput.value = item.getAttribute('data-value');
+        reasonError.style.display = 'none';
+      });
+    });
+
+    // Form validation
+    form.addEventListener('submit', function (e) {
+      if (!reasonInput.value) {
+        e.preventDefault();
+        reasonError.style.display = 'block';
+      }
+    });
+  });
+</script>
+
+</div>
+  
+  <!-- Right Sidebar Column -->
+  <div class="advertisement-column">
+    <!-- User Profile -->
+    <div class="user-profile">
+   
+  <div class="profile-header">
+  <a href="{% url 'user_listings' ad.user.id %}" class="text-decoration-none text-dark d-flex align-items-center">
+    <div class="profile-avatar me-2">
+      {% if ad.user.image %}
+        <img src="{{ ad.user.image.url }}" alt="{{ ad.user.username }}" class="avatar-image">
+      {% else %}
+        <div class="default-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h4>{{ ad.user.username|capfirst }}</h4>
+      <div class="rating">
+        <span>Owner</span>
+      </div>
+    </div>
+  </a>
+</div>
+  
+  <div class="profile-details">
+    <div class="detail-item">
+      <i class="fas fa-check-circle"></i>
+      <span>Email Verified</span>
+    </div>
+  </div>
+  
+   <div class="contact-actions">
+    <button onclick="window.location.href='https://wa.me/{{ ad.data.user.whatsapp }}'" class="btn-whatsapp">
+      <i class="fab fa-whatsapp" style="color: #25D366; text-decoration: none;"></i> WhatsApp
+    </button>
+   
+ <button onclick="event.stopPropagation(); showPhonePopup('{{ ad.user.phone }}')" class="btn-call">
+  <img src="{% static '/assets/images/phoneicon.png' %}" alt="Call" style="width: 23px; height: 23px; margin-top: -3px;"> Call
+</button>              
+        <button class="btn-chat" onclick="{% if request.user.is_authenticated %}window.location.href='/chat/{{ ad.user.id }}/'{% else %}window.location.href='{% url 'login' %}?next=/chat/{{ ad.user.id }}/'{% endif %}">
+          <img src="{% static '\assets\images\chaticon.png' %}" alt="Call" style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;"> Chat
+        </button>
+    <!-- Contact Button -->
+<button class="btn-save" onclick="showContactPopup('{{ ad.id }}', '{{ ad.user.id }}', '{{ ad.user.whatsapp|default:"" }}', '{{ ad.user.phone|default:"" }}', '{{ request.user.is_authenticated|yesno:"true,false" }}')">
+    <i class="fas fa-id-card mb-1"></i> Contact
+</button>
+<div id="contactPopup" class="contact-popup" style="display: none;">
+    <div class="contact-popup-inner">
+        <div class="contact-popup-header">
+            <h3 class="contact-popup-title">Contact Options</h3>
+            <button class="contact-popup-close" style="font-size: 28px;" onclick="hideContactPopup()">&times;</button>
+        </div>
+        <div id="contactOptions" class="contact-options" style="text-decoration: none;">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Ensures no underlines appear */
+    .contact-option, 
+    .contact-option:hover, 
+    .contact-option:focus {
+        text-decoration: none !important;
+    }
+</style>
+
+
+  </div>
+
+
+    </div>
+    
+    <!-- Advertisement -->
+    <div class="vertical-ad">
+      <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement" class="ad-image">
+    </div>
+  </div>
+</div>
+<script>
+function showContactPopup(adId, userId, whatsapp, phone, isAuthenticated) {
+    const popup = document.getElementById('contactPopup');
+    const options = document.getElementById('contactOptions');
+    if (!popup || !options) return;
+
+    options.innerHTML = '';
+
+    if (phone) {
+        const smsMessage = `Hi, I'm interested in your listing (ID: ${adId})`;
+        options.innerHTML += `
+            <a href="sms:${phone}?body=${encodeURIComponent(smsMessage)}" class="contact-option sms-option">
+                <i class="fas fa-sms"></i> SMS
+            </a>`;
+    }
+
+    options.innerHTML += `
+        <a href="mailto:?subject=Regarding Listing ${encodeURIComponent(adId)}" class="contact-option email-option">
+            <i class="fas fa-envelope"></i> Email
+        </a>`;
+
+    popup.style.display = 'flex';
+}
+
+function hideContactPopup() {
+    document.getElementById('contactPopup').style.display = 'none';
+}
+
+// Close when clicking outside popup
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('contactPopup')) {
+        hideContactPopup();
+    }
+});
+</script>
+
+
+            <script>
+                const bannerSection = document.getElementById('banner-section');
+                const images = [
+                    "{% static 'assets/images/banner/1-01.png' %}",
+                    "{% static 'assets/images/banner/1-02.png' %}",
+                    "{% static 'assets/images/banner/1-03.png' %}",
+                    "{% static 'assets/images/banner/1-04.png' %}",
+                ];
+                let currentIndex = 0;
+            
+                function changeBackground() {
+                    bannerSection.style.backgroundImage = `url(${images[currentIndex]})`; // Corrected line
+                    currentIndex = (currentIndex + 1) % images.length; // Loop through the images
+                }
+            
+                // Change background every 4 seconds
+                setInterval(changeBackground, 4000);
+            
+                // Initialize with the first image
+                changeBackground();
+            </script>
+
+<!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+<script>
+let currentPhoneNumber = '';
+
+/* ================================
+   SHOW POPUP
+================================ */
+function showPhonePopup(phone, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    currentPhoneNumber = phone;
+
+    const popup = document.getElementById('phonePopup');
+    const display = document.getElementById('phoneNumberDisplay');
+
+    display.innerText = formatPhoneNumber(phone);
+    popup.style.display = 'flex';
+}
+
+/* ================================
+   HIDE POPUP
+================================ */
+function hidePhonePopup() {
+    document.getElementById('phonePopup').style.display = 'none';
+    currentPhoneNumber = '';
+}
+
+/* ================================
+   COPY NUMBER
+================================ */
+function copyPhoneNumber() {
+    if (!currentPhoneNumber) return;
+
+    navigator.clipboard.writeText(currentPhoneNumber).then(() => {
+        alert('Phone number copied');
+    });
+}
+
+/* ================================
+   FORMAT NUMBER
+================================ */
+function formatPhoneNumber(phone) {
+    phone = phone.replace(/\s/g, '');
+
+    if (phone.length === 8) return phone.replace(/(\d{4})(\d{4})/, '$1 $2');
+    if (phone.length === 9) return phone.replace(/(\d{4})(\d{5})/, '$1 $2');
+    if (phone.length === 10) return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2 $3');
+
+    return phone;
+}
+
+/* ================================
+   ESC CLOSE (SAFE)
+================================ */
+document.addEventListener('keydown', function (e) {
+    const popup = document.getElementById('phonePopup');
+    if (e.key === 'Escape' && popup.style.display === 'flex') {
+        hidePhonePopup();
+    }
+});
+</script>
+
+        
+            {% include 'footer.html' %}
+
+
+
+
+
+

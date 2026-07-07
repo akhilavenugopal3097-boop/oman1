@@ -1,0 +1,170 @@
+{% extends 'admin1/admin_notifications/base.html' %}
+{% load static %}
+
+{% block title %}Announcement Broadcast{% endblock %}
+
+{% block page_title %}
+<h1 class="h3 mb-0 text-gray-800">Announcement Broadcast</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/notifications_dashboard/">Notifications</a></li>
+                    <li class="breadcrumb-item active">Announcement Broadcast</li>
+                </ol>
+            </nav>
+            <p class="text-muted">Send broadcast announcements to all users</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Create New Announcement</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="announcementTitle" class="form-label">Announcement Title</label>
+                            <input type="text" class="form-control" id="announcementTitle" placeholder="Enter announcement title">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="announcementMessage" class="form-label">Message</label>
+                            <textarea class="form-control" id="announcementMessage" rows="8" placeholder="Enter your announcement message"></textarea>
+                            <small class="text-muted">This message will be sent to all users via email and in-app notification</small>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="priority" class="form-label">Priority</label>
+                                <select class="form-select" id="priority">
+                                    <option>Low</option>
+                                    <option selected>Medium</option>
+                                    <option>High</option>
+                                    <option>Critical</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiryDate">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Delivery Channels</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelEmail" checked>
+                                        <label class="form-check-label" for="channelEmail">
+                                            Email
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelPush" checked>
+                                        <label class="form-check-label" for="channelPush">
+                                            Push Notification
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelSMS">
+                                        <label class="form-check-label" for="channelSMS">
+                                            SMS
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelInApp" checked>
+                                        <label class="form-check-label" for="channelInApp">
+                                            In-App
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-danger" disabled>Send Announcement</button>
+                            <button type="button" class="btn btn-outline-primary" disabled>Schedule for Later</button>
+                            <button type="button" class="btn btn-outline-secondary">Save as Draft</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Broadcast Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Total Recipients</h6>
+                        <h3>12,345</h3>
+                        <small class="text-muted">All registered users</small>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h6>Last Broadcast</h6>
+                        <p class="mb-1">System Maintenance</p>
+                        <small class="text-muted">Sent 3 days ago</small>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Open Rate</h6>
+                        <div class="progress mb-2">
+                            <div class="progress-bar bg-success" style="width: 72%">72%</div>
+                        </div>
+                        <small class="text-muted">Average for last 5 broadcasts</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">Recent Announcements</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-1">System Maintenance</h6>
+                                <span class="badge bg-info">Scheduled</span>
+                            </div>
+                            <p class="text-muted small mb-1">Server maintenance on Jan 20, 2024</p>
+                            <small class="text-muted">Created 2 hours ago</small>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-1">New Feature Launch</h6>
+                                <span class="badge bg-success">Sent</span>
+                            </div>
+                            <p class="text-muted small mb-1">Introducing our new marketplace features</p>
+                            <small class="text-muted">Sent yesterday</small>
+                        </div>
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-1">Holiday Schedule</h6>
+                                <span class="badge bg-success">Sent</span>
+                            </div>
+                            <p class="text-muted small mb-1">Updated holiday delivery schedule</p>
+                            <small class="text-muted">Sent 5 days ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

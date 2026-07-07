@@ -1,0 +1,146 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Payment Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6 hover-scale">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Total Revenue</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">
+                    <span class="currency-symbol">OMR</span> {{ total_revenue }}
+                </p>
+                <p class="text-green-600 text-sm mt-2">
+                    <i class="fas fa-arrow-up mr-1"></i> +12.5% from last month
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-money-bill-wave text-xl" style="color: #F9AD1F;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm p-6 hover-scale">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Transactions</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ total_transactions }}</p>
+                <p class="text-sm mt-2" style="color: #F9AD1F;">
+                    <i class="fas fa-arrow-up mr-1"></i> +8.2% from last month
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-exchange-alt text-xl" style="color: #EB362D;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm p-6 hover-scale">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Subscriptions</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ active_subscriptions }}</p>
+                <p class="text-sm mt-2" style="color: #F9AD1F;">
+                    <i class="fas fa-arrow-up mr-1"></i> +5.3% from last month
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-users text-xl" style="color: #F9AD1F;"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm p-6 hover-scale">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-sm">Pending Refunds</p>
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ pending_refunds }}</p>
+                <p class="text-sm mt-2" style="color: #EB362D;">
+                    <i class="fas fa-clock mr-1"></i> 2 urgent
+                </p>
+            </div>
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+                <i class="fas fa-undo-alt text-xl" style="color: #EB362D;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Revenue Overview</h3>
+        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+            <p class="text-gray-400">Chart will be displayed here</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Transaction Volume</h3>
+        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+            <p class="text-gray-400">Chart will be displayed here</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <a href="{% url 'view_transactions' %}" class="p-4 rounded-xl text-center transition-colors group" style="background: linear-gradient(60deg, #F9AD1F10, #EB362D10); hover:background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+        <i class="fas fa-eye text-2xl mb-2 group-hover:scale-110 transition-transform" style="color: #F9AD1F;"></i>
+        <p class="text-sm font-medium" style="color: #EB362D;">View Transactions</p>
+    </a>
+    <a href="{% url 'refund_management' %}" class="p-4 rounded-xl text-center transition-colors group" style="background: linear-gradient(60deg, #F9AD1F10, #EB362D10); hover:background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+        <i class="fas fa-undo text-2xl mb-2 group-hover:scale-110 transition-transform" style="color: #EB362D;"></i>
+        <p class="text-sm font-medium" style="color: #F9AD1F;">Process Refunds</p>
+    </a>
+    <a href="{% url 'subscription_plans' %}" class="p-4 rounded-xl text-center transition-colors group" style="background: linear-gradient(60deg, #F9AD1F10, #EB362D10); hover:background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+        <i class="fas fa-edit text-2xl mb-2 group-hover:scale-110 transition-transform" style="color: #F9AD1F;"></i>
+        <p class="text-sm font-medium" style="color: #EB362D;">Manage Plans</p>
+    </a>
+    <a href="{% url 'invoice_generation' %}" class="p-4 rounded-xl text-center transition-colors group" style="background: linear-gradient(60deg, #F9AD1F10, #EB362D10); hover:background: linear-gradient(60deg, #F9AD1F20, #EB362D20);">
+        <i class="fas fa-file-pdf text-2xl mb-2 group-hover:scale-110 transition-transform" style="color: #EB362D;"></i>
+        <p class="text-sm font-medium" style="color: #F9AD1F;">Generate Invoice</p>
+    </a>
+</div>
+
+<!-- Recent Transactions Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-gray-800">Recent Transactions</h3>
+        <a href="{% url 'view_transactions' %}" class="text-sm font-medium hover:underline" style="color: #F9AD1F;">View All →</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Transaction ID</th>
+                    <th class="px-6 py-3">User</th>
+                    <th class="px-6 py-3">Amount</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for transaction in recent_transactions %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 font-mono text-sm">{{ transaction.id }}</td>
+                    <td class="px-6 py-4">{{ transaction.user }}</td>
+                    <td class="px-6 py-4 font-semibold">
+                        <span class="currency-symbol">OMR</span> {{ transaction.amount }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 text-xs rounded-full font-medium
+                            {% if transaction.status == 'completed' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                            {% elif transaction.status == 'pending' %}" style="background: #EB362D20; color: #EB362D;"
+                            {% else %}" style="background: #dc262620; color: #dc2626;"
+                            {% endif %}>{{ transaction.status }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ transaction.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

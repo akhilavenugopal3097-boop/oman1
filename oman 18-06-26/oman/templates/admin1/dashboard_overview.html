@@ -1,0 +1,867 @@
+<!-- templates/admin1/dashboard_overview.html -->
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .badge-success {
+        background: #e6f7e6;
+        color: #10b981;
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        border-color: #e2e8f0;
+    }
+
+    .kpi-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .kpi-icon-primary { background: #eef2ff; color: #4f46e5; }
+    .kpi-icon-success { background: #e6f7e6; color: #10b981; }
+    .kpi-icon-info { background: #e6f3ff; color: #0ea5e9; }
+    .kpi-icon-warning { background: #fff7e6; color: #f59e0b; }
+    .kpi-icon-secondary { background: #f1f5f9; color: #64748b; }
+    .kpi-icon-dark { background: #e2e8f0; color: #334155; }
+
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .kpi-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .kpi-footer {
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .kpi-footer-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #475569;
+    }
+
+    .kpi-footer-item i {
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+
+    .text-success { color: #10b981; }
+    .text-warning { color: #f59e0b; }
+    .text-danger { color: #ef4444; }
+    .text-info { color: #0ea5e9; }
+
+    /* Charts Grid */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+
+    .chart-header h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .chart-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .chart-btn {
+        padding: 0.375rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: #f8fafc;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .chart-btn:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+    .chart-container {
+        height: 300px;
+        position: relative;
+    }
+
+    /* Tables */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        height: 100%;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+
+    .table-header h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* Activity List */
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+
+    .activity-item:hover {
+        background: #f1f5f9;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .activity-icon-primary { background: #eef2ff; color: #4f46e5; }
+    .activity-icon-success { background: #e6f7e6; color: #10b981; }
+    .activity-icon-warning { background: #fff7e6; color: #f59e0b; }
+    .activity-icon-info { background: #e6f3ff; color: #0ea5e9; }
+    .activity-icon-danger { background: #fee9e9; color: #ef4444; }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    .activity-time {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .dashboard-wrapper {
+            padding: 0 1.5rem;
+        }
+        
+        .kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .kpi-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Loading Skeleton */
+    .skeleton {
+        background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Dashboard Overview</h1>
+            <div class="header-badges">
+                <span class="badge badge-primary">
+                    <i class="fas fa-user-plus"></i>
+                    {{ new_users_today|default:"0" }} new users today
+                </span>
+                <span class="badge badge-success">
+                    <i class="fas fa-chart-line"></i>
+                    {{ new_listings_last_week|default:"0" }} new listings (7d)
+                </span>
+            </div>
+        </div>
+
+        <!-- Main KPI Cards Grid -->
+        <div class="kpi-grid">
+            <!-- Total Users Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span class="badge badge-success">{{ new_users_today|default:"0" }} today</span>
+                </div>
+                <div class="kpi-value">{{ total_users|default:"0" }}</div>
+                <div class="kpi-label">Total Users</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-user-check"></i>
+                        <span>{{ active_users|default:"0" }} active</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-user-clock"></i>
+                        <span>{{ pending_users|default:"0" }} pending</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Active Listings Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-success">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <span class="badge badge-warning">{{ total_pending_approvals|default:"0" }} pending</span>
+                </div>
+                <div class="kpi-value">{{ total_active_listings|default:"0" }}</div>
+                <div class="kpi-label">Active Listings</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-eye"></i>
+                        <span>{{ total_views|default:"0" }} views</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-star"></i>
+                        <span>{{ featured_ads|default:"0" }} featured</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-info">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <span class="badge badge-success">+{{ revenue_growth|default:"0" }}%</span>
+                </div>
+                <div class="kpi-value">OMR {{ monthly_revenue|floatformat:2|default:"0" }}</div>
+                <div class="kpi-label">Monthly Revenue</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>Daily: OMR {{ daily_revenue|floatformat:2|default:"0" }}</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Yearly: OMR {{ yearly_revenue|floatformat:2|default:"0" }}</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Reports Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-warning">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <span class="badge badge-danger">{{ pending_reports|default:"0" }} pending</span>
+                </div>
+                <div class="kpi-value">{{ total_reports|default:"0" }}</div>
+                <div class="kpi-label">Reports & Flags</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>{{ resolved_reports|default:"0" }} resolved</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ pending_reports|default:"0" }} pending</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- New Ads Card (Second Row) -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-secondary">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="kpi-value">{{ new_listings_last_week|default:"0" }}</div>
+                <div class="kpi-label">New Ads (7 days)</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>{{ listings_growth|default:"0" }}% growth</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Active Subscriptions Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-dark">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
+                <div class="kpi-value">{{ active_subscriptions|default:"0" }}</div>
+                <div class="kpi-label">Active Subscriptions</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-user-clock"></i>
+                        <span>{{ trial_users|default:"0" }} on trial</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-percent"></i>
+                        <span>MRR: OMR {{ monthly_recurring_revenue|floatformat:2|default:"0" }}</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Traffic Stats Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-primary">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="kpi-value">{{ daily_active_users|default:"0" }}</div>
+                <div class="kpi-label">Daily Active Users</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>{{ weekly_active_users|default:"0" }} weekly</span>
+                    </span>
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ monthly_active_users|default:"0" }} monthly</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Conversion Rate Card -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon kpi-icon-success">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                </div>
+                <div class="kpi-value">{{ conversion_rate|floatformat:1|default:"0" }}%</div>
+                <div class="kpi-label">Conversion Rate</div>
+                <div class="kpi-footer">
+                    <span class="kpi-footer-item">
+                        <i class="fas fa-chart-simple"></i>
+                        <span>{{ avg_listings_per_user|floatformat:1|default:"0" }} avg/user</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- User Growth Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6><i class="fas fa-users me-2" style="color: #4f46e5;"></i>User Growth (30 Days)</h6>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="toggleChart('user', 'daily')">Daily</button>
+                        <button class="chart-btn" onclick="toggleChart('user', 'weekly')">Weekly</button>
+                        <button class="chart-btn" onclick="toggleChart('user', 'monthly')">Monthly</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Ads Posted Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6><i class="fas fa-chart-bar me-2" style="color: #10b981;"></i>Ads Posted Per Day (30 Days)</h6>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="toggleChart('ads', 'daily')">Daily</button>
+                        <button class="chart-btn" onclick="toggleChart('ads', 'weekly')">Weekly</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="adsPostedChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Charts Row -->
+        <div class="charts-grid">
+            <!-- Revenue Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6><i class="fas fa-dollar-sign me-2" style="color: #0ea5e9;"></i>Revenue (Last 30 Days)</h6>
+                    <div class="chart-actions">
+                        <button class="chart-btn" onclick="toggleChart('revenue', 'daily')">Daily</button>
+                        <button class="chart-btn" onclick="toggleChart('revenue', 'weekly')">Weekly</button>
+                        <button class="chart-btn" onclick="toggleChart('revenue', 'monthly')">Monthly</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Category Performance Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h6><i class="fas fa-chart-pie me-2" style="color: #f59e0b;"></i>Category Performance</h6>
+                </div>
+                <div class="chart-container">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports & Recent Activity Row -->
+        <div class="charts-grid">
+            <!-- Reports Breakdown -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h6><i class="fas fa-flag me-2" style="color: #ef4444;"></i>Reports by Reason</h6>
+                    <a href="{% url 'product_reports_admin' %}" class="chart-btn">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Reason</th>
+                                <th>Count</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reason, count in reports_by_reason.items %}
+                            <tr>
+                                <td>{{ reason }}</td>
+                                <td><span class="badge badge-warning">{{ count }}</span></td>
+                                <td>
+                                    {% if count > 5 %}
+                                    <span class="text-danger">⚠️ High</span>
+                                    {% else %}
+                                    <span class="text-success">✓ Normal</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    <i class="fas fa-check-circle text-success mb-2" style="font-size: 2rem;"></i>
+                                    <p class="text-muted">No reports found</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h6><i class="fas fa-history me-2" style="color: #64748b;"></i>Recent Activity</h6>
+                    <a href="{% url 'user_activity_log' %}" class="chart-btn">View All</a>
+                </div>
+                <div class="activity-list">
+                    {% for activity in recent_activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon-{{ activity.color }}">
+                            <i class="fas fa-{{ activity.icon }}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ activity.description }}</div>
+                            <div class="activity-time">
+                                <i class="far fa-clock me-1"></i>{{ activity.time|timesince }} ago
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clock text-muted mb-2" style="font-size: 2rem;"></i>
+                        <p class="text-muted">No recent activity</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // User Growth Chart
+    const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(userCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in user_growth_daily %}'{{ item.date }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'New Users',
+                data: [{% for item in user_growth_daily %}{{ item.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.05)',
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#4f46e5',
+                pointBorderColor: 'white',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1e293b' }
+            },
+            scales: {
+                x: { 
+                    grid: { display: false },
+                    ticks: { maxTicksLimit: 7, color: '#64748b' }
+                },
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: { color: '#64748b' }
+                }
+            }
+        }
+    });
+
+    // Ads Posted Chart
+    const adsCtx = document.getElementById('adsPostedChart').getContext('2d');
+    new Chart(adsCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for item in ads_posted_daily %}'{{ item.date }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Ads Posted',
+                data: [{% for item in ads_posted_daily %}{{ item.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: '#10b981',
+                borderRadius: 8,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1e293b' }
+            },
+            scales: {
+                x: { 
+                    grid: { display: false },
+                    ticks: { maxTicksLimit: 7, color: '#64748b' }
+                },
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: { color: '#64748b' }
+                }
+            }
+        }
+    });
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in revenue_daily %}'{{ item.date }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Revenue (OMR)',
+                data: [{% for item in revenue_daily %}{{ item.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: '#0ea5e9',
+                backgroundColor: 'rgba(14, 165, 233, 0.05)',
+                tension: 0.3,
+                fill: true,
+                pointBackgroundColor: '#0ea5e9',
+                pointBorderColor: 'white',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { 
+                    backgroundColor: '#1e293b',
+                    callbacks: {
+                        label: function(context) {
+                            return 'OMR ' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { 
+                    grid: { display: false },
+                    ticks: { maxTicksLimit: 7, color: '#64748b' }
+                },
+                y: { 
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: { 
+                        color: '#64748b',
+                        callback: function(value) {
+                            return 'OMR ' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Category Pie Chart
+    const categoryCtx = document.getElementById('categoryPieChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for cat in category_performance|slice:":5" %}'{{ cat.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for cat in category_performance|slice:":5" %}{{ cat.active }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: ['#4f46e5', '#10b981', '#0ea5e9', '#f59e0b', '#ef4444'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1e293b' }
+            }
+        }
+    });
+
+    // Toggle Chart Function
+    function toggleChart(chart, view) {
+        console.log('Toggling', chart, 'to', view, 'view');
+        // Implement with AJAX to fetch new data
+        // This would require additional backend endpoints
+    }
+</script>
+
+{% include 'admin1/footeradmin.html' %}

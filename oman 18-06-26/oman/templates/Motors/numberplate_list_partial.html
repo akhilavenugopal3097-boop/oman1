@@ -1,0 +1,3436 @@
+{% load dict_filters %}
+{% load param_replace %}
+{% load list_extras %}
+{% load static %}
+{% load humanize %}
+<style>
+    /* ============================================================
+   NUMBER PLATE MOBILE – NEAT ALIGNMENT
+   ============================================================ */
+
+/* --- Fix inline style disasters (desktop fixed values) --- */
+@media (max-width: 768px) {
+    /* ---- Containers & Cards ---- */
+    .listings-container {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 12px !important;
+    }
+
+    .feature-block-one {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+
+    .inner-box {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin-left: 0 !important;
+        padding: 16px 12px !important;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* ---- Number Plate Box (center it) ---- */
+    .numberplate-box {
+        margin: 0 auto 10px auto !important;
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* ---- Lower Content (reset negative margins) ---- */
+    .lower-content {
+        margin: 12px 0 0 0 !important;
+        margin-top: 10px !important;
+        margin-left: 0 !important;
+        padding: 0 4px !important;
+        width: 100% !important;
+    }
+
+    /* ---- Price & Favorite row (neat flex) ---- */
+    .lower-content h3 {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        margin: 0 0 6px 0 !important;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .lower-content h3 a {
+        font-size: 1.15rem !important;
+        white-space: normal !important;
+        word-break: break-word;
+        text-decoration: none;
+    }
+
+    /* ---- Favorite button (remove absolute positioning) ---- */
+    .favorite-btn {
+        position: relative !important;
+        right: auto !important;
+        top: auto !important;
+        margin-left: auto;
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    .favorite-btn i {
+        font-size: 20px;
+    }
+
+    /* ---- Category / "Number Plate" label ---- */
+    .cat {
+        font-size: 0.9rem;
+        margin: 2px 0 6px 0 !important;
+        margin-right: 0 !important;
+        white-space: normal !important;
+        width: 100%;
+        text-align: left;
+        color: #666;
+    }
+
+    /* ---- Details Icons (clean wrap, left align) ---- */
+    .details-icons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center;
+        gap: 12px 20px !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 4px !important;
+        font-size: 0.85rem;
+        color: #333;
+    }
+    .details-icons span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        padding-right: 0 !important;
+    }
+    .details-icons img {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* ---- Details Icons 2 (clean grid) ---- */
+    .details-icons2 {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 6px 16px !important;
+        width: 100%;
+        margin: 4px 0;
+        font-size: 0.8rem;
+        color: #444;
+    }
+    .details-icons2 span {
+        white-space: nowrap;
+    }
+    .details-icons2 b {
+        font-weight: 600;
+        color: #222;
+    }
+
+    /* ---- Plate type paragraph ---- */
+    .lower-content p {
+        font-size: 0.85rem;
+        white-space: normal !important;
+        margin: 6px 0 8px 0 !important;
+        color: #555;
+        width: 100%;
+        text-align: left;
+    }
+
+    /* ---- Action Buttons (neat grid / flex) ---- */
+    .action-buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center;
+        gap: 8px !important;
+        width: 100%;
+        margin-top: 6px;
+        padding: 0;
+    }
+    .action-buttons li {
+        list-style: none !important;
+        margin: 0 !important;
+        display: inline-flex;
+    }
+
+    /* Buttons – consistent height, left-aligned */
+    .action-buttons .badge-style,
+    .action-buttons a,
+    .action-buttons span,
+    .action-buttons .contact-toggle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        height: 38px !important;
+        padding: 0 14px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+        white-space: nowrap;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        min-width: 60px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        transition: background 0.2s;
+    }
+    .action-buttons .badge-style img,
+    .action-buttons a img {
+        width: 18px;
+        height: 18px;
+        margin: 0 !important;
+    }
+    .action-buttons .badge-style i,
+    .action-buttons a i {
+        font-size: 15px;
+    }
+
+    /* Individual button colour overrides (keep consistent) */
+    .action-buttons a[style*="background-color: #e9f7ef"] {
+        background-color: #e9f7ef !important;
+        color: #128C7E !important;
+    }
+    .action-buttons a[style*="background-color: #fff3f3"],
+    .action-buttons a[style*="background-color: #fcd9db"] {
+        background-color: #fff3f3 !important;
+        color: #1A73E8 !important;
+    }
+    .action-buttons a[style*="background-color: #f0f6ff"] {
+        background-color: #f0f6ff !important;
+        color: #063e71 !important;
+    }
+    .action-buttons .contact-toggle {
+        background-color: #f5f5f5 !important;
+        color: #333 !important;
+    }
+
+    /* ---- Boost icon (reposition) ---- */
+    .boost-icon {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+        background: rgba(0,0,0,0.55);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff9800;
+        z-index: 5;
+    }
+
+    /* ---- Sidebar & Ad (centered) ---- */
+    .ad-column {
+        width: 100% !important;
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 8px;
+    }
+    .ad-categories {
+        width: 100% !important;
+        max-width: 400px;
+        margin: 0 auto 16px auto;
+        padding: 16px 18px;
+        border-radius: 16px;
+        background: #efefef;
+    }
+    .category-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        padding-top: 0;
+    }
+    .subcategory-list {
+        padding-left: 16px;
+        margin: 0;
+    }
+    .subcategory-list li {
+        margin-bottom: 6px;
+    }
+    .subcategory-list a {
+        font-size: 0.9rem;
+        color: #444;
+        text-decoration: none;
+    }
+    .subcategory-list .view-more a {
+        color: #E35D20;
+        font-weight: 500;
+    }
+
+    .vertical-ad {
+        width: 100% !important;
+        max-width: 400px;
+        height: auto;
+        min-height: 160px;
+        border-radius: 16px;
+        border: 3px solid #ccc;
+        overflow: hidden;
+        margin: 0 auto;
+    }
+    .vertical-ad img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* ---- Filters & Search (neat spacing) ---- */
+    .filter-scroll-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 8px !important;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        max-height: 7.5rem;
+        overflow-y: auto;
+    }
+    .filter-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        margin: 0.15rem 0.3rem;
+        border-radius: 30px;
+    }
+    .clear-filters-link {
+        font-size: 0.8rem;
+        margin-right: 6px;
+    }
+
+    .number-search-box {
+        max-width: 100% !important;
+        width: 100%;
+        margin: 12px 0 4px 0 !important;
+    }
+    .number-search-input {
+        width: 100% !important;
+        padding: 10px 14px 10px 42px;
+        font-size: 15px;
+        border-radius: 24px;
+    }
+    .search-icon {
+        left: 14px;
+        font-size: 16px;
+    }
+
+    /* ---- Sort dropdown (right aligned neatly) ---- */
+    .custom-sort-dropdown {
+        margin-right: 0 !important;
+    }
+    .sort-trigger {
+        padding: 6px 14px;
+        border-radius: 24px;
+        font-size: 0.85rem;
+    }
+    .sort-dropdown-menu {
+        right: 0;
+        left: auto;
+        min-width: 160px;
+    }
+
+    /* ---- Pagination (centered) ---- */
+    .container .page {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px 0 0 0;
+        margin: 0;
+    }
+    .page__numbers a,
+    .page__btn a,
+    .page__numbers span,
+    .page__btn span {
+        display: inline-block;
+        padding: 4px 12px;
+        font-size: 0.9rem;
+        border-radius: 4px;
+        background: #f5f5f5;
+        color: #333;
+        text-decoration: none;
+        min-width: 34px;
+        text-align: center;
+    }
+    .page__numbers.active a {
+        background: #E35D20;
+        color: #fff;
+    }
+
+    /* ---- Breadcrumb (scrollable, left aligned) ---- */
+    .breadcrumb {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px 0;
+        gap: 4px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+    .breadcrumb li {
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    /* ---- Heading row (stack neatly) ---- */
+    .d-flex.align-items-center.justify-content-between.w-100 {
+        flex-wrap: wrap;
+        gap: 10px 6px;
+        align-items: center;
+    }
+    h5 {
+        font-size: 1.1rem !important;
+        margin: 0 !important;
+    }
+    .property-count {
+        font-size: 0.9rem;
+        padding-left: 8px;
+        margin-left: 4px;
+        border-left: 1px solid #ddd;
+    }
+
+    /* ---- Popups (phone, chat, contact) - neat centering ---- */
+    .phone-popup .popup-card {
+        width: 92% !important;
+        max-width: 360px !important;
+        padding: 18px !important;
+        margin: 20px auto !important;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .popup-phone {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        margin: 12px 0;
+    }
+
+    .contact-popup-inner {
+        width: 92% !important;
+        max-width: 360px !important;
+        padding: 18px !important;
+    }
+
+    .chat-popup-container {
+        width: 96% !important;
+        max-width: 380px !important;
+        right: 2% !important;
+        bottom: 10px !important;
+        height: 75% !important;
+        max-height: 500px !important;
+        border-radius: 16px !important;
+        left: auto !important;
+        transform: none !important;
+    }
+    .chat-popup-messages {
+        max-height: 180px !important;
+    }
+    .chat-popup-input textarea {
+        font-size: 0.9rem !important;
+        padding: 8px 12px !important;
+        border-radius: 20px;
+    }
+}
+
+/* --- Extra Small (max-width: 480px) - tighten spacing --- */
+@media (max-width: 480px) {
+    .inner-box {
+        padding: 12px 8px !important;
+    }
+    .lower-content h3 a {
+        font-size: 1rem !important;
+    }
+    .action-buttons .badge-style,
+    .action-buttons a,
+    .action-buttons span,
+    .action-buttons .contact-toggle {
+        height: 34px !important;
+        font-size: 12px !important;
+        padding: 0 10px !important;
+        min-width: 50px;
+    }
+    .action-buttons .badge-style img,
+    .action-buttons a img {
+        width: 15px;
+        height: 15px;
+    }
+    .details-icons {
+        gap: 6px 12px !important;
+        font-size: 0.75rem;
+    }
+    .details-icons span {
+        font-size: 0.75rem;
+    }
+    .details-icons2 {
+        font-size: 0.7rem;
+        gap: 4px 10px !important;
+    }
+    .filter-badge {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.5rem;
+    }
+    .sort-trigger {
+        padding: 4px 10px;
+        font-size: 0.75rem;
+    }
+    .chat-popup-container {
+        height: 80% !important;
+        max-height: 450px !important;
+    }
+    .chat-popup-messages {
+        max-height: 140px !important;
+    }
+}
+
+/* --- Landscape phones (fix height issues) --- */
+@media (max-height: 500px) and (orientation: landscape) {
+    .chat-popup-container {
+        height: 90% !important;
+        max-height: 90vh !important;
+        bottom: 5px !important;
+    }
+    .chat-popup-messages {
+        max-height: 120px !important;
+    }
+    .inner-box {
+        padding: 8px !important;
+    }
+    .action-buttons .badge-style,
+    .action-buttons a {
+        height: 30px !important;
+        font-size: 12px !important;
+        padding: 0 8px !important;
+    }
+}
+    </style>
+<style>
+    
+    .filter-container{
+        border: 1px solid black;
+    }
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.5;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #333;
+    background-color: #f0f0f0;
+    border-radius: 50rem; /* pill-shaped */
+    border: 1px solid #ddd;
+    transition: all 0.2s ease;
+}
+
+.filter-badge:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-badge .remove-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.filter-badge .remove-filter:hover {
+    color: #fff;
+   
+}
+
+/* For the active/highlighted state */
+.filter-badge.active {
+    background-color: #e0f7fa;
+    border-color: #b2ebf2;
+    color: #006064;
+}
+
+/* Clear filters link style */
+.clear-filters-link {
+    color: #d32f2f;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    transition: color 0.2s;
+}
+
+.clear-filters-link:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+.property-count {
+    font-size: 1rem;
+    color: #555;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 2px solid #eee;
+    margin-left: 8px;
+    margin-top: 5px;
+}
+.clear-filters-link {
+    color: #e01919;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    margin-right: 20px;
+}
+
+.clear-filters-link:hover {
+    color: #c01010;
+    text-decoration: none;
+}
+/* Sorting Dropdown Styles */
+.sort-dropdown {
+    min-width: 180px;
+}
+
+.sort-dropdown select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-dropdown select:hover {
+    border-color: #aaa;
+}
+
+.sort-dropdown select:focus {
+    outline: none;
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+}
+
+</style>
+<nav aria-label="Breadcrumb" style="margin-left: -50px;margin-bottom: 30px;">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <!-- Breadcrumb Trail -->
+        <ol class="breadcrumb mb-0">
+            <li><a href="{% url 'index' %}"><i class="fas fa-home"></i></a></li>
+            <li><a href="{% url 'index2' %}">Motors</a></li>
+          
+               
+       
+            {% if request.resolver_match.url_name %}
+                <li>
+                    Number Plates
+                    {% if request.GET.listing_type %}
+                        {% if request.GET.listing_type == "sell" %}
+                            <span>for Sale</span>
+                        {% elif request.GET.listing_type == "rent" %}
+                            <span>for Rent</span>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endif %}
+        </ol>
+<style>
+                .breadcrumb {
+        list-style: none;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        }
+        
+        .breadcrumb li {
+        display: inline;
+        font-size: 16px;
+        color:#15818E;
+        }
+        
+        .breadcrumb li + li:before {
+        content: ">";
+        padding: 0 8px;
+        color: #999;
+        }
+        
+        .breadcrumb li a {
+    color: #15818E;
+    text-decoration: none;
+}
+
+        
+        .breadcrumb li a:hover {
+        text-decoration: none;
+        }
+        
+        .breadcrumb li[aria-current="page"] {
+        color:#15818E;
+        }
+              </style>
+       <!-- Section Heading -->
+<div class="d-flex align-items-center justify-content-between w-100">
+    <div class="d-flex align-items-center gap-3">
+        <h5 class="mb-0">
+            Motors 
+            in Number Plate
+        </h5>
+        <span class="property-count">{{numberplate_count }} Ad{{ numberplate_count|pluralize }}</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+         {% if request.GET and request.GET|length > 0 %}
+            <a href="{% url request.resolver_match.url_name %}"
+               id="clear-all-filters"
+               class="clear-filters-link">
+                Clear Filters
+            </a>
+        {% endif %}
+        
+       <div class="custom-sort-dropdown">
+        <div class="sort-trigger" onclick="toggleSortDropdown()">
+            <svg class="sort-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 9l4-4 4 4"></path>
+    <path d="M16 15l-4 4-4-4"></path> 
+</svg>
+            <span class="sort-text">Sort:{% if current_sort == '-id' %}Latest{% elif current_sort == 'oldest' %}Oldest{% elif current_sort == 'price_asc' %}Price: Low to High{% elif current_sort == 'price_desc' %}Price: High to Low{% else %}Latest{% endif %}</span>
+            
+        </div>
+        <div class="sort-dropdown-menu">
+            <div class="sort-option {% if current_sort == '-id' %}active{% endif %}" onclick="updateSort('-id')">Latest</div>
+            <div class="sort-option {% if current_sort == 'oldest' %}active{% endif %}" onclick="updateSort('oldest')">Oldest</div>
+            <div class="sort-option {% if current_sort == 'price_asc' %}active{% endif %}" onclick="updateSort('price_asc')">Price: Low to High</div>
+            <div class="sort-option {% if current_sort == 'price_desc' %}active{% endif %}" onclick="updateSort('price_desc')">Price: High to Low</div>
+        </div>
+    </div>
+
+
+<script>
+// Toggle dropdown visibility
+function toggleSortDropdown() {
+    const dropdown = document.querySelector('.sort-dropdown-menu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.custom-sort-dropdown')) {
+        document.querySelector('.sort-dropdown-menu').style.display = 'none';
+    }
+});
+
+// Update sort parameter with AJAX
+function updateSort(value) {
+    const newUrl = updateQueryStringParameter(window.location.href, 'sort', value);
+
+    // Update browser URL without reload
+    window.history.pushState({}, '', newUrl);
+
+    // AJAX fetch new sorted content
+    fetch(newUrl, {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Replace listing content
+        document.querySelector('#numberplate-list-container').innerHTML = data;
+    })
+    .catch(err => console.error("AJAX Sort Error:", err));
+}
+
+// Helper function to update URL parameters
+function updateQueryStringParameter(uri, key, value) {
+    const re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    const separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+        return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    return uri + separator + key + "=" + value;
+}
+</script>
+
+<style>
+    .custom-sort-dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 1;
+        margin-right: -40px;
+    }
+    
+    .sort-trigger {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        cursor: pointer;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .sort-trigger:hover {
+        border-color: #E35D20;
+    }
+    
+    .sort-text {
+        margin-right: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .sort-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .sort-dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        min-width: 180px;
+        margin-top: 5px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 100;
+    }
+    
+    .custom-sort-dropdown:hover .sort-icon {
+        transform: rotate(180deg);
+    }
+    
+    .sort-option {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .sort-option:hover {
+        background-color: #f8f8f8;
+        color: #E35D20;
+    }
+    
+    .sort-option.active {
+        color: #E35D20;
+        background-color: #f8f8f8;
+        font-weight: 500;
+    }
+    
+    .vertical-divider {
+        display: inline-block;
+        height: 20px;
+        width: 1px;
+        background-color: #ddd;
+        margin: 0 10px;
+    }
+</style>
+    </div>
+</div>
+        <style>
+            h5 {
+                font-size: 1.25rem;
+                margin: 0.5rem 0;
+                color: #333;
+                font-weight: 600;
+                margin-left: 13px;
+            }
+            
+        </style>
+
+        
+{% if request.GET %}
+<div id="filters-container" class="mt-2">
+    <div class="filter-scroll-wrapper" style="max-height: 7.8rem;width: 1115px; overflow-y: auto; scrollbar-width: thin;
+        {% for key, values in request.GET.lists %}
+            {% if key != 'page' and key != 'number' %}
+                {% for value in values %}
+                    {% if value and value != 'null' and value != 'None' %}
+                        border:1px solid #ccc;
+                        border-radius:8px;
+                        padding:10px;
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    ">
+      <div class="d-flex flex-wrap gap-2">
+    {% for key, values in request.GET.lists %}
+        {% if key != 'page' and key != 'number' %}
+        {% if key == 'governate' %}
+    {% for governate_id in values %}
+        {% if governate_id and governate_id != 'null' and governate_id != 'None' %}
+            {% for gov_obj in selected_governate_objs %}
+                {% if gov_obj.id|stringformat:"s" == governate_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ gov_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="governate"
+                           data-value="{{ governate_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% elif key == 'district' %}
+    {% for district_id in values %}
+        {% if district_id and district_id != 'null' and district_id != 'None' %}
+            {% for dist_obj in selected_district_objs %}
+                {% if dist_obj.id|stringformat:"s" == district_id %}
+                    <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                        {{ dist_obj.name }}
+                        <a href="#"
+                           class="remove-filter"
+                           data-key="district"
+                           data-value="{{ district_id }}">
+                           ×
+                        </a>
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+           {% elif key == 'city' %}
+                {% for city_id in values %}
+                    {% if city_id and city_id != 'null' and city_id != 'None' %}
+                        {% for city_obj in selected_city_objs %}
+                            {% if city_obj.id|stringformat:"s" == city_id %}
+                                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                    {{ city_obj.name }}
+                                    <a href="#"
+                                       class="remove-filter"
+                                       data-key="city"
+                                       data-value="{{ city_id }}">
+                                       ×
+                                    </a>
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% elif key == 'sort' %}
+                {% for value in values %}
+                    {% if value == 'price_desc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            High to Low
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_desc">
+                               ×
+                            </a>
+                        </span>
+
+                    {% elif value == 'price_asc' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Low to High
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="price_asc">
+                               ×
+                            </a>
+                        </span>
+                    {% elif value == '-id' %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Latest
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="-id">
+                               ×
+                            </a>
+                        </span>
+                    {% else %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            {{ value|title }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="sort"
+                               data-value="{{ value }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            
+            {% elif key == 'price_from' or key == 'price_to' %}
+                {% if request.GET.price_from and request.GET.price_to %}
+                    {% if key == 'price_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price: {{ request.GET.price_from }} - {{ request.GET.price_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_range"
+                               data-value="{{ request.GET.price_from }}-{{ request.GET.price_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'price_from' and request.GET.price_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price from {{ request.GET.price_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_from"
+                               data-value="{{ request.GET.price_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'price_to' and request.GET.price_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Price to {{ request.GET.price_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="price_to"
+                               data-value="{{ request.GET.price_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'year_from' or key == 'year_to' %}
+                {% if request.GET.year_from and request.GET.year_to %}
+                    {% if key == 'year_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year: {{ request.GET.year_from }} - {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_range"
+                               data-value="{{ request.GET.year_from }}-{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'year_from' and request.GET.year_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year from {{ request.GET.year_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_from"
+                               data-value="{{ request.GET.year_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'year_to' and request.GET.year_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            Year to {{ request.GET.year_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="year_to"
+                               data-value="{{ request.GET.year_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            {% elif key == 'kilometers_from' or key == 'kilometers_to' %}
+                {% if request.GET.kilometers_from and request.GET.kilometers_to %}
+                    {% if key == 'kilometers_from' %} {# Only show once #}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM: {{ request.GET.kilometers_from }} - {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometer_range"
+                               data-value="{{ request.GET.kilometers_from }}-{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% else %}
+                    {% if key == 'kilometers_from' and request.GET.kilometers_from %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM from {{ request.GET.kilometers_from }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_from"
+                               data-value="{{ request.GET.kilometers_from }}">
+                               ×
+                            </a>
+                        </span>
+                    {% elif key == 'kilometers_to' and request.GET.kilometers_to %}
+                        <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                            KM to {{ request.GET.kilometers_to }}
+                            <a href="#"
+                               class="remove-filter"
+                               data-key="kilometers_to"
+                               data-value="{{ request.GET.kilometers_to }}">
+                               ×
+                            </a>
+                        </span>
+                    {% endif %}
+                {% endif %}
+                {% elif key == 'boat_type' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v|format_boat_type|title }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+     {% elif key == 'letter_english' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                   {{ v }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+    {% elif key == 'letter_count' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                    {% if v == 'single' %}
+                        A
+                    {% elif v == 'similar' %}
+                        AA
+                    {% elif v == 'different' %}
+                        AB
+                    {% elif v == 'all' %}
+                        All
+                    {% else %}
+                        {{ v }}
+                    {% endif %}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+     {% elif key == 'subcategory' %}
+    {% for value in values %}
+        {% for v in value|split:"," %}
+            {% if v and v != 'null' and v != 'None' %}
+                <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                    {{ v|format_subcategory|title }}
+                    <a href="?#"
+                       class="remove-filter"
+                       data-key="{{ key }}"
+                       data-value="{{ v }}">
+                       ×
+                    </a>
+                </span>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+            {% elif key == 'condition' %}
+    {% for value in values %}
+        {% if value and value != 'null' and value != 'None' %}
+            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                {{ value|capfirst }}
+                <a href="?{% param_replace request condition=value %}"
+                   class="remove-filter"
+                   data-key="{{ key }}"
+                   data-value="{{ value }}">
+                   ×
+                </a>
+            </span>
+        {% endif %}
+    {% endfor %}
+            {% elif key == 'usage' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v|format_usage }}
+                                  <a href="?{% param_replace request usage=value %}"
+                   class="remove-filter"
+                   data-key="{{ key }}"
+                   data-value="{{ value }}">
+                   ×
+                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% elif key == 'service_type' %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                                {{ v|format_service_type:'babyitem' }}
+                                <a href="#"
+   class="remove-filter"
+   data-key="{{ key }}"
+   data-value="{{ v }}">
+   ×
+</a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                {% for value in values %}
+                    {% for v in value|split:"," %}
+                        {% if v and v != 'null' and v != 'None' %}
+                            <span class="filter-badge badge text-bg-primary" style="font-weight: normal;">
+                               {{ v|title }}
+                                <a href="#"
+                                   class="remove-filter"
+                                   data-key="{{ key }}"
+                                   data-value="{{ v }}">
+                                   ×
+                                </a>
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+    </div>
+    
+    
+</div>
+{% endif %}
+    </div>
+    <div class="number-search-box mb-4" style="margin-top: 15px; margin-left: 15px;">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text"
+                               id="numberSearch"
+                               name="number"
+                               value="{{ number_search|default:'' }}"
+                               placeholder="Search number..."
+                               class="number-search-input"
+                               pattern="[0-9]*"
+                               inputmode="numeric"
+                               onkeypress="handleNumberSearch(event)"
+                               oninput="handleNumberChange(this)">
+                    </div>
+                </div>
+</nav>
+<style>
+       .details-icons {
+    display: flex;
+    gap: 30px; /* space between items */
+    align-items: center;
+    font-size: 16px;
+   
+   
+    width: 250%;
+}
+
+.details-icons span {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* space between icon and text */
+   
+}
+
+.details-icons img {
+    width: 16px; /* consistent icon size */
+    height: 16px;
+}
+
+            </style>
+<style>
+   
+    
+    
+    /* Added styles for consistent spacing and lighter fonts */
+    .feature-block-one {
+        margin-bottom: 25px;
+    }
+    .lower-content {
+    padding: 15px;
+    font-size: 16px;
+    margin-left: 120px;
+}
+
+.lower-content h4 {
+ 
+    {% comment %} margin-bottom: 8px; {% endcomment %}
+    font-size: 16px; /* Slightly larger for price */
+    color: #1976d2;
+}
+
+.lower-content p,
+.lower-content h6,
+.lower-content .details-icons span {
+    font-size: 16px;
+    
+}
+.
+
+.lower-content .details-icons {
+    display: flex;
+    {% comment %} gap: 10px; {% endcomment %}
+    flex-wrap: wrap;
+    color: black;
+    {% comment %} margin: 8px 0; {% endcomment %}
+}
+/* Add these styles to your existing CSS */
+.image-box {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-box:hover .btn {
+    opacity: 1;
+}
+
+.btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(16, 15, 15, 0.8);
+    border: none;
+    border-radius: 30%;
+    padding:2px 8px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.btn.backward {
+    left: 10px;
+}
+
+.btn.forward {
+    right: 230px;
+}
+
+.btn span {
+    font-size: 18px;
+    color: white;
+}
+
+/* Ensure the slider container is positioned relative */
+.slider {
+    position: relative;
+}
+
+</style>
+<style>
+    .image-box {
+        position: relative;
+    }
+
+    .dots-container {
+        display: flex !important; /* Force display */
+        justify-content: center;
+        position: absolute;
+        bottom: 10px;
+        margin-left:170px;
+        transform: translateX(-50%);
+        z-index: 10;
+        gap: 5px;
+    }
+    
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent by default */
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .dot.active {
+        background-color: white; /* More visible when active */
+    }
+    
+    /* Add this new style for image counter */
+    .image-counter {
+        position: absolute;
+        bottom: 10px;
+        font-family: 'FontStyle1', Arial, sans-serif;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        z-index: 10;
+    }
+    .listings-container{
+        width:1125px;
+        margin-left:-58px;
+    }
+    
+</style>
+<!-- Listings Section -->
+<div class="listings-container">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column - Products (8 columns on large screens) -->
+            <div class="col-lg-9 col-md-12">
+
+
+<script>
+    let searchTimeout;
+    let isUpdating = false;
+
+    function handleNumberSearch(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            applyNumberSearch();
+        }
+    }
+
+    function handleNumberChange(input) {
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Set new timeout to search after user stops typing (500ms delay)
+        searchTimeout = setTimeout(() => {
+            applyNumberSearch();
+        }, 500);
+    }
+
+    function applyNumberSearch() {
+        if (isUpdating) return;
+        
+        const input = document.getElementById('numberSearch');
+        const value = input.value.trim();
+        const currentValue = input.value; // Store current value
+        const cursorPosition = input.selectionStart; // Store cursor position
+
+        let newUrl;
+
+        if (value) {
+            newUrl = updateQueryStringParameter(window.location.href, 'number', value);
+        } else {
+            newUrl = removeQueryStringParameter(window.location.href, 'number');
+        }
+
+        // Update browser URL without reload
+        window.history.pushState({}, '', newUrl);
+
+        isUpdating = true;
+
+        // AJAX fetch new content
+        fetch(newUrl, {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(response => response.text())
+        .then(data => {
+            document.querySelector('#numberplate-list-container').innerHTML = data;
+            
+            // Restore focus and cursor position to the input
+            const newInput = document.getElementById('numberSearch');
+            if (newInput) {
+                newInput.value = currentValue;
+                newInput.focus();
+                newInput.setSelectionRange(cursorPosition, cursorPosition);
+            }
+            
+            isUpdating = false;
+        })
+        .catch(err => {
+            console.error("AJAX Search Error:", err);
+            isUpdating = false;
+        });
+    }
+
+    // Helper to remove parameter
+    function removeQueryStringParameter(uri, key) {
+        const url = new URL(uri);
+        url.searchParams.delete(key);
+        return url.toString();
+    }
+
+    // Helper to update parameter
+    function updateQueryStringParameter(uri, key, value) {
+        const url = new URL(uri);
+        url.searchParams.set(key, value);
+        return url.toString();
+    }
+</script>
+
+
+<style>
+.number-search-box {
+    max-width: 280px;
+}
+
+.search-input-wrapper {
+    position: relative;
+}
+
+.number-search-input {
+    width: 300px;
+    padding: 8px 14px 8px 36px;
+    border: 2px solid #d07a2d;
+    border-radius: 22px;
+    font-size: 13px;
+    outline: none;
+    background: #fff;
+}
+
+.number-search-input:focus {
+    border-color: #b9651f;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #d07a2d;
+    font-size: 14px;
+}
+</style>
+
+
+                 {% if show_related %}
+<div class="related-box mb-4">
+                    <div class="related-inner">
+                        <div class="icon-circle">
+                            <span>!</span>
+                        </div>
+                        <p class="related-text">
+                            <strong>No Results Found</strong><br>
+                            We couldn't find any items matching your search.
+                        </p>
+                    </div>
+                </div>
+                <h5 class="mt-2">Recommended Listings</h5>
+{% endif %}
+
+                <!-- Products Grid -->
+                {% if show_related %}
+                  <!-- Show Related Number Plates -->
+{% for numberplate in related_numberplates %}
+<div class="feature-block-one" style="cursor: pointer; width: 799px;" onclick="window.open('{% url 'numberplate_details' numberplate.id %}', '_blank')">
+    <div class="inner-box">
+        <!-- Number Plate - Conditional based on plate_type -->
+        {% if numberplate.plate_type == 'motorcycle' %}
+            <!-- Motorcycle Plate (with numberplate-box wrapper) -->
+            <div class="numberplate-box">
+                <div class="motorcycle-plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                    <div class="motorcycle-section arabic-section">
+                        <div class="arabic-letters">{{ numberplate.letter_arabic }}</div>
+                        <div class="english-letters">{{ numberplate.letter_english }}</div>
+                    </div>
+                    <div class="motorcycle-section number-section">
+                        <div class="region">عُمان</div>
+                        <div class="number">{{ numberplate.number }}</div>
+                    </div>
+                </div>
+                <div class="base"></div>
+            </div>
+        {% else %}
+            <!-- Car Plate with 3D Design -->
+            <div class="numberplate-box">
+                <div class="plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                    <div class="section number">{{ numberplate.number }}</div>
+                    <div class="section letters">
+                        <span class="arabic">{{ numberplate.letter_arabic }}</span>
+                        <span class="english">{{ numberplate.letter_english }}</span>
+                    </div>
+                    <div class="section country">عُمان</div>
+                </div>
+                <div class="base"></div>
+            </div>
+        {% endif %}
+        {% if numberplate.is_boosted %}
+        <div class="boost-icon" title="Boosted listing">
+            <i class="fas fa-rocket"></i>   <!-- or use 🚀 -->
+        </div>
+        {% endif %}
+        <style>
+            .slider {
+    position: relative;
+}
+
+.boost-icon {
+    position: absolute;
+    top: 10px;
+    right: 90px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ff9800;
+    border-radius: 10%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 5;
+}
+            </style>
+        
+        <div class="lower-content" style="margin-top: -150px; margin-left: 220px;">
+            <h3 style="position: relative; margin: 0;">
+                <a href="{% url 'numberplate_details' numberplate.id %}" style="text-decoration: none; white-space: nowrap;" target="_new">
+                   <span style="color: #EB362D; font-size: 1em;">{{ numberplate.price|floatformat:0|intcomma }}</span>
+                    <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                    {% if numberplate.listing_type == "rent" and numberplate.rental_period %}
+                        <span style="color: #EB362D; font-size: 0.85em;"> - {{ numberplate.rental_period|capfirst }}</span>
+                    {% endif %}
+                </a>
+                <!-- Favorite button moved here (right side) -->
+                <button class="favorite-btn" 
+                        style="position: absolute; right: -415px; top: -15px;"
+                        data-product-id="{{ numberplate.id }}" 
+                        data-product-type="numberplate" 
+                        data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+                        onclick="event.stopPropagation(); handleFavoriteClick(this);">
+                    <i id="favorite-icon-{{ numberplate.id }}" 
+                       class="far fa-heart {% if numberplate.id in user_favorites %}filled{% endif %}" 
+                       data-favorite="{% if numberplate.id in user_favorites %}true{% else %}false{% endif %}"
+                       style="{% if numberplate.id in user_favorites %}color: #d32f2f;{% endif %}"></i>
+                </button>
+            </h3>
+            <div class="cat" style="margin-top:5px;margin-right: -260px; white-space: nowrap;">Number Plate</div>
+
+            <div class="details-icons" style="margin-left: 2px;margin-top:10px;">
+                <span><img src="{% static 'assets/images/icons/listing.svg'%}" style="margin-top:-3px;" alt="Bedrooms"> {% if numberplate.usage_type == 'commercial' %}
+                        <span>Commercial</span>
+                    {% else %}
+                        <span>Private</span>
+                    {% endif %}  </span>
+              
+            </div>
+             <div class="details-icons2">
+   <span>Plate Type: <b>{{ numberplate.usage_type|capfirst }}</b></span>
+    <span>Listing Type: <b>{{ numberplate.listing_type|title }}</b></span>
+    <span>Payment Method: <b>{{ numberplate.payment_method|title }}</b></span>
+</div>
+
+            <p style="white-space: nowrap;margin-top:10px;color:black;">{{ numberplate.plate_type|truncatechars:25|title }}</p>
+            <!-- <div style="white-space: nowrap; margin-left: -2px;margin-top:-10px;margin-bottom:5px;">
+                <img src="{% static 'assets/images/icons/location.svg' %}" alt="Location" class="location-icons" style="vertical-align: middle;">
+                <span>{{ numberplate.city|clean_city_name|truncatechars:25 }}, {{ numberplate.city.district.name }}, {{numberplate.city.district.governate.name }}</span>
+            </div> -->
+           
+
+            <div class="lower-box">
+                <div class="details-row" style="margin-top: 10px;">
+                    <div class="action-buttons">
+                        <li>
+                            {% if numberplate.user.whatsapp %}
+                                {% if request.user.is_authenticated %}
+                                    <!-- Logged in: direct WhatsApp -->
+                                    <a href="https://wa.me/{{ numberplate.user.whatsapp }}"
+                                       target="_blank"
+                                       onclick="event.stopPropagation()"
+                                       class="badge-style"
+                                       style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                      <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                    </a>
+                                {% else %}
+                                    <!-- Not logged in: send back to same page after login -->
+                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                       onclick="event.stopPropagation()"
+                                       class="badge-style"
+                                       style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                      <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+
+                        <!-- Phone Button -->
+                        <li>
+                            {% if numberplate.user.phone %}
+                                {% if request.user.is_authenticated %}
+                                    <!-- Logged in: Direct call -->
+                                    <a href="#"
+                                        onclick="event.stopPropagation(); showPhonePopup('{{numberplate.user.phone }}'); return false;"
+                                        class="badge-style"
+                                        style="width:80px;background-color: #fff3f3;font-size:16px; padding: 8px 12px; margin-left:5px;border-radius: 10px; color: #1A73E8; border: none;">
+                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                            alt="Call"
+                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                        Call
+                                    </a>
+                                {% else %}
+                                    <!-- Not logged in: Redirect to login with full return URL -->
+                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                        onclick="event.stopPropagation();"
+                                        class="badge-style"
+                                        style="width:80px;background-color: #fcd9db;font-size:16px;margin-left:3px; padding: 8px 12px; border-radius: 10px; color: #1A73E8; border: none;">
+                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                            alt="Call"
+                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                        Call
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <!-- No phone number available -->
+                                <span class="badge-style"
+                                    style="width:90px;background-color: #fcd9db;font-size:16px;margin-left:-16px; padding: 8px 12px; border-radius: 10px; color: #1A73E8;">
+                                    <img src="{% static 'assets/images/phoneicon.png' %}"
+                                        alt="Call"
+                                        style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                    Call
+                                </span>
+                            {% endif %}
+                        </li>
+
+                        <!-- Chat Button -->
+                        <li>
+                            {% if request.user.is_authenticated %}
+                                <!-- Logged in: Go to chat - Modified to open popup -->
+                                <a href="javascript:void(0);"
+                                   onclick="openChatPopup('{{ numberplate.user.id }}', '{{ numberplate.id }}', 'numberplate', '{{ numberplate.title|escapejs }}', '{{ numberplate.user.username|escapejs }}', '{% if numberplate.images.first %}{{ numberplate.images.first.image.url }}{% endif %}'); event.stopPropagation();"
+                                   style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px; cursor: pointer;">
+                                    <img src="{% static 'assets/images/chaticon.png' %}"
+                                        alt="Chat"
+                                        style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+                                    Chat
+                                </a>
+                            {% else %}
+                                <!-- Not logged in: redirect to login preserving full URL -->
+                                <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                   onclick="event.stopPropagation();"
+                                   style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px;">
+                                    <img src="{% static 'assets/images/chaticon.png' %}"
+                                        alt="Chat"
+                                        style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+                                    Chat
+                                </a>
+                            {% endif %}
+                        </li>
+
+                        <!-- Contact Popup Button -->
+                        <li>
+                            {% if request.user.is_authenticated %}
+                                <!-- Logged in: Show contact popup -->
+                                <a href="#"
+                                   class="contact-toggle"
+                                   style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;"
+                                   onclick="showContactPopup('{{ numberplate.id }}', '{{ numberplate.user.id }}', '{{ numberplate.user.whatsapp|default:'' }}', '{{ numberplate.user.phone|default:'' }}', 'true'); event.stopPropagation();">
+                                    <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                </a>
+                            {% else %}
+                                <!-- Not logged in: redirect to login and return to same page -->
+                                <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                   onclick="event.stopPropagation();"
+                                   class="contact-toggle"
+                                   style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;">
+                                    <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                </a>
+                            {% endif %}
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+                    <!-- Clear Filters Button for Related Products -->
+                    <div class="text-center mt-4">
+                        <a href="{% url request.resolver_match.url_name %}" class="btn btn-clear-filters" style="background-color: #E35D20; color: white; padding: 10px 20px; border-radius: 25px; text-decoration: none;">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Clear All Filters
+                        </a>
+                    </div>
+
+                {% else %}
+                    <!-- Show Regular Results -->
+                  {% for numberplate in page_obj %}
+<div class="feature-block-one" style="cursor: pointer; width: 799px;" onclick="window.open('{% url 'numberplate_details' numberplate.id %}', '_blank')">
+    <div class="inner-box">
+        <!-- Number Plate - Conditional based on plate_type -->
+        {% if numberplate.plate_type == 'motorcycle' %}
+            <!-- Motorcycle Plate (with numberplate-box wrapper) -->
+            <div class="numberplate-box">
+                <div class="motorcycle-plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                    <div class="motorcycle-section arabic-section">
+                        <div class="arabic-letters">{{ numberplate.letter_arabic }}</div>
+                        <div class="english-letters">{{ numberplate.letter_english }}</div>
+                    </div>
+                    <div class="motorcycle-section number-section">
+                        <div class="region">عُمان</div>
+                        <div class="number">{{ numberplate.number }}</div>
+                    </div>
+                </div>
+                <div class="base"></div>
+            </div>
+        {% else %}
+            <!-- Car Plate with 3D Design -->
+            <div class="numberplate-box">
+                <div class="plate {% if numberplate.usage_type == 'commercial' %}commercial{% else %}private{% endif %}">
+                    <div class="section number">{{ numberplate.number }}</div>
+                    <div class="section letters">
+                        <span class="arabic">{{ numberplate.letter_arabic }}</span>
+                        <span class="english">{{ numberplate.letter_english }}</span>
+                    </div>
+                    <div class="section country">عُمان</div>
+                </div>
+                <div class="base"></div>
+            </div>
+        {% endif %}
+        {% if numberplate.is_boosted %}
+        <div class="boost-icon" title="Boosted listing">
+            <i class="fas fa-rocket"></i>   <!-- or use 🚀 -->
+        </div>
+        {% endif %}
+        <style>
+            .slider {
+    position: relative;
+}
+
+.boost-icon {
+    position: absolute;
+    top: 10px;
+    right: 90px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #ff9800;
+    border-radius: 10%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 5;
+}
+            </style>
+        
+        <div class="lower-content" style="margin-top: -150px; margin-left: 220px;">
+            <h3 style="position: relative; margin: 0;">
+                <a href="{% url 'numberplate_details' numberplate.id %}" style="text-decoration: none; white-space: nowrap;" target="_new">
+                   <span style="color: #EB362D; font-size: 1em;">{{ numberplate.price|floatformat:0|intcomma }}</span>
+                    <span style="color: #EB362D; font-size: 0.8em;"> OMR</span>
+                    {% if numberplate.listing_type == "rent" and numberplate.rental_period %}
+                        <span style="color: #EB362D; font-size: 0.85em;"> - {{ numberplate.rental_period|capfirst }}</span>
+                    {% endif %}
+                </a>
+                <!-- Favorite button moved here (right side) -->
+                <button class="favorite-btn" 
+                        style="position: absolute; right: -415px; top: -15px;"
+                        data-product-id="{{ numberplate.id }}" 
+                        data-product-type="numberplate" 
+                        data-is-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+                        onclick="event.stopPropagation(); handleFavoriteClick(this);">
+                    <i id="favorite-icon-{{ numberplate.id }}" 
+                       class="far fa-heart {% if numberplate.id in user_favorites %}filled{% endif %}" 
+                       data-favorite="{% if numberplate.id in user_favorites %}true{% else %}false{% endif %}"
+                       style="{% if numberplate.id in user_favorites %}color: #d32f2f;{% endif %}"></i>
+                </button>
+            </h3>
+            <div class="cat" style="margin-top:5px; white-space: nowrap;">Number Plate</div>
+
+            <div class="details-icons" style="margin-left: 2px;margin-top:10px;">
+                <span><img src="{% static 'assets/images/icons/listing.svg'%}" style="margin-top:-3px;" alt="Bedrooms">  {% if numberplate.usage_type == 'commercial' %}
+                        <span>Commercial</span>
+                    {% else %}
+                        <span>Private</span>
+                    {% endif %} </span>
+               
+            </div>
+             <div class="details-icons2">
+   <span>Plate Type: <b>{{ numberplate.usage_type|capfirst }}</b></span>
+    <span>Listing Type: <b>{{ numberplate.listing_type|title }}</b></span>
+    <span>Payment Method: <b>{{ numberplate.payment_method|title }}</b></span>
+</div>
+
+            <p style="white-space: nowrap;margin-top:10px;color:black;">{{ numberplate.plate_type|truncatechars:25|title }}</p>
+            <!-- <div style="white-space: nowrap; margin-left: -2px;margin-top:-10px;margin-bottom:5px;">
+                <img src="{% static 'assets/images/icons/location.svg' %}" alt="Location" class="location-icons" style="vertical-align: middle;">
+                <span>{{ numberplate.city|clean_city_name|truncatechars:25 }}, {{ numberplate.city.district.name }}, {{numberplate.city.district.governate.name }}</span>
+            </div> -->
+
+            <div class="lower-box">
+                <div class="details-row" style="margin-top: 10px;">
+                    <div class="action-buttons">
+                        <li>
+                            {% if numberplate.user.whatsapp %}
+                                {% if request.user.is_authenticated %}
+                                    <!-- Logged in: direct WhatsApp -->
+                                    <a href="https://wa.me/{{ numberplate.user.whatsapp }}"
+                                       target="_blank"
+                                       onclick="event.stopPropagation()"
+                                       class="badge-style"
+                                       style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                      <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                    </a>
+                                {% else %}
+                                    <!-- Not logged in: send back to same page after login -->
+                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                       onclick="event.stopPropagation()"
+                                       class="badge-style"
+                                       style="background-color: #e9f7ef; border: none; padding: 8px 12px; font-size:16px; border-radius: 10px; color: #128C7E; text-decoration: none;">
+                                      <i class="fab fa-whatsapp" style="color: #25D366"></i> WhatsApp
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+
+                        <!-- Phone Button -->
+                        <li>
+                            {% if numberplate.user.phone %}
+                                {% if request.user.is_authenticated %}
+                                    <!-- Logged in: Direct call -->
+                                    <a href="#"
+                                        onclick="event.stopPropagation(); showPhonePopup('{{numberplate.user.phone }}'); return false;"
+                                        class="badge-style"
+                                        style="width:80px;background-color: #fff3f3;font-size:16px; padding: 8px 12px; margin-left:5px;border-radius: 10px; color: #1A73E8; border: none;">
+                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                            alt="Call"
+                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                        Call
+                                    </a>
+                                {% else %}
+                                    <!-- Not logged in: Redirect to login with full return URL -->
+                                    <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                        onclick="event.stopPropagation();"
+                                        class="badge-style"
+                                        style="width:80px;background-color: #fcd9db;font-size:16px;margin-left:3px; padding: 8px 12px; border-radius: 10px; color: #1A73E8; border: none;">
+                                        <img src="{% static 'assets/images/phoneicon.png' %}"
+                                            alt="Call"
+                                            style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                        Call
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <!-- No phone number available -->
+                                <span class="badge-style"
+                                    style="width:90px;background-color: #fcd9db;font-size:16px;margin-left:-16px; padding: 8px 12px; border-radius: 10px; color: #1A73E8;">
+                                    <img src="{% static 'assets/images/phoneicon.png' %}"
+                                        alt="Call"
+                                        style="width: 22px; height: 22px; margin-top: -1px; margin-right: 2px;">
+                                    Call
+                                </span>
+                            {% endif %}
+                        </li>
+
+                        <!-- Chat Button -->
+                        <li>
+                            {% if request.user.is_authenticated %}
+                                <!-- Logged in: Go to chat - Modified to open popup -->
+                                <a href="javascript:void(0);"
+                                   onclick="openChatPopup('{{ numberplate.user.id }}', '{{ numberplate.id }}', 'numberplate', '{{ numberplate.title|escapejs }}', '{{ numberplate.user.username|escapejs }}', '{% if numberplate.images.first %}{{ numberplate.images.first.image.url }}{% endif %}'); event.stopPropagation();"
+                                   style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px; cursor: pointer;">
+                                    <img src="{% static 'assets/images/chaticon.png' %}"
+                                        alt="Chat"
+                                        style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+                                    Chat
+                                </a>
+                            {% else %}
+                                <!-- Not logged in: redirect to login preserving full URL -->
+                                <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                   onclick="event.stopPropagation();"
+                                   style="height: 40px; background-color: #f0f6ff; display: flex; margin-left:3px;font-size:16px; align-items: center; justify-content: center; border: none;border-radius: 10px; color: #063e71; padding: 0 16px;">
+                                    <img src="{% static 'assets/images/chaticon.png' %}"
+                                        alt="Chat"
+                                        style="width: 18px; height: 18px; margin-top: -3px; margin-right: 3px;">
+                                    Chat
+                                </a>
+                            {% endif %}
+                        </li>
+
+                        <!-- Contact Popup Button -->
+                        <li>
+                            {% if request.user.is_authenticated %}
+                                <!-- Logged in: Show contact popup -->
+                                <a href="#"
+                                   class="contact-toggle"
+                                   style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;"
+                                   onclick="showContactPopup('{{ numberplate.id }}', '{{ numberplate.user.id }}', '{{ numberplate.user.whatsapp|default:'' }}', '{{ numberplate.user.phone|default:'' }}', 'true'); event.stopPropagation();">
+                                    <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                </a>
+                            {% else %}
+                                <!-- Not logged in: redirect to login and return to same page -->
+                                <a href="{% url 'login1' %}?next={{ request.get_full_path|urlencode }}"
+                                   onclick="event.stopPropagation();"
+                                   class="contact-toggle"
+                                   style="background-color: #f5f5f5;margin-left:3px; padding: 8px 12px;border: none;font-size:16px; border-radius: 7px; color: #333;">
+                                    <i class="fas fa-id-card" style="color: #555;"></i> Contact
+                                </a>
+                            {% endif %}
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+                    <!-- Pagination for Regular Results -->
+                    {% if page_obj and page_obj.paginator.count > 0 and page_obj.has_other_pages %}
+                    <div class="container">  
+                        <ul class="page">
+                            {% if page_obj.has_previous %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">
+                                        <span class="material-icons">chevron_left</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_left</span>
+                                </li>
+                            {% endif %}
+
+                            {% if page_obj.number > 3 %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page=1">1</a>
+                                </li>
+                                {% if page_obj.number > 4 %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                                    <li class="page__numbers {% if num == page_obj.number %}active{% endif %}">
+                                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
+                                {% if page_obj.number < page_obj.paginator.num_pages|add:"-3" %}
+                                    <li class="page__dots">...</li>
+                                {% endif %}
+                                <li class="page__numbers">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+                                </li>
+                            {% endif %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page__btn active">
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">
+                                        <span class="material-icons">chevron_right</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page__btn">
+                                    <span class="material-icons">chevron_right</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <!-- Contact Popup -->
+                <div id="contactPopup" class="contact-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+                    <div style="background-color: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;">Email / SMS Contact</h3>
+                            <button onclick="hideContactPopup()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+                        </div>
+                        <div id="contactOptions" style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Content added by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Categories and Ad (3 columns) -->
+            <div class="ad-column mb-3">
+                <div class="ad-categories"> 
+                    <h4 class="category-title">Motors</h4> 
+                    <ul class="subcategory-list" id="subcategoryList"> 
+                        <li><a href="{% url 'numberplate' %}"><b>Plate Numbers</b></a></li>
+                        <li><a href="{% url 'car' %}?listing_type=sell">Cars for Sale</a></li>
+                        <li><a href="{% url 'motorcyclemain' %}?listing_type=sell">Motorcycles & Accessories</a></li>
+                        <li><a href="{% url 'vehiclerent' %}?listing_type=rent">Vehicles for Rent</a></li>
+                        <li><a href="{% url 'heavyvehicle' %}?listing_type=sell">Heavy Vehicles</a></li>
+
+                        <div class="extra-motors" style="display:none;">
+                            <li><a href="{% url 'boat' %}?listing_type=sell" >Boats & Jet Skis</a></li>
+                            <li><a href="{% url 'tiresandcaps' %}">Tires, Wheels & Rims</a></li>
+                            <li><a href="{% url 'accessoriesparts' %}">Auto Accessories & Parts</a></li>
+                            <li><a href="{% url 'junkcars' %}">Junk Cars - Other Vehicles</a></li>
+                            <li><a href="#">Car Maintenance and Repair</a></li>
+                            <li><a href="#">Vehicle Check</a></li>
+                            <li><a href="{% url 'calculator' %}">Calculator</a></li>
+                        </div>
+                        <!-- Toggle button -->
+                        <li class="view-more">
+                            <a href="javascript:void(0)" onclick="toggleMotors(this)">View More</a>
+                        </li>
+                    </ul>
+                </div> 
+
+                <div class="vertical-ad"> 
+                    <img src="{% static 'assets/images/adv.jpg' %}" alt="Advertisement"> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<script>
+    function handleFavoriteClick(button) {
+        const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+        
+        if (!isAuthenticated) {
+            // Get the FULL current URL including query parameters
+            const currentFullUrl = window.location.href;
+            
+            // Encode the full URL for the next parameter
+            const encodedUrl = encodeURIComponent(currentFullUrl);
+            
+            // Redirect to login with the full return URL
+            window.location.href = "{% url 'login1' %}?next=" + encodedUrl;
+            return;
+        }
+        
+        // User is authenticated, proceed with favorite toggle
+        toggleFavorite(button);
+    }
+
+    function toggleMotors(btn) {
+        const extra = document.querySelector('.extra-motors');
+
+        if (extra.style.display === "none" || extra.style.display === "") {
+            extra.style.display = "block";
+            btn.textContent = "View Less";
+        } else {
+            extra.style.display = "none";
+            btn.textContent = "View More";
+        }
+    }
+</script>
+<style>
+    /* Plate-style fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Tajawal:wght@700;800&display=swap');
+
+/* Number Plate 3D Styling */
+.inner-box {
+    align-items: center;
+    gap: 20px;
+    margin-left: -90px;
+}
+
+/* Number Plate 3D Box */
+.numberplate-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    margin-left: -180px;
+    margin-top: 60px;
+}
+
+/* ============================= */
+/* CAR PLATE DESIGN */
+/* ============================= */
+.plate {
+    display: flex;
+    align-items: center;
+    background: #FFD700;
+    border-radius: 8px;
+    padding: 6px 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    width: 300px;
+    height: 60px;
+    border: 3px solid black;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Vertical Separator Lines */
+.plate::before,
+.plate::after {
+    content: "";
+    position: absolute;
+    width: 2px;
+    height: 80%;
+    background: black;
+    top: 10%;
+}
+
+.plate::before {
+    left: 36.33%;
+}
+
+.plate::after {
+    right: 33.33%;
+}
+
+/* Plate Sections */
+.plate .section {
+    width: 31.33%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Car plate number */
+.plate .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    margin-right: 15px;
+}
+
+/* Auto size for longer numbers */
+.plate .number[data-length="5"] {
+    font-size: 30px;
+    letter-spacing: 0.5px;
+}
+
+/* Letters container */
+.letters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Arabic letters */
+.letters .arabic {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    direction: rtl;
+    letter-spacing: 16px;
+    line-height: 1;
+}
+
+/* English letters */
+.letters .english {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    letter-spacing: 8px;
+    line-height: 1;
+    margin-left: 8px;
+}
+
+/* Country text */
+.plate .country {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* 3D Base Effect */
+.base {
+    width: 100px;
+    height: 10px;
+    background: #ddd;
+    border-radius: 50%;
+    margin-top: 5px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Commercial Car Plate (Red) */
+.plate.commercial {
+    background: #DC3545;
+    color: white;
+}
+
+.plate.commercial::before,
+.plate.commercial::after {
+    background: white;
+}
+
+.plate.commercial .section {
+    color: white;
+}
+
+/* Hover effect */
+.plate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================= */
+/* MOTORCYCLE PLATE DESIGN */
+/* ============================= */
+.motorcycle-plate {
+    display: flex;
+    width: 200px;   /* half of car plate width */
+    height: 60px;   /* same height as car plate */
+    border: 3px solid #000;
+    border-radius: 4px;
+    overflow: hidden;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Private Motorcycle Plate (Yellow) */
+.motorcycle-plate.private {
+    background-color: #FFD700;
+}
+
+/* Commercial Motorcycle Plate (Red) */
+.motorcycle-plate.commercial {
+    background-color: #DC3545;
+    color: white;
+}
+
+.motorcycle-plate.commercial .arabic-letters,
+.motorcycle-plate.commercial .english-letters,
+.motorcycle-plate.commercial .region,
+.motorcycle-plate.commercial .number {
+    color: white;
+}
+
+.motorcycle-plate.commercial .motorcycle-section {
+    border-left: 1px solid white;
+}
+
+.motorcycle-plate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.motorcycle-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #000;
+    padding: 6px;
+}
+
+.motorcycle-section:first-child {
+    border-left: none;
+}
+
+/* Motorcycle Arabic letters */
+.arabic-section .arabic-letters {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    direction: rtl;
+    line-height: 1;
+    letter-spacing: 16px;
+ 
+}
+
+/* Motorcycle English letters */
+.arabic-section .english-letters {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-top: 3px;
+    letter-spacing: 8px;
+    margin-left: 8px;
+}
+
+/* Motorcycle region text */
+.number-section .region {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Motorcycle numbers */
+.number-section .number {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+/* Auto size for 5-digit motorcycle numbers */
+.number-section .number[data-length="5"] {
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* ============================= */
+/* GRID + BADGES */
+/* ============================= */
+.product-image-container.listing-image-container {
+    background-color: #f8f9fa;
+    overflow: hidden;
+}
+
+.plate-wrapper {
+    padding: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Usage type badges */
+.icon-item .badge {
+    font-size: 0.7em;
+    padding: 2px 6px;
+    margin-left: 5px;
+}
+
+.icon-item .badge.bg-danger {
+    background-color: #DC3545 !important;
+}
+
+.icon-item .badge.bg-warning {
+    background-color: #FFD700 !important;
+    color: #000 !important;
+}
+
+    </style>
+
+<style>
+    .location-icons {
+        width: 16px;
+        height: 16px;
+    }
+   
+    /* Vertical ad styling */
+    .vertical-ad {
+        width: 100%;
+        height: 500px;
+        border-radius: 25px;
+        border: 5px solid gray;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .vertical-ad img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Favorite button styles */
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: transparent;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-btn:hover {
+        background: #e0e0e0;
+        border-radius: 6px;
+    }
+
+    .favorite-btn i {
+        font-size: 18px;
+        color: #d32f2f;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-btn i.filled {
+        color: #d32f2f;
+    }
+
+    .image-box {
+        position: relative;
+    }
+
+  
+    /* Categories styling */
+    .ad-categories { 
+        margin-bottom: 15px; 
+        margin-top: -15px;
+        width: 280px;
+        padding-left: 10px; 
+        background-color: #efefef; 
+        border-radius: 20px;
+    } 
+    
+    .category-title { 
+        font-size: 1rem; 
+        font-weight: 600;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        padding-top: 20px;
+        margin-bottom: 8px; 
+        color: #222; 
+    } 
+    
+    .subcategory-list { 
+        list-style: none;
+        padding-left: 30px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        margin: 0; 
+    } 
+    
+    .subcategory-list li { 
+        margin-bottom: 6px;
+        font-family: 'FontStyle6', Arial, sans-serif;
+    }
+    
+    .subcategory-list a {
+        text-decoration: none;
+        color: #444;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+        font-family: 'FontStyle6', Arial, sans-serif;
+        cursor: pointer; 
+    }
+    
+    .subcategory-list a:hover {
+        color: #E35D20;
+    } 
+    
+    .subcategory-list a.active {
+        font-weight: 600; 
+        color: #E35D20; 
+    }
+    
+    .subcategory-list .view-more {
+        text-decoration: none;
+        color: #444;
+        font-size: 0.9rem;
+        padding-bottom: 15px;
+        transition: color 0.2s;
+        cursor: pointer; 
+    }
+</style>
+<script>
+    function navigateSlide(button, direction) {
+        event.stopPropagation(); // Prevent event bubbling
+        
+        const block = button.closest('.feature-block-one');
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        const backwardBtn = block.querySelector('.backward');
+        const forwardBtn = block.querySelector('.forward');
+        const imageCounter = block.querySelector('.image-counter');
+    
+        if (images.length === 0) return;
+    
+        let currentIndex = parseInt(slider.getAttribute('data-current-index')) || 0;
+        let newIndex = (currentIndex + direction + images.length) % images.length;
+    
+        updateSlider(block, newIndex);
+    }
+    
+    
+    // Add this helper function if not already present
+    function updateSlider(block, newIndex) {
+        const slider = block.querySelector('.slider');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        const backwardBtn = block.querySelector('.backward');
+        const forwardBtn = block.querySelector('.forward');
+        const dotsContainer = slider.querySelector('.dots-container');
+        const imageCounter = block.querySelector('.image-counter');
+        
+        imgElement.src = images[newIndex];
+        slider.setAttribute('data-current-index', newIndex);
+        
+        if (imageCounter) {
+            imageCounter.innerHTML = `<i class="fas fa-image"></i> ${newIndex + 1}/${images.length}`;
+        }
+        
+        if (images.length > 1) {
+            backwardBtn.style.display = newIndex === 0 ? 'none' : 'block';
+            forwardBtn.style.display = newIndex === images.length - 1 ? 'none' : 'block';
+        }
+        
+        if (dotsContainer) {
+            const dots = dotsContainer.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === newIndex);
+            });
+        }
+    }
+    // Update dots function
+    function updateDots(slider, currentIndex) {
+        const dotsContainer = slider.querySelector('.dots-container');
+        const imgElement = slider.querySelector('img');
+        const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+        // Clear and recreate dots
+        dotsContainer.innerHTML = '';
+        images.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = `dot ${index === currentIndex ? 'active' : ''}`;
+            dot.onclick = (e) => {
+                e.stopPropagation();
+                const block = slider.closest('.feature-block-one');
+                updateSlider(block, index); // Update the slider when a dot is clicked
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.feature-block-one').forEach(block => {
+            const slider = block.querySelector('.slider');
+            const imgElement = slider.querySelector('img');
+            const images = JSON.parse(imgElement.getAttribute('data-images') || '[]');
+            const backwardBtn = block.querySelector('.backward');
+            const forwardBtn = block.querySelector('.forward');
+            const imageCounter = block.querySelector('.image-counter');
+            
+            if (images.length > 0) {
+                imgElement.src = images[0]; // Set the first image
+                slider.setAttribute('data-current-index', 0); // Set the initial index
+                
+                // Update image counter with icon
+                if (imageCounter) {
+                    imageCounter.innerHTML = `<i class="fas fa-image"></i> 1/${images.length}`;
+                }
+                
+                updateDots(slider, 0); // Initialize dots with the first index
+                
+                // Set button visibility based on the number of images
+                if (images.length <= 1) {
+                    backwardBtn.style.display = 'none';
+                    forwardBtn.style.display = 'none';
+                } else {
+                    backwardBtn.style.display = 'none';
+                    forwardBtn.style.display = 'block';
+                }
+            }
+        });
+    });
+    
+    // Maintain hover effects
+    document.querySelectorAll('.image-box').forEach(box => {
+        box.addEventListener('mouseenter', function() {
+            const slider = this.querySelector('.slider');
+            const currentIndex = parseInt(slider.getAttribute('data-current-index')) || 0;
+            const images = JSON.parse(slider.querySelector('img').getAttribute('data-images') || '[]');
+            
+            if (images.length > 1) {
+                const backwardBtn = this.querySelector('.backward');
+                const forwardBtn = this.querySelector('.forward');
+                
+                backwardBtn.style.display = currentIndex === 0 ? 'none' : 'block';
+                forwardBtn.style.display = currentIndex === images.length - 1 ? 'none' : 'block';
+            }
+        });
+        
+        box.addEventListener('mouseleave', function() {
+            const backwardBtn = this.querySelector('.backward');
+            const forwardBtn = this.querySelector('.forward');
+            
+            backwardBtn.style.display = 'none';
+            forwardBtn.style.display = 'none';
+        });
+    });
+    </script>
+
+
+
+ 
+<script>
+    function showContactPopup(numberplateId, userId, email, phone, isAuthenticated) {
+      event.preventDefault();
+      event.stopPropagation();
+    
+      const popup = document.getElementById('contactPopup');
+      const optionsContainer = document.getElementById('contactOptions');
+    
+      // Clear previous options
+      optionsContainer.innerHTML = '';
+    
+      // Add SMS option if available
+      if (phone) {
+        const smsOption = document.createElement('a');
+        smsOption.href = `sms:${phone.trim().replace(/\s/g, '')}?body=Hello,%20I'm%20interested%20in%20your%20numberplate%20listing%20(ID:%20${numberplateId})`;
+        smsOption.style.backgroundColor = '#f5f5f5';
+        smsOption.style.padding = '10px';
+        smsOption.style.borderRadius = '4px';
+        smsOption.style.display = 'flex';
+        smsOption.style.alignItems = 'center';
+        smsOption.style.gap = '10px';
+        smsOption.style.textDecoration = 'none';
+        smsOption.style.color = 'inherit';
+        smsOption.innerHTML = `<i class="fas fa-sms" ></i> SMS`;
+        smsOption.onclick = function () {
+          window.location.href = this.href;
+          hideContactPopup();
+          return false;
+        };
+        optionsContainer.appendChild(smsOption);
+      }
+    
+      // Add Email option if available
+      if (email) {
+        const emailOption = document.createElement('a');
+        emailOption.href = `mailto:${email}?subject=numberplate%20Inquiry&body=Hello,%20I'm%20interested%20in%20your%20numberplate%20listing%20(ID:%20${numberplateId})`;
+        emailOption.style.backgroundColor = '#f5f5f5';
+        emailOption.style.padding = '10px';
+        emailOption.style.borderRadius = '4px';
+        emailOption.style.display = 'flex';
+        emailOption.style.alignItems = 'center';
+        emailOption.style.gap = '10px';
+        emailOption.style.textDecoration = 'none';
+        emailOption.style.color = 'inherit';
+        emailOption.innerHTML = `<i class="fas fa-envelope"></i> Email`;
+        emailOption.onclick = function () {
+          hideContactPopup();
+        };
+        optionsContainer.appendChild(emailOption);
+      }
+    
+      // Show the popup
+      popup.style.display = 'flex';
+    }
+    
+    function hideContactPopup() {
+      document.getElementById('contactPopup').style.display = 'none';
+    }
+    
+    // Close popup when clicking outside
+    document.getElementById('contactPopup').addEventListener('click', function (e) {
+      if (e.target === this) {
+        hideContactPopup();
+      }
+    });
+    </script>
+
+
+<!-- Phone Popup -->
+<div id="phonePopup" class="phone-popup" onclick="hidePhonePopup()">
+    <div class="popup-card" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="popup-header">
+            <div class="popup-user">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" class="popup-user-img" alt="{{ user.username }}">
+                {% else %}
+                    <img src="{% static 'assets/images/resource/author-1.png' %}" class="popup-user-img">
+                {% endif %}
+
+                <div class="popup-user-info">
+                    <h4>{{ user.username|title }}</h4>
+                    <p>Verified account • Use responsibly</p>
+                </div>
+            </div>
+
+            <button class="popup-close" onclick="hidePhonePopup()">×</button>
+        </div>
+
+        <div class="popup-divider"></div>
+
+        <!-- Phone -->
+        <div class="popup-phone">
+            <div class="phone-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <span id="phoneNumberDisplay"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="popup-actions single">
+            <button onclick="copyPhoneNumber()" class="popup-btn primary">
+                <i class="fas fa-copy"></i> Copy Number
+            </button>
+        </div>
+
+        <div class="popup-footer">
+            By proceeding, you agree to contact only for legitimate purposes.
+        </div>
+
+    </div>
+</div>
+
+<!-- Update your chat popup HTML structure -->
+<div id="chatPopup" class="chat-popup-container" style="display: none;">
+    <div class="chat-popup-header">
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+            <!-- User avatar -->
+            <div class="chat-popup-avatar" id="chatPopupAvatar"></div>
+            
+            <!-- User and product info -->
+            <div style="flex: 1; min-width: 0;">
+                <div class="chat-popup-username" id="chatPopupUsername"></div>
+                <!-- Product info will be inserted here -->
+                <div id="chatPopupProductInfo" style="display: flex; align-items: center; gap: 6px; margin-top: 2px;"></div>
+            </div>
+        </div>
+        <button onclick="closeChatPopup()" class="chat-popup-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- General Tips -->
+    <div class="chat-popup-tips">
+        <strong>General Tips</strong>
+        <ul>
+            <li>Only meet in public places</li>
+            <li>Never pay or transfer money in advance</li>
+            <li>Inspect the product before you buy it</li>
+        </ul>
+    </div>
+    
+    <div class="chat-popup-messages" id="chatPopupMessages">
+        <!-- Messages will be loaded here -->
+    </div>
+    
+    <div class="chat-popup-input">
+        <textarea id="chatPopupInput" placeholder="Type your message..."></textarea>
+        <button onclick="sendPopupMessage()" id="chatPopupSendBtn">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+
+<script>
+// Store current chat data
+let currentChatData = null;
+let chatPollingInterval = null;
+
+// Function to open chat popup
+function openChatPopup(userId, productId, productType, productTitle, username, productImage) {
+    console.log('Opening chat popup with data:', {
+        userId, productId, productType, productTitle, username, productImage
+    });
+    
+    // Store chat data
+    currentChatData = {
+        userId: userId,
+        productId: productId,
+        productType: productType,
+        productTitle: productTitle,
+        username: username,
+        productImage: productImage
+    };
+    
+    // Update popup header - User info
+    const avatarElement = document.getElementById('chatPopupAvatar');
+    const usernameElement = document.getElementById('chatPopupUsername');
+    const productInfoElement = document.getElementById('chatPopupProductInfo');
+    
+    if (avatarElement) {
+        avatarElement.textContent = username ? username.charAt(0).toUpperCase() : 'U';
+    }
+    
+    if (usernameElement) {
+        usernameElement.textContent = username || 'Seller';
+    }
+    
+    // Update popup header - Product info
+    if (productInfoElement) {
+        let productImageHtml = '';
+        if (productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined') {
+            productImageHtml = `
+                <img src="${productImage}" 
+                     alt="${productTitle}" 
+                     style="width: 24px; height: 18px; border-radius: 3px; object-fit: cover;"
+                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            `;
+        }
+        
+        productInfoElement.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0;">
+                    ${productImageHtml}
+                    <div style="display: ${productImage && productImage.trim() !== '' && productImage !== 'None' && productImage !== 'undefined' ? 'none' : 'flex'}; 
+                         align-items: center; justify-content: center; width: 24px; height: 18px; 
+                         background: rgba(255,255,255,0.1); border-radius: 3px;">
+                        <i class="fas fa-${getProductIcon(productType)}" style="font-size: 10px;"></i>
+                    </div>
+                    <span style="font-size: 12px; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;"
+                          title="${productTitle}">
+                        ${productTitle.length > 20 ? productTitle.substring(0, 20) + '...' : productTitle}
+                    </span>
+                </div>
+                <span style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 1px 5px; border-radius: 3px;">
+                    ${productType.toUpperCase()}
+                </span>
+            </div>
+        `;
+    }
+    
+    // Show popup
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'flex';
+    }
+    
+    // Load existing messages
+    loadChatMessages();
+    
+    // Start polling for new messages
+    startChatPolling();
+    
+    // Focus on input
+    setTimeout(() => {
+        const inputElement = document.getElementById('chatPopupInput');
+        if (inputElement) {
+            inputElement.focus();
+        }
+    }, 100);
+}
+
+// Helper function to get product icon
+function getProductIcon(productType) {
+    const iconMap = {
+        'car': 'car',
+        'land': 'map-marker-alt',
+        'apartment': 'building',
+        'electronics': 'mobile-alt',
+        'furniture': 'couch',
+        'motorcycle': 'motorcycle',
+        'scooter': 'motorcycle',
+        'boat': 'ship',
+        'computer': 'laptop',
+        'camera': 'camera',
+        'jewelry': 'gem',
+        'clothing': 'tshirt',
+        'pet': 'paw',
+        'business': 'briefcase',
+        'service': 'concierge-bell'
+    };
+    return iconMap[productType] || 'tag';
+}
+
+// Function to close chat popup
+function closeChatPopup() {
+    const popupElement = document.getElementById('chatPopup');
+    if (popupElement) {
+        popupElement.style.display = 'none';
+    }
+    
+    // Stop polling
+    stopChatPolling();
+    
+    // Clear current chat data
+    currentChatData = null;
+    
+    // Clear messages
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
+    }
+    
+    // Clear input
+    const inputElement = document.getElementById('chatPopupInput');
+    if (inputElement) {
+        inputElement.value = '';
+        inputElement.style.height = 'auto';
+    }
+}
+
+// Function to load chat messages
+function loadChatMessages() {
+    if (!currentChatData) {
+        console.error('No current chat data');
+        return;
+    }
+    
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) {
+        console.error('Messages container not found');
+        return;
+    }
+    
+    messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Loading messages...</div>';
+    
+    // First check if chat exists
+    fetch(`/chat/${currentChatData.userId}/check-chat-exists/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.exists) {
+                // Load existing messages
+                return fetch(`/chat/${currentChatData.userId}/get-messages/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`);
+            } else {
+                // Show initial message for new chat
+                showInitialMessage();
+                // Automatically create the first message
+                createInitialChat();
+                throw new Error('new_chat');
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayMessages(data.messages);
+        })
+        .catch(error => {
+            if (error.message === 'new_chat') {
+                // This is expected for new chats
+                return;
+            }
+            console.error('Error loading messages:', error);
+            messagesContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">Error loading messages</div>';
+        });
+}
+
+// Function to create initial chat message
+function createInitialChat() {
+    if (!currentChatData) return;
+    
+    // Send initial interest message
+    const initialMessage = `I'm interested in your Product`;
+    
+    const formData = new FormData();
+    formData.append('message', initialMessage);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    }
+    
+    // Send initial message silently
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Initial message sent:', data);
+    })
+    .catch(error => {
+        console.error('Error sending initial message:', error);
+    });
+}
+
+// Function to show initial message
+function showInitialMessage() {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    // Show initial message
+    const initialMessage = document.createElement('div');
+    initialMessage.className = 'chat-popup-message received';
+    initialMessage.innerHTML = `
+        <div>Hello! Thanks for your interest in my product.</div>
+        <div class="message-time">Now</div>
+    `;
+    messagesContainer.appendChild(initialMessage);
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to display messages
+function displayMessages(messages) {
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    if (messages && messages.length > 0) {
+        // Sort messages by timestamp (oldest first)
+        messages.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+        
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-popup-message ${message.is_sent ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `
+                <div>${message.text}</div>
+                <div class="message-time">${message.time}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+        });
+    } else {
+        // If no messages, show initial message
+        showInitialMessage();
+    }
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Function to send message
+function sendPopupMessage() {
+    if (!currentChatData) {
+        console.log('No active chat');
+        return;
+    }
+    
+    const inputElement = document.getElementById('chatPopupInput');
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    
+    if (!inputElement || !sendBtn) return;
+    
+    const message = inputElement.value.trim();
+    if (!message) {
+        // Just return without alert
+        return;
+    }
+    
+    // Disable send button
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    // Create message element immediately for better UX
+    const messagesContainer = document.getElementById('chatPopupMessages');
+    if (messagesContainer) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-popup-message sent';
+        messageDiv.innerHTML = `
+            <div>${message}</div>
+            <div class="message-time">Sending...</div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Clear input
+    inputElement.value = '';
+    inputElement.style.height = 'auto';
+    
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('product_id', currentChatData.productId);
+    formData.append('product_type', currentChatData.productType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken);
+    } else {
+        console.error('CSRF token not found');
+        // Show error in message instead of alert
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Security error. Please refresh the page.</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+        return;
+    }
+    
+    // Send message to server
+    fetch(`/chat/${currentChatData.userId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Update message with success timestamp
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ':' + 
+                       now.getMinutes().toString().padStart(2, '0');
+        
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div>${data.message || message}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+        }
+        
+        // Scroll to show new message
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    })
+    .catch(error => {
+        console.error('Error sending message:', error);
+        
+        // Update message to show error
+        if (messagesContainer && messagesContainer.lastChild) {
+            messagesContainer.lastChild.innerHTML = `
+                <div style="color: #e74c3c;">Failed to send: ${message}</div>
+                <div class="message-time">Failed</div>
+            `;
+        }
+    })
+    .finally(() => {
+        // Re-enable send button
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+    });
+}
+
+// Function to start polling for new messages
+function startChatPolling() {
+    // Clear any existing interval
+    stopChatPolling();
+    
+    if (!currentChatData) return;
+    
+    // Poll every 3 seconds for new messages
+    chatPollingInterval = setInterval(() => {
+        if (!currentChatData) {
+            stopChatPolling();
+            return;
+        }
+        
+        fetch(`/chat/${currentChatData.userId}/check-new/?product_id=${currentChatData.productId}&product_type=${currentChatData.productType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.has_new && data.count > 0) {
+                    // Reload messages if new ones arrived
+                    loadChatMessages();
+                }
+            })
+            .catch(error => {
+                console.error('Polling error:', error);
+            });
+    }, 3000);
+}
+
+// Function to stop polling
+function stopChatPolling() {
+    if (chatPollingInterval) {
+        clearInterval(chatPollingInterval);
+        chatPollingInterval = null;
+    }
+}
+
+// Function to handle Enter key in textarea
+function handleChatInputKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        
+        const inputElement = event.target;
+        const message = inputElement.value.trim();
+        
+        if (message) {
+            sendPopupMessage();
+        } else {
+            // Just clear the input on Enter
+            inputElement.value = '';
+            inputElement.style.height = 'auto';
+        }
+    }
+}
+
+// Function to auto-resize textarea
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+}
+
+// Initialize chat popup functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Set up textarea event listeners
+    const textarea = document.getElementById('chatPopupInput');
+    if (textarea) {
+        textarea.addEventListener('keydown', handleChatInputKeydown);
+        textarea.addEventListener('input', function() {
+            autoResizeTextarea(this);
+        });
+    }
+    
+    // Set up send button - FIXED VERSION
+    const sendBtn = document.getElementById('chatPopupSendBtn');
+    if (sendBtn) {
+        // Remove any existing onclick handlers
+        sendBtn.onclick = null;
+        
+        // Add new event listener
+        sendBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const inputElement = document.getElementById('chatPopupInput');
+            if (!inputElement) return;
+            
+            const message = inputElement.value.trim();
+            if (!message) {
+                // Clear input and return without alert
+                inputElement.value = '';
+                inputElement.style.height = 'auto';
+                return;
+            }
+            
+            // Call sendPopupMessage function
+            sendPopupMessage();
+        });
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+        const popup = document.getElementById('chatPopup');
+        if (popup && popup.style.display === 'flex') {
+            const isClickInsidePopup = popup.contains(e.target);
+            const isChatButton = e.target.closest('[onclick*="openChatPopup"]') || 
+                                 e.target.closest('.chat-button') ||
+                                 e.target.closest('a[href*="chat"]');
+            
+            if (!isClickInsidePopup && !isChatButton) {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Close popup with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('chatPopup');
+            if (popup && popup.style.display === 'flex') {
+                closeChatPopup();
+            }
+        }
+    });
+    
+    // Debug: Log all chat buttons for testing
+    const chatButtons = document.querySelectorAll('[onclick*="openChatPopup"]');
+    console.log(`Found ${chatButtons.length} chat buttons on page`);
+    
+    // Add click handler to all chat buttons (backup)
+    chatButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Prevent default if it's an anchor tag
+            if (this.tagName === 'A' && this.getAttribute('href') === 'javascript:void(0);') {
+                e.preventDefault();
+            }
+        });
+    });
+});
+
+// Global function to be called from onclick attribute
+window.openChatPopup = openChatPopup;
+window.closeChatPopup = closeChatPopup;
+window.sendPopupMessage = sendPopupMessage;
+</script>
+<script>
+let currentPhoneNumber = '';
+
+/* ================================
+   SHOW POPUP
+================================ */
+function showPhonePopup(phone, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    currentPhoneNumber = phone;
+
+    const popup = document.getElementById('phonePopup');
+    const display = document.getElementById('phoneNumberDisplay');
+
+    display.innerText = formatPhoneNumber(phone);
+    popup.style.display = 'flex';
+}
+
+/* ================================
+   HIDE POPUP
+================================ */
+function hidePhonePopup() {
+    document.getElementById('phonePopup').style.display = 'none';
+    currentPhoneNumber = '';
+}
+
+/* ================================
+   COPY NUMBER
+================================ */
+function copyPhoneNumber() {
+    if (!currentPhoneNumber) return;
+
+    navigator.clipboard.writeText(currentPhoneNumber).then(() => {
+        alert('Phone number copied');
+    });
+}
+
+/* ================================
+   FORMAT NUMBER
+================================ */
+function formatPhoneNumber(phone) {
+    phone = phone.replace(/\s/g, '');
+
+    if (phone.length === 8) return phone.replace(/(\d{4})(\d{4})/, '$1 $2');
+    if (phone.length === 9) return phone.replace(/(\d{4})(\d{5})/, '$1 $2');
+    if (phone.length === 10) return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2 $3');
+
+    return phone;
+}
+
+/* ================================
+   ESC CLOSE (SAFE)
+================================ */
+document.addEventListener('keydown', function (e) {
+    const popup = document.getElementById('phonePopup');
+    if (e.key === 'Escape' && popup.style.display === 'flex') {
+        hidePhonePopup();
+    }
+});
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />

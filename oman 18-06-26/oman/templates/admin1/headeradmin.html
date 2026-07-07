@@ -1,0 +1,1417 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<!--begin::Head-->
+<head>
+    <base href="">
+    <title>ZOQO DEAL</title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+    
+    <!-- Vendor Stylesheets -->
+    <link href="{% static 'adminlte/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'adminlte/assets/plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'adminlte/assets/css/style.bundle.css' %}" rel="stylesheet" type="text/css" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Ultra clean styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+        }
+
+        /* Header - Pure white */
+        #kt_header {
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .container-custom {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+        }
+
+        /* Logo */
+        .header-logo img {
+            height: 38px;
+            display: block;
+        }
+
+        /* Menu Container - Pushed to right */
+        .menu-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            height: 100%;
+            margin-left: 40px;
+        }
+
+        /* Menu */
+        .menu-nav {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .menu-item {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            height: 44px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            border-radius: 10px;
+            transition: all 0.2s;
+            gap: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            text-decoration: none;
+            letter-spacing: 0.2px;
+        }
+
+        .menu-link i {
+            font-size: 16px;
+            color: #94a3b8;
+            transition: color 0.2s;
+            width: 18px;
+            text-align: center;
+        }
+
+        .menu-link:hover {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .menu-link:hover i {
+            color: #F9AD1F;
+        }
+
+        /* Dropdown menu - Fixed hover issue */
+        .menu-sub-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 260px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            padding: 8px;
+            border: 1px solid #f1f5f9;
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        /* Add a transparent bridge between menu item and dropdown */
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* Keep dropdown open when hovering over it or the menu item */
+        .menu-item:hover .menu-sub-dropdown,
+        .menu-sub-dropdown:hover {
+            display: block;
+        }
+
+        .menu-sub-dropdown.wide {
+            min-width: 600px;
+        }
+
+        .menu-sub-dropdown .menu-link {
+            padding: 12px 14px;
+            height: auto;
+            border-radius: 10px;
+            white-space: nowrap;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        .menu-sub-dropdown .menu-link i {
+            width: 22px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Grid layout for wide dropdown */
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        /* Section headers in dropdown */
+        .dropdown-section-header {
+            padding: 8px 14px 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            grid-column: span 2;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 30px;
+            margin-left: 8px;
+            letter-spacing: 0.3px;
+        }
+        .badge-danger { background: #fef2f2; color: #dc2626; }
+        .badge-info { background: #eff6ff; color: #2563eb; }
+        .badge-primary { background: #F9AD1F10; color: #F9AD1F; }
+        .badge-success { background: #f0fdf4; color: #16a34a; }
+
+        /* Topbar icons */
+        .topbar-item {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: #64748b;
+            position: relative;
+        }
+        .topbar-item:hover {
+            background: #f8fafc;
+            color: #F9AD1F;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 6px;
+            height: 6px;
+            background: #F9AD1F;
+            border-radius: 50%;
+        }
+
+        /* User profile */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 12px 6px 6px;
+            border-radius: 40px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 12px;
+            border: 1px solid #f1f5f9;
+        }
+        .user-profile:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #F9AD1F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(249,173,31,0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.3;
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .logout-link {
+            color: #94a3b8;
+            transition: color 0.2s;
+            font-size: 15px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .logout-link:hover {
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Divider */
+        .divider {
+            width: 1px;
+            height: 30px;
+            background: #f1f5f9;
+            margin: 0 15px;
+        }
+
+        /* Mobile menu */
+        .mobile-menu-btn {
+            display: none;
+            width: 42px;
+            height: 42px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #f8fafc;
+            cursor: pointer;
+            margin-right: 15px;
+            color: #475569;
+            border: 1px solid #f1f5f9;
+        }
+        .mobile-menu-btn:hover {
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 1024px) {
+            .desktop-menu { display: none; }
+            .mobile-menu-btn { display: flex; }
+            .user-info { display: none; }
+        }
+
+        /* Chevron icon */
+        .chevron {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-left: 4px;
+            transition: transform 0.2s;
+        }
+        
+        .menu-item:hover .chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Count badge on menu items */
+        .menu-count {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        /* Right section alignment */
+        .right-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 20px;
+        }
+
+        /* Header layout */
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-section {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        /* Fix for dropdown closing issue - add invisible bridge */
+        .menu-item {
+            position: relative;
+        }
+
+        .menu-item:hover .menu-sub-dropdown {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Ensure dropdown stays open when hovering over it */
+        .menu-sub-dropdown {
+            pointer-events: auto;
+        }
+
+        /* Create invisible bridge between menu item and dropdown */
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: transparent;
+            z-index: 1001;
+        }
+    </style>
+</head>
+
+<!--begin::Body-->
+<body id="kt_body" class="header-fixed">
+
+    <!--begin::Root-->
+    <div class="d-flex flex-column flex-root">
+        <!--begin::Page-->
+        <div class="page d-flex flex-row flex-column-fluid">
+            <!--begin::Wrapper-->
+            <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
+                
+                <!--begin::Header-->
+                <div id="kt_header" class="header">
+                    <div class="container-custom">
+                        <div class="header-content">
+                            
+                            <!-- Logo Section - Left -->
+                            <div class="logo-section">
+                                <!-- Mobile menu button -->
+                                <div class="mobile-menu-btn" id="kt_header_menu_mobile_toggle">
+                                    <i class="fas fa-bars"></i>
+                                </div>
+                                
+                                <!-- Logo -->
+                                <div class="header-logo">
+                                    <a href="{% if user.is_superuser %}{% url 'admin_dashboard_overview' %}{% else %}{% url 'subadmin_dashboard' %}{% endif %}">
+                                        <img alt="Logo" src="{% static 'assets/images/Zoqo-01.png' %}" />
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Navigation Section - Right -->
+                            <div class="nav-section">
+                                <!-- SUPERADMIN MENU - Full version (unchanged) -->
+                                {% if user.is_superuser %}
+                                <div class="desktop-menu d-none d-lg-flex align-items-center h-100">
+                                    <div class="menu-nav">
+                                        
+                                        <!-- Dashboard -->
+                                        <div class="menu-item">
+                                            <a href="{% url 'admin_dashboard_overview' %}" class="menu-link">
+                                                <i class="fas fa-home"></i>
+                                                <span>Dashboard</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                <a href="{% url 'admin_dashboard' %}" class="menu-link">
+                                                    <i class="fas fa-chart-pie"></i>
+                                                    <span>Main Dashboard</span>
+                                                    <span class="menu-count">New</span>
+                                                </a>
+                                                 <a href="{% url 'exclusive_listings' %}" class="menu-link">
+                                                    <i class="fas fa-chart-pie"></i>
+                                                    <span>Oman Deal can sell your property</span>
+                                                    <span class="menu-count">New</span>
+                                                </a>
+                                                <a href="{% url 'product_dashboard' %}?status=approved" class="menu-link">
+                                                    <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                                                    <span>Approved Products</span>
+                                                </a>
+                                                <a href="{% url 'product_dashboard' %}?status=rejected" class="menu-link">
+                                                    <i class="fas fa-times-circle" style="color: #ef4444;"></i>
+                                                    <span>Rejected Products</span>
+                                                </a>
+                                                <a href="{% url 'product_dashboard' %}?status=soldout" class="menu-link">
+                                                    <i class="fas fa-ban" style="color: #64748b;"></i>
+                                                    <span>Sold Out Products</span>
+                                                </a>
+                                                <a href="{% url 'admin_all_comments' %}" class="menu-link">
+    <i class="fas fa-comment-dots"></i>
+    <span>All Comments</span>
+    <!-- <span class="menu-count">{{ total_comments|default:0 }}</span> -->
+</a>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Pages Dropdown -->
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-file"></i>
+                                                <span>Pages</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown wide">
+                                                <div class="dropdown-grid">
+                                                    <!-- Column 1 -->
+                                                    <div>
+                                                        <a href="{% url 'advertisement' %}" class="menu-link">
+                                                            <i class="fas fa-ad"></i>
+                                                            <span>Advertisements</span>
+                                                        </a>
+                                                        <a href="{% url 'nearbylocation' %}" class="menu-link">
+                                                            <i class="fas fa-map-marker-alt"></i>
+                                                            <span>Near By Location</span>
+                                                        </a>
+                                                        <a href="{% url 'mainamenities' %}" class="menu-link">
+                                                            <i class="fas fa-list"></i>
+                                                            <span>Main Amenities</span>
+                                                        </a>
+                                                        <a href="{% url 'additionalamenities' %}" class="menu-link">
+                                                            <i class="fas fa-plus-circle"></i>
+                                                            <span>Additional Amenities</span>
+                                                        </a>
+                                                        <a href="{% url 'aboutus_list' %}" class="menu-link">
+    <i class="fas fa-building"></i>
+    <span>About Us</span>
+</a>
+<a href="{% url 'refundpolicy_list' %}" class="menu-link">
+    <i class="fas fa-money-bill-wave"></i>
+    <span>Refund Policy</span>
+</a>
+                                                        
+                                                    </div>
+                                                    
+                                                    <!-- Column 2 -->
+                                                    <div>
+                                                        
+                                                        
+                                                        <a href="{% url 'faq_list' %}" class="menu-link">
+                                                            <i class="fas fa-question-circle"></i>
+                                                            <span>FAQ</span>
+                                                        </a>
+                                                        <a href="{% url 'blog_list' %}" class="menu-link">
+                                                            <i class="fas fa-blog"></i>
+                                                            <span>Blog</span>
+                                                        </a>
+                                                        <a href="{% url 'banner_list' %}" class="menu-link">
+                                                            <i class="fas fa-images"></i>
+                                                            <span>Banner</span>
+                                                        </a>
+                                                        <a href="{% url 'privacy_policy_list' %}" class="menu-link">
+                                                            <i class="fas fa-user-shield"></i>
+                                                            <span>Privacy Policy</span>
+                                                        </a>
+                                                        <a href="{% url 'terms_list' %}" class="menu-link">
+                                                            <i class="fas fa-file-contract"></i>
+                                                            <span>Terms & Conditions</span>
+                                                        </a>
+                                                        <a href="{% url 'contactus_list' %}" class="menu-link">
+    <i class="fas fa-envelope"></i>
+    <span>Contact Us</span>
+</a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Second row of dropdown (full width) -->
+                                                <div class="dropdown-grid" style="margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+                                                    <div>
+                                                        <a href="{% url 'ad_analytics' %}" class="menu-link">
+                                                            <i class="fas fa-chart-line"></i>
+                                                            <span>Ad Analytics</span>
+                                                        </a>
+                                                        <a href="{% url 'user' %}" class="menu-link">
+                                                            <i class="fas fa-users"></i>
+                                                            <span>Users</span>
+                                                        </a>
+                                                         <a href="{% url 'offers_list' %}" class="menu-link">
+                                                            <i class="fas fa-tags"></i>
+                                                            <span>Offers</span>
+                                                        </a>
+                                                    </div>
+                                                    <div>
+                                                        <a href="{% url 'user_activity_log' %}" class="menu-link">
+                                                            <i class="fas fa-history"></i>
+                                                            <span>User Activity</span>
+                                                        </a>
+                                                        <a href="{% url 'product_reports_admin' %}" class="menu-link">
+                                                            <i class="fas fa-flag"></i>
+                                                            <span>Reports</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Motors Options Section -->
+                                                <div style="margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+                                                    <div class="dropdown-section-header">Motors Options</div>
+                                                    <div class="dropdown-grid">
+                                                        <div>
+                                                            <a href="{% url 'interioroptions' %}" class="menu-link">
+                                                                <i class="fas fa-couch"></i>
+                                                                <span>Interior Options</span>
+                                                            </a>
+                                                            <a href="{% url 'exterioroptions' %}" class="menu-link">
+                                                                <i class="fas fa-car"></i>
+                                                                <span>Exterior Options</span>
+                                                            </a>
+                                                        </div>
+                                                        <div>
+                                                            <a href="{% url 'technologyoptions' %}" class="menu-link">
+                                                                <i class="fas fa-microchip"></i>
+                                                                <span>Technology Options</span>
+                                                            </a>
+                                                            <a href="{% url 'subadmin_list' %}" class="menu-link">
+                                                                <i class="fas fa-user-shield"></i>
+                                                                <span>Sub-Admins</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top: 4px; border-top: 1px solid #f1f5f9; padding-top: 4px;">
+                                                    <div class="dropdown-section-header">Loaction</div>
+                                                    <div class="dropdown-grid">
+                                                        <div>
+                                                           <a href="{% url 'governate' %}" class="menu-link">
+                                                            <i class="fas fa-building"></i>
+                                                            <span>Governate</span>
+                                                        </a>
+                                                            <a href="{% url 'districts' %}" class="menu-link">
+                                                            <i class="fas fa-map"></i>
+                                                            <span>District</span>
+                                                        </a>
+                                                        </div>
+                                                        <div>
+                                                            <a href="{% url 'cities' %}" class="menu-link">
+                                                            <i class="fas fa-city"></i>
+                                                            <span>Cities</span>
+                                                        </a>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Jobs Dropdown -->
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-briefcase"></i>
+                                                <span>Jobs</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                <a href="{% url 'jobcategory' %}" class="menu-link">
+                                                    <i class="fas fa-tags"></i>
+                                                    <span>Job Categories</span>
+                                                </a>
+                                                <a href="{% url 'company_list' %}" class="menu-link">
+                                                    <i class="fas fa-building"></i>
+                                                    <span>Companies</span>
+                                                </a>
+                                                <a href="{% url 'jobpost' %}" class="menu-link">
+                                                    <i class="fas fa-briefcase"></i>
+                                                    <span>Job Posts</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Chat Dropdown -->
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-comments"></i>
+                                                <span>Chat</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                <a href="{% url 'admin_chat_monitor' %}" class="menu-link">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                    <span>Chat Monitor</span>
+                                                </a>
+                                                <a href="{% url 'admin_chat_analytics' %}" class="menu-link">
+                                                    <i class="fas fa-chart-pie"></i>
+                                                    <span>Chat Analytics</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- System Management -->
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-credit-card"></i>
+                                                <span>System</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                <a href="{% url 'payments_dashboard' %}" class="menu-link">
+                                                    <i class="fas fa-chart-line"></i>
+                                                    <span>Payments</span>
+                                                </a>
+                                                <a href="{% url 'dashboard' %}" class="menu-link">
+                                                    <i class="fas fa-bell"></i>
+                                                    <span>Notifications</span>
+                                                </a>
+                                                <a href="{% url 'export_data' %}" class="menu-link">
+                                                    <i class="fas fa-download"></i>
+                                                    <span>Export Data</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Verification -->
+                                        <!-- <div class="menu-item">
+                                            <a href="#" class="menu-link">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Verification</span>
+                                            </a>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- SUB-ADMIN MENU - Ultra Compact Version (Maximum Dropdowns) -->
+                                {% if not user.is_superuser %}
+                                <div class="desktop-menu d-none d-lg-flex align-items-center h-100">
+                                    <div class="menu-nav">
+                                        
+                                        <!-- Dashboard (Always visible) -->
+                                        <div class="menu-item">
+                                            <a href="{% url 'subadmin_dashboard' %}" class="menu-link">
+                                                <i class="fas fa-home"></i>
+                                                <span>Dashboard</span>
+                                            </a>
+                                        </div>
+                                        
+                                        <!-- Master Data Dropdown (Location + Amenities) -->
+                                        {% if subadmin_permissions.governates.view or subadmin_permissions.districts.view or subadmin_permissions.cities.view or subadmin_permissions.amenities.view %}
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-database"></i>
+                                                <span>Master Data</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown wide">
+                                                <div class="dropdown-grid">
+                                                    <!-- Column 1 - Location -->
+                                                    <div>
+                                                        <div class="dropdown-section-header">Location</div>
+                                                        {% if subadmin_permissions.governates.view %}
+                                                        <a href="{% url 'governate' %}" class="menu-link">
+                                                            <i class="fas fa-building"></i>
+                                                            <span>Governates</span>
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if subadmin_permissions.districts.view %}
+                                                        <a href="{% url 'districts' %}" class="menu-link">
+                                                            <i class="fas fa-map"></i>
+                                                            <span>Districts</span>
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if subadmin_permissions.cities.view %}
+                                                        <a href="{% url 'cities' %}" class="menu-link">
+                                                            <i class="fas fa-city"></i>
+                                                            <span>Cities</span>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                    <!-- Column 2 - Amenities -->
+                                                    <div>
+                                                        <div class="dropdown-section-header">Amenities</div>
+                                                        {% if subadmin_permissions.amenities.view %}
+                                                        <a href="{% url 'mainamenities' %}" class="menu-link">
+                                                            <i class="fas fa-check-circle"></i>
+                                                            <span>Main Amenities</span>
+                                                        </a>
+                                                        <a href="{% url 'additionalamenities' %}" class="menu-link">
+                                                            <i class="fas fa-plus-circle"></i>
+                                                            <span>Additional Amenities</span>
+                                                        </a>
+                                                        <a href="{% url 'nearbylocation' %}" class="menu-link">
+                                                            <i class="fas fa-map-pin"></i>
+                                                            <span>Nearby Locations</span>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <div class="dropdown-section-header">ADS Approval</div>
+                                                        {% if subadmin_permissions.ads_approval.view %}
+                                                <a href="{% url 'admin_dashboard' %}" class="menu-link">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span>Ads Approval</span>
+                                                </a>
+                                                {% endif %}
+                                                    </div>
+                                                     
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Motors Dropdown -->
+                                        {% if subadmin_permissions.interior_options.view or subadmin_permissions.exterior_options.view or subadmin_permissions.technology_options.view %}
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-car"></i>
+                                                <span>Motors</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                {% if subadmin_permissions.interior_options.view %}
+                                                <a href="{% url 'interioroptions' %}" class="menu-link">
+                                                    <i class="fas fa-couch"></i>
+                                                    <span>Interior Options</span>
+                                                </a>
+                                                {% endif %}
+                                                {% if subadmin_permissions.exterior_options.view %}
+                                                <a href="{% url 'exterioroptions' %}" class="menu-link">
+                                                    <i class="fas fa-car-side"></i>
+                                                    <span>Exterior Options</span>
+                                                </a>
+                                                {% endif %}
+                                                {% if subadmin_permissions.technology_options.view %}
+                                                <a href="{% url 'technologyoptions' %}" class="menu-link">
+                                                    <i class="fas fa-microchip"></i>
+                                                    <span>Technology Options</span>
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Content Dropdown (FAQ, Blog, Banner) -->
+                                        {% if subadmin_permissions.faq.view or subadmin_permissions.blog.view or subadmin_permissions.banner.view %}
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-file-alt"></i>
+                                                <span>Content</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                {% if subadmin_permissions.faq.view %}
+                                                <a href="{% url 'faq_list' %}" class="menu-link">
+                                                    <i class="fas fa-question-circle"></i>
+                                                    <span>FAQ</span>
+                                                </a>
+                                                {% endif %}
+                                                {% if subadmin_permissions.blog.view %}
+                                                <a href="{% url 'blog_list' %}" class="menu-link">
+                                                    <i class="fas fa-blog"></i>
+                                                    <span>Blog</span>
+                                                </a>
+                                                {% endif %}
+                                                {% if subadmin_permissions.banner.view %}
+                                                <a href="{% url 'banner_list' %}" class="menu-link">
+                                                    <i class="fas fa-images"></i>
+                                                    <span>Banner</span>
+                                                </a>
+                                                {% endif %}
+                                                  {% if subadmin_permissions.advertisement.view %}
+                                                <a href="{% url 'advertisement' %}" class="menu-link">
+                                                    <i class="fas fa-ad"></i>
+                                                    <span>Advertisements</span>
+                                                </a>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                      
+                                        <!-- Business Dropdown (Companies + Jobs) -->
+                                        {% if subadmin_permissions.companies.view or subadmin_permissions.company_approval.view or subadmin_permissions.job_posts.view or subadmin_permissions.job_categories.view %}
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-briefcase"></i>
+                                                <span>Business</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown wide">
+                                                <div class="dropdown-grid">
+                                                    <!-- Column 1 - Companies -->
+                                                    <div>
+                                                        <div class="dropdown-section-header">Companies</div>
+                                                        {% if subadmin_permissions.companies.view %}
+                                                        <a href="{% url 'company_list' %}" class="menu-link">
+                                                            <i class="fas fa-building"></i>
+                                                            <span>All Companies</span>
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if subadmin_permissions.company_approval.view %}
+                                                        <a href="{% url 'company_list' %}?status=pending" class="menu-link">
+                                                            <i class="fas fa-clock"></i>
+                                                            <span>Pending Approval</span>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                    <!-- Column 2 - Jobs -->
+                                                    <div>
+                                                        <div class="dropdown-section-header">Jobs</div>
+                                                        {% if subadmin_permissions.job_categories.view %}
+                                                        <a href="{% url 'jobcategory' %}" class="menu-link">
+                                                            <i class="fas fa-tags"></i>
+                                                            <span>Job Categories</span>
+                                                        </a>
+                                                        {% endif %}
+                                                        {% if subadmin_permissions.job_posts.view %}
+                                                        <a href="{% url 'jobpost' %}" class="menu-link">
+                                                            <i class="fas fa-briefcase"></i>
+                                                            <span>Job Posts</span>
+                                                        </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        
+                                        
+                                        <!-- Users Dropdown -->
+                                        {% if subadmin_permissions.users_view.view or subadmin_permissions.user_activity.view %}
+                                        <div class="menu-item">
+                                            <a href="#" class="menu-link" onclick="return false;">
+                                                <i class="fas fa-users"></i>
+                                                <span>Users</span>
+                                                <i class="fas fa-chevron-down chevron"></i>
+                                            </a>
+                                            <div class="menu-sub-dropdown">
+                                                {% if subadmin_permissions.users_view.view %}
+                                                <a href="{% url 'user' %}" class="menu-link">
+                                                    <i class="fas fa-users"></i>
+                                                    <span>View Users</span>
+                                                </a>
+                                                {% endif %}
+                                                {% if subadmin_permissions.user_activity.view %}
+                                                <a href="{% url 'user_activity_log' %}" class="menu-link">
+                                                    <i class="fas fa-history"></i>
+                                                    <span>Activity Log</span>
+                                                </a>
+                                                {% endif %}
+                                                <!-- Reports (Single item, no dropdown) -->
+                                        {% if subadmin_permissions.reported_ads.view %}
+                                     
+                                            <a href="{% url 'product_reports_admin' %}" class="menu-link">
+                                                <i class="fas fa-flag"></i>
+                                                <span>Reports</span>
+                                            </a>
+                                      
+                                        {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Right section with icons and profile (Always visible) -->
+                                <div class="right-section">
+                                    <!-- Activities -->
+                                    <div class="topbar-item" id="kt_activities_toggle">
+                                        <i class="far fa-chart-bar"></i>
+                                    </div>
+                                    
+                                    <!-- Notifications -->
+                                    <div class="topbar-item">
+                                        <i class="far fa-bell"></i>
+                                        <span class="notification-dot"></span>
+                                    </div>
+                                    
+                                    <!-- Divider -->
+                                    <div class="divider"></div>
+                                    
+                                   <!-- User Profile Dropdown -->
+<div class="user-profile-dropdown">
+    <div class="dropdown-trigger" onclick="toggleUserDropdown()">
+        <div class="user-avatar">
+            {% if user.image %}
+                <img src="{{ user.image.url }}" alt="{{ user.username }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            {% else %}
+                {{ user.username|first|upper }}
+            {% endif %}
+        </div>
+        <div class="user-info">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-role">
+                Administrator
+            </span>
+        </div>
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </div>
+    
+    <div class="dropdown-menu" id="userDropdownMenu">
+        <!-- Profile Header -->
+        <div class="dropdown-header">
+            <div class="dropdown-avatar">
+                {% if user.image %}
+                    <img src="{{ user.image.url }}" alt="{{ user.username }}">
+                {% else %}
+                    {{ user.username|first|upper }}
+                {% endif %}
+            </div>
+            <div class="dropdown-user-info">
+                <h4>{{ user.username }}</h4>
+                <p>{{ user.email }}</p>
+            </div>
+        </div>
+        
+        <!-- Profile Completion Status -->
+        <div class="dropdown-section">
+            {% if user.phone and user.address and user.dob and user.gender %}
+                <div class="profile-complete-badge">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Profile Complete ✓</span>
+                </div>
+            {% else %}
+                <div class="profile-incomplete-badge">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Profile Incomplete</span>
+                </div>
+                <div class="completion-progress">
+                    <!-- <div class="completion-bar" style="width: {{ user.get_completion_percentage }}%"></div> -->
+                </div>
+                <!-- <div class="completion-text">{{ user.get_completion_percentage }}% Complete</div> -->
+            {% endif %}
+        </div>
+        
+        <!-- Dropdown Menu Items -->
+        <div class="dropdown-items">
+            <!-- Edit Profile -->
+            <a href="{% url 'complete_profile' %}" class="dropdown-item edit-profile">
+                <i class="fas fa-user-edit"></i>
+                <span>Edit Profile</span>
+                <i class="fas fa-chevron-right" style="margin-left: auto; font-size: 0.7rem;"></i>
+            </a>
+            
+           
+            
+            <div class="dropdown-divider"></div>
+            
+            <!-- Logout -->
+            <a href="{% url 'adminlogout' %}" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* User Profile Dropdown Styles */
+    .user-profile-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-trigger {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .dropdown-trigger:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #15818E, #1a9aab);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: white;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .user-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: white;
+    }
+    
+    .user-role {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .dropdown-arrow {
+        color: white;
+        font-size: 0.8rem;
+        transition: transform 0.3s;
+    }
+    
+    .dropdown-trigger.active .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+    
+    /* Dropdown Menu */
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 320px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+    
+    .dropdown-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    /* Dropdown Header */
+    .dropdown-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #15818E, #1a9aab);
+        border-radius: 16px 16px 0 0;
+    }
+    
+    .dropdown-avatar {
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: #15818E;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .dropdown-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .dropdown-user-info h4 {
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+    }
+    
+    .dropdown-user-info p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.75rem;
+        margin: 0;
+    }
+    
+    /* Profile Status */
+    .dropdown-section {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .profile-complete-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #d1fae5;
+        border-radius: 8px;
+        color: #065f46;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .profile-incomplete-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        background: #fef3c7;
+        border-radius: 8px;
+        color: #92400e;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.75rem;
+    }
+    
+    .completion-progress {
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .completion-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #15818E, #1a9aab);
+        border-radius: 3px;
+        transition: width 0.3s;
+    }
+    
+    .completion-text {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-align: right;
+    }
+    
+    /* Dropdown Items */
+    .dropdown-items {
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        color: #1e293b;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+    }
+    
+    .dropdown-item:hover {
+        background: #f8fafc;
+    }
+    
+    .dropdown-item i:first-child {
+        width: 20px;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+    .dropdown-item:hover i:first-child {
+        color: #15818E;
+    }
+    
+    .dropdown-item.edit-profile {
+        background: linear-gradient(90deg, #f0f9fa 0%, white 100%);
+        border-left: 3px solid #15818E;
+    }
+    
+    .dropdown-item.edit-profile i:first-child {
+        color: #15818E;
+    }
+    
+    .dropdown-item.logout {
+        color: #dc2626;
+    }
+    
+    .dropdown-item.logout i:first-child {
+        color: #dc2626;
+    }
+    
+    .dropdown-item.logout:hover {
+        background: #fee2e2;
+    }
+    
+    .dropdown-divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 0.5rem 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dropdown-menu {
+            width: 280px;
+            right: -10px;
+        }
+        
+        .user-info {
+            display: none;
+        }
+        
+        .dropdown-trigger {
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Toggle dropdown function
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const trigger = document.querySelector('.dropdown-trigger');
+        
+        dropdown.classList.toggle('show');
+        trigger.classList.toggle('active');
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const trigger = document.querySelector('.dropdown-trigger');
+        
+        if (!event.target.closest('.user-profile-dropdown')) {
+            if (dropdown) dropdown.classList.remove('show');
+            if (trigger) trigger.classList.remove('active');
+        }
+    });
+    
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const dropdown = document.getElementById('userDropdownMenu');
+            const trigger = document.querySelector('.dropdown-trigger');
+            if (dropdown) dropdown.classList.remove('show');
+            if (trigger) trigger.classList.remove('active');
+        }
+    });
+    
+    // Prevent dropdown from closing when clicking inside
+    document.getElementById('userDropdownMenu')?.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Header-->
+
+                <!-- Content block -->
+                <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+                    {% block content %}{% endblock %}
+                </div>
+
+            </div>
+            <!--end::Wrapper-->
+        </div>
+        <!--end::Page-->
+    </div>
+    <!--end::Root-->
+
+    <!-- Activities drawer -->
+    <div id="kt_activities" class="bg-body" data-kt-drawer="true" data-kt-drawer-name="activities" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'lg': '400px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_activities_toggle">
+        <!-- Drawer content -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'adminlte/assets/plugins/global/plugins.bundle.js' %}"></script>
+    <script src="{% static 'adminlte/assets/js/scripts.bundle.js' %}"></script>
+    
+    <script>
+        // Ensure dropdowns work on hover - simpler approach
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all menu items with dropdowns
+            document.querySelectorAll('.menu-item').forEach(function(item) {
+                const dropdown = item.querySelector('.menu-sub-dropdown');
+                
+                if (dropdown) {
+                    // Show dropdown when hovering over menu item
+                    item.addEventListener('mouseenter', function() {
+                        // Hide all other dropdowns first
+                        document.querySelectorAll('.menu-item .menu-sub-dropdown').forEach(function(d) {
+                            if (d !== dropdown) {
+                                d.style.display = 'none';
+                            }
+                        });
+                        
+                        dropdown.style.display = 'block';
+                    });
+                    
+                    // Keep dropdown visible when hovering over it
+                    dropdown.addEventListener('mouseenter', function() {
+                        dropdown.style.display = 'block';
+                    });
+                    
+                    // Hide when mouse leaves both
+                    item.addEventListener('mouseleave', function(e) {
+                        // Check if mouse is going to dropdown
+                        if (!dropdown.contains(e.relatedTarget)) {
+                            setTimeout(function() {
+                                if (!dropdown.matches(':hover')) {
+                                    dropdown.style.display = 'none';
+                                }
+                            }, 100);
+                        }
+                    });
+                    
+                    dropdown.addEventListener('mouseleave', function() {
+                        dropdown.style.display = 'none';
+                    });
+                }
+            });
+            
+            // Handle mobile menu toggle
+            let mobileBtn = document.getElementById('kt_header_menu_mobile_toggle');
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', function() {
+                    // Toggle mobile menu logic here
+                    console.log('Mobile menu clicked');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

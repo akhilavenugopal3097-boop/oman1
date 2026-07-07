@@ -1,0 +1,236 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Gateway Logs{% endblock %}
+{% block page_title %}Payment Gateway Logs{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Gateway</label>
+            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+                <option>All Gateways</option>
+                <option>Stripe</option>
+                <option>PayPal</option>
+                <option>Square</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+                <option>All Status</option>
+                <option>Success</option>
+                <option>Failed</option>
+                <option>Pending</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+                <option>Last 24 hours</option>
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">&nbsp;</label>
+            <button class="w-full px-4 py-2 text-white rounded-lg transition-colors btn-gradient">
+                <i class="fas fa-search mr-2"></i>Search Logs
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Total Events</p>
+        <p class="text-xl font-bold text-gray-800">1,247</p>
+        <p class="text-xs mt-1" style="color: #F9AD1F;">Last 24 hours</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Successful</p>
+        <p class="text-xl font-bold" style="color: #F9AD1F;">1,198</p>
+        <p class="text-xs mt-1" style="color: #10b981;">96.1% success rate</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Failed</p>
+        <p class="text-xl font-bold" style="color: #EB362D;">42</p>
+        <p class="text-xs mt-1" style="color: #EB362D;">3.4% failure rate</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Pending</p>
+        <p class="text-xl font-bold" style="color: #F9AD1F;">7</p>
+        <p class="text-xs mt-1" style="color: #6B7280;">Awaiting confirmation</p>
+    </div>
+</div>
+
+<!-- Logs Timeline -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-semibold" style="color: #F9AD1F;">Gateway Events</h3>
+        <div class="flex gap-2">
+            <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                <i class="fas fa-download mr-1" style="color: #F9AD1F;"></i>Export Logs
+            </button>
+            <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                <i class="fas fa-sync-alt mr-1" style="color: #EB362D;"></i>Refresh
+            </button>
+        </div>
+    </div>
+    <div class="divide-y divide-gray-200">
+        {% for log in logs %}
+        <div class="p-6 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center
+                        {% if log.status == 'success' %}" style="background: #F9AD1F20;"
+                        {% elif log.status == 'failed' %}" style="background: #EB362D20;"
+                        {% else %}" style="background: linear-gradient(60deg, #F9AD1F20, #EB362D20);"
+                        {% endif %}>
+                        <i class="fas {% if log.status == 'success' %}fa-check-circle{% elif log.status == 'failed' %}fa-exclamation-circle{% else %}fa-clock{% endif %} 
+                            {% if log.status == 'success' %}" style="color: #F9AD1F;"
+                            {% elif log.status == 'failed' %}" style="color: #EB362D;"
+                            {% else %}" style="color: #F9AD1F;"
+                            {% endif %}></i>
+                    </div>
+                </div>
+                <div class="ml-4 flex-1">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900">
+                                <span style="color: #F9AD1F;">{{ log.gateway }}</span> - {{ log.event }}
+                            </h4>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Transaction ID: <span class="font-mono" style="color: #EB362D;">{{ log.transaction_id }}</span>
+                            </p>
+                        </div>
+                        <span class="text-sm text-gray-500">{{ log.timestamp }}</span>
+                    </div>
+                    <div class="mt-2 flex items-center">
+                        <span class="text-sm font-medium text-gray-700">
+                            Amount: <span class="currency-symbol">OMR</span> {{ log.amount }}
+                        </span>
+                        {% if log.error %}
+                        <span class="ml-4 text-sm" style="color: #EB362D;">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>{{ log.error }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="mt-3 flex gap-3">
+                        <button class="text-xs font-medium hover:underline" style="color: #F9AD1F;">
+                            <i class="fas fa-eye mr-1"></i>View Details
+                        </button>
+                        <button class="text-xs font-medium hover:underline" style="color: #EB362D;">
+                            <i class="fas fa-redo mr-1"></i>Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Real-time Monitoring -->
+<div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Monitoring Stats -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold" style="color: #F9AD1F;">Real-time Monitoring</h3>
+            <span class="flex items-center text-sm">
+                <span class="w-2 h-2 rounded-full animate-pulse mr-2" style="background: #F9AD1F;"></span>
+                <span style="color: #F9AD1F;">Live</span>
+            </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <p class="text-sm text-gray-500">Success Rate (24h)</p>
+                <p class="text-2xl font-bold" style="color: #F9AD1F;">98.5%</p>
+                <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full" style="width: 98.5%; background: linear-gradient(90deg, #F9AD1F, #EB362D);"></div>
+                </div>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+                <p class="text-sm text-gray-500">Avg. Response Time</p>
+                <p class="text-2xl font-bold text-gray-800">234ms</p>
+                <p class="text-xs mt-1" style="color: #10b981;">↓ 12ms from avg</p>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-4">
+                <p class="text-sm text-gray-500">Failed Webhooks</p>
+                <p class="text-2xl font-bold" style="color: #EB362D;">3</p>
+                <p class="text-xs mt-1" style="color: #EB362D;">Last hour: 0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gateway Health -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4 gradient-text">Gateway Health</h3>
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm text-gray-600">Stripe</span>
+                    <span class="text-xs px-2 py-1 rounded-full" style="background: #10b98120; color: #10b981;">Operational</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full" style="width: 100%; background: #F9AD1F;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm text-gray-600">PayPal</span>
+                    <span class="text-xs px-2 py-1 rounded-full" style="background: #F9AD1F20; color: #F9AD1F;">Degraded</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full" style="width: 85%; background: #EB362D;"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-sm text-gray-600">Square</span>
+                    <span class="text-xs px-2 py-1 rounded-full" style="background: #10b98120; color: #10b981;">Operational</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-1.5">
+                    <div class="h-1.5 rounded-full" style="width: 100%; background: #F9AD1F;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Errors -->
+<div class="mt-6 bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold" style="color: #EB362D;">Recent Errors</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3">Time</th>
+                    <th class="px-6 py-3">Gateway</th>
+                    <th class="px-6 py-3">Event</th>
+                    <th class="px-6 py-3">Error</th>
+                    <th class="px-6 py-3">Transaction</th>
+                    <th class="px-6 py-3">Action</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 text-sm">09:45:33</td>
+                    <td class="px-6 py-4">Stripe</td>
+                    <td class="px-6 py-4">charge.failed</td>
+                    <td class="px-6 py-4" style="color: #EB362D;">insufficient_funds</td>
+                    <td class="px-6 py-4 font-mono text-sm">ch_54321</td>
+                    <td class="px-6 py-4">
+                        <button class="text-xs px-2 py-1 rounded" style="background: #F9AD1F20; color: #F9AD1F;">
+                            <i class="fas fa-redo mr-1"></i>Retry
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

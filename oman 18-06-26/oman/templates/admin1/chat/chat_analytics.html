@@ -1,0 +1,791 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+    <title>Chat Analytics - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fb;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+
+        /* Header */
+        .header-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #edf2f7;
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a2639;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title h1 i {
+            color: #F9AD1F;
+        }
+
+        .header-title p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .date-filter {
+            background: #f8fafc;
+            padding: 8px 15px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .date-filter select {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:nth-child(3)::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #15818E;
+        }
+
+        .stat-card:nth-child(3):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(21, 129, 142, 0.15);
+            border-color: #15818E;
+        }
+
+        .stat-card:not(:nth-child(3))::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #F9AD1F, #EB362D);
+        }
+
+        .stat-card:not(:nth-child(3)):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(235, 54, 45, 0.1);
+            border-color: #EB362D;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card:nth-child(3) .stat-icon i {
+            color: #15818E;
+        }
+
+        .stat-card:not(:nth-child(3)) .stat-icon i {
+            color: #EB362D;
+        }
+
+        .stat-icon i {
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .trend-up {
+            color: #10b981;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .trend-down {
+            color: #EB362D;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
+        }
+
+        .chart-card:first-child:hover {
+            border-color: #15818E40;
+        }
+
+        .chart-card:first-child .chart-header h3 i {
+            color: #15818E;
+        }
+
+        .chart-card:first-child .chart-header span {
+            border-left: 2px solid #15818E;
+        }
+
+        .chart-card:last-child:hover {
+            border-color: #F9AD1F40;
+        }
+
+        .chart-card:last-child .chart-header h3 i {
+            color: #F9AD1F;
+        }
+
+        .chart-card:last-child .chart-header span {
+            border-left: 2px solid #F9AD1F;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .chart-header span {
+            font-size: 13px;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
+        }
+
+        .metric-card:nth-child(2):hover {
+            border-color: #15818E40;
+        }
+
+        .metric-card:nth-child(2) .metric-title {
+            border-bottom: 2px solid #15818E40;
+    }
+
+        .metric-card:nth-child(2) .metric-title i {
+            color: #15818E;
+        }
+
+        .metric-card:first-child .metric-title i {
+            color: #F9AD1F;
+        }
+
+        .metric-card:last-child .metric-title i {
+            color: #EB362D;
+        }
+
+        .metric-card:first-child .metric-title {
+            border-bottom: 2px solid #F9AD1F40;
+        }
+
+        .metric-card:last-child .metric-title {
+            border-bottom: 2px solid #EB362D40;
+        }
+
+        .metric-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+        }
+
+        .metric-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-item .label {
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .metric-item .value {
+            font-weight: 600;
+            color: #EB362D;
+        }
+
+        .metric-card:nth-child(2) .metric-item .value {
+            color: #15818E;
+        }
+
+        .progress-bar-container {
+            width: 100px;
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #F9AD1F, #EB362D);
+            border-radius: 10px;
+        }
+
+        /* User List */
+        .user-list {
+            margin-top: 15px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .user-rank {
+            width: 25px;
+            height: 25px;
+            border-radius: 8px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #F9AD1F;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #F9AD1F, #EB362D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .user-email {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .user-count {
+            font-weight: 600;
+            color: #EB362D;
+        }
+
+        /* Engagement Cards - Using #15818E for the middle card */
+        .engagement-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .engagement-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .metric-card:nth-child(2) .engagement-item {
+            border-bottom: 2px solid #15818E;
+        }
+
+        .metric-card:nth-child(2) .engagement-number {
+            color: #15818E;
+        }
+
+        .engagement-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .engagement-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Product Tags */
+        .product-tag {
+            background: #fef3e7;
+            color: #EB362D;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .metric-card:nth-child(2) .product-tag {
+            background: #e0f0f2;
+            color: #15818E;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-card">
+            <div class="header-title">
+                <h1>
+                    <i class="fas fa-chart-pie"></i>
+                    Chat Analytics Dashboard
+                </h1>
+                <p>Comprehensive insights into your chat platform</p>
+            </div>
+            <div class="date-filter">
+                <form method="get" id="dateFilterForm">
+                    <select name="days" onchange="this.form.submit()">
+                        <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+                        <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+                        <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+                        <option value="365" {% if days == 365 %}selected{% endif %}>Last year</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- Key Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comment"></i>
+                </div>
+                <div class="stat-value">{{ total_messages }}</div>
+                <div class="stat-label">Total Messages</div>
+                {% if growth_rate > 0 %}
+                <span class="trend-up"><i class="fas fa-arrow-up"></i> {{ growth_rate }}%</span>
+                {% else %}
+                <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ growth_rate }}%</span>
+                {% endif %}
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            
+            <!-- Third stat card with #15818E accent -->
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="stat-value">{{ total_conversations }}</div>
+                <div class="stat-label">Conversations</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <div class="stat-value">{{ total_blocked }}</div>
+                <div class="stat-label">Blocked Users</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <!-- Daily Messages Chart - Using #15818E -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-calendar-alt me-2"></i>Daily Messages</h3>
+                    <span>Last {{ days }} days</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Hourly Distribution - Using #F9AD1F -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-clock me-2"></i>Hourly Activity</h3>
+                    <span>24h pattern</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="charts-row">
+            <!-- Weekday Distribution - Using #EB362D -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-calendar-week me-2"></i>Weekday Distribution</h3>
+                    <span>Peak days</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weekdayChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Product Distribution - Using all three colors in chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-tag me-2"></i>Top Product Categories</h3>
+                    <span>By message volume</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+            <!-- Top Users - Orange accent -->
+            <div class="metric-card">
+                <div class="metric-title">
+                    <i class="fas fa-crown me-2"></i>Top Chatters
+                </div>
+                <div class="user-list">
+                    {% for user in top_users %}
+                    <div class="user-item">
+                        <div class="user-rank">#{{ forloop.counter }}</div>
+                        <div class="user-avatar">{{ user.username|first|upper }}</div>
+                        <div class="user-details">
+                            <div class="user-name">{{ user.username }}</div>
+                            <div class="user-email">{{ user.email|default:"No email"|truncatechars:20 }}</div>
+                        </div>
+                        <div class="user-count">{{ user.message_count }} msgs</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 text-muted">No data available</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- User Engagement - Teal accent (#15818E) -->
+            <div class="metric-card">
+                <div class="metric-title">
+                    <i class="fas fa-chart-line me-2"></i>User Engagement
+                </div>
+                <div class="engagement-grid">
+                    <div class="engagement-item">
+                        <div class="engagement-number">{{ user_engagement.very_active }}</div>
+                        <div class="engagement-label">Very Active<br><small>100+ msgs</small></div>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-number">{{ user_engagement.active }}</div>
+                        <div class="engagement-label">Active<br><small>50-99 msgs</small></div>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-number">{{ user_engagement.moderate }}</div>
+                        <div class="engagement-label">Moderate<br><small>10-49 msgs</small></div>
+                    </div>
+                    <div class="engagement-item">
+                        <div class="engagement-number">{{ user_engagement.low }}</div>
+                        <div class="engagement-label">Low<br><small>1-9 msgs</small></div>
+                    </div>
+                </div>
+                
+                <div class="metric-title mt-4">
+                    <i class="fas fa-chart-simple me-2"></i>Conversation Metrics
+                </div>
+                <div class="metric-list">
+                    <div class="metric-item">
+                        <span class="label">Avg. messages per conversation</span>
+                        <span class="value">{{ avg_messages }}</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="label">Longest conversation</span>
+                        <span class="value">{{ max_messages }} msgs</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Products - Red accent -->
+            <div class="metric-card">
+                <div class="metric-title">
+                    <i class="fas fa-fire me-2"></i>Top Products
+                </div>
+                <div class="metric-list">
+                    {% for product in top_products %}
+                    <div class="metric-item">
+                        <span class="label">
+                            <span class="product-tag me-2">{{ product.type }}</span>
+                        </span>
+                        <div style="text-align: right;">
+                            <div class="value">{{ product.messages }} msgs</div>
+                            <small style="color: #94a3b8;">{{ product.chats }} chats</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-4 text-muted">No product data</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="metric-title mt-4">
+                    <i class="fas fa-chart-pie me-2"></i>Growth Rate
+                </div>
+                <div class="metric-item">
+                    <span class="label">Last 7 days vs previous</span>
+                    <span class="value {% if growth_rate > 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if growth_rate > 0 %}+{% endif %}{{ growth_rate }}%
+                    </span>
+                </div>
+                <div class="progress-bar-container mt-2">
+                    <div class="progress-bar-fill" style="width: {{ growth_rate|stringformat:'d' }}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parse data from Django
+        const dailyStats = {{ daily_stats|safe }};
+        const hourlyData = {{ hourly_distribution|safe }};
+        const weekdayData = {{ weekday_distribution|safe }};
+        const productData = {{ product_stats|safe }};
+
+        // Daily Messages Chart - Using #15818E
+        new Chart(document.getElementById('dailyChart'), {
+            type: 'line',
+            data: {
+                labels: dailyStats.map(d => d.date),
+                datasets: [{
+                    label: 'Messages',
+                    data: dailyStats.map(d => d.count),
+                    borderColor: '#15818E',
+                    backgroundColor: 'rgba(21, 129, 142, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Hourly Chart - Using #F9AD1F
+        new Chart(document.getElementById('hourlyChart'), {
+            type: 'bar',
+            data: {
+                labels: hourlyData.map(h => h.hour),
+                datasets: [{
+                    label: 'Messages',
+                    data: hourlyData.map(h => h.count),
+                    backgroundColor: '#F9AD1F',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Weekday Chart - Using #EB362D
+        new Chart(document.getElementById('weekdayChart'), {
+            type: 'bar',
+            data: {
+                labels: weekdayData.map(w => w.day),
+                datasets: [{
+                    label: 'Messages',
+                    data: weekdayData.map(w => w.count),
+                    backgroundColor: '#EB362D',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Product Chart - Using all three colors
+        new Chart(document.getElementById('productChart'), {
+            type: 'doughnut',
+            data: {
+                labels: productData.map(p => p.product_type || 'Unknown'),
+                datasets: [{
+                    data: productData.map(p => p.message_count),
+                    backgroundColor: [
+                        '#EB362D',  // Red
+                        '#F9AD1F',  // Orange
+                        '#15818E',  // Teal
+                        '#10b981',  // Green
+                        '#3b82f6',  // Blue
+                        '#8b5cf6'   // Purple
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

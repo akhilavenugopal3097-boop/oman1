@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/images/1-01.png' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set a New Password</title>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <style>
+        :root {
+            --primary: #E35D20;
+            --primary-dark: #c14a16;
+            --bg: #f5f6fa;
+            --text-dark: #2d2d2d;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Wrapper */
+        .password-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            min-height: 100vh;
+        }
+
+        /* Left Section (Image Area) */
+        .password-image {
+            flex: 1;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.55)),
+                        url("{% static 'assets/images/1-04.png' %}") center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px;
+        }
+
+        .password-image h1 {
+            color: #fff;
+            font-size: 56px;
+            font-weight: 700;
+            text-align: center;
+            z-index: 2;
+            line-height: 1.2;
+            animation: fadeInDown 1s ease;
+        }
+
+        /* Right Section (Form Area) */
+        .password-form-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg);
+            padding: 80px 50px;
+        }
+
+        /* Password Card */
+        .password-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+            padding: 50px 40px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* Highlight Glow */
+        .password-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top left, rgba(227,93,32,0.2), transparent 70%);
+            transform: rotate(15deg);
+            z-index: 0;
+        }
+
+        .password-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(227,93,32,0.25);
+        }
+
+        .password-card h2 {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .password-card p {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        /* Input Fields */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        input.form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: rgba(255,255,255,0.95);
+            transition: all 0.3s ease;
+        }
+
+        input.form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(227,93,32,0.3);
+            outline: none;
+        }
+
+        /* Button */
+        .theme-btn-one {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            padding: 14px 30px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .theme-btn-one:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 20px rgba(227,93,32,0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Messages */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .alert-success {
+            background-color: rgba(209,231,221,0.9);
+            border: 1px solid #a3cfbb;
+            color: #0a3622;
+        }
+
+        .alert-error {
+            background-color: rgba(248,215,218,0.9);
+            border: 1px solid #f1aeb5;
+            color: #58151c;
+        }
+
+        .alert-info {
+            background-color: rgba(227, 242, 253, 0.9);
+            border: 1px solid #b3e5fc;
+            color: #01579b;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        /* Error List */
+        .error-list {
+            background-color: rgba(248,215,218,0.9);
+            border: 1px solid #f1aeb5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .error-list ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #58151c;
+        }
+
+        .error-list li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        /* Back to Login */
+        .back-login {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .back-login a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-login a:hover {
+            text-decoration: underline;
+            color: var(--primary-dark);
+        }
+
+        /* Password Requirements */
+        .password-requirements {
+            background-color: rgba(227, 242, 253, 0.9);
+            border: 1px solid #b3e5fc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .password-requirements h4 {
+            color: #01579b;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #01579b;
+            font-size: 13px;
+        }
+
+        .password-requirements li {
+            margin-bottom: 5px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 992px) {
+            .password-wrapper {
+                flex-direction: column;
+            }
+            .password-image {
+                height: 300px;
+                flex: none;
+            }
+            .password-image h1 {
+                font-size: 38px;
+            }
+            .password-form-container {
+                padding: 50px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="password-wrapper">
+    <div class="password-image" data-aos="fade-right">
+        <h1>Create New Password</h1>
+    </div>
+
+    <div class="password-form-container" data-aos="fade-left">
+        <div class="password-card">
+            <h2>Set a New Password</h2>
+            <p>Create a strong and secure password for your account</p>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                        {{ message|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if form.errors %}
+                <div class="error-list">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Password Requirements -->
+                <div class="password-requirements">
+                    <h4>Password Requirements:</h4>
+                    <ul>
+                        <li>At least 8 characters long</li>
+                        <li>Include uppercase and lowercase letters</li>
+                        <li>Contain at least one number</li>
+                        <li>Include at least one special character</li>
+                    </ul>
+                </div>
+                
+                <!-- New Password -->
+                <div class="form-group">
+                    <label for="new_password1">New Password</label>
+                    <input type="password" name="new_password1" id="new_password1" class="form-control" placeholder="Enter new password" required>
+                </div>
+                
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="new_password2">Confirm New Password</label>
+                    <input type="password" name="new_password2" id="new_password2" class="form-control" placeholder="Confirm new password" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="theme-btn-one">Reset Password</button>
+                </div>
+            </form>
+            
+            <div class="back-login">
+                <p>Remember your password? <a href="{% url 'login' %}">Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+
+    // Subtle fade-in for card
+    document.addEventListener("DOMContentLoaded", function() {
+        const card = document.querySelector('.password-card');
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.15s ease, transform 0.10s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 200);
+    });
+
+    // Password strength indicator (optional enhancement)
+    document.addEventListener("DOMContentLoaded", function() {
+        const passwordInput = document.getElementById('new_password1');
+        const requirements = document.querySelector('.password-requirements');
+        
+        if (passwordInput && requirements) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                const requirementsList = requirements.querySelectorAll('li');
+                
+                // Reset all requirements
+                requirementsList.forEach(item => {
+                    item.style.color = '#01579b';
+                    item.style.listStyle = 'disc';
+                });
+                
+                // Check each requirement and update styling
+                if (password.length >= 8) {
+                    requirementsList[0].style.color = '#0a3622';
+                    requirementsList[0].style.listStyle = 'circle';
+                }
+                
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+                    requirementsList[1].style.color = '#0a3622';
+                    requirementsList[1].style.listStyle = 'circle';
+                }
+                
+                if (/\d/.test(password)) {
+                    requirementsList[2].style.color = '#0a3622';
+                    requirementsList[2].style.listStyle = 'circle';
+                }
+                
+                if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                    requirementsList[3].style.color = '#0a3622';
+                    requirementsList[3].style.listStyle = 'circle';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

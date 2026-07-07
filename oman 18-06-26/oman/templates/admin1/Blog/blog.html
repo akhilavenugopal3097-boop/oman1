@@ -1,0 +1,675 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+   .toolbar {
+         background: #15818E;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+    }
+    
+    /* Preserve formatting in textarea */
+    .preserve-format-textarea {
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        line-height: 1.5;
+    }
+    
+    /* Style for content display in table */
+    .content-preview {
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 11px;
+        max-height: 80px;
+        overflow-y: auto;
+    }
+    
+    /* View modal content styling */
+    .blog-content-view {
+        white-space: pre-wrap;
+        font-family: 'Courier New', monospace;
+        line-height: 1.6;
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    /* Image preview */
+    .blog-image-preview {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .btn-group {
+        display: inline-flex;
+        gap: 5px;
+    }
+    
+    .btn-sm {
+        margin: 0 2px;
+    }
+    
+    /* Category badge styles */
+    .category-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+    .category-motors { background: #FF6B6B; color: white; }
+    .category-real_estate { background: #4ECDC4; color: white; }
+    .category-other { background: #95A5A6; color: white; }
+    .category-job { background: #3498DB; color: white; }
+    .category-mobiles_tablets { background: #9B59B6; color: white; }
+    .category-service { background: #F39C12; color: white; }
+</style>
+
+<div class="toolbar py-5 py-lg-15" id="kt_toolbar">
+    <div id="kt_toolbar_container" class="container-xxl d-flex flex-stack flex-wrap">
+        <h3 class="text-white fw-bolder fs-2qx me-5">Blog Management</h3>
+        <div class="d-flex align-items-center flex-wrap py-2">
+            <div id="kt_header_search" class="d-flex align-items-center w-200px w-lg-250px my-2 me-4 me-lg-6">
+                <form class="search w-100 position-relative" autocomplete="off">
+                    <input type="text" class="form-control ps-15" name="search" placeholder="Search blogs..." />
+                </form>
+            </div>
+            <button type="button" class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#addBlogModal">
+                Add Blog
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
+    <div class="content flex-row-fluid" id="kt_content">
+        <div class="card">
+            <div class="card-body p-lg-17">
+                <div class="mb-18">
+                    <div class="mb-10">
+                        <div class="text-center mb-15">
+                            <h3 class="fs-2hx text-dark mb-5">Blog Posts</h3>
+                            
+                            {% if messages %}
+                            <div class="messages">
+                                {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <div class="table-responsive">
+                                <table id="blogTable" class="table table-bordered table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th width="50px">Sl No</th>
+                                            <th width="80px">Image</th>
+                                            <th>Title</th>
+                                            <th width="120px">Category</th>
+                                            <!-- <th>Content Preview</th> -->
+                                            <th width="80px">Status</th>
+                                            <th width="140px">Created At</th>
+                                            <th width="150px">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for blog in blogs %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>
+                                                {% if blog.image %}
+                                                <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-image-preview">
+                                                {% else %}
+                                                <span class="text-muted">No image</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ blog.title|truncatechars:50 }}</td>
+                                            <td>
+                                                <span class="category-badge category-{{ blog.category }}">
+                                                    {{ blog.get_category_display }}
+                                                </span>
+                                            </td>
+                                            <!-- <td>
+                                                <div class="content-preview">
+                                                    {{ blog.content|truncatechars:100 }}
+                                                </div>
+                                            </td> -->
+                                            <td>
+                                                <span class="badge {% if blog.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                                    {% if blog.is_active %}Active{% else %}Inactive{% endif %}
+                                                </span>
+                                            </td>
+                                            <td>{{ blog.created_at|date:"Y-m-d H:i" }}</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-info btn-sm view-btn" 
+                                                            data-blog-title="{{ blog.title }}"
+                                                            data-blog-category="{{ blog.get_category_display }}"
+                                                            data-blog-content="{{ blog.content|escapejs }}"
+                                                            data-blog-image="{% if blog.image %}{{ blog.image.url }}{% endif %}"
+                                                            data-blog-created="{{ blog.created_at|date:'Y-m-d H:i' }}"
+                                                            data-blog-updated="{{ blog.updated_at|date:'Y-m-d H:i'|default:blog.created_at|date:'Y-m-d H:i' }}"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#viewBlogModal"
+                                                            title="View">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    
+                                                    <button class="btn btn-warning btn-sm edit-btn" 
+                                                            data-edit-url="{% url 'edit_blog' blog.id %}" 
+                                                            data-blog-title="{{ blog.title }}" 
+                                                            data-blog-category="{{ blog.category }}"
+                                                            data-blog-content="{{ blog.content|escapejs }}" 
+                                                            data-blog-status="{{ blog.is_active|lower }}"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#editBlogModal"
+                                                            title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    
+                                                    <form method="POST" action="{% url 'toggle_blog_status' blog.id %}" style="display: inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm {% if blog.is_active %}btn-secondary{% else %}btn-success{% endif %}" 
+                                                                title="{% if blog.is_active %}Deactivate{% else %}Activate{% endif %}">
+                                                            <i class="fas {% if blog.is_active %}fa-toggle-on{% else %}fa-toggle-off{% endif %}"></i>
+                                                        </button>
+                                                    </form>
+                                                    
+                                                    <button class="btn btn-outline-danger btn-sm delete-btn" 
+                                                            data-delete-url="{% url 'delete_blog' blog.id %}" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#deleteBlogModal"
+                                                            title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="8" class="text-center">No blog posts found.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Blog Modal -->
+<div class="modal fade" id="addBlogModal" tabindex="-1" aria-labelledby="addBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="addBlogForm" method="POST" action="{% url 'add_blog' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBlogModalLabel">Add New Blog Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="blogTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="blogTitle" name="title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="blogCategory" class="form-label">Category</label>
+                            <select class="form-control" id="blogCategory" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="motors">Motors</option>
+                                <option value="real_estate">Real Estate</option>
+                                <option value="other">Other</option>
+                                <option value="job">Job</option>
+                                <option value="mobiles_tablets">Mobiles and Tablets</option>
+                                <option value="service">Service</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="blogImage" class="form-label">Blog Image</label>
+                            <input type="file" class="form-control" id="blogImage" name="image" accept="image/*" required>
+                            <small class="text-muted">Upload a featured image for the blog post</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="blogIsActive" name="is_active" checked>
+                                <label class="form-check-label" for="blogIsActive">
+                                    Active (Publish immediately)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="blogContent" class="form-label">Content <small class="text-muted">(Preserves all formatting - spaces, line breaks, bullet points)</small></label>
+                        <textarea class="form-control preserve-format-textarea" id="blogContent" name="content" rows="15" required 
+                                  placeholder="Write your blog content here. All formatting (spaces, line breaks, bullet points) will be preserved..."></textarea>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            All formatting (spaces, line breaks, bullet points) will be preserved exactly as entered.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Blog Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Blog Modal -->
+<div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <form id="editBlogForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBlogModalLabel">Edit Blog Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editBlogTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editBlogTitle" name="title" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editBlogCategory" class="form-label">Category</label>
+                            <select class="form-control" id="editBlogCategory" name="category" required>
+                                <option value="motors">Motors</option>
+                                <option value="real_estate">Real Estate</option>
+                                <option value="other">Other</option>
+                                <option value="job">Job</option>
+                                <option value="mobiles_tablets">Mobiles and Tablets</option>
+                                <option value="service">Service</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editBlogImage" class="form-label">Blog Image</label>
+                            <input type="file" class="form-control" id="editBlogImage" name="image" accept="image/*">
+                            <small class="text-muted">Leave empty to keep current image</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input class="form-check-input" type="checkbox" id="editBlogIsActive" name="is_active">
+                                <label class="form-check-label" for="editBlogIsActive">
+                                    Active
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBlogContent" class="form-label">Content <small class="text-muted">(Preserves all formatting)</small></label>
+                        <textarea class="form-control preserve-format-textarea" id="editBlogContent" name="content" rows="15" required></textarea>
+                        <small class="text-muted">All spaces, line breaks, and special characters will be preserved exactly as entered.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Blog Modal -->
+<div class="modal fade" id="viewBlogModal" tabindex="-1" aria-labelledby="viewBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewBlogModalLabel">Blog Post Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <strong>Title:</strong>
+                        <h3 id="viewBlogTitle" class="mt-1"></h3>
+                        <strong>Category:</strong>
+                        <p id="viewBlogCategory" class="mt-1"></p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <strong>Created:</strong>
+                        <p id="viewBlogCreated" class="mt-1"></p>
+                        <strong>Updated:</strong>
+                        <p id="viewBlogUpdated" class="mt-1"></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <strong>Featured Image:</strong>
+                        <div id="viewBlogImage" class="mt-2 mb-3"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <strong>Content (with preserved formatting):</strong>
+                    <div id="viewBlogContent" class="blog-content-view mt-3"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteBlogModal" tabindex="-1" aria-labelledby="deleteBlogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteBlogForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBlogModalLabel">Delete Blog Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this blog post?</p>
+                    <p class="text-danger"><small>This action cannot be undone and will permanently remove the blog post and its image.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    // Function to decode Unicode escape sequences
+    function decodeUnicodeEscapes(str) {
+        if (!str) return '';
+        
+        // First, decode HTML entities
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        let decoded = textarea.value;
+        
+        // Replace Unicode escape sequences
+        decoded = decoded.replace(/\\u000D/g, '\r');
+        decoded = decoded.replace(/\\u000A/g, '\n');
+        decoded = decoded.replace(/\\u002D/g, '-');
+        decoded = decoded.replace(/\\u003C/g, '<');
+        decoded = decoded.replace(/\\u003E/g, '>');
+        decoded = decoded.replace(/\\u0026/g, '&');
+        decoded = decoded.replace(/\\u0022/g, '"');
+        decoded = decoded.replace(/\\u0027/g, "'");
+        decoded = decoded.replace(/\\u003D/g, '=');
+        decoded = decoded.replace(/\\u002F/g, '/');
+        
+        // Handle any remaining \uXXXX patterns
+        decoded = decoded.replace(/\\u([0-9A-Fa-f]{4})/g, function(match, grp) {
+            return String.fromCharCode(parseInt(grp, 16));
+        });
+        
+        return decoded;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle delete modal
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const deleteForm = document.getElementById('deleteBlogForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteUrl = button.getAttribute('data-delete-url');
+                deleteForm.action = deleteUrl;
+            });
+        });
+
+        // Handle edit modal - properly decode Unicode escapes
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const editForm = document.getElementById('editBlogForm');
+        const editTitleInput = document.getElementById('editBlogTitle');
+        const editCategorySelect = document.getElementById('editBlogCategory');
+        const editContentInput = document.getElementById('editBlogContent');
+        const editStatusCheckbox = document.getElementById('editBlogIsActive');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const editUrl = button.getAttribute('data-edit-url');
+                const title = button.getAttribute('data-blog-title');
+                const category = button.getAttribute('data-blog-category');
+                let content = button.getAttribute('data-blog-content');
+                const isActive = button.getAttribute('data-blog-status') === 'true';
+
+                // Decode the content properly
+                if (content) {
+                    content = decodeUnicodeEscapes(content);
+                }
+
+                editForm.action = editUrl;
+                editTitleInput.value = title;
+                editCategorySelect.value = category;
+                editContentInput.value = content;
+                editStatusCheckbox.checked = isActive;
+            });
+        });
+
+        // Handle view modal - display content with preserved formatting
+        const viewButtons = document.querySelectorAll('.view-btn');
+        
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const title = button.getAttribute('data-blog-title');
+                const category = button.getAttribute('data-blog-category');
+                let content = button.getAttribute('data-blog-content');
+                const imageUrl = button.getAttribute('data-blog-image');
+                const createdAt = button.getAttribute('data-blog-created');
+                const updatedAt = button.getAttribute('data-blog-updated');
+                
+                // Decode the content properly
+                if (content) {
+                    content = decodeUnicodeEscapes(content);
+                }
+                
+                document.getElementById('viewBlogTitle').innerHTML = title;
+                document.getElementById('viewBlogCategory').innerHTML = category;
+                document.getElementById('viewBlogCreated').innerHTML = createdAt;
+                document.getElementById('viewBlogUpdated').innerHTML = updatedAt;
+                
+                // Display image if exists
+                const imageDiv = document.getElementById('viewBlogImage');
+                if (imageUrl && imageUrl !== 'None') {
+                    imageDiv.innerHTML = `<img src="${imageUrl}" alt="${title}" style="max-width: 100%; max-height: 300px; border-radius: 8px;">`;
+                } else {
+                    imageDiv.innerHTML = '<span class="text-muted">No image available</span>';
+                }
+                
+                // Display content with preserved formatting
+                const contentDiv = document.getElementById('viewBlogContent');
+                contentDiv.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit; margin: 0; padding: 0;">${escapeHtml(content)}</pre>`;
+            });
+        });
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Search functionality
+        const searchInput = document.querySelector('input[name="search"]');
+        const tableRows = document.querySelectorAll('#blogTable tbody tr');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    if (row.querySelector('td[colspan]')) return;
+                    
+                    const title = row.cells[2]?.textContent.toLowerCase() || '';
+                    const category = row.cells[3]?.textContent.toLowerCase() || '';
+                    
+                    if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Preview image before upload
+        const imageInput = document.getElementById('blogImage');
+        if (imageInput) {
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        console.log('Image selected:', this.files[0].name);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+        
+        // Add preview button functionality for add modal
+        const addBlogForm = document.getElementById('addBlogForm');
+        if (addBlogForm) {
+            const previewBtn = document.createElement('button');
+            previewBtn.type = 'button';
+            previewBtn.className = 'btn btn-info me-2';
+            previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            previewBtn.onclick = function() {
+                const content = document.getElementById('blogContent').value;
+                const title = document.getElementById('blogTitle').value;
+                const category = document.getElementById('blogCategory').options[document.getElementById('blogCategory').selectedIndex]?.text || '';
+                const previewWindow = window.open('', '_blank', 'width=800,height=600');
+                previewWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Blog Preview - ${escapeHtml(title)}</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    line-height: 1.6;
+                                    padding: 40px;
+                                    max-width: 900px;
+                                    margin: 0 auto;
+                                }
+                                .content {
+                                    white-space: pre-wrap;
+                                    font-family: inherit;
+                                    font-size: 14px;
+                                }
+                                h1 {
+                                    color: #15818E;
+                                }
+                                .category {
+                                    display: inline-block;
+                                    padding: 4px 12px;
+                                    background: #15818E;
+                                    color: white;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    margin-bottom: 20px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>${escapeHtml(title)}</h1>
+                            <div class="category">${escapeHtml(category)}</div>
+                            <div class="content">${escapeHtml(content)}</div>
+                        </body>
+                    </html>
+                `);
+                previewWindow.document.close();
+            };
+            
+            const modalFooter = addBlogForm.querySelector('.modal-footer');
+            if (modalFooter) {
+                modalFooter.insertBefore(previewBtn, modalFooter.firstChild);
+            }
+        }
+        
+        // Add preview button functionality for edit modal
+        const editBlogForm = document.getElementById('editBlogForm');
+        if (editBlogForm) {
+            const editPreviewBtn = document.createElement('button');
+            editPreviewBtn.type = 'button';
+            editPreviewBtn.className = 'btn btn-info me-2';
+            editPreviewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+            editPreviewBtn.onclick = function() {
+                const content = document.getElementById('editBlogContent').value;
+                const title = document.getElementById('editBlogTitle').value;
+                const category = document.getElementById('editBlogCategory').options[document.getElementById('editBlogCategory').selectedIndex]?.text || '';
+                const previewWindow = window.open('', '_blank', 'width=800,height=600');
+                previewWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Blog Preview - ${escapeHtml(title)}</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    line-height: 1.6;
+                                    padding: 40px;
+                                    max-width: 900px;
+                                    margin: 0 auto;
+                                }
+                                .content {
+                                    white-space: pre-wrap;
+                                    font-family: inherit;
+                                    font-size: 14px;
+                                }
+                                h1 {
+                                    color: #15818E;
+                                }
+                                .category {
+                                    display: inline-block;
+                                    padding: 4px 12px;
+                                    background: #15818E;
+                                    color: white;
+                                    border-radius: 20px;
+                                    font-size: 12px;
+                                    margin-bottom: 20px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>${escapeHtml(title)}</h1>
+                            <div class="category">${escapeHtml(category)}</div>
+                            <div class="content">${escapeHtml(content)}</div>
+                        </body>
+                    </html>
+                `);
+                previewWindow.document.close();
+            };
+            
+            const editModalFooter = editBlogForm.querySelector('.modal-footer');
+            if (editModalFooter) {
+                editModalFooter.insertBefore(editPreviewBtn, editModalFooter.firstChild);
+            }
+        }
+    });
+</script>

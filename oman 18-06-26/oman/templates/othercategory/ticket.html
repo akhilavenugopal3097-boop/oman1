@@ -1,0 +1,2777 @@
+{% load static %}
+{% load automobile_filters %}
+{% load static %}
+
+
+            {% include 'header2.html' %}
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.querySelector('.filter-form');
+    const originalOffset = filterForm.offsetTop;
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > originalOffset) {
+            filterForm.classList.add('sticky');
+        } else {
+            filterForm.classList.remove('sticky');
+        }
+    });
+});
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+           
+        <div class="auto-container">
+                  
+            {% include 'search.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+              
+<style>
+.price-container,
+.subcategory-container,
+.location-list-container,
+.category-container,
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+    margin-left: -10px;
+    z-index: 2;
+    display: none;
+    width: 240px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.price-container {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.price-inputs {
+    display: flex;
+    flex-direction: column;
+    font-size:14px;
+    gap: 5px;
+}
+
+.price-inputs label {
+    font-weight: 500;
+}
+
+.price-inputs input {
+    padding: 5px 5px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+}
+
+.location-list-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    position: absolute;
+    width:345px;
+    margin-left: -10px;
+    margin-top:56px;
+     z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.additional-filters-container {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    position: absolute;
+    margin-top: 56px; 
+     width: 230px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-left:-10px;
+    z-index: 2;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.additional-filters-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+    position: sticky;
+    bottom: -12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.additional-filters-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.additional-filters-inputs input,
+.additional-filters-inputs select {
+    padding: 5px;
+    border-radius: 25px;
+    border: 1px solid #aaa9a9;
+    width: 100px;
+    flex: 1;
+}
+
+/* Normal Checkbox Styles for Location Filter */
+.location-checkbox {
+    position: relative;
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+.location-checkbox:checked + .location-label {
+    background-color: #e8f4fd;
+    color: #E35D20;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color:#E35D20;
+    border-color: #E35D20;
+}
+
+/* Chevron for navigation levels */
+.location-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+}
+
+.oval-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.oval-checkbox,
+.oval-radio {
+    position: fixed;   /* 🔥 key fix */
+    opacity: 0;
+    pointer-events: none;
+}
+
+.oval-button {
+    display: inline-block;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.oval-checkbox:checked + .oval-button,
+.oval-radio:checked + .oval-button {
+    background-color: #E35D20;
+    color: white;
+    border-color: #E35D20;
+}
+
+.oval-button:hover {
+    background-color: #e0e0e0;
+}
+
+.btn-apply {
+    padding: 5px 15px;
+    font-size: 16px;
+    color: white;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-apply:hover {
+    background-color:#E35D20;
+}
+
+.dropdown-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.dropdown-icons2 {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.filter-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 30px 0;
+    z-index: 2038;
+    transition: all 0.3s ease;
+}
+
+.filter-form.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    
+    padding: 15px 0; /* Reduced padding when sticky */
+    animation: slideDown 0.3s ease;
+}
+
+.filter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    border: 1px solid #5d5b5b;
+    padding: 10px;
+    border-radius: 20px;
+    width: 1120px;
+    box-shadow: 0 4px 12px rgba(157, 154, 154, 0.1);
+}
+.filter-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width:5px;
+    position:relative;
+}
+
+.filter-item label {
+    font-size: 14px;
+    font-family: 'FontStyle1', Arial, sans-serif;
+    margin-bottom: -5px;
+}
+
+
+
+.input-value {
+    font-size: 14px;
+    font-family: 'FontStyle6', Arial, sans-serif;
+    color: #555555;
+}
+
+.separators {
+    width: 1px;
+    background-color: #ccc;
+    height: 100%;
+}
+
+#region_search, #city_search {
+    width: 100%;
+    padding: 8px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.regions-lists {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.region-item {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.city-list {
+    list-style: none;
+    padding-left: 15px;
+    display: none;
+}
+
+.city-list li {
+    cursor: pointer;
+    color: #333;
+}
+
+#back-to-oman,
+#clear-selected-city {
+    display: none;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background: linear-gradient(60deg, #F9AD1F, #EB362D);
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#clear-selected-city {
+    margin-top: 10px;
+}
+
+#back-to-oman:hover {
+    background: #E35D20;
+}
+
+.hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.loading-indicator {
+    padding: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error-message {
+    padding: 20px;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+}
+
+.price-label, .year-label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Normal checkbox styling */
+.location-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.location-checkbox + .location-label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    margin-right: 10px;
+    background: white;
+    transition: all 0.3s;
+}
+
+.location-checkbox:checked + .location-label::before {
+    background-color: #E35D20;
+    border-color: #E35D20;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3E%3Cpath d='M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 1 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+}
+
+.location-checkbox:checked + .location-label {
+    color: #E35D20;
+    font-weight: 500;
+}
+
+/* Fallback for native checkboxes */
+input[type="checkbox"]:checked {
+    accent-color: #E35D20;
+}
+
+.location-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.location-label:hover {
+    background-color: #f5f5f5;
+}
+
+/* Miscellaneous */
+.loading {
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}
+
+.empty {
+    padding: 10px;
+    text-align: center;
+    color: #666;
+}
+
+.error {
+    padding: 10px;
+    text-align: center;
+    color: red;
+}
+
+.location-navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.search-container {
+  padding: 10px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.location-lists {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.location-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.location-item {
+  cursor: pointer;
+}
+
+.location-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+.hidden-checkbox:checked + .oval-button {
+  background-color: #E35D20;
+  color: white;
+  border-color: #E35D20;
+}
+
+.select-all-container {
+  padding: 5px 15px;
+  margin-bottom: 5px;
+}
+
+.location-list-container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.location-item {
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.nested-list {
+  margin-left: 20px;
+  padding-left: 10px;
+  display: none;
+}
+
+.label-item {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 3px 0;
+}
+
+.nested-label {
+  display: block;
+  background-color: #f0f0f0;
+  text-transform: uppercase; 
+  padding: 3px 8px;
+  margin: 5px 0 3px 5px;
+  border-radius: 4px;
+}
+
+#select-all-governates + label {
+  background: none;
+  font-weight: normal;
+  padding: 0;
+  margin: 0;
+}
+
+.all {
+    margin-left: 7px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+</style>
+
+
+<div class="auto-container">
+    <div class="row clearfix">
+        <form action="{% url 'ticket' %}" method="GET" autocomplete="off">
+            <div class="filter-form">
+                <div class="filter-box">
+<!-- Location Filter Trigger -->
+<div class="filter-item" id="toggle-location-filter">
+  <label for="location" class="mx-3">Location</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" name="location" id="selected-location" class="input-value" style="margin-left:15px;" placeholder="Select Location" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Location Dropdown -->
+<div id="location-list-container" class="location-list-container" style="display:none;">
+  <!-- Search Box -->
+  <div class="location-search-container">
+    <input type="text" id="location-search" placeholder="Search for governate, district, or city..." class="location-search-input">
+    <i class="fas fa-search location-search-icon"></i>
+  </div>
+  
+  <ul id="location-list">
+    <!-- Governate label with background -->
+    <li class="label-item governate-label">GOVERNORATE</li>
+    <!-- All checkbox without background -->
+    <li class="all">
+      <input type="checkbox" id="select-all-governates">
+      <label for="select-all-governates">All</label>
+    </li>
+
+    {% for governate in governates %}
+    <li class="location-item" data-id="{{ governate.id }}" data-type="governate" data-name="{{ governate.name|lower }}">
+      <div class="location-item-header">
+        <input type="checkbox" name="governate" value="{{ governate.id }}">
+        <label>{{ governate.name }}</label>
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+      </div>
+      <ul class="nested-list"></ul>
+    </li>
+    {% endfor %}
+  </ul>
+
+   <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-location-filter">Clear</button>
+  </div>
+</div>
+
+<style>
+.location-search-container {
+  position: relative;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.location-search-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.location-search-icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.district-dropdown-arrow {
+  margin-left: auto;
+  margin-right: 10px;
+  transition: transform 0.3s ease;
+  color: #666;
+  font-size: 12px;
+}
+
+.district-dropdown-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Search related styles */
+.search-hidden {
+  display: none !important;
+}
+
+.location-item, .nested-label, .label-item, .all {
+  transition: all 0.3s ease;
+}
+
+.nested-list {
+  transition: all 0.3s ease;
+}
+
+.loading-nested {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.search-highlight {
+  background-color: #fff3cd;
+  font-weight: bold;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleLocation = document.getElementById('toggle-location-filter');
+  const locationContainer = document.getElementById('location-list-container');
+  const locationList = document.getElementById('location-list');
+  const selectAllGov = document.getElementById('select-all-governates');
+  const clearBtn = document.getElementById('clear-location-filter');
+  const selectedInput = document.getElementById('selected-location');
+  const locationSearch = document.getElementById('location-search');
+
+  // Store fetched data to avoid duplicate API calls
+  const fetchedDistricts = new Map();
+  const fetchedCities = new Map();
+
+  // Toggle dropdown
+  toggleLocation.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const wasVisible = locationContainer.style.display === 'block';
+    closeAllFilterContainers();
+    locationContainer.style.display = wasVisible ? 'none' : 'block';
+    
+    // Focus on search when dropdown opens
+    if (locationContainer.style.display === 'block') {
+      setTimeout(() => {
+        locationSearch.focus();
+        locationSearch.select();
+      }, 100);
+    }
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#location-list-container') && !e.target.closest('#toggle-location-filter')) {
+      locationContainer.style.display = 'none';
+    }
+  });
+
+  // Search functionality - SIMPLIFIED and WORKING version
+  locationSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    performSearch(searchTerm);
+  });
+
+  // Main search function
+  async function performSearch(searchTerm) {
+    const allItems = locationList.querySelectorAll('.location-item, .nested-label, .label-item, .all');
+    
+    if (!searchTerm) {
+      // Reset everything when search is cleared
+      allItems.forEach(item => {
+        item.classList.remove('search-hidden');
+        // Reset expanded state for non-user-expanded items
+        if (item.classList.contains('location-item') && !item.classList.contains('user-expanded')) {
+          const nestedList = item.querySelector('.nested-list');
+          const arrow = item.querySelector('.dropdown-arrow, .district-dropdown-arrow');
+          if (nestedList && nestedList.children.length > 0) {
+            nestedList.style.display = 'none';
+            if (arrow) arrow.classList.remove('rotated');
+          }
+        }
+      });
+      return;
+    }
+
+    // First hide everything
+    allItems.forEach(item => {
+      item.classList.add('search-hidden');
+    });
+
+    const governateItems = locationList.querySelectorAll('.location-item[data-type="governate"]');
+
+for (const governateItem of governateItems) {
+  const governateName = governateItem.querySelector('label').textContent.toLowerCase();
+
+  // 🔹 Always load districts first
+  await expandAndLoadGovernate(governateItem, searchTerm);
+
+  // 🔹 Now check district & city matches
+  const hasMatch =
+    governateName.includes(searchTerm) ||
+    await checkDistrictsForMatch(governateItem, searchTerm);
+
+  if (hasMatch) {
+    governateItem.classList.remove('search-hidden');
+  } else {
+    governateItem.classList.add('search-hidden');
+  }
+}
+
+
+    // Show labels if any items are visible
+    const visibleItems = locationList.querySelectorAll('.location-item:not(.search-hidden)');
+    if (visibleItems.length > 0) {
+      document.querySelectorAll('.label-item, .all').forEach(label => {
+        label.classList.remove('search-hidden');
+      });
+    }
+  }
+
+  // Expand and load governate data
+  async function expandAndLoadGovernate(governateItem, searchTerm) {
+    const nestedList = governateItem.querySelector('.nested-list');
+    const arrow = governateItem.querySelector('.dropdown-arrow');
+    
+    // Ensure districts are loaded
+    if (nestedList.children.length === 0) {
+      const governateId = governateItem.dataset.id;
+      await fetchDistricts(governateId, nestedList, searchTerm);
+    }
+    
+    // Expand the governate
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+    if (arrow) arrow.classList.add('rotated');
+    
+    // Apply search to loaded districts
+    if (searchTerm) {
+      const districtItems = nestedList.querySelectorAll('.location-item[data-type="district"]');
+      districtItems.forEach(districtItem => {
+        const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+        if (districtName.includes(searchTerm)) {
+          districtItem.classList.remove('search-hidden');
+        } else {
+          districtItem.classList.add('search-hidden');
+        }
+      });
+    }
+  }
+async function checkDistrictsForMatch(governateItem, searchTerm) {
+  const nestedList = governateItem.querySelector('.nested-list');
+  const districts = nestedList.querySelectorAll('.location-item[data-type="district"]');
+  let hasMatch = false;
+
+  for (const districtItem of districts) {
+    const districtName = districtItem.querySelector('label').textContent.toLowerCase();
+    const districtNested = districtItem.querySelector('.nested-list');
+    const arrow = districtItem.querySelector('.district-dropdown-arrow');
+
+    // Always load cities
+    if (districtNested.children.length === 0) {
+      await fetchCities(districtItem.dataset.id, districtNested);
+    }
+
+    const cityMatched = await checkCitiesForMatch(districtItem, searchTerm);
+
+    if (districtName.includes(searchTerm) || cityMatched) {
+      districtItem.classList.remove('search-hidden');
+
+      // ✅ FORCE EXPAND DISTRICT
+      districtNested.style.display = 'block';
+      districtNested.classList.add('expanded');
+      if (arrow) arrow.classList.add('rotated');
+
+      hasMatch = true;
+    } else {
+      districtItem.classList.add('search-hidden');
+    }
+  }
+
+  return hasMatch;
+}
+async function checkCitiesForMatch(districtItem, searchTerm) {
+  const nestedList = districtItem.querySelector('.nested-list');
+  const cities = nestedList.querySelectorAll('.location-item[data-type="city"]');
+  let hasMatch = false;
+
+  cities.forEach(cityItem => {
+    const cityName = cityItem.querySelector('label').textContent.toLowerCase();
+
+    if (cityName.includes(searchTerm)) {
+      cityItem.classList.remove('search-hidden');
+      hasMatch = true;
+    } else {
+      cityItem.classList.add('search-hidden');
+    }
+  });
+
+  // ✅ FORCE SHOW city container
+  if (hasMatch) {
+    nestedList.style.display = 'block';
+    nestedList.classList.add('expanded');
+  }
+
+  return hasMatch;
+}
+
+
+  // Enhanced fetchDistricts with caching
+  function fetchDistricts(governateId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedDistricts.has(governateId)) {
+      const districts = fetchedDistricts.get(governateId);
+      renderDistricts(districts, nestedContainer, searchTerm);
+      return Promise.resolve(districts);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading districts...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-districts/?governate_id=${governateId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedDistricts.set(governateId, data.districts);
+      renderDistricts(data.districts, nestedContainer, searchTerm);
+      return data.districts;
+    })
+    .catch(error => {
+      console.error('Error fetching districts:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading districts</div>';
+    });
+  }
+
+  function renderDistricts(districts, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">WILAYATS(DISTRICTS)</div>
+      ${districts.map(d => `
+        <li class="location-item" data-id="${d.id}" data-type="district" data-name="${d.name.toLowerCase()}">
+          <div class="district-item-header">
+            <input type="checkbox" name="district" value="${d.id}" data-governate="${d.governate_id || ''}">
+            <label>${d.name}</label>
+            <i class="fas fa-chevron-down district-dropdown-arrow"></i>
+          </div>
+          <ul class="nested-list"></ul>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Enhanced fetchCities with caching
+  function fetchCities(districtId, nestedContainer, searchTerm = '') {
+    // Check cache first
+    if (fetchedCities.has(districtId)) {
+      const cities = fetchedCities.get(districtId);
+      renderCities(cities, nestedContainer, searchTerm);
+      return Promise.resolve(cities);
+    }
+
+    // Show loading
+    nestedContainer.innerHTML = '<div class="loading-nested">Loading cities...</div>';
+    nestedContainer.style.display = 'block';
+
+    return fetch(`/get-cities/?district_id=${districtId}`, { 
+      headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+    })
+    .then(res => res.json())
+    .then(data => {
+      // Cache the results
+      fetchedCities.set(districtId, data.cities);
+      renderCities(data.cities, nestedContainer, searchTerm);
+      return data.cities;
+    })
+    .catch(error => {
+      console.error('Error fetching cities:', error);
+      nestedContainer.innerHTML = '<div class="loading-nested">Error loading cities</div>';
+    });
+  }
+
+  function renderCities(cities, nestedContainer, searchTerm = '') {
+    nestedContainer.innerHTML = `
+      <div class="nested-label">CITIES</div>
+      ${cities.map(c => `
+        <li class="location-item city-item" data-id="${c.id}" data-type="city" data-name="${c.name.toLowerCase()}">
+          <input type="checkbox" name="city" value="${c.id}" data-district="${c.district_id || ''}">
+          <label>${c.name}</label>
+        </li>
+      `).join('')}
+    `;
+    nestedContainer.style.display = 'block';
+    nestedContainer.classList.add('expanded');
+  }
+
+  // Toggle governate dropdown with user-expanded marker
+  locationList.addEventListener('click', function(e) {
+    const arrow = e.target.closest('.dropdown-arrow');
+    const districtArrow = e.target.closest('.district-dropdown-arrow');
+    
+    if (arrow) {
+      e.stopPropagation();
+      const header = arrow.closest('.location-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        arrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch districts
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="governate"]');
+          if (checkbox) {
+            fetchDistricts(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          arrow.classList.add('rotated');
+        }
+      }
+    }
+    
+    if (districtArrow) {
+      e.stopPropagation();
+      const header = districtArrow.closest('.district-item-header');
+      const listItem = header.closest('.location-item');
+      const nestedList = listItem.querySelector('.nested-list');
+      
+      // Mark as user-expanded
+      listItem.classList.add('user-expanded');
+      
+      if (nestedList.style.display === 'block') {
+        nestedList.style.display = 'none';
+        nestedList.classList.remove('expanded');
+        districtArrow.classList.remove('rotated');
+      } else {
+        // If nested list is empty, fetch cities
+        if (nestedList.children.length === 0) {
+          const checkbox = listItem.querySelector('input[name="district"]');
+          if (checkbox) {
+            fetchCities(checkbox.value, nestedList);
+          }
+        } else {
+          nestedList.style.display = 'block';
+          nestedList.classList.add('expanded');
+          districtArrow.classList.add('rotated');
+        }
+      }
+    }
+  });
+
+  // Handle checkbox changes
+  locationList.addEventListener('change', function(e) {
+    const checkbox = e.target;
+    const li = checkbox.closest('li');
+    if (!li) return;
+
+    if (checkbox.id === 'select-all-governates') {
+      handleSelectAllGovernates(checkbox.checked);
+    } 
+    else if (li.dataset.type === 'governate') {
+      handleGovernateChange(checkbox);
+    }
+    else if (li.dataset.type === 'district') {
+      handleDistrictChange(checkbox);
+    }
+    else if (li.dataset.type === 'city') {
+      updateSelectedLocation();
+      updateURL();
+    }
+
+    updateSelectAllState();
+  });
+
+  // Handle Select All Governates
+  function handleSelectAllGovernates(isChecked) {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    
+    allGovCheckboxes.forEach(cb => {
+      cb.checked = isChecked;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      
+      if (isChecked) {
+        // Expand and load districts for this governate
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.add('rotated');
+        }
+        li.classList.add('user-expanded');
+        fetchDistricts(cb.value, nested);
+      } else {
+        // Clear all nested content and collapse
+        clearNestedContent(nested);
+        const arrow = li.querySelector('.dropdown-arrow');
+        if (arrow) {
+          arrow.classList.remove('rotated');
+        }
+        li.classList.remove('user-expanded');
+      }
+    });
+
+    // If selecting all, also automatically select all districts and cities
+    if (isChecked) {
+      // Wait for districts to load, then select all districts and cities
+      setTimeout(() => {
+        selectAllDistrictsAndCities();
+      }, 500);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual governate change
+  function handleGovernateChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load districts
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchDistricts(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child districts and cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Handle individual district change
+  function handleDistrictChange(checkbox) {
+    const li = checkbox.closest('li');
+    const nested = li.querySelector('.nested-list');
+    const arrow = li.querySelector('.district-dropdown-arrow');
+    
+    if (checkbox.checked) {
+      // Expand and load cities
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(checkbox.value, nested);
+    } else {
+      // Clear content and collapse
+      clearNestedContent(nested);
+      if (arrow) {
+        arrow.classList.remove('rotated');
+      }
+      li.classList.remove('user-expanded');
+      // Also uncheck any child cities
+      const childCheckboxes = nested.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach(cb => cb.checked = false);
+    }
+
+    updateSelectedLocation();
+    updateURL();
+  }
+
+  // Select all districts and cities (for "All" functionality)
+  function selectAllDistrictsAndCities() {
+    const districtCheckboxes = locationList.querySelectorAll('input[name="district"]');
+    districtCheckboxes.forEach(cb => {
+      cb.checked = true;
+      const li = cb.closest('li');
+      const nested = li.querySelector('.nested-list');
+      const arrow = li.querySelector('.district-dropdown-arrow');
+      if (arrow) {
+        arrow.classList.add('rotated');
+      }
+      li.classList.add('user-expanded');
+      fetchCities(cb.value, nested);
+    });
+
+    // Wait for cities to load, then select all cities
+    setTimeout(() => {
+      const cityCheckboxes = locationList.querySelectorAll('input[name="city"]');
+      cityCheckboxes.forEach(cb => cb.checked = true);
+      updateSelectedLocation();
+      updateURL();
+    }, 1000);
+  }
+
+  // Clear nested content
+  function clearNestedContent(container) {
+    if (container) {
+      container.innerHTML = '';
+      container.style.display = 'none';
+      container.classList.remove('expanded');
+    }
+  }
+
+  // Update Select All state
+  function updateSelectAllState() {
+    const allGovCheckboxes = locationList.querySelectorAll('input[name="governate"]');
+    const checkedGovCheckboxes = locationList.querySelectorAll('input[name="governate"]:checked');
+    
+    selectAllGov.checked = allGovCheckboxes.length > 0 && allGovCheckboxes.length === checkedGovCheckboxes.length;
+    selectAllGov.indeterminate = checkedGovCheckboxes.length > 0 && checkedGovCheckboxes.length < allGovCheckboxes.length;
+  }
+
+  // NEW: Function to deselect "All" checkbox when individual locations are removed
+  function deselectAllCheckbox() {
+    if (selectAllGov) {
+      selectAllGov.checked = false;
+      selectAllGov.indeterminate = false;
+    }
+  }
+
+  // Clear button
+  clearBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    locationList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      cb.indeterminate = false;
+    });
+    locationList.querySelectorAll('ul.nested-list').forEach(u => { 
+      u.innerHTML = ''; 
+      u.style.display = 'none';
+      u.classList.remove('expanded');
+    });
+    // Reset all arrows and user-expanded markers
+    locationList.querySelectorAll('.dropdown-arrow, .district-dropdown-arrow').forEach(arrow => {
+      arrow.classList.remove('rotated');
+    });
+    locationList.querySelectorAll('.user-expanded').forEach(item => {
+      item.classList.remove('user-expanded');
+    });
+    locationList.querySelectorAll('.search-hidden').forEach(item => {
+      item.classList.remove('search-hidden');
+    });
+    selectedInput.value = "Select Location";
+    locationSearch.value = ''; // Clear search
+    updateURL();
+    locationContainer.style.display = 'none';
+  });
+
+  // FIXED: Update selected location with proper names
+  function updateSelectedLocation() {
+    // Get selected governates with names
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.location-item-header')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+    
+    // Get selected districts with names
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.district-item-header')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+    
+    // Get selected cities with names
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => {
+        const label = cb.closest('.location-item')?.querySelector('label');
+        return label ? label.textContent : cb.value;
+      });
+
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+
+    selectedInput.value = text || "Select Location";
+  }
+
+  function updateURL() {
+    // Get CURRENT URL parameters to preserve existing filters
+    const params = new URLSearchParams(window.location.search);
+    
+    // Remove existing location parameters to avoid duplicates
+    params.delete('governate');
+    params.delete('district');
+    params.delete('city');
+    
+    // Get selected governates
+    const selectedGovs = Array.from(locationList.querySelectorAll('input[name="governate"]:checked'))
+      .map(cb => cb.value);
+    selectedGovs.forEach(gov => params.append('governate', gov));
+    
+    // Get selected districts
+    const selectedDistricts = Array.from(locationList.querySelectorAll('input[name="district"]:checked'))
+      .map(cb => cb.value);
+    selectedDistricts.forEach(dist => params.append('district', dist));
+    
+    // Get selected cities
+    const selectedCities = Array.from(locationList.querySelectorAll('input[name="city"]:checked'))
+      .map(cb => cb.value);
+    selectedCities.forEach(city => params.append('city', city));
+
+    window.history.replaceState(null, '', '?' + params.toString());
+
+    // Refresh the results - use the complete URL with all parameters
+    const container = document.getElementById('ticket-list-container');
+    if (container) {
+        container.innerHTML = '<div class="loading">Loading...</div>';
+        fetch(`{% url 'ticket' %}?${params.toString()}`, { 
+            headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+        })
+        .then(r => r.text())
+        .then(html => { 
+            container.innerHTML = html; 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            container.innerHTML = '<div class="error-message">Error loading results</div>';
+        });
+    }
+}
+
+  // NEW: Global function to update location from URL (for breadcrumb removal)
+  window.updateLocationFromURL = function() {
+    const params = new URLSearchParams(window.location.search);
+    const governateIds = params.getAll('governate');
+    const districtIds = params.getAll('district');
+    const cityIds = params.getAll('city');
+    
+    // Get names for governates
+    const selectedGovs = governateIds.map(govId => {
+      const govItem = document.querySelector(`.location-item[data-type="governate"][data-id="${govId}"]`);
+      return govItem ? govItem.querySelector('label').textContent : govId;
+    });
+    
+    // Get names for districts
+    const selectedDistricts = districtIds.map(distId => {
+      const distItem = document.querySelector(`.location-item[data-type="district"][data-id="${distId}"]`);
+      return distItem ? distItem.querySelector('label').textContent : distId;
+    });
+    
+    // Get names for cities
+    const selectedCities = cityIds.map(cityId => {
+      const cityItem = document.querySelector(`.location-item[data-type="city"][data-id="${cityId}"]`);
+      return cityItem ? cityItem.querySelector('label').textContent : cityId;
+    });
+    
+    let text = '';
+    
+    if (selectedGovs.length > 0) {
+      text += selectedGovs.join(', ');
+    }
+    
+    if (selectedDistricts.length > 0) {
+      text += (text ? ' > ' : '') + selectedDistricts.join(', ');
+    }
+    
+    if (selectedCities.length > 0) {
+      text += (text ? ' > ' : '') + selectedCities.join(', ');
+    }
+    
+    selectedInput.value = text || "Select Location";
+    
+    // Also deselect "All" checkbox if any location is removed
+    if (governateIds.length === 0 && districtIds.length === 0 && cityIds.length === 0) {
+      deselectAllCheckbox();
+    }
+  };
+
+  // NEW: Event listener for remove filter buttons (X buttons) - FIXED
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-filter')) {
+      const key = e.target.getAttribute('data-key');
+      const value = e.target.getAttribute('data-value');
+      
+      // If removing a location filter (governate, district, or city)
+      if (key === 'governate' || key === 'district' || key === 'city') {
+        // Deselect "All" checkbox
+        deselectAllCheckbox();
+        
+        // Also uncheck the corresponding checkbox in the location dropdown
+        if (key === 'governate') {
+          const govCheckbox = locationList.querySelector(`input[name="governate"][value="${value}"]`);
+          if (govCheckbox) {
+            govCheckbox.checked = false;
+            handleGovernateChange(govCheckbox);
+          }
+        } else if (key === 'district') {
+          const distCheckbox = locationList.querySelector(`input[name="district"][value="${value}"]`);
+          if (distCheckbox) {
+            distCheckbox.checked = false;
+            handleDistrictChange(distCheckbox);
+          }
+        } else if (key === 'city') {
+          const cityCheckbox = locationList.querySelector(`input[name="city"][value="${value}"]`);
+          if (cityCheckbox) {
+            cityCheckbox.checked = false;
+          }
+        }
+        
+        // Update URL and refresh
+        updateURL();
+        
+        // Force update the location display after a short delay
+        setTimeout(() => {
+          window.updateLocationFromURL();
+        }, 100);
+        
+        e.preventDefault();
+      }
+    }
+  });
+
+  // Initialize selected location from URL params
+  function initializeFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Set governates
+    const govParams = urlParams.getAll('governate');
+    govParams.forEach(govId => {
+      const govCheckbox = locationList.querySelector(`input[name="governate"][value="${govId}"]`);
+      if (govCheckbox) {
+        govCheckbox.checked = true;
+        handleGovernateChange(govCheckbox);
+      }
+    });
+    
+    // Set districts
+    const districtParams = urlParams.getAll('district');
+    districtParams.forEach(distId => {
+      const distCheckbox = locationList.querySelector(`input[name="district"][value="${distId}"]`);
+      if (distCheckbox) {
+        distCheckbox.checked = true;
+        handleDistrictChange(distCheckbox);
+      }
+    });
+    
+    // Set cities
+    const cityParams = urlParams.getAll('city');
+    cityParams.forEach(cityId => {
+      const cityCheckbox = locationList.querySelector(`input[name="city"][value="${cityId}"]`);
+      if (cityCheckbox) {
+        cityCheckbox.checked = true;
+      }
+    });
+
+    updateSelectedLocation();
+    updateSelectAllState();
+  }
+
+  // Initialize from URL on page load
+  initializeFromURL();
+});
+</script>
+<!-- Trigger Input -->
+<div class="filter-item" id="toggle-subcategory">
+  <label for="selected-subcategory">Subcategory</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-subcategory" class="input-value" placeholder="Select Subcategory(s)" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Subcategory Dropdown -->
+<div class="category-container" id="subcategory-container" style="display: none;">
+  <div class="oval-button-group" style="flex-direction: column; gap: 8px;">
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_concerts" value="concerts" class="oval-checkbox">
+      <label for="subcategory_concerts" class="oval-button">Concerts</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_sporting_events" value="sporting_events" class="oval-checkbox">
+      <label for="subcategory_sporting_events" class="oval-button">Sporting Events</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_travel" value="travel" class="oval-checkbox">
+      <label for="subcategory_travel" class="oval-button">Travel</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_events" value="events" class="oval-checkbox">
+      <label for="subcategory_events" class="oval-button">Events</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_movies_theater" value="movies_theater" class="oval-checkbox">
+      <label for="subcategory_movies_theater" class="oval-button">Movies & Theater</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_activities_attractions" value="activities_attractions" class="oval-checkbox">
+      <label for="subcategory_activities_attractions" class="oval-button">Activities & Attractions</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_vouchers_giftcards" value="vouchers_giftcards" class="oval-checkbox">
+      <label for="subcategory_vouchers_giftcards" class="oval-button">Vouchers & Gift Cards</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="subcategory" id="subcategory_others" value="others" class="oval-checkbox">
+      <label for="subcategory_others" class="oval-button">Other</label>
+    </div>
+
+  </div>
+  <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-subcategory-filter">Clear</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown
+    document.getElementById('toggle-subcategory').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('subcategory-container');
+        const wasVisible = container.style.display === 'block';
+
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox changes
+    document.querySelectorAll('input[name="subcategory"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSubcategoryFilter();
+        });
+    });
+
+    // Clear filter
+    document.getElementById('clear-subcategory-filter').addEventListener('click', function() {
+        clearSubcategoryFilter();
+    });
+
+    // Initialize from URL
+    initSubcategoryFilterFromURL();
+});
+
+function updateSubcategoryFilter() {
+    const selected = Array.from(document.querySelectorAll('input[name="subcategory"]:checked'))
+        .map(cb => cb.value);
+
+    const labels = Array.from(document.querySelectorAll('input[name="subcategory"]:checked'))
+        .map(cb => document.querySelector(`label[for="subcategory_${cb.value}"]`).textContent);
+
+    // Update UI
+    document.getElementById('selected-subcategory').value = labels.length > 0 ? labels.join(', ') : "Select Subcategory(s)";
+
+    // Update URL
+    const params = new URLSearchParams(window.location.search);
+    if (selected.length > 0) {
+        params.set('subcategory', selected.join(','));
+    } else {
+        params.delete('subcategory');
+    }
+    updatesubcategoryFilters(params);
+}
+
+function clearSubcategoryFilter() {
+    document.querySelectorAll('input[name="subcategory"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-subcategory').value = "Select Subcategory(s)";
+    
+    const params = new URLSearchParams(window.location.search);
+    params.delete('subcategory');
+    updatesubcategoryFilters(params);
+    
+    document.getElementById('subcategory-container').style.display = 'none';
+}
+
+function initSubcategoryFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const subcategory = params.get('subcategory');
+    
+    if (subcategory) {
+        const values = subcategory.split(',');
+        values.forEach(val => {
+            const cb = document.querySelector(`input[name="subcategory"][value="${val}"]`);
+            if (cb) cb.checked = true;
+        });
+        const labels = values.map(val => {
+            const label = document.querySelector(`label[for="subcategory_${val}"]`);
+            return label ? label.textContent : '';
+        }).filter(Boolean);
+        document.getElementById('selected-subcategory').value = labels.join(', ');
+    }
+}
+
+function updatesubcategoryFilters(params) {
+    const container = document.getElementById('ticket-list-container');
+    if (!container) {
+        console.error('ticket container not found');
+        return;
+    }
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    
+    fetch(`{% url 'ticket' %}?${params.toString()}`, {
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#subcategory-container') && !e.target.closest('#toggle-subcategory')) {
+        document.getElementById('subcategory-container').style.display = 'none';
+    }
+});
+</script>
+<!-- Trigger Input -->
+<div class="filter-item" id="toggle-ticket-number">
+  <label for="selected-ticket-number">Number of Tickets</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-ticket-number" class="input-value" placeholder="Select Ticket(s)" readonly>
+</div>
+
+<div class="separators"></div>
+
+<!-- Ticket Number Dropdown -->
+<div class="category-container" id="ticket-number-container" style="display: none;">
+  <div class="oval-button-group" style="flex-direction: column; gap: 8px;">
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="number_of_tickets" id="tickets_single" value="single" class="oval-checkbox">
+      <label for="tickets_single" class="oval-button">Single Ticket</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="number_of_tickets" id="tickets_pair" value="pair" class="oval-checkbox">
+      <label for="tickets_pair" class="oval-button">Pair Tickets</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="number_of_tickets" id="tickets_3" value="3" class="oval-checkbox">
+      <label for="tickets_3" class="oval-button">3 Tickets</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="number_of_tickets" id="tickets_4" value="4" class="oval-checkbox">
+      <label for="tickets_4" class="oval-button">4 Tickets</label>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" name="number_of_tickets" id="tickets_4_plus" value="4_plus" class="oval-checkbox">
+      <label for="tickets_4_plus" class="oval-button">4+ Tickets</label>
+    </div>
+
+  </div>
+  <div class="additional-filters-footer mt-3">
+  <button type="button" class="btn-apply" id="clear-ticket-number-filter">Clear</button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle dropdown
+    document.getElementById('toggle-ticket-number').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('ticket-number-container');
+        const wasVisible = container.style.display === 'block';
+
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Checkbox changes
+    document.querySelectorAll('input[name="number_of_tickets"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateTicketNumberFilter();
+        });
+    });
+
+    // Clear filter
+    document.getElementById('clear-ticket-number-filter').addEventListener('click', function() {
+        clearTicketNumberFilter();
+    });
+
+    // Initialize from URL
+    initTicketNumberFilterFromURL();
+});
+
+function updateTicketNumberFilter() {
+    const selected = Array.from(document.querySelectorAll('input[name="number_of_tickets"]:checked'))
+        .map(cb => cb.value);
+
+    const labels = Array.from(document.querySelectorAll('input[name="number_of_tickets"]:checked'))
+        .map(cb => document.querySelector(`label[for="tickets_${cb.value}"]`).textContent);
+
+    // Update UI
+    document.getElementById('selected-ticket-number').value = labels.length > 0 ? labels.join(', ') : "Select Ticket(s)";
+
+    // Update URL
+    const params = new URLSearchParams(window.location.search);
+    if (selected.length > 0) {
+        params.set('number_of_tickets', selected.join(','));
+    } else {
+        params.delete('number_of_tickets');
+    }
+    updateTicketNumberFilters(params);
+}
+
+function clearTicketNumberFilter() {
+    document.querySelectorAll('input[name="number_of_tickets"]').forEach(cb => cb.checked = false);
+    document.getElementById('selected-ticket-number').value = "Select Ticket(s)";
+    
+    const params = new URLSearchParams(window.location.search);
+    params.delete('number_of_tickets');
+    updateTicketNumberFilters(params);
+    
+    document.getElementById('ticket-number-container').style.display = 'none';
+}
+
+function initTicketNumberFilterFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const number_of_tickets = params.get('number_of_tickets');
+    
+    if (number_of_tickets) {
+        const values = number_of_tickets.split(',');
+        values.forEach(val => {
+            const cb = document.querySelector(`input[name="number_of_tickets"][value="${val}"]`);
+            if (cb) cb.checked = true;
+        });
+        const labels = values.map(val => {
+            const label = document.querySelector(`label[for="tickets_${val}"]`);
+            return label ? label.textContent : '';
+        }).filter(Boolean);
+        document.getElementById('selected-ticket-number').value = labels.join(', ');
+    }
+}
+
+function updateTicketNumberFilters(params) {
+    const container = document.getElementById('ticket-list-container');
+    if (!container) {
+        console.error('ticket container not found');
+        return;
+    }
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+    
+    fetch(`{% url 'ticket' %}?${params.toString()}`, {
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network error');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        window.history.replaceState(null, '', '?' + params.toString());
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results</div>';
+    });
+}
+
+// Close when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#ticket-number-container') && !e.target.closest('#toggle-ticket-number')) {
+        document.getElementById('ticket-number-container').style.display = 'none';
+    }
+});
+</script>
+<!-- Price Range Filter -->
+<div class="filter-item" id="toggle-price">
+  <label for="price-range">Price Range</label>
+  <i class="fas fa-chevron-down dropdown-icons"></i>
+  <input type="text" id="selected-price" class="input-value" placeholder="Select Price Range" readonly>
+</div>
+
+<div class="separators"></div>
+
+<div class="price-container" id="price-container" style="display: none;">
+  <div class="price-inputs">
+  <label>From</label>
+  <input type="number" id="price_from" placeholder="Min Price">  <!-- Changed id -->
+  <label>To</label>
+  <input type="number" id="price_to" placeholder="Max Price">    <!-- Changed id -->
+</div>
+  <hr>
+  <button type="button" class="btn-apply" id="apply-price-filter">Apply</button>
+  <button type="button" class="btn-apply" id="clear-price-filter">Clear</button>
+</div>
+<script>
+document.getElementById('toggle-price').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const container = document.getElementById('price-container');
+    const wasVisible = container.style.display === 'block';
+
+    closeAllFilterContainers();
+
+    if (!wasVisible) {
+        const rect = this.getBoundingClientRect();
+        
+        container.style.left = `${rect.left + window.scrollX}px`;
+        container.style.display = 'block';
+    }
+});
+
+document.getElementById('apply-price-filter').addEventListener('click', function () {
+
+    let priceFrom = document.getElementById('price_from').value.trim();
+    let priceTo = document.getElementById('price_to').value.trim();
+
+    // 🔥 Validation: Show warning if ANY one is empty
+    if (priceFrom === "" || priceTo === "") {
+        alert("Please enter both 'From' and 'To' prices.");
+        return;
+    }
+
+    // Convert after validation
+    priceFrom = Number(priceFrom);
+    priceTo = Number(priceTo);
+
+    // 🔥 Validation: From must not exceed To
+    if (priceFrom > priceTo) {
+        alert("Error: 'From' price cannot be greater than 'To' price.");
+        return;
+    }
+
+    // Update URL params
+    const queryParams = new URLSearchParams(window.location.search);
+
+    queryParams.set('price_from', priceFrom);
+    queryParams.set('price_to', priceTo);
+
+    // Update selected price text in input box
+    document.getElementById('selected-price').value = `${priceFrom} - ${priceTo}`;
+
+    // Update results dynamically
+    updateCarFilters();
+
+    // Update URL (no reload)
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+
+    document.getElementById('price-container').style.display = 'none';
+});
+
+document.getElementById('clear-price-filter').addEventListener('click', function () {
+
+    document.getElementById('price_from').value = '';
+    document.getElementById('price_to').value = '';
+
+    document.getElementById('selected-price').value = "Select Price Range";
+
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.delete('price_from');
+    queryParams.delete('price_to');
+
+    window.history.replaceState(null, '', '?' + queryParams.toString());
+
+    updateCarFilters();
+
+    document.getElementById('price-container').style.display = 'none';
+});
+
+function updateCarFilters() {
+    const container = document.getElementById('ticket-list-container');
+    if (!container) {
+        console.error('Car list container not found');
+        return;
+    }
+
+    container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+
+    const params = new URLSearchParams(window.location.search);
+
+    const priceFrom = document.getElementById('price_from').value.trim();
+    const priceTo = document.getElementById('price_to').value.trim();
+
+    if (priceFrom !== "") params.set('price_from', priceFrom);
+    if (priceTo !== "") params.set('price_to', priceTo);
+
+    fetch(`{% url 'ticket' %}?${params.toString()}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
+    })
+    .then(html => {
+        container.innerHTML = html;
+        history.pushState(null, '', `?${params.toString()}`);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+    });
+}
+
+window.addEventListener('load', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const priceFrom = urlParams.get('price_from') || '';
+    const priceTo = urlParams.get('price_to') || '';
+
+    document.getElementById('price_from').value = priceFrom;
+    document.getElementById('price_to').value = priceTo;
+
+    if (priceFrom || priceTo) {
+        document.getElementById('selected-price').value = `${priceFrom || '0'} - ${priceTo || '∞'}`;
+    }
+});
+</script>
+
+<!-- Additional Filters Container -->
+<div class="filter-item" id="toggle-additional-filters">
+    <label for="additional_filters">Additional Filters</label>
+    <i class="fas fa-chevron-down dropdown-icons2"></i>
+    <input type="text" id="selected-additional-filters" class="input-value" placeholder="Select Filters" readonly>
+</div>
+
+<div class="additional-filters-container" id="additional-filters-container" style="display: none;">
+    <div class="additional-filters-inputs">
+
+        
+<!-- Provide -->
+<label>Provide</label>
+<div class="oval-button-group">
+    <input type="radio" id="provide_yes" value="yes" class="oval-radio" name="provide">
+    <label for="provide_yes" class="oval-button">Yes</label>
+
+    <input type="radio" id="provide_no" value="no" class="oval-radio" name="provide">
+    <label for="provide_no" class="oval-button">No</label>
+</div>
+
+        <!-- Footer -->
+        <div class="additional-filters-footer mt-3">
+            <button type="button" class="btn-apply mx-2" id="clear-additional-filters">Clear</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // Toggle additional filters container
+    document.getElementById('toggle-additional-filters')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const container = document.getElementById('additional-filters-container');
+        const wasVisible = container.style.display === 'block';
+        closeAllFilterContainers();
+        if (!wasVisible) {
+            const rect = this.getBoundingClientRect();
+            
+            container.style.left = `${rect.left + window.scrollX}px`;
+            container.style.display = 'block';
+        }
+    });
+
+    // Radio button filters
+    document.querySelectorAll('.additional-filters-inputs .oval-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateSelectedFiltersDisplay();
+            updateticketFilters();
+        });
+    });
+
+    // Update selected filters display
+    function updateSelectedFiltersDisplay() {
+        const selectedFilters = [];
+
+        // Provide
+        const provideRadio = document.querySelector('input[name="provide"]:checked');
+        if (provideRadio) {
+            selectedFilters.push(`Provide: ${provideRadio.nextElementSibling.textContent}`);
+        }
+
+        // Update display
+        const displayInput = document.getElementById('selected-additional-filters');
+        if (selectedFilters.length > 0) {
+            displayInput.value = selectedFilters.join(' | ');
+            document.getElementById('toggle-additional-filters').classList.add('active');
+        } else {
+            displayInput.value = '';
+            document.getElementById('toggle-additional-filters').classList.remove('active');
+        }
+    }
+
+    // Update ticket filters
+    function updateticketFilters() {
+        const container = document.getElementById('ticket-list-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="loading-indicator">Loading...</div>';
+        const params = new URLSearchParams(window.location.search);
+
+        // Provide
+        const provideRadio = document.querySelector('input[name="provide"]:checked');
+        if (provideRadio) {
+            params.set('provide', provideRadio.value);
+        } else {
+            params.delete('provide');
+        }
+
+        fetch(`{% url 'ticket' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.text())
+        .then(html => {
+            container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+        })
+        .catch(() => {
+            container.innerHTML = '<div class="error-message">Error loading results. Please try again.</div>';
+        });
+    }
+
+    // Clear button
+    document.getElementById('clear-additional-filters')?.addEventListener('click', function() {
+        document.querySelectorAll('.additional-filters-inputs input[type="radio"]').forEach(radio => radio.checked = false);
+        const params = new URLSearchParams(window.location.search);
+        params.delete('provide');
+        window.history.replaceState(null, '', `?${params.toString()}`);
+        updateSelectedFiltersDisplay();
+        updateticketFilters();
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#additional-filters-container') && 
+            !e.target.closest('#toggle-additional-filters')) {
+            document.getElementById('additional-filters-container').style.display = 'none';
+        }
+    });
+
+    // Initialize from URL
+    function initializeFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Provide
+        const provide = urlParams.get('provide');
+        if (provide) {
+            const radio = document.querySelector(`input[name="provide"][value="${provide}"]`);
+            if (radio) radio.checked = true;
+        }
+
+        updateSelectedFiltersDisplay();
+    }
+
+    initializeFromURL();
+});
+</script>
+<script>
+function closeAllFilterContainers() {
+    // Close all filter containers including location
+    document.getElementById('location-list-container').style.display = 'none';
+    document.getElementById('subcategory-container').style.display = 'none';
+    document.getElementById('ticket-number-container').style.display = 'none';
+    document.getElementById('price-container').style.display = 'none';
+    document.getElementById('additional-filters-container').style.display = 'none';
+}
+    
+document.addEventListener("click", function (event) {
+    var bedroomsContainer = document.getElementById('price-container');
+    var bathroomContainer = document.getElementById('subcategory-container');
+    var furnishedContainer = document.getElementById('ticket-number-container');
+    var regionsContainer = document.getElementById('location-list-container');
+    var additionalfiltersContainer = document.getElementById('additional-filters-container');
+
+    var bedroomsToggle = document.getElementById('toggle-price');
+    var bathroomToggle = document.getElementById('toggle-subcategory');
+    var furnishedToggle = document.getElementById('toggle-ticket-number');
+    var regionsToggle = document.getElementById('toggle-location-filter');
+    var additionalfiltersToggle = document.getElementById('toggle-additional-filters');
+
+    if (!bedroomsContainer.contains(event.target) && !bedroomsToggle.contains(event.target)) {
+        bedroomsContainer.style.display = 'none';
+    }
+    if (!bathroomContainer.contains(event.target) && !bathroomToggle.contains(event.target)) {
+        bathroomContainer.style.display = 'none';
+    }
+    if (!furnishedContainer.contains(event.target) && !furnishedToggle.contains(event.target)) {
+        furnishedContainer.style.display = 'none';
+    }
+    if (!regionsContainer.contains(event.target) && !regionsToggle.contains(event.target)) {
+        regionsContainer.style.display = 'none';
+    }
+    if (!additionalfiltersContainer.contains(event.target) && !additionalfiltersToggle.contains(event.target)) {
+        additionalfiltersContainer.style.display = 'none';
+    }
+});
+
+// Close all containers when clicking outside
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.filter-item') && 
+        !event.target.closest('#location-list-container') && 
+        !event.target.closest('#price-container') && 
+        !event.target.closest('#subcategory-container') && 
+        !event.target.closest('#ticket-number-container') && 
+        !event.target.closest('#additional-filters-container')) {
+        closeAllFilterContainers();
+    }
+});
+
+// Prevent containers from closing when clicking inside them
+document.getElementById('location-list-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('price-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('subcategory-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('ticket-number-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+document.getElementById('additional-filters-container').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+</script>
+                </div>
+            </div>
+        </form>
+      
+    </div>
+</div>
+
+
+                         <!-- Content Section -->
+                         <div class="col-lg-16 col-md-12 col-sm-12 content-side" style="margin-top: 10px;">
+                             <div class="category-details-content">
+                                
+                                  
+             
+                                 <!-- Sorting and View Options -->
+                                 <!-- Sorting and View Options -->
+<div class="item-shorting clearfix">
+    <div class="right-column pull-right clearfix">
+        <div class="select-box">
+            <!-- You can add a select dropdown here if needed -->
+        </div>
+        
+        
+    </div>
+</div>
+
+             
+                              
+             
+                                <!-- Replace your existing list view section with this: -->
+<div class="category-block wrapper list-view-active" id="list-view">
+    
+    <div class="list-item feature-style2-three pd-0" id="ticket-list-container" style="margin-top: -40px; margin-left:20px;">
+        {% include 'othercategory/ticket_list_partial.html' %}
+    </div>
+    
+</div>
+                                  <script>
+// Favorite toggle function
+function toggleFavorite(button) {
+    const icon = button.querySelector('i');
+    const productId = button.getAttribute('data-product-id');
+    const productType = button.getAttribute('data-product-type');
+    const isAuthenticated = button.getAttribute('data-is-authenticated') === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = '/login/';
+        return;
+    }
+    
+    const isCurrentlyFavorite = icon.classList.contains('filled');
+    const action = isCurrentlyFavorite ? 'remove' : 'add';
+    
+    // Toggle visual state immediately for better UX
+    if (isCurrentlyFavorite) {
+        icon.classList.remove('fas', 'filled');
+        icon.classList.add('far');
+    } else {
+        icon.classList.remove('far');
+        icon.classList.add('fas', 'filled');
+    }
+
+    // Update localStorage
+    localStorage.setItem(`favorite_${productType}_${productId}`, !isCurrentlyFavorite);
+    
+    // Send AJAX request
+    fetch(`/add-to-favorites/${productType}/${productId}/${action}/`, {
+        method: 'GET',
+        headers: { 
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'error') {
+            // Revert visual state if there was an error
+            if (isCurrentlyFavorite) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'filled');
+            } else {
+                icon.classList.remove('fas', 'filled');
+                icon.classList.add('far');
+            }
+            console.error("Error updating favorite:", data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error updating favorite:", error);
+        // Revert visual state on error
+        if (isCurrentlyFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize favorite icons on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.favorite-btn i').forEach(icon => {
+        const button = icon.closest('.favorite-btn');
+        const productId = button.getAttribute('data-product-id');
+        const productType = button.getAttribute('data-product-type');
+        
+        // Check localStorage for favorite status
+        const isFavorite = localStorage.getItem(`favorite_${productType}_${productId}`) === 'true';
+        
+        if (isFavorite) {
+            icon.classList.remove('far');
+            icon.classList.add('fas', 'filled');
+        } else {
+            icon.classList.remove('fas', 'filled');
+            icon.classList.add('far');
+        }
+    });
+});
+</script>
+<style>
+                                .far.fa-heart {
+                                transition: color 0.3s ease; /* For smooth transition */
+                                }
+                                
+                                .far.fa-heart.filled {
+                                color: red;  /* Change color when the icon is filled */
+                                font-weight: bold;  /* Make the icon bold */
+                                }
+                                
+                                
+                                </style> 
+                                       
+                                 </div>
+                                
+                                    
+             <script>
+                function showListView() {
+                    document.getElementById('grid-view').style.display = 'none';
+                    document.getElementById('list-view').style.display = 'block';
+                }
+            
+                function showGridView() {
+                    document.getElementById('list-view').style.display = 'none';
+                    document.getElementById('grid-view').style.display = 'block';
+                }
+            </script>
+            
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+        const gridButton = document.querySelector(".grid-view");
+        const listButton = document.querySelector(".list-view");
+        const categoryBlock = document.querySelector(".category-block.wrapper");
+    
+        // Set initial state: List view active
+        categoryBlock.classList.add("list-view-active");
+        listButton.classList.add("on");
+        gridButton.classList.remove("on");
+    
+        gridButton.addEventListener("click", () => {
+            categoryBlock.classList.add("grid-view-active");
+            categoryBlock.classList.remove("list-view-active");
+            gridButton.classList.add("on");
+            listButton.classList.remove("on");
+            console.log("Switched to Grid View");
+        });
+    
+        listButton.addEventListener("click", () => {
+            categoryBlock.classList.add("list-view-active");
+            categoryBlock.classList.remove("grid-view-active");
+            listButton.classList.add("on");
+            gridButton.classList.remove("on");
+            console.log("Switched to List View");
+        });
+    });
+    
+            </script>
+    
+    
+            </div>
+
+            <script>
+    const bannerSection = document.getElementById('banner-section');
+
+    const images = [
+        {% for banner in banners %}
+            "{{ banner.image.url }}",
+        {% endfor %}
+    ];
+
+    let currentIndex = 0;
+
+    function changeBackground() {
+        if (images.length === 0) return;
+
+        bannerSection.style.backgroundImage = `url(${images[currentIndex]})`;
+        currentIndex = (currentIndex + 1) % images.length;
+    }
+
+    setInterval(changeBackground, 4000);
+    changeBackground();
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 🔁 Helper: Update visible filter display fields
+    function updateFilterDisplay() {
+        // Price Range
+        const priceFromInput = document.querySelector('#price_from');
+        const priceToInput = document.querySelector('#price_to');
+        const priceFrom = new URLSearchParams(window.location.search).get('price_from');
+        const priceTo = new URLSearchParams(window.location.search).get('price_to');
+
+        if (priceFromInput) priceFromInput.value = priceFrom || '';
+        if (priceToInput) priceToInput.value = priceTo || '';
+
+        const priceField = document.querySelector('#selected-price');
+        if (priceField) {
+            if (priceFrom && priceTo) {
+                priceField.value = `${priceFrom} - ${priceTo}`;
+            } else if (priceFrom) {
+                priceField.value = `From ${priceFrom}`;
+            } else if (priceTo) {
+                priceField.value = `Up to ${priceTo}`;
+            } else {
+                priceField.value = '';
+            }
+        }
+
+        // Year Range
+        const yearFromInput = document.querySelector('#year_from');
+        const yearToInput = document.querySelector('#year_to');
+        const yearFrom = new URLSearchParams(window.location.search).get('year_from');
+        const yearTo = new URLSearchParams(window.location.search).get('year_to');
+
+        if (yearFromInput) yearFromInput.value = yearFrom || '';
+        if (yearToInput) yearToInput.value = yearTo || '';
+
+        const yearField = document.querySelector('#selected-year');
+        if (yearField) {
+            if (yearFrom && yearTo) {
+                yearField.value = `${yearFrom} - ${yearTo}`;
+            } else if (yearFrom) {
+                yearField.value = `From ${yearFrom}`;
+            } else if (yearTo) {
+                yearField.value = `Up to ${yearTo}`;
+            } else {
+                yearField.value = '';
+            }
+        }
+
+        // Kilometer Range
+        const kmFromInput = document.querySelector('#kilometers_from');
+        const kmToInput = document.querySelector('#kilometers_to');
+        const kmFrom = new URLSearchParams(window.location.search).get('kilometers_from');
+        const kmTo = new URLSearchParams(window.location.search).get('kilometers_to');
+
+        if (kmFromInput) kmFromInput.value = kmFrom || '';
+        if (kmToInput) kmToInput.value = kmTo || '';
+
+        const kmField = document.querySelector('#selected-kilometer');
+        if (kmField) {
+            if (kmFrom && kmTo) {
+                kmField.value = `${kmFrom} - ${kmTo} km`;
+            } else if (kmFrom) {
+                kmField.value = `From ${kmFrom} km`;
+            } else if (kmTo) {
+                kmField.value = `Up to ${kmTo} km`;
+            } else {
+                kmField.value = '';
+            }
+        }
+
+        // Location Filters
+        const governateField = document.querySelector('#selected-governate');
+        const districtField = document.querySelector('#selected-district');
+        const cityField = document.querySelector('#selected-city');
+
+        const params = new URLSearchParams(window.location.search);
+        const governates = params.getAll('governate');
+        const districts = params.getAll('district');
+        const cities = params.getAll('city');
+
+        if (governateField) governateField.value = governates.join(', ') || '';
+        if (districtField) districtField.value = districts.join(', ') || '';
+        if (cityField) cityField.value = cities.join(', ') || '';
+
+        // 🔁 Additional Filters Display
+const additionalFiltersField = document.querySelector('#selected-additional-filters');
+if (additionalFiltersField) {
+    const selectedFilters = [];
+
+    // ✅ Delivery
+    const provide = params.get('provide');
+    if (provide) {
+        selectedFilters.push(`Delivery: ${provide === 'yes' ? 'Yes' : 'No'}`);
+    }
+
+    // ✅ Usage
+    const usage = params.getAll('usage');
+    if (usage.length > 0) {
+        selectedFilters.push(`Usage: ${usage.join(', ')}`);
+    }
+
+    // ✅ Service Type (map values to labels)
+    const service_type = params.getAll('service_type');
+    if (service_type.length > 0) {
+        const accLabels = service_type.map(a => {
+            switch (a) {
+                case 'box': return 'Original Box';
+                case 'charger': return 'Charger';
+                case 'headset': return 'Headset';
+                default: return a;
+            }
+        });
+        selectedFilters.push(`Accessories: ${accLabels.join(', ')}`);
+    }
+
+    // ✅ Listing type, age, ads_posted, condition
+    const multiKeys = {
+        listing_type: 'Listing Type',
+        age: 'Age',
+        ads_posted: 'Ads Posted',
+        condition: 'Condition'
+    };
+    Object.entries(multiKeys).forEach(([key, label]) => {
+        const values = params.getAll(key).flatMap(v => v.split(','));
+        if (values.length > 0) {
+            selectedFilters.push(`${label}: ${values.join(', ')}`);
+        }
+    });
+
+    // Update field
+    additionalFiltersField.value = selectedFilters.join(' | ');
+
+    // Toggle active class
+    const toggleEl = document.getElementById('toggle-additional-filters');
+    if (toggleEl) {
+        toggleEl.classList.toggle('active', selectedFilters.length > 0);
+    }
+}
+
+        // Other Filters
+        const selectedFilters = [
+            ...governates.map(g => `Governate: ${g}`),
+            ...districts.map(d => `District: ${d}`),
+            ...cities.map(c => `City: ${c}`),
+            priceFrom && priceTo ? `Price: ${priceFrom} - ${priceTo}` : 
+                priceFrom ? `Price from ${priceFrom}` : 
+                priceTo ? `Price to ${priceTo}` : '',
+            yearFrom && yearTo ? `Year: ${yearFrom} - ${yearTo}` : 
+                yearFrom ? `Year from ${yearFrom}` : 
+                yearTo ? `Year to ${yearTo}` : '',
+            kmFrom && kmTo ? `KM: ${kmFrom} - ${kmTo}` : 
+                kmFrom ? `KM from ${kmFrom}` : 
+                kmTo ? `KM to ${kmTo}` : ''
+        ].filter(Boolean);
+
+        const allFiltersField = document.querySelector('#selected-all-filters');
+        if (allFiltersField) allFiltersField.value = selectedFilters.join(', ');
+    }
+
+    // Unified function to handle filter removal
+    function handleFilterRemoval(key, value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        
+        // Handle different parameter types
+        if (['service_type', 'category', 'subcategory', 'number_of_tickets'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-${key}`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+
+        // Handle different parameter types
+        if ( ['number_of_tickets'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            // Update the display field if it exists
+            const displayField = document.querySelector(`#selected-ticket-number`);
+            if (displayField) {
+                displayField.value = updatedValues.join(', ') || '';
+            }
+        }
+        
+        // Handle different parameter types
+        else if (['provide'].includes(key)) {
+            // Multi-value parameters
+            const currentValues = params.getAll(key).flatMap(v => v.split(','));
+            const updatedValues = currentValues.filter(v => v !== value);
+            
+            params.delete(key);
+            if (updatedValues.length > 0) {
+                // Re-add remaining values
+                updatedValues.forEach(v => params.append(key, v));
+            }
+            
+            // Uncheck the corresponding checkbox
+            const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+            if (checkbox) checkbox.checked = false;
+            
+            /// Update the display field if it exists
+const displayField = document.querySelector(`#selected-additional-filters`);
+if (displayField) {
+    const allValues = ['provide']
+        .flatMap(k => params.getAll(k).flatMap(v => v.split(',')));
+
+    displayField.value = allValues.join(', ') || '';
+}
+
+        } 
+       
+else if (['governate', 'district', 'city'].includes(key)) {
+    // Remove the value from its parameter
+    const currentValues = params.getAll(key).flatMap(v => v.split(','));
+    const updatedValues = currentValues.filter(v => v && v !== value);
+
+    params.delete(key);
+    if (updatedValues.length > 0) {
+        updatedValues.forEach(v => params.append(key, v));
+    }
+
+    // Uncheck the corresponding checkbox
+    const checkbox = document.querySelector(`input[name="${key}"][value="${value}"]`);
+    if (checkbox) checkbox.checked = false;
+
+    // Handle hierarchy clearing
+    if (key === 'governate') {
+        // Clear districts and cities if governate removed
+        params.delete('district');
+        params.delete('city');
+        document.querySelectorAll(`input[name="district"], input[name="city"]`).forEach(cb => cb.checked = false);
+    } else if (key === 'district') {
+        // Clear cities if district removed
+        params.delete('city');
+        document.querySelectorAll(`input[name="city"]`).forEach(cb => cb.checked = false);
+    }
+
+    // ✅ Collect selected labels instead of IDs
+    const selectedLabels = [];
+    ['governate', 'district', 'city'].forEach(type => {
+        document.querySelectorAll(`input[name="${type}"]:checked`).forEach(cb => {
+            const label = document.querySelector(`label[for="${cb.id}"]`);
+            if (label) {
+                selectedLabels.push(label.innerText.trim());
+            } else {
+                // fallback if label not found
+                selectedLabels.push(cb.value);
+            }
+        });
+    });
+
+    // Update the display field with human-readable names
+    const displayField = document.querySelector('#selected-location');
+    if (displayField) {
+        displayField.value = selectedLabels.length > 0 ? selectedLabels.join(', ') : '';
+    }
+}
+
+        else if (key === 'price_range') {
+    const [from, to] = value.split('-');
+    params.delete('price_from');
+    params.delete('price_to');
+    const fromInput = document.querySelector('#price_from');
+    const toInput = document.querySelector('#price_to');
+    if (fromInput) fromInput.value = '';
+    if (toInput) toInput.value = '';
+    const displayField = document.querySelector('#selected-price');
+    if (displayField) displayField.value = '';
+}
+        else if (key === 'sort') {
+            // Special case for sort
+            params.delete('sort');
+        }
+        
+        // Update the URL and refresh the content
+        updateContent(params);
+    }
+
+    // Function to update content via AJAX
+    function updateContent(params) {
+        fetch(`{% url 'ticket' %}?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById('ticket-list-container');
+            if (container) container.innerHTML = html;
+            window.history.replaceState(null, '', `?${params.toString()}`);
+            updateFilterDisplay(); // Update filter display after content loads
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    // Event listener for removing filters
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-filter')) {
+            e.preventDefault();
+            
+            const key = e.target.getAttribute('data-key');
+            const value = e.target.getAttribute('data-value');
+            
+            if (key && value) {
+                handleFilterRemoval(key, value);
+            }
+        }
+    });
+
+    // Clear all filters
+    document.body.addEventListener('click', function(e) {
+        if (e.target.matches('#clear-all-filters')) {
+            e.preventDefault();
+
+            // Clear all checkboxes and radios
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+
+            // Clear all input fields
+            document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+                if (input.id !== 'search' && !input.closest('.filter-modal')) {
+                    input.value = '';
+                }
+            });
+
+            // Clear all hidden/selected fields
+            const filterFields = [
+                '#selected-price', '#selected-year', '#selected-kilometer',
+                '#selected-governate', '#selected-district', '#selected-city',
+                '#selected-all-filters', '#selected-additional-filters',
+                '#selected-listing-type', '#selected-category', '#selected-age', '#selected-ticket-number'
+            ];
+            filterFields.forEach(id => {
+                const el = document.querySelector(id);
+                if (el) el.value = '';
+            });
+
+            // Clear URL params and refresh
+            const url = new URL(window.location.href);
+            url.search = '';
+            
+            fetch(url.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.querySelector('#ticket-list-container');
+                    if (container) container.innerHTML = html;
+                    history.pushState(null, '', url.toString());
+                    updateFilterDisplay();
+                })
+                .catch(err => console.error('Error:', err));
+        }
+    });
+
+
+    // Initial load
+    updateFilterDisplay();
+});
+</script>                                                           
+            </div>   
+            </div>                                                                     
+            {% include 'footer.html' %}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+
+
+
+
+

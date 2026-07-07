@@ -1,0 +1,139 @@
+{% extends 'admin1/payments/base_payments.html' %}
+{% block title %}Transactions{% endblock %}
+{% block page_title %}Transaction Management{% endblock %}
+
+{% block content %}
+<!-- Filters and Actions -->
+<div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="flex-1 flex gap-4">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" placeholder="Search transactions..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+            </div>
+            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+                <option>All Status</option>
+                <option>Completed</option>
+                <option>Pending</option>
+                <option>Failed</option>
+            </select>
+            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F9AD1F] focus:border-[#F9AD1F]">
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+            </select>
+        </div>
+        <div class="flex gap-3">
+            <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-download mr-2" style="color: #F9AD1F;"></i>Export CSV
+            </button>
+            <button class="px-4 py-2 text-white rounded-lg transition-colors btn-gradient">
+                <i class="fas fa-filter mr-2"></i>Apply Filters
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Total Volume</p>
+        <p class="text-xl font-bold text-gray-800">
+            <span class="currency-symbol">OMR</span> 4,250.50
+        </p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Completed</p>
+        <p class="text-xl font-bold" style="color: #F9AD1F;">
+            <span class="currency-symbol">OMR</span> 3,890.25
+        </p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Pending</p>
+        <p class="text-xl font-bold" style="color: #EB362D;">
+            <span class="currency-symbol">OMR</span> 245.75
+        </p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm p-4">
+        <p class="text-sm text-gray-500">Failed</p>
+        <p class="text-xl font-bold text-red-600">
+            <span class="currency-symbol">OMR</span> 114.50
+        </p>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gray-50">
+                <tr class="text-left text-gray-600 text-sm">
+                    <th class="px-6 py-3"><input type="checkbox" class="rounded" style="accent-color: #F9AD1F;"></th>
+                    <th class="px-6 py-3">Transaction ID</th>
+                    <th class="px-6 py-3">User</th>
+                    <th class="px-6 py-3">Amount</th>
+                    <th class="px-6 py-3">Payment Method</th>
+                    <th class="px-6 py-3">Status</th>
+                    <th class="px-6 py-3">Date</th>
+                    <th class="px-6 py-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for transaction in transactions %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4"><input type="checkbox" class="rounded" style="accent-color: #F9AD1F;"></td>
+                    <td class="px-6 py-4 font-mono text-sm font-medium">{{ transaction.id }}</td>
+                    <td class="px-6 py-4">{{ transaction.user }}</td>
+                    <td class="px-6 py-4 font-semibold">
+                        <span class="currency-symbol">OMR</span> {{ transaction.amount }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="flex items-center">
+                            {% if 'Credit' in transaction.payment_method %}
+                                <i class="fas fa-credit-card mr-2" style="color: #F9AD1F;"></i>
+                            {% elif 'PayPal' in transaction.payment_method %}
+                                <i class="fab fa-paypal mr-2" style="color: #EB362D;"></i>
+                            {% else %}
+                                <i class="fas fa-money-bill mr-2" style="color: #F9AD1F;"></i>
+                            {% endif %}
+                            {{ transaction.payment_method }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 text-xs rounded-full font-medium
+                            {% if transaction.status == 'completed' %}" style="background: #F9AD1F20; color: #F9AD1F;"
+                            {% elif transaction.status == 'pending' %}" style="background: #EB362D20; color: #EB362D;"
+                            {% else %}" style="background: #dc262620; color: #dc2626;"
+                            {% endif %}>{{ transaction.status }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ transaction.date }}</td>
+                    <td class="px-6 py-4">
+                        <button class="mr-3 hover:opacity-80 transition-opacity" title="View Details" style="color: #F9AD1F;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="mr-3 hover:opacity-80 transition-opacity" title="Download Receipt" style="color: #EB362D;">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="hover:opacity-80 transition-opacity" title="Issue Refund" style="color: #F9AD1F;">
+                            <i class="fas fa-undo-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <p class="text-sm text-gray-600">Showing 1 to 4 of 24 results</p>
+        <div class="flex gap-2">
+            <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">Previous</button>
+            <button class="px-3 py-1 text-white rounded btn-gradient">1</button>
+            <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">2</button>
+            <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">3</button>
+            <button class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors">Next</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1214 @@
+{% load static %}
+{% include 'admin1/headeradmin.html' %}
+
+<!-- Add Google Fonts and Font Awesome for better typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Reset and Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+    }
+
+    /* Main container with proper padding on both sides */
+    .dashboard-wrapper {
+        padding: 0 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    .container-fluid {
+        padding: 4rem 4rem;
+        width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-header h1 i {
+        color: #15818E;
+        font-size: 2rem;
+    }
+
+    .header-badges {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-primary {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-success {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    .badge-info {
+        background: #e0f2f4;
+        color: #15818E;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(21, 129, 142, 0.1), 0 10px 10px -5px rgba(21, 129, 142, 0.05);
+        border-color: #15818E;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-icon-primary { background: #e0f2f4; color: #15818E; }
+    .stat-icon-success { background: #e0f2f4; color: #15818E; }
+    .stat-icon-info { background: #e0f2f4; color: #15818E; }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    /* Search and Add Bar */
+    .action-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-wrapper {
+        flex: 1;
+        max-width: 400px;
+        position: relative;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .btn-add {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-add:hover {
+        background: #0e5f68;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(21, 129, 142, 0.3);
+    }
+
+    /* Table Card - Fixed height to prevent shifting */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #f1f5f9;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .table-header h5 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-header h5 i {
+        color: #15818E;
+    }
+
+    /* Table Container with fixed height and scroll */
+    .table-container {
+        flex: 1;
+        overflow-y: auto;
+        min-height: 300px;
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .table-responsive {
+        width: 100%;
+        height: 100%;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 500px;
+    }
+
+    .table th {
+        text-align: left;
+        padding: 1rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        background: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table td {
+        padding: 1rem 1rem;
+        font-size: 0.875rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table tbody tr:hover td {
+        background: #f8fafc;
+    }
+
+    /* Amenity Name Styling */
+    .amenity-name {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .amenity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #e0f2f4;
+        color: #15818E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .amenity-text {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    /* Empty state container */
+    .empty-state-container {
+        display: table-row;
+        width: 100%;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state .btn-add-small {
+        background: #15818E;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .empty-state .btn-add-small:hover {
+        background: #0e5f68;
+    }
+
+    /* No results message */
+    .no-results {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #ffffff;
+        border-radius: 12px;
+    }
+
+    .no-results i {
+        font-size: 2.5rem;
+        color: #15818E;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-results h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-results p {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+    }
+
+    .clear-search {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .clear-search:hover {
+        background: #e2e8f0;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+    }
+
+    .btn-icon:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+
+    .btn-icon.edit:hover {
+        background: #e0f2f4;
+        border-color: #15818E;
+        color: #15818E;
+    }
+
+    .btn-icon.delete:hover {
+        background: #fee9e9;
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 25px 50px -12px rgba(21, 129, 142, 0.25);
+    }
+
+    .modal-header {
+        padding: 1.5rem 1.5rem 0.5rem;
+        border: none;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-title i {
+        color: #15818E;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+        border: none;
+        gap: 0.75rem;
+    }
+
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label i {
+        color: #15818E;
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #15818E;
+        box-shadow: 0 0 0 3px rgba(21, 129, 142, 0.1);
+    }
+
+    .btn-modal {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-modal-primary {
+        background: #15818E;
+        color: white;
+    }
+
+    .btn-modal-primary:hover {
+        background: #0e5f68;
+    }
+
+    .btn-modal-secondary {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .btn-modal-secondary:hover {
+        background: #e2e8f0;
+    }
+
+    .btn-modal-danger {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-modal-danger:hover {
+        background: #dc2626;
+    }
+
+    /* Error Message Styles */
+    .error-message {
+        background-color: #fee9e9;
+        border: 1px solid #fecaca;
+        color: #ef4444;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .error-message i {
+        font-size: 1rem;
+    }
+
+    .field-error {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .field-error i {
+        font-size: 0.75rem;
+    }
+
+    .form-control.error {
+        border-color: #ef4444;
+        background-color: #fff5f5;
+    }
+
+    .form-control.error:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    /* Toast Messages */
+    .toast-messages {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast-message {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+        border-left: 4px solid;
+    }
+
+    .toast-message.success {
+        border-left-color: #10b981;
+    }
+
+    .toast-message.success i {
+        color: #10b981;
+    }
+
+    .toast-message.error {
+        border-left-color: #ef4444;
+    }
+
+    .toast-message.error i {
+        color: #ef4444;
+    }
+
+    .toast-message.warning {
+        border-left-color: #f59e0b;
+    }
+
+    .toast-message.warning i {
+        color: #f59e0b;
+    }
+
+    .toast-message.info {
+        border-left-color: #3b82f6;
+    }
+
+    .toast-message.info i {
+        color: #3b82f6;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Badge styles for serial numbers */
+    .badge-primary[style*="background: #eef2ff"] {
+        background: #e0f2f4 !important;
+        color: #15818E !important;
+    }
+
+    /* Search info badge */
+    .badge-info[style*="background: #e6f3ff"] {
+        background: #e0f2f4 !important;
+        color: #15818E !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding: 0 1rem;
+        }
+        
+        .container-fluid {
+            padding: 1rem 0;
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-wrapper {
+            max-width: none;
+        }
+        
+        .table-card {
+            min-height: 350px;
+        }
+        
+        .table-container {
+            min-height: 250px;
+        }
+    }
+</style>
+
+<!-- Toast Messages Container -->
+<div class="toast-messages">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="toast-message {{ message.tags }}">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<div class="dashboard-wrapper">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-plus-circle"></i>
+                Additional Amenities Management
+            </h1>
+            <div class="header-badges">
+                <span class="badge badge-primary" id="totalAmenitiesBadge">
+                    <i class="fas fa-list"></i>
+                    Total: {{ additionalamenities|length|default:"0" }} amenities
+                </span>
+                <span class="badge badge-info" id="visibleAmenitiesBadge" style="display: none;">
+                    <i class="fas fa-eye"></i>
+                    <span id="visibleCount">0</span> visible
+                </span>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+           
+        </div>
+
+        <!-- Search and Add Bar -->
+        <div class="action-bar">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search amenities..." onkeyup="searchTable()">
+            </div>
+            <button type="button" class="btn-add" data-bs-toggle="modal" data-bs-target="#addadditionalamenitiesModal">
+                <i class="fas fa-plus-circle"></i>
+                Add New Amenity
+            </button>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="table-card">
+            <div class="table-header">
+                <h5>
+                    <i class="fas fa-list"></i>
+                    All Additional Amenities
+                </h5>
+                <span class="badge badge-primary">Last updated: {% now "F j, Y" %}</span>
+            </div>
+
+            <!-- Table Container with fixed height -->
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table id="amenityTable" class="table">
+                        <thead>
+                            <tr>
+                                <th width="80px">#</th>
+                                <th>Additional Amenity</th>
+                                <th width="120px">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {% for additionalamenities in additionalamenities %}
+                            <tr class="data-row" data-search="{{ additionalamenities.name|lower }}">
+                                <td>
+                                    <span class="badge badge-primary" style="background: #e0f2f4; color: #15818E;">{{ forloop.counter }}</span>
+                                </td>
+                                <td>
+                                    <div class="amenity-name">
+                                        <div class="amenity-icon">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </div>
+                                        <span class="amenity-text">{{ additionalamenities.name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon edit" 
+                                                data-edit-url="{% url 'edit_additionalamenities' additionalamenities.id %}" 
+                                                data-additionalamenities-name="{{ additionalamenities.name }}" 
+                                                data-additionalamenities-id="{{ additionalamenities.id }}"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editadditionalamenitiesModal"
+                                                title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon delete" 
+                                                data-delete-url="{% url 'delete_additionalamenities' additionalamenities.id %}" 
+                                                data-additionalamenities-name="{{ additionalamenities.name }}"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#deleteadditionalamenitiesModal"
+                                                title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="empty-state-container">
+                                <td colspan="3" style="padding: 0; border: none;">
+                                    <div class="empty-state">
+                                        <i class="fas fa-plus-circle"></i>
+                                        <p>No additional amenities found. Click "Add New Amenity" to create one.</p>
+                                        <button type="button" class="btn-add-small" data-bs-toggle="modal" data-bs-target="#addadditionalamenitiesModal">
+                                            <i class="fas fa-plus-circle"></i>
+                                            Add Amenity
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Search results info (fixed position) -->
+            <div id="searchInfo" style="margin-top: 1rem; padding: 0.5rem; display: none;">
+                <div class="badge badge-info" style="background: #e0f2f4; color: #15818E;">
+                    <i class="fas fa-search"></i>
+                    Found <span id="resultsCount">0</span> amenities
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Amenity Modal with Error Handling -->
+<div class="modal fade" id="addadditionalamenitiesModal" tabindex="-1" aria-hidden="true" {% if show_add_modal %}data-bs-backdrop="static" data-bs-keyboard="false"{% endif %}>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addadditionalamenitiesForm" method="POST" action="{% url 'add_additionalamenities' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle"></i>
+                        Add New Additional Amenity
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if add_form_errors and add_form_errors.name %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% for error in add_form_errors.name %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-plus-circle"></i>
+                            Amenity Name
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if add_form_errors and add_form_errors.name %}error{% endif %}" 
+                               id="additionalamenitiesName" 
+                               name="name" 
+                               placeholder="Enter amenity name" 
+                               value="{{ form_data.name|default:'' }}"
+                               required>
+                        {% if add_form_errors and add_form_errors.name %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {% for error in add_form_errors.name %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <small class="text-muted" style="font-size: 0.75rem; margin-top: 0.5rem; display: block;">
+                            Example: Air Conditioning, Balcony, Microwave, TV
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-modal btn-modal-primary">
+                        <i class="fas fa-save"></i>
+                        Save Amenity
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Amenity Modal with Error Handling -->
+<div class="modal fade" id="editadditionalamenitiesModal" tabindex="-1" aria-hidden="true" {% if show_edit_modal %}data-bs-backdrop="static" data-bs-keyboard="false"{% endif %}>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editadditionalamenitiesForm" method="POST" action="">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit"></i>
+                        Edit Additional Amenity
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if edit_form_errors and edit_form_errors.name %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {% for error in edit_form_errors.name %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-plus-circle"></i>
+                            Amenity Name
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if edit_form_errors and edit_form_errors.name %}error{% endif %}" 
+                               id="editadditionalamenitiesName" 
+                               name="name" 
+                               value="{% if edit_form_data.name %}{{ edit_form_data.name }}{% elif edit_amenity_name %}{{ edit_amenity_name }}{% endif %}"
+                               required>
+                        {% if edit_form_errors and edit_form_errors.name %}
+                        <div class="field-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {% for error in edit_form_errors.name %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-modal btn-modal-primary">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteadditionalamenitiesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="deleteadditionalamenitiesForm" method="POST" action="">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-trash" style="color: #ef4444;"></i>
+                        Delete Additional Amenity
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-3">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                        <p style="font-size: 1rem; color: #1e293b; margin-bottom: 0.5rem;">Are you sure you want to delete <strong id="deleteAmenityName"></strong>?</p>
+                        <p style="font-size: 0.875rem; color: #64748b;">This action cannot be undone.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal btn-modal-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-modal btn-modal-danger">
+                        <i class="fas fa-trash"></i>
+                        Yes, Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% include 'admin1/footeradmin.html' %}
+
+<script>
+    // Search functionality with fixed layout
+    function searchTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const tbody = document.getElementById('tableBody');
+        const rows = tbody.getElementsByClassName('data-row');
+        const emptyStateContainer = document.querySelector('.empty-state-container');
+        
+        let visibleCount = 0;
+        let hasDataRows = rows.length > 0;
+        
+        // Hide empty state initially if we have data rows
+        if (emptyStateContainer) {
+            emptyStateContainer.style.display = 'none';
+        }
+        
+        // Filter data rows
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const searchData = row.getAttribute('data-search') || '';
+            
+            if (searchData.toUpperCase().indexOf(filter) > -1) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        }
+        
+        // Handle no results scenario
+        const searchInfo = document.getElementById('searchInfo');
+        const visibleAmenitiesBadge = document.getElementById('visibleAmenitiesBadge');
+        const visibleCountSpan = document.getElementById('visibleCount');
+        
+        if (filter.trim() !== '') {
+            // Show search info
+            searchInfo.style.display = 'block';
+            document.getElementById('resultsCount').textContent = visibleCount;
+            
+            // Show visible count badge
+            if (visibleCount > 0) {
+                visibleAmenitiesBadge.style.display = 'inline-flex';
+                visibleCountSpan.textContent = visibleCount;
+            } else {
+                visibleAmenitiesBadge.style.display = 'none';
+            }
+            
+            // If no results and we have data rows, show no results message
+            if (visibleCount === 0 && hasDataRows) {
+                // Check if no results row already exists
+                let noResultsRow = document.getElementById('noResultsRow');
+                if (!noResultsRow) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'noResultsRow';
+                    noResultsRow.className = 'no-results-row';
+                    noResultsRow.innerHTML = `
+                        <td colspan="3" style="padding: 0; border: none;">
+                            <div class="no-results">
+                                <i class="fas fa-plus-circle"></i>
+                                <h6>No matching amenities</h6>
+                                <p>No amenities found matching "${input.value}"</p>
+                                <button class="clear-search" onclick="clearSearch()">
+                                    <i class="fas fa-times"></i>
+                                    Clear Search
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            } else {
+                // Remove no results row if it exists
+                const noResultsRow = document.getElementById('noResultsRow');
+                if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+            }
+        } else {
+            // Clear search
+            searchInfo.style.display = 'none';
+            visibleAmenitiesBadge.style.display = 'none';
+            
+            // Remove no results row
+            const noResultsRow = document.getElementById('noResultsRow');
+            if (noResultsRow) {
+                noResultsRow.remove();
+            }
+            
+            // Show all rows
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+        }
+        
+        // If no data rows at all, show empty state
+        if (!hasDataRows && filter.trim() === '') {
+            if (emptyStateContainer) {
+                emptyStateContainer.style.display = '';
+            }
+        }
+    }
+    
+    // Clear search function
+    function clearSearch() {
+        const searchInput = document.getElementById('searchInput');
+        searchInput.value = '';
+        searchTable();
+    }
+    
+    // Handle delete modal - FIXED VERSION
+    document.addEventListener('DOMContentLoaded', function () {
+        // Delete button handler - using correct selector
+        const deleteButtons = document.querySelectorAll('.btn-icon.delete');
+        const deleteForm = document.getElementById('deleteadditionalamenitiesForm');
+        const deleteAmenityNameSpan = document.getElementById('deleteAmenityName');
+
+        if (deleteButtons.length > 0) {
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const deleteUrl = button.getAttribute('data-delete-url');
+                    const amenityName = button.getAttribute('data-additionalamenities-name');
+                    
+                    // Set the form action
+                    if (deleteForm) {
+                        deleteForm.action = deleteUrl;
+                    }
+                    
+                    // Set the amenity name in the confirmation message
+                    if (deleteAmenityNameSpan) {
+                        deleteAmenityNameSpan.textContent = amenityName || 'this amenity';
+                    }
+                });
+            });
+        }
+
+        // Edit button handler - using correct selector
+        const editButtons = document.querySelectorAll('.btn-icon.edit');
+        const editForm = document.getElementById('editadditionalamenitiesForm');
+        const editNameInput = document.getElementById('editadditionalamenitiesName');
+
+        if (editButtons.length > 0) {
+            editButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const editUrl = button.getAttribute('data-edit-url');
+                    const amenityName = button.getAttribute('data-additionalamenities-name');
+                    const amenityId = button.getAttribute('data-additionalamenities-id');
+
+                    // Set the form action
+                    if (editForm) {
+                        editForm.action = editUrl;
+                    }
+                    
+                    // Set the amenity name in the input field
+                    if (editNameInput) {
+                        editNameInput.value = amenityName || '';
+                    }
+                });
+            });
+        }
+
+        // Auto-show add modal if there are errors
+        {% if show_add_modal %}
+            var addModal = new bootstrap.Modal(document.getElementById('addadditionalamenitiesModal'));
+            addModal.show();
+        {% endif %}
+
+        // Auto-show edit modal if there are errors
+        {% if show_edit_modal %}
+            var editModal = new bootstrap.Modal(document.getElementById('editadditionalamenitiesModal'));
+            editModal.show();
+        {% endif %}
+
+        // Auto-hide toast messages after 5 seconds
+        const toastMessages = document.querySelectorAll('.toast-message');
+        if (toastMessages.length > 0) {
+            toastMessages.forEach((toast, index) => {
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300);
+                }, 5000 + (index * 500));
+            });
+        }
+    });
+
+    // Add slide out animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
